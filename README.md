@@ -21,14 +21,14 @@ See individual distribution READMEs for installation instructions.
 
 ## 📚 Documentation
 
-- **Complete Documentation**: See [Wiki](../../wiki) for comprehensive guides
+- **Complete Documentation**: See [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) for comprehensive guides
 - **Platform-Specific**: See `docs/` in each distribution
 - **API Reference**: Available in each distribution's `docs/API.md`
 
 ## 📖 Wiki
 
-Comprehensive documentation is available in the [GitHub Wiki](../../wiki):
-- [macOS Guide](../../wiki/macOS)
-- [Windows Guide](../../wiki/Windows)
-- [Linux Guide](../../wiki/Linux)
-- [Containers Guide](../../wiki/Containers)
+Comprehensive documentation is available in the [GitHub Wiki](https://github.com/roto31/StreamTV/wiki):
+- [macOS Guide](https://github.com/roto31/StreamTV/wiki/macOS)
+- [Windows Guide](https://github.com/roto31/StreamTV/wiki/Windows)
+- [Linux Guide](https://github.com/roto31/StreamTV/wiki/Linux)
+- [Containers Guide](https://github.com/roto31/StreamTV/wiki/Containers)
