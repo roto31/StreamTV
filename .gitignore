@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs and databases
+*.log
+*.db
+*.sqlite
+streamtv.db
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Distribution-specific
+*.command
+create-dmg.sh
+build-distribution.sh
+install_*.sh
+*.bat
+*.ps1
+
+# Container volumes
+docker-data/
+kubernetes-data/
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+.wiki-temp/

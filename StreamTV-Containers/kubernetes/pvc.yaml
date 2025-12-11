@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: streamtv-data-pvc
+  labels:
+    app: streamtv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard  # Update based on your cluster
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: streamtv-schedules-pvc
+  labels:
+    app: streamtv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: streamtv-logs-pvc
+  labels:
+    app: streamtv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: standard

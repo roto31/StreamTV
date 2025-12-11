@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: streamtv-ingress
+  labels:
+    app: streamtv
+  annotations:
+    # NGINX Ingress Controller
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Traefik (alternative)
+    # traefik.ingress.kubernetes.io/rule: Host(`streamtv.example.com`)
+    # traefik.ingress.kubernetes.io/entrypoints: web,websecure
+spec:
+  ingressClassName: nginx  # Update based on your ingress controller
+  rules:
+  - host: streamtv.example.com  # Update with your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: streamtv
+            port:
+              number: 8410
+  # TLS configuration (optional)
+  # tls:
+  # - hosts:
+  #   - streamtv.example.com
+  #   secretName: streamtv-tls

@@ -1,0 +1,153 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamtv
+  labels:
+    app: streamtv
+    version: v1
+spec:
+  replicas: 1  # Note: SQLite doesn't support multiple replicas. Use PostgreSQL for scaling.
+  selector:
+    matchLabels:
+      app: streamtv
+  template:
+    metadata:
+      labels:
+        app: streamtv
+        version: v1
+    spec:
+      containers:
+      - name: streamtv
+        image: streamtv:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8410
+          protocol: TCP
+        - name: streaming
+          containerPort: 5004
+          protocol: TCP
+        - name: ssdp
+          containerPort: 1900
+          protocol: UDP
+        env:
+        # Server configuration
+        - name: STREAMTV_SERVER_HOST
+          value: "0.0.0.0"
+        - name: STREAMTV_SERVER_PORT
+          value: "8410"
+        - name: STREAMTV_SERVER_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: streamtv-config
+              key: base_url
+        # Database
+        - name: STREAMTV_DATABASE_URL
+          value: "sqlite:///./data/streamtv.db"
+        # YouTube
+        - name: STREAMTV_YOUTUBE_ENABLED
+          value: "true"
+        - name: STREAMTV_YOUTUBE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: streamtv-secrets
+              key: youtube-api-key
+              optional: true
+        # Archive.org
+        - name: STREAMTV_ARCHIVE_ORG_ENABLED
+          value: "true"
+        - name: STREAMTV_ARCHIVE_ORG_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: streamtv-secrets
+              key: archive-org-username
+              optional: true
+        - name: STREAMTV_ARCHIVE_ORG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: streamtv-secrets
+              key: archive-org-password
+              optional: true
+        # Security
+        - name: STREAMTV_SECURITY_API_KEY_REQUIRED
+          value: "false"
+        - name: STREAMTV_SECURITY_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: streamtv-secrets
+              key: access-token
+              optional: true
+        # HDHomeRun
+        - name: STREAMTV_HDHOMERUN_ENABLED
+          value: "true"
+        - name: STREAMTV_HDHOMERUN_DEVICE_ID
+          value: "FFFFFFFF"
+        - name: STREAMTV_HDHOMERUN_TUNER_COUNT
+          value: "2"
+        - name: STREAMTV_HDHOMERUN_ENABLE_SSDP
+          value: "true"
+        # Logging
+        - name: STREAMTV_LOGGING_LEVEL
+          value: "INFO"
+        - name: STREAMTV_LOGGING_FILE
+          value: "logs/streamtv.log"
+        # Plex
+        - name: STREAMTV_PLEX_ENABLED
+          value: "false"
+        - name: STREAMTV_PLEX_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: streamtv-config
+              key: plex-base-url
+              optional: true
+        - name: STREAMTV_PLEX_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: streamtv-secrets
+              key: plex-token
+              optional: true
+        # Python optimization
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: PYTHONDONTWRITEBYTECODE
+          value: "1"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        volumeMounts:
+        - name: streamtv-data
+          mountPath: /app/data
+        - name: streamtv-schedules
+          mountPath: /app/schedules
+        - name: streamtv-logs
+          mountPath: /app/logs
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8410
+          initialDelaySeconds: 40
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8410
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: streamtv-data
+        persistentVolumeClaim:
+          claimName: streamtv-data-pvc
+      - name: streamtv-schedules
+        persistentVolumeClaim:
+          claimName: streamtv-schedules-pvc
+      - name: streamtv-logs
+        persistentVolumeClaim:
+          claimName: streamtv-logs-pvc

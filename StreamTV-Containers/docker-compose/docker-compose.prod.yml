@@ -1,0 +1,35 @@
+version: '3.8'
+
+# Production configuration with additional optimizations
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  streamtv:
+    # Override for production
+    restart: always
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Security: read-only root filesystem (if possible)
+    read_only: false  # Set to true if no writes needed outside volumes
+    
+    # Additional environment variables for production
+    environment:
+      - STREAMTV_LOGGING_LEVEL=WARNING  # Reduce log verbosity
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1

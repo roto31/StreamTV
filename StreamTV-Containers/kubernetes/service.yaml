@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamtv
+  labels:
+    app: streamtv
+spec:
+  type: LoadBalancer  # Use NodePort or ClusterIP for different access methods
+  ports:
+  - name: http
+    port: 8410
+    targetPort: 8410
+    protocol: TCP
+  - name: streaming
+    port: 5004
+    targetPort: 5004
+    protocol: TCP
+  - name: ssdp
+    port: 1900
+    targetPort: 1900
+    protocol: UDP
+  selector:
+    app: streamtv
+---
+# Alternative: NodePort service for direct access
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamtv-nodeport
+  labels:
+    app: streamtv
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8410
+    targetPort: 8410
+    nodePort: 30410  # Accessible on all nodes at port 30410
+    protocol: TCP
+  selector:
+    app: streamtv

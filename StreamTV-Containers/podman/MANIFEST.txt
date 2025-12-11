@@ -1,0 +1,71 @@
+StreamTV macOS Distribution v1.0.0
+==================================
+
+This distribution package contains all files necessary to install and run StreamTV on macOS.
+
+Package Contents:
+-----------------
+
+Core Application:
+  streamtv/                    - Main application code (55 Python modules)
+  requirements.txt             - Python package dependencies
+  config.example.yaml          - Configuration template
+
+Installation:
+  install_macos.sh             - Automated installation script
+  Install-StreamTV.command     - Double-click installer launcher
+  verify-installation.sh       - Post-installation verification
+
+Launch Scripts:
+  start_server.sh              - Server startup script
+  Start-StreamTV.command        - Double-click server launcher
+
+Documentation:
+  README.md                    - Main documentation
+  INSTALL.md                   - Installation guide
+  CHANGELOG.md                 - Version history
+  DISTRIBUTION_CHECKLIST.md    - Distribution verification checklist
+  MANIFEST.txt                 - This file
+
+Data & Configuration:
+  schedules/                   - Example schedule files
+  schemas/                     - JSON schema definitions
+  data/channel_icons/         - Channel icon images
+  data/channels_example.yaml  - Example channel configuration
+
+Utilities:
+  scripts/                    - Utility scripts
+  create-dmg.sh               - DMG creation script (optional)
+
+System Requirements:
+-------------------
+  macOS: 10.15 (Catalina) or later
+  Python: 3.8 or later
+  FFmpeg: 6.0 or later
+  RAM: 2GB minimum (4GB recommended)
+  Disk: 500MB for installation
+
+Installation:
+-------------
+1. Double-click Install-StreamTV.command
+   OR
+   Run: ./install_macos.sh
+
+2. Follow the installation prompts
+
+3. Start the server:
+   Double-click Start-StreamTV.command
+   OR
+   Run: ./start_server.sh
+
+4. Access the web interface:
+   http://localhost:8410
+
+File Count:
+-----------
+  Total files: 154
+  Total directories: 17
+  Python modules: 55
+
+Version: 1.0.0
+Date: 2025-12-11

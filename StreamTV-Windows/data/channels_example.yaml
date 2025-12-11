@@ -1,0 +1,19 @@
+# StreamTV Channel Configuration Example
+# Copy this file and modify it to create your own channels
+
+# Example channel configuration
+channels:
+  - number: "1"
+    name: "Example Channel 1"
+    description: "An example channel configuration"
+    icon: null  # Path to channel icon (optional)
+    enabled: true
+    mode: "CONTINUOUS"  # CONTINUOUS or ON_DEMAND
+    schedule_file: null  # Path to schedule YAML file (optional)
+    
+  # Add more channels as needed
+  # - number: "2"
+  #   name: "Example Channel 2"
+  #   description: "Another example channel"
+  #   enabled: true
+  #   mode: "ON_DEMAND"

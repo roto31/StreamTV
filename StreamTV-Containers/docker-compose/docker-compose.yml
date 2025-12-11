@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  streamtv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: streamtv:latest
+    container_name: streamtv
+    restart: unless-stopped
+    
+    ports:
+      - "8410:8410"      # Main web interface
+      - "5004:5004"      # HDHomeRun streaming (if needed)
+      - "1900:1900/udp"  # SSDP discovery (optional)
+    
+    environment:
+      # Server configuration
+      - STREAMTV_SERVER_HOST=0.0.0.0
+      - STREAMTV_SERVER_PORT=8410
+      - STREAMTV_SERVER_BASE_URL=http://localhost:8410
+      
+      # Database
+      - STREAMTV_DATABASE_URL=sqlite:///./data/streamtv.db
+      
+      # YouTube (optional)
+      - STREAMTV_YOUTUBE_ENABLED=true
+      - STREAMTV_YOUTUBE_QUALITY=best
+      - STREAMTV_YOUTUBE_API_KEY=${YOUTUBE_API_KEY:-}
+      - STREAMTV_YOUTUBE_USE_AUTHENTICATION=false
+      
+      # Archive.org (optional)
+      - STREAMTV_ARCHIVE_ORG_ENABLED=true
+      - STREAMTV_ARCHIVE_ORG_USERNAME=${ARCHIVE_ORG_USERNAME:-}
+      - STREAMTV_ARCHIVE_ORG_PASSWORD=${ARCHIVE_ORG_PASSWORD:-}
+      
+      # Security
+      - STREAMTV_SECURITY_API_KEY_REQUIRED=false
+      - STREAMTV_SECURITY_ACCESS_TOKEN=${ACCESS_TOKEN:-}
+      
+      # HDHomeRun
+      - STREAMTV_HDHOMERUN_ENABLED=true
+      - STREAMTV_HDHOMERUN_DEVICE_ID=FFFFFFFF
+      - STREAMTV_HDHOMERUN_TUNER_COUNT=2
+      - STREAMTV_HDHOMERUN_ENABLE_SSDP=true
+      
+      # Logging
+      - STREAMTV_LOGGING_LEVEL=INFO
+      - STREAMTV_LOGGING_FILE=logs/streamtv.log
+      
+      # Plex (optional)
+      - STREAMTV_PLEX_ENABLED=false
+      - STREAMTV_PLEX_BASE_URL=${PLEX_BASE_URL:-}
+      - STREAMTV_PLEX_TOKEN=${PLEX_TOKEN:-}
+    
+    volumes:
+      # Persistent data
+      - streamtv_data:/app/data
+      - streamtv_schedules:/app/schedules
+      - streamtv_logs:/app/logs
+      
+      # Optional: Mount custom config
+      # - ./config.yaml:/app/config.yaml:ro
+      
+      # Optional: Mount cookies for YouTube authentication
+      # - ./cookies.txt:/app/cookies.txt:ro
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8410/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - streamtv-network
+
+volumes:
+  streamtv_data:
+    driver: local
+  streamtv_schedules:
+    driver: local
+  streamtv_logs:
+    driver: local
+
+networks:
+  streamtv-network:
+    driver: bridge

@@ -1,0 +1,343 @@
+"""Import channels and all requirements from YAML files"""
+
+import yaml
+from pathlib import Path
+from typing import Dict, List, Any, Optional
+import logging
+from datetime import datetime
+import re
+
+from ..database.session import SessionLocal, init_db
+from ..database.models import (
+    Channel, MediaItem, Collection, CollectionItem, 
+    Playlist, PlaylistItem, StreamSource
+)
+from ..streaming import StreamManager
+from ..validation import YAMLValidator, ValidationError
+
+logger = logging.getLogger(__name__)
+
+
+class ChannelImporter:
+    """Import channels and all requirements from YAML configuration"""
+    
+    def __init__(self, db_session=None):
+        self.db = db_session or SessionLocal()
+        self.stream_manager = StreamManager()
+        self.created_channels = []
+        self.created_collections = {}
+        self.created_media = {}
+    
+    def parse_duration(self, duration_str: str) -> Optional[int]:
+        """Parse ISO 8601 duration (PT3M44S) to seconds"""
+        if not duration_str:
+            return None
+        
+        try:
+            # Remove PT prefix
+            duration_str = duration_str.replace('PT', '')
+            
+            total_seconds = 0
+            
+            # Parse hours
+            hours_match = re.search(r'(\d+)H', duration_str)
+            if hours_match:
+                total_seconds += int(hours_match.group(1)) * 3600
+            
+            # Parse minutes
+            minutes_match = re.search(r'(\d+)M', duration_str)
+            if minutes_match:
+                total_seconds += int(minutes_match.group(1)) * 60
+            
+            # Parse seconds
+            seconds_match = re.search(r'(\d+)S', duration_str)
+            if seconds_match:
+                total_seconds += int(seconds_match.group(1))
+            
+            return total_seconds if total_seconds > 0 else None
+        except Exception as e:
+            logger.warning(f"Could not parse duration '{duration_str}': {e}")
+            return None
+    
+    def get_or_create_media_item(self, stream_data: Dict[str, Any]) -> MediaItem:
+        """Get existing media item or create new one"""
+        url = stream_data.get('url')
+        if not url:
+            raise ValueError("Stream data missing 'url' field")
+        
+        # Check if media item already exists
+        existing = self.db.query(MediaItem).filter(MediaItem.url == url).first()
+        if existing:
+            return existing
+        
+        # Determine source
+        source_str = stream_data.get('source', '').lower()
+        if 'youtube' in source_str or 'youtu.be' in url or 'youtube.com' in url:
+            source = StreamSource.YOUTUBE
+        elif 'archive' in source_str or 'archive.org' in url:
+            source = StreamSource.ARCHIVE_ORG
+        else:
+            source = StreamSource.YOUTUBE  # Default
+        
+        # Extract source ID
+        source_id = ""
+        if source == StreamSource.YOUTUBE:
+            match = re.search(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*', url)
+            if match:
+                source_id = match.group(1)
+        elif source == StreamSource.ARCHIVE_ORG:
+            match = re.search(r'archive\.org\/details\/([^\/\?]+)', url)
+            if match:
+                source_id = match.group(1)
+        
+        # Get title
+        title = stream_data.get('collection', 'Untitled')
+        if not title or title == 'Untitled':
+            title = stream_data.get('id', 'Media Item')
+        
+        # Parse duration
+        duration = self.parse_duration(stream_data.get('runtime'))
+        
+        # Create media item
+        media_item = MediaItem(
+            source=source,
+            source_id=source_id or url,
+            url=url,
+            title=title,
+            description=stream_data.get('notes', ''),
+            duration=duration,
+            uploader=stream_data.get('network', None),
+            upload_date=str(stream_data.get('broadcast_date', '')) if stream_data.get('broadcast_date') else None
+        )
+        
+        self.db.add(media_item)
+        self.db.commit()
+        self.db.refresh(media_item)
+        
+        logger.info(f"  ✓ Created media item: {title[:50]}")
+        return media_item
+    
+    def get_or_create_collection(self, collection_name: str) -> Collection:
+        """Get existing collection or create new one"""
+        if collection_name in self.created_collections:
+            return self.created_collections[collection_name]
+        
+        # Check if collection already exists
+        existing = self.db.query(Collection).filter(Collection.name == collection_name).first()
+        if existing:
+            self.created_collections[collection_name] = existing
+            return existing
+        
+        # Create new collection
+        collection = Collection(
+            name=collection_name,
+            description=f"Collection: {collection_name}"
+        )
+        self.db.add(collection)
+        self.db.commit()
+        self.db.refresh(collection)
+        
+        self.created_collections[collection_name] = collection
+        logger.info(f"  ✓ Created collection: {collection_name}")
+        return collection
+    
+    def add_media_to_collection(self, collection: Collection, media_item: MediaItem, order: int = 0):
+        """Add media item to collection"""
+        # Check if already in collection
+        existing = self.db.query(CollectionItem).filter(
+            CollectionItem.collection_id == collection.id,
+            CollectionItem.media_item_id == media_item.id
+        ).first()
+        
+        if existing:
+            return
+        
+        collection_item = CollectionItem(
+            collection_id=collection.id,
+            media_item_id=media_item.id,
+            order=order
+        )
+        self.db.add(collection_item)
+        self.db.commit()
+    
+    def import_channel_from_config(self, channel_config: Dict[str, Any]) -> Channel:
+        """Import a single channel from configuration"""
+        channel_number = str(channel_config.get('number', ''))
+        channel_name = channel_config.get('name', f'Channel {channel_number}')
+        
+        if not channel_number:
+            raise ValueError("Channel config missing 'number' field")
+        
+        # Check if channel already exists
+        existing = self.db.query(Channel).filter(Channel.number == channel_number).first()
+        if existing:
+            logger.info(f"Channel {channel_number} already exists, updating...")
+            existing.name = channel_name
+            existing.group = channel_config.get('group')
+            existing.description = channel_config.get('description')
+            existing.enabled = channel_config.get('enabled', True)
+            self.db.commit()
+            self.db.refresh(existing)
+            channel = existing
+        else:
+            # Create new channel
+            channel = Channel(
+                number=channel_number,
+                name=channel_name,
+                group=channel_config.get('group'),
+                enabled=channel_config.get('enabled', True)
+            )
+            self.db.add(channel)
+            self.db.commit()
+            self.db.refresh(channel)
+            
+            logger.info(f"✓ Created channel: {channel_number} - {channel_name}")
+            self.created_channels.append(channel)
+        
+        # Import media items and collections
+        streams = channel_config.get('streams', [])
+        if streams:
+            logger.info(f"  Importing {len(streams)} media items...")
+            
+            # Group streams by collection
+            collection_map = {}
+            for i, stream_data in enumerate(streams):
+                collection_name = stream_data.get('collection')
+                if collection_name:
+                    if collection_name not in collection_map:
+                        collection_map[collection_name] = []
+                    collection_map[collection_name].append((i, stream_data))
+            
+            # Create collections and add media
+            for collection_name, stream_list in collection_map.items():
+                collection = self.get_or_create_collection(collection_name)
+                
+                for order, stream_data in stream_list:
+                    try:
+                        media_item = self.get_or_create_media_item(stream_data)
+                        self.add_media_to_collection(collection, media_item, order)
+                    except Exception as e:
+                        logger.error(f"  ✗ Error importing media item: {e}")
+                        continue
+            
+            # Create main playlist for channel
+            playlist_name = f"{channel_name} - Main Playlist"
+            existing_playlist = self.db.query(Playlist).filter(
+                Playlist.name == playlist_name,
+                Playlist.channel_id == channel.id
+            ).first()
+            
+            if not existing_playlist:
+                playlist = Playlist(
+                    name=playlist_name,
+                    description=f"Main playlist for {channel_name}",
+                    channel_id=channel.id
+                )
+                self.db.add(playlist)
+                self.db.commit()
+                self.db.refresh(playlist)
+                
+                # Add all media items to playlist in order
+                all_media = []
+                for stream_data in streams:
+                    try:
+                        media_item = self.get_or_create_media_item(stream_data)
+                        all_media.append(media_item)
+                    except Exception as e:
+                        logger.error(f"  ✗ Error adding to playlist: {e}")
+                        continue
+                
+                for order, media_item in enumerate(all_media):
+                    playlist_item = PlaylistItem(
+                        playlist_id=playlist.id,
+                        media_item_id=media_item.id,
+                        order=order
+                    )
+                    self.db.add(playlist_item)
+                
+                self.db.commit()
+                logger.info(f"  ✓ Created playlist with {len(all_media)} items")
+        
+        return channel
+    
+    def import_from_yaml(self, yaml_path: Path, validate: bool = True) -> List[Channel]:
+        """
+        Import channels from YAML file
+        
+        Args:
+            yaml_path: Path to YAML file
+            validate: Whether to validate against JSON schema (default: True)
+        
+        Returns:
+            List of imported Channel objects
+        """
+        if not yaml_path.exists():
+            raise FileNotFoundError(f"YAML file not found: {yaml_path}")
+        
+        # Validate YAML file against schema if requested
+        if validate:
+            try:
+                validator = YAMLValidator()
+                result = validator.validate_channel_file(yaml_path)
+                if not result.get('valid', False):
+                    raise ValidationError(f"Validation failed: {result.get('errors', [])}")
+                logger.info(f"✓ Validated {yaml_path.name} before import")
+            except ValidationError as e:
+                logger.error(f"Validation error: {e.message}")
+                raise
+            except Exception as e:
+                logger.warning(f"Validation skipped due to error: {e}")
+                # Continue with import even if validation fails (non-blocking)
+        
+        with open(yaml_path, 'r') as f:
+            data = yaml.safe_load(f)
+        
+        # Initialize database
+        init_db()
+        
+        channels_config = data.get('channels', [])
+        if not channels_config:
+            raise ValueError("YAML file must contain a 'channels' list")
+        
+        logger.info(f"Importing {len(channels_config)} channels from {yaml_path.name}...")
+        
+        imported_channels = []
+        for channel_config in channels_config:
+            try:
+                channel = self.import_channel_from_config(channel_config)
+                imported_channels.append(channel)
+            except Exception as e:
+                logger.error(f"Error importing channel: {e}")
+                continue
+        
+        logger.info(f"\n{'='*60}")
+        logger.info(f"Import complete!")
+        logger.info(f"  Created/Updated: {len(imported_channels)} channels")
+        logger.info(f"  Created: {len(self.created_collections)} collections")
+        logger.info(f"{'='*60}")
+        
+        return imported_channels
+    
+    def close(self):
+        """Close database session"""
+        if self.db:
+            self.db.close()
+
+
+def import_channels_from_yaml(yaml_path: Path, validate: bool = True) -> List[Channel]:
+    """
+    Convenience function to import channels from YAML file
+    
+    Args:
+        yaml_path: Path to YAML file
+        validate: Whether to validate against JSON schema (default: True)
+    
+    Returns:
+        List of imported Channel objects
+    """
+    importer = ChannelImporter()
+    try:
+        return importer.import_from_yaml(yaml_path, validate=validate)
+    finally:
+        importer.close()
+

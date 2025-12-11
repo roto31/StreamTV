@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: streamtv-config
+  labels:
+    app: streamtv
+data:
+  # Server base URL - update with your actual hostname/IP
+  base_url: "http://streamtv.default.svc.cluster.local:8410"
+  
+  # Plex base URL (optional)
+  plex-base-url: ""
+  
+  # Additional configuration can be added here
+  # All values are available as environment variables via configMapKeyRef

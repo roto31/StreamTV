@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Schedules - StreamTV{% endblock %}
+
+{% block extra_styles %}
+    .schedules-toolbar {
+        background: var(--surface);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 16px; /* Apple HIG standard */
+        margin-bottom: 16px; /* Apple 8pt grid */
+        display: flex;
+        align-items: center;
+        gap: 16px; /* Apple HIG standard spacing */
+        border: 0.5px solid var(--divider);
+    }
+    
+    .schedules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 24px;
+    }
+    
+    .schedule-card {
+        background: var(--surface);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 20px; /* Apple HIG standard */
+        border: 0.5px solid var(--divider);
+        transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
+    }
+    
+    .schedule-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .schedule-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 16px;
+    }
+    
+    .schedule-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    
+    .schedule-channel {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .schedule-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    
+    .schedule-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .schedule-info-item .material-icons {
+        font-size: 18px;
+    }
+    
+    .schedule-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--divider);
+    }
+    
+    .file-list {
+        background: var(--background);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 16px; /* Apple HIG standard */
+        margin-top: 16px; /* Apple 8pt grid */
+    }
+    
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px; /* Apple HIG standard */
+        border-bottom: 0.5px solid var(--divider);
+        transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
+        min-height: 44px; /* Apple minimum touch target */
+    }
+    
+    .file-item:hover {
+        background: var(--hover);
+    }
+    
+    .file-item:last-child {
+        border-bottom: none;
+    }
+    
+    .file-name {
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+    
+    .file-path {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+    
+    .empty-state-icon {
+        font-size: 64px;
+        opacity: 0.5;
+        margin-bottom: 16px;
+    }
+{% endblock %}
+
+{% block content %}
+    <div class="content-header">
+        <h1>Schedules</h1>
+        <p>Manage YAML schedule files for your channels</p>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- Toolbar -->
+    <div class="schedules-toolbar">
+        <button class="btn btn-primary" onclick="refreshSchedules()">
+            <span class="material-icons" style="font-size: 18px;">refresh</span>
+            Refresh
+        </button>
+        <div style="flex: 1;"></div>
+        <a href="/import" class="btn btn-outlined">
+            <span class="material-icons" style="font-size: 18px;">upload</span>
+            Import Channel
+        </a>
+    </div>
+    
+    <!-- Schedule Files -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Schedule Files</div>
+        </div>
+        <div id="loading" class="loading">Loading schedules...</div>
+        <div id="schedules-container" class="schedules-grid" style="display: none;"></div>
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📅</div>
+            <h3 style="margin-bottom: 8px;">No schedule files found</h3>
+            <p>Schedule files are located in the <code>schedules/</code> directory</p>
+        </div>
+    </div>
+    
+    <!-- YAML Files List -->
+    <div class="card file-list">
+        <div class="card-header">
+            <div class="card-title">Available YAML Files</div>
+        </div>
+        <div id="files-container"></div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        // Load schedules on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchedules();
+            loadYamlFiles();
+        });
+        
+        async function loadSchedules() {
+            try {
+                // Load channels to get schedule associations
+                const channelsRes = await fetch('/api/channels');
+                const channels = await channelsRes.json();
+                
+                // Load schedule files from API
+                let scheduleFiles = [];
+                try {
+                    const schedulesRes = await fetch('/api/schedules/files');
+                    if (schedulesRes.ok) {
+                        scheduleFiles = await schedulesRes.json();
+                    }
+                } catch (e) {
+                    console.warn('Could not load schedule files from API:', e);
+                }
+                
+                document.getElementById('loading').style.display = 'none';
+                const container = document.getElementById('schedules-container');
+                const emptyState = document.getElementById('empty-state');
+                
+                if (scheduleFiles.length === 0) {
+                    container.style.display = 'none';
+                    emptyState.style.display = 'block';
+                } else {
+                    container.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                    
+                    container.innerHTML = scheduleFiles.map(schedule => {
+                        // Try to find associated channel by schedule file name or channel number
+                        const channel = channels.find(c => 
+                            c.schedule_file === schedule.file || 
+                            c.number === schedule.channel_number
+                        );
+                        const channelNumber = schedule.channel_number || (channel ? channel.number : null);
+                        return `
+                            <div class="schedule-card">
+                                <div class="schedule-header">
+                                    <div>
+                                        <div class="schedule-title">${schedule.name || schedule.file}</div>
+                                        ${channelNumber ? `<div class="schedule-channel">Channel ${channelNumber}</div>` : ''}
+                                    </div>
+                                    ${channel ? `<span class="badge ${channel.enabled ? 'badge-success' : 'badge-error'}">${channel.enabled ? 'Active' : 'Disabled'}</span>` : '<span class="badge badge-warning">No Channel</span>'}
+                                </div>
+                                <div class="schedule-info">
+                                    <div class="schedule-info-item">
+                                        <span class="material-icons">description</span>
+                                        <span>File: ${schedule.file}</span>
+                                    </div>
+                                    ${channel ? `
+                                        <div class="schedule-info-item">
+                                            <span class="material-icons">tv</span>
+                                            <span>Channel: ${channel.name}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="schedule-actions">
+                                    ${channel ? `
+                                        <a href="/player" class="btn btn-outlined" style="flex: 1; text-align: center;" onclick="localStorage.setItem('autoPlayChannel', '${channel.number}')">
+                                            <span class="material-icons" style="font-size: 18px;">play_circle</span>
+                                            Play
+                                        </a>
+                                    ` : ''}
+                                    <a href="/channels" class="btn btn-outlined" style="flex: 1; text-align: center;">
+                                        <span class="material-icons" style="font-size: 18px;">settings</span>
+                                        Manage
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                console.error('Error loading schedules:', error);
+            }
+        }
+        
+        async function loadYamlFiles() {
+            try {
+                const res = await fetch('/api/schedules/files');
+                if (res.ok) {
+                    const files = await res.json();
+            const container = document.getElementById('files-container');
+                    if (files.length === 0) {
+                        container.innerHTML = '<div class="file-item"><div><div class="file-name">No schedule files found</div><div class="file-path">Create schedule files in the schedules/ directory</div></div></div>';
+                    } else {
+                        container.innerHTML = files.map(schedule => `
+                <div class="file-item">
+                    <div>
+                                    <div class="file-name">${schedule.file}</div>
+                                    <div class="file-path">schedules/${schedule.file}</div>
+                    </div>
+                    <span class="badge badge-info">YAML</span>
+                </div>
+            `).join('');
+                    }
+                } else {
+                    document.getElementById('files-container').innerHTML = '<div class="file-item"><div><div class="file-name">Could not load schedule files</div></div></div>';
+                }
+            } catch (error) {
+                console.error('Error loading YAML files:', error);
+                document.getElementById('files-container').innerHTML = '<div class="file-item"><div><div class="file-name">Error loading schedule files</div></div></div>';
+            }
+        }
+        
+        function refreshSchedules() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('schedules-container').style.display = 'none';
+            loadSchedules();
+        }
+    </script>
+{% endblock %}
+

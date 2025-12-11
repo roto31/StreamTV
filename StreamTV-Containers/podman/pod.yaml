@@ -1,0 +1,60 @@
+# Podman Pod configuration for StreamTV
+# Usage: podman play kube pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: streamtv-pod
+  labels:
+    app: streamtv
+spec:
+  containers:
+  - name: streamtv
+    image: streamtv:latest
+    ports:
+    - containerPort: 8410
+      protocol: TCP
+    - containerPort: 5004
+      protocol: TCP
+    - containerPort: 1900
+      protocol: UDP
+    env:
+    - name: STREAMTV_SERVER_HOST
+      value: "0.0.0.0"
+    - name: STREAMTV_SERVER_PORT
+      value: "8410"
+    - name: STREAMTV_SERVER_BASE_URL
+      value: "http://localhost:8410"
+    - name: STREAMTV_DATABASE_URL
+      value: "sqlite:///./data/streamtv.db"
+    - name: STREAMTV_YOUTUBE_ENABLED
+      value: "true"
+    - name: STREAMTV_HDHOMERUN_ENABLED
+      value: "true"
+    volumeMounts:
+    - name: streamtv-data
+      mountPath: /app/data
+    - name: streamtv-schedules
+      mountPath: /app/schedules
+    - name: streamtv-logs
+      mountPath: /app/logs
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "0.5"
+      limits:
+        memory: "2Gi"
+        cpu: "2"
+  volumes:
+  - name: streamtv-data
+    hostPath:
+      path: /var/lib/containers/streamtv/data
+      type: DirectoryOrCreate
+  - name: streamtv-schedules
+    hostPath:
+      path: /var/lib/containers/streamtv/schedules
+      type: DirectoryOrCreate
+  - name: streamtv-logs
+    hostPath:
+      path: /var/lib/containers/streamtv/logs
+      type: DirectoryOrCreate

@@ -1,0 +1,64 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (will be copied separately if needed)
+docs/
+*.md
+!README.md
+
+# Distribution files
+*.command
+*.sh
+*.bat
+*.ps1
+install_*.sh
+create-dmg.sh
+build-distribution.sh
+
+# Data (use volumes instead)
+data/channel_icons/*
+!data/channel_icons/README.md
+*.db
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Config (use environment variables or mounted config)
+config.yaml

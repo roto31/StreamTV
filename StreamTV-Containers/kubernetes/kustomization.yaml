@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: streamtv
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+
+commonLabels:
+  app: streamtv
+  managed-by: kustomize
+
+# Uncomment to use different image
+# images:
+# - name: streamtv
+#   newName: your-registry/streamtv
+#   newTag: v1.0.0

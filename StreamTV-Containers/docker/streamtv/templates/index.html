@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - StreamTV{% endblock %}
+
+{% block extra_styles %}
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 16px; /* Apple 8pt grid */
+        margin-top: 16px; /* Apple 8pt grid */
+    }
+    
+    .stat-card {
+        background: var(--surface);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 20px; /* Apple HIG standard */
+        border: 0.5px solid var(--divider);
+        transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px; /* Apple 8pt grid */
+    }
+    
+    .stat-card-title {
+        font-size: 13px; /* Apple HIG standard caption */
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.08px; /* Apple HIG standard */
+        font-weight: 600;
+    }
+    
+    .stat-card-icon {
+        width: 44px; /* Apple minimum touch target */
+        height: 44px; /* Apple minimum touch target */
+        border-radius: 10px; /* Apple HIG standard */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .stat-card-icon.primary {
+        background: rgba(0, 144, 0, 0.1);
+        color: var(--primary);
+    }
+    
+    .stat-card-icon.secondary {
+        background: rgba(0, 144, 144, 0.1);
+        color: var(--secondary);
+    }
+    
+    .stat-card-icon.info {
+        background: rgba(0, 192, 192, 0.1);
+        color: var(--info);
+    }
+    
+    .stat-card-value {
+        font-size: 34px; /* Apple HIG Large Title size */
+        font-weight: 700; /* Apple HIG standard */
+        letter-spacing: 0.374px; /* Apple HIG standard */
+        line-height: 1.17647; /* Apple HIG standard */
+        color: var(--text-primary);
+        margin-bottom: 8px; /* Apple 8pt grid */
+    }
+    
+    .stat-card-change {
+        font-size: 13px; /* Apple HIG standard caption */
+        color: var(--text-secondary);
+        font-weight: 400;
+        line-height: 1.38462; /* Apple HIG standard */
+    }
+    
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px; /* Apple 8pt grid */
+        margin-top: 16px; /* Apple 8pt grid */
+    }
+    
+    .action-card {
+        background: var(--surface);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 20px; /* Apple HIG standard */
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
+        text-decoration: none;
+        color: var(--text-primary);
+        border: 0.5px solid var(--divider);
+        min-height: 44px; /* Apple minimum touch target */
+    }
+    
+    .action-card:hover {
+        background: var(--hover);
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+    
+    .action-card-icon {
+        font-size: 32px;
+        margin-bottom: 12px; /* Apple 8pt grid */
+    }
+    
+    .action-card-title {
+        font-size: 17px; /* Apple HIG standard body */
+        font-weight: 600; /* Apple HIG standard */
+        margin-bottom: 4px; /* Apple 8pt grid */
+        line-height: 1.47059; /* Apple HIG standard */
+    }
+    
+    .action-card-desc {
+        font-size: 13px; /* Apple HIG standard caption */
+        color: var(--text-secondary);
+        font-weight: 400;
+        line-height: 1.38462; /* Apple HIG standard */
+    }
+    
+    .recent-channels {
+        margin-top: 16px; /* Apple 8pt grid */
+    }
+    
+    .channel-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px; /* Apple HIG standard */
+        border-bottom: 0.5px solid var(--divider);
+        transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
+        min-height: 44px; /* Apple minimum touch target */
+    }
+    
+    .channel-item:hover {
+        background: var(--hover);
+    }
+    
+    .channel-item:last-child {
+        border-bottom: none;
+    }
+    
+    .channel-number {
+        width: 60px;
+        font-weight: 600; /* Apple HIG standard */
+        color: var(--primary);
+        font-size: 17px; /* Apple HIG standard body */
+        line-height: 1.47059; /* Apple HIG standard */
+    }
+    
+    .channel-name {
+        flex: 1;
+        color: var(--text-primary);
+        font-size: 17px; /* Apple HIG standard body */
+        font-weight: 400;
+        line-height: 1.47059; /* Apple HIG standard */
+    }
+    
+    .channel-status {
+        margin-left: auto;
+    }
+{% endblock %}
+
+{% block content %}
+    <div class="content-header">
+        <h1>Dashboard</h1>
+        <p>Welcome to StreamTV</p>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- Statistics Cards -->
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-title">Channels</div>
+                <div class="stat-card-icon primary">
+                    <span class="material-icons">tv</span>
+                </div>
+            </div>
+            <div class="stat-card-value" id="channelCount">-</div>
+            <div class="stat-card-change">Total channels configured</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-title">Media Items</div>
+                <div class="stat-card-icon secondary">
+                    <span class="material-icons">video_library</span>
+                </div>
+            </div>
+            <div class="stat-card-value" id="mediaCount">-</div>
+            <div class="stat-card-change">Total media items</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-title">Playlists</div>
+                <div class="stat-card-icon info">
+                    <span class="material-icons">playlist_play</span>
+                </div>
+            </div>
+            <div class="stat-card-value" id="playlistCount">-</div>
+            <div class="stat-card-change">Total playlists</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-title">Collections</div>
+                <div class="stat-card-icon secondary">
+                    <span class="material-icons">collections</span>
+                </div>
+            </div>
+            <div class="stat-card-value" id="collectionCount">-</div>
+            <div class="stat-card-change">Total collections</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-title">Schedules</div>
+                <div class="stat-card-icon info">
+                    <span class="material-icons">schedule</span>
+                </div>
+            </div>
+            <div class="stat-card-value" id="scheduleCount">5</div>
+            <div class="stat-card-change">YAML schedule files</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-title">Enabled Channels</div>
+                <div class="stat-card-icon primary">
+                    <span class="material-icons">check_circle</span>
+                </div>
+            </div>
+            <div class="stat-card-value" id="enabledCount">-</div>
+            <div class="stat-card-change">Active channels</div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Quick Actions</div>
+        </div>
+        <div class="quick-actions">
+            <a href="/player" class="action-card">
+                <div class="action-card-icon">▶️</div>
+                <div class="action-card-title">Play Channels</div>
+                <div class="action-card-desc">Watch your channels</div>
+            </a>
+            <a href="/channels" class="action-card">
+                <div class="action-card-icon">📺</div>
+                <div class="action-card-title">Manage Channels</div>
+                <div class="action-card-desc">Create and edit channels</div>
+            </a>
+            <a href="/import" class="action-card">
+                <div class="action-card-icon">📥</div>
+                <div class="action-card-title">Import Channels</div>
+                <div class="action-card-desc">Import from YAML</div>
+            </a>
+            <a href="/api/media" class="action-card" target="_blank">
+                <div class="action-card-icon">📚</div>
+                <div class="action-card-title">Media Library</div>
+                <div class="action-card-desc">Browse media items</div>
+            </a>
+            <a href="/docs" class="action-card" target="_blank">
+                <div class="action-card-icon">📖</div>
+                <div class="action-card-title">API Docs</div>
+                <div class="action-card-desc">View API documentation</div>
+            </a>
+            <a href="/iptv/channels.m3u" class="action-card" target="_blank">
+                <div class="action-card-icon">📡</div>
+                <div class="action-card-title">IPTV Playlist</div>
+                <div class="action-card-desc">M3U playlist</div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Channels -->
+    <div class="card recent-channels">
+        <div class="card-header">
+            <div class="card-title">Channels</div>
+            <a href="/channels" class="btn btn-outlined">View All</a>
+        </div>
+        <div id="channelsList">
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                Loading channels...
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        // Load statistics
+        async function loadStats() {
+            try {
+                // Load channels
+                const channelsRes = await fetch('/api/channels');
+                const channels = await channelsRes.json();
+                document.getElementById('channelCount').textContent = channels.length || 0;
+                document.getElementById('enabledCount').textContent = channels.filter(c => c.enabled).length || 0;
+                
+                // Load media
+                const mediaRes = await fetch('/api/media');
+                const media = await mediaRes.json();
+                document.getElementById('mediaCount').textContent = media.length || 0;
+                
+                // Load playlists
+                const playlistsRes = await fetch('/api/playlists');
+                const playlists = await playlistsRes.json();
+                document.getElementById('playlistCount').textContent = playlists.length || 0;
+                
+                // Load collections
+                try {
+                    const collectionsRes = await fetch('/api/collections');
+                    const collections = await collectionsRes.json();
+                    document.getElementById('collectionCount').textContent = collections.length || 0;
+                } catch (e) {
+                    document.getElementById('collectionCount').textContent = '0';
+                }
+                
+                // Display channels
+                const channelsList = document.getElementById('channelsList');
+                if (channels.length === 0) {
+                    channelsList.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <span class="material-icons" style="font-size: 48px; opacity: 0.5; margin-bottom: 16px; display: block;">tv_off</span>
+                            <p>No channels configured</p>
+                            <a href="/channels" class="btn btn-primary" style="margin-top: 16px;">Create Channel</a>
+                        </div>
+                    `;
+                } else {
+                    channelsList.innerHTML = channels.slice(0, 10).map(channel => `
+                        <div class="channel-item">
+                            <div class="channel-number">${channel.number}</div>
+                            <div class="channel-name">${channel.name}</div>
+                            <div class="channel-status">
+                                <span class="badge ${channel.enabled ? 'badge-success' : 'badge-error'}">
+                                    ${channel.enabled ? 'Enabled' : 'Disabled'}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                document.getElementById('channelCount').textContent = 'Error';
+                document.getElementById('mediaCount').textContent = 'Error';
+                document.getElementById('playlistCount').textContent = 'Error';
+            }
+        }
+        
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
+{% endblock %}

@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StreamTV{% endblock %}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Apple System Colors - Dark Mode (per HIG) */
+            --apple-blue: #0A84FF;
+            --apple-blue-dark: #0051D5;
+            --apple-gray-1: #8E8E93;
+            --apple-gray-2: #636366;
+            --apple-gray-3: #48484A;
+            --apple-gray-4: #3A3A3C;
+            --apple-gray-5: #2C2C2E;
+            --apple-gray-6: #1C1C1E;
+            --apple-label: #FFFFFF;
+            --apple-label-secondary: rgba(255, 255, 255, 0.60);
+            --apple-label-tertiary: rgba(255, 255, 255, 0.40);
+            --apple-separator: rgba(255, 255, 255, 0.20);
+            --apple-fill: rgba(255, 255, 255, 0.10);
+            --apple-fill-secondary: rgba(255, 255, 255, 0.15);
+            --apple-fill-tertiary: rgba(255, 255, 255, 0.20);
+            --apple-background: #000000;
+            --apple-background-secondary: #1C1C1E;
+            --apple-background-tertiary: #2C2C2E;
+            --apple-grouped-background: #000000;
+            --apple-grouped-background-secondary: #1C1C1E;
+            --apple-grouped-background-tertiary: #2C2C2E;
+            
+            /* Primary colors */
+            --primary: var(--apple-blue);
+            --primary-dark: var(--apple-blue-dark);
+            --secondary: var(--apple-gray-2);
+            --background: var(--apple-grouped-background);
+            --surface: var(--apple-grouped-background-secondary);
+            --surface-light: var(--apple-grouped-background-tertiary);
+            --appbar: var(--apple-background-secondary);
+            --drawer: var(--apple-background-secondary);
+            --text-primary: var(--apple-label);
+            --text-secondary: var(--apple-label-secondary);
+            --text-disabled: var(--apple-label-tertiary);
+            --divider: var(--apple-separator);
+            --hover: var(--apple-fill);
+            --error: #FF3B30;
+            --warning: #FF9500;
+            --success: #34C759;
+            --info: var(--apple-blue);
+        }
+        
+        [data-theme="light"] {
+            /* Apple System Colors - Light Mode (per HIG) */
+            --apple-blue: #007AFF;
+            --apple-blue-dark: #0051D5;
+            --apple-gray-1: #8E8E93;
+            --apple-gray-2: #AEAEB2;
+            --apple-gray-3: #C7C7CC;
+            --apple-gray-4: #D1D1D6;
+            --apple-gray-5: #E5E5EA;
+            --apple-gray-6: #F2F2F7;
+            --apple-label: #000000;
+            --apple-label-secondary: rgba(0, 0, 0, 0.60);
+            --apple-label-tertiary: rgba(0, 0, 0, 0.40);
+            --apple-separator: rgba(0, 0, 0, 0.20);
+            --apple-fill: rgba(0, 0, 0, 0.05);
+            --apple-fill-secondary: rgba(0, 0, 0, 0.10);
+            --apple-fill-tertiary: rgba(0, 0, 0, 0.15);
+            --apple-background: #FFFFFF;
+            --apple-background-secondary: #F2F2F7;
+            --apple-background-tertiary: #FFFFFF;
+            --apple-grouped-background: #F2F2F7;
+            --apple-grouped-background-secondary: #FFFFFF;
+            --apple-grouped-background-tertiary: #F2F2F7;
+            
+            --primary: var(--apple-blue);
+            --primary-dark: var(--apple-blue-dark);
+            --secondary: var(--apple-gray-2);
+            --background: var(--apple-grouped-background);
+            --surface: var(--apple-grouped-background-secondary);
+            --surface-light: var(--apple-grouped-background-tertiary);
+            --appbar: var(--apple-background-secondary);
+            --drawer: var(--apple-background-secondary);
+            --text-primary: var(--apple-label);
+            --text-secondary: var(--apple-label-secondary);
+            --text-disabled: var(--apple-label-tertiary);
+            --divider: var(--apple-separator);
+            --hover: var(--apple-fill);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: "kern" 1;
+            text-rendering: optimizeLegibility;
+            font-size: 17px; /* Apple standard body text size */
+            line-height: 1.47059; /* Apple standard line height */
+        }
+        
+        /* Apple Typography Hierarchy (per HIG) */
+        h1 {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 0.374px;
+            line-height: 1.17647;
+        }
+        
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.364px;
+            line-height: 1.21429;
+        }
+        
+        h3 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.352px;
+            line-height: 1.27273;
+        }
+        
+        /* Navigation Bar - Apple HIG Component */
+        .app-bar {
+            background: var(--appbar);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            color: var(--text-primary);
+            height: 44px; /* Apple standard navigation bar height */
+            display: flex;
+            align-items: center;
+            padding: 0 16px; /* Apple standard horizontal padding */
+            border-bottom: 0.5px solid var(--divider);
+            z-index: 1100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        .app-bar .menu-button {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0;
+            margin-right: 8px;
+            border-radius: 8px;
+            transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            width: 44px; /* Apple minimum touch target */
+            height: 44px; /* Apple minimum touch target */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .app-bar .menu-button:hover {
+            background: var(--hover);
+        }
+        
+        .app-bar .menu-button:active {
+            background: var(--apple-fill-secondary);
+        }
+        
+        .app-bar .logo {
+            display: flex;
+            align-items: center;
+            margin-right: 24px;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+        
+        .app-bar .logo span {
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.41px;
+        }
+        
+        .app-bar .search-form {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .app-bar .search-bar {
+            width: 100%;
+            background: var(--surface);
+            border: 0.5px solid var(--divider);
+            border-radius: 10px; /* Apple standard corner radius */
+            padding: 8px 16px 8px 36px;
+            color: var(--text-primary);
+            font-size: 17px; /* Apple standard */
+            font-weight: 400;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            min-height: 36px; /* Apple minimum input height */
+        }
+        
+        .app-bar .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface-light);
+        }
+        
+        .app-bar .search-bar::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .app-bar .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 17px;
+            pointer-events: none;
+        }
+        
+        .app-bar .actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        
+        .app-bar .action-link {
+            color: var(--primary);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            font-size: 17px;
+            font-weight: 400;
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .app-bar .action-link:hover {
+            background: var(--hover);
+        }
+        
+        .app-bar .action-button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+            border-radius: 8px;
+            transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            width: 44px; /* Apple minimum touch target */
+            height: 44px; /* Apple minimum touch target */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .app-bar .action-button:hover {
+            background: var(--hover);
+        }
+        
+        .app-bar .action-button:active {
+            background: var(--apple-fill-secondary);
+        }
+        
+        /* Sidebar Navigation - Apple HIG Component */
+        .drawer {
+            position: fixed;
+            top: 44px;
+            left: 0;
+            width: 280px;
+            height: calc(100vh - 44px);
+            background: var(--drawer);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-right: 0.5px solid var(--divider);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .drawer.closed {
+            transform: translateX(-100%);
+        }
+        
+        .drawer .nav-menu {
+            padding: 8px 0; /* Apple standard vertical padding */
+        }
+        
+        /* Navigation Link - Apple HIG Component */
+        .drawer .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px; /* Apple standard padding */
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 10px; /* Apple standard corner radius */
+            margin: 2px 8px;
+            font-size: 17px; /* Apple standard */
+            font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 44px; /* Apple minimum touch target */
+            box-sizing: border-box;
+            gap: 12px; /* Apple standard spacing between icon and text */
+        }
+        
+        .drawer .nav-link:hover {
+            background: var(--hover);
+        }
+        
+        .drawer .nav-link.active {
+            background: var(--apple-fill-secondary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .drawer .nav-link .material-icons {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        
+        .drawer .nav-link > span:not(.material-icons) {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .drawer .nav-group {
+            margin-top: 8px; /* Apple 8pt grid */
+        }
+        
+        .drawer .nav-group-title {
+            padding: 8px 16px; /* Apple standard padding */
+            font-size: 13px; /* Apple standard caption size */
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 0.08px;
+        }
+        
+        .drawer .nav-group-content {
+            padding: 4px 0;
+        }
+        
+        .drawer .divider {
+            height: 0.5px;
+            background: var(--divider);
+            margin: 8px 16px; /* Apple standard margins */
+        }
+        
+        .drawer .version-info {
+            padding: 16px; /* Apple standard padding */
+            text-align: right;
+            font-size: 13px; /* Apple standard caption size */
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        /* Dropdown Menu */
+        .nav-dropdown {
+            position: relative;
+        }
+        
+        .nav-dropdown-menu {
+            display: none;
+            margin-left: 16px;
+            border-left: 2px solid var(--divider);
+            padding-left: 8px;
+        }
+        
+        .nav-dropdown.active .nav-dropdown-menu {
+            display: block;
+        }
+        
+        .nav-dropdown-toggle .dropdown-icon {
+            margin-left: auto;
+            transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .nav-dropdown.active .nav-dropdown-toggle .dropdown-icon {
+            transform: rotate(90deg);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 44px;
+            padding: 20px; /* Apple standard content padding */
+            min-height: calc(100vh - 44px);
+            transition: margin-left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .drawer.closed ~ .main-content {
+            margin-left: 0;
+        }
+        
+        .content-header {
+            margin-bottom: 20px; /* Apple standard spacing */
+        }
+        
+        .content-header h1 {
+            font-size: 34px; /* Apple Large Title */
+            font-weight: 700;
+            letter-spacing: 0.374px;
+            line-height: 1.17647;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .content-header p {
+            color: var(--text-secondary);
+            font-size: 17px; /* Apple standard body */
+            font-weight: 400;
+            line-height: 1.47059;
+        }
+        
+        .divider {
+            height: 0.5px;
+            background: var(--divider);
+            margin: 16px 0; /* Apple standard spacing */
+        }
+        
+        /* Cards - Apple HIG Component */
+        .card {
+            background: var(--surface);
+            border-radius: 12px; /* Apple standard corner radius for cards */
+            padding: 16px; /* Apple standard padding */
+            margin-bottom: 16px; /* Apple standard spacing */
+            border: 0.5px solid var(--divider);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px; /* Apple standard spacing */
+        }
+        
+        .card-title {
+            font-size: 22px; /* Apple Title 2 */
+            font-weight: 700;
+            letter-spacing: 0.352px;
+            line-height: 1.27273;
+            color: var(--text-primary);
+        }
+        
+        /* Buttons - Apple HIG Component */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px; /* Apple standard button padding */
+            border: none;
+            border-radius: 10px; /* Apple standard corner radius */
+            font-size: 17px; /* Apple standard */
+            font-weight: 600; /* Apple button font weight */
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            text-decoration: none;
+            gap: 6px;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            min-height: 44px; /* Apple minimum touch target */
+            white-space: nowrap;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: scale(0.98);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.96);
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--apple-gray-3);
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary:active {
+            transform: scale(0.96);
+        }
+        
+        .btn-outlined {
+            background: transparent;
+            border: 0.5px solid var(--divider);
+            color: var(--primary);
+        }
+        
+        .btn-outlined:hover {
+            background: var(--hover);
+            border-color: var(--primary);
+        }
+        
+        .btn-outlined:active {
+            background: var(--apple-fill-secondary);
+        }
+        
+        /* Tables - Apple HIG Component */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: 12px; /* Apple standard corner radius */
+            overflow: hidden;
+        }
+        
+        .table th {
+            text-align: left;
+            padding: 12px 16px; /* Apple standard table padding */
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 13px; /* Apple standard caption */
+            text-transform: uppercase;
+            letter-spacing: 0.08px;
+            border-bottom: 0.5px solid var(--divider);
+            background: var(--surface-light);
+            height: 44px; /* Apple minimum row height */
+            box-sizing: border-box;
+        }
+        
+        .table td {
+            padding: 12px 16px; /* Apple standard table padding */
+            border-bottom: 0.5px solid var(--divider);
+            color: var(--text-primary);
+            font-size: 17px; /* Apple standard body */
+            font-weight: 400;
+            line-height: 1.47059;
+            min-height: 44px; /* Apple minimum row height */
+            box-sizing: border-box;
+        }
+        
+        .table tr:hover {
+            background: var(--hover);
+        }
+        
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badges - Apple HIG Component */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px; /* Apple standard badge padding */
+            border-radius: 6px; /* Apple standard corner radius for badges */
+            font-size: 13px; /* Apple standard caption */
+            font-weight: 600;
+            letter-spacing: 0.08px;
+            line-height: 1.38462;
+        }
+        
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .badge-error {
+            background: var(--error);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .badge-info {
+            background: var(--info);
+            color: white;
+        }
+        
+        /* Status Indicator */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px; /* Apple standard spacing */
+            flex-shrink: 0;
+        }
+        
+        .status-indicator.online {
+            background: var(--success);
+        }
+        
+        .status-indicator.offline {
+            background: var(--text-disabled);
+        }
+        
+        /* Material Icons - Apple Style Sizing */
+        .material-icons {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        
+        /* Fix for button text wrapping */
+        .btn {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .btn .material-icons {
+            flex-shrink: 0;
+        }
+        
+        /* Fix for action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px; /* Apple standard spacing */
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+        
+        .btn-icon {
+            flex-shrink: 0;
+            white-space: nowrap;
+            width: 44px; /* Apple minimum touch target */
+            height: 44px; /* Apple minimum touch target */
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px; /* Apple standard corner radius */
+        }
+        
+        /* Responsive */
+        @media (max-width: 960px) {
+            .drawer {
+                transform: translateX(-100%);
+            }
+            
+            .drawer.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .app-bar .search-form {
+                display: none;
+            }
+        }
+        
+        /* Overlay for mobile drawer */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 999;
+        }
+        
+        .drawer-overlay.active {
+            display: block;
+        }
+        
+        /* Forms - Apple HIG Component */
+        .form-group {
+            margin-bottom: 16px; /* Apple standard spacing */
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px; /* Apple standard spacing */
+            color: var(--text-primary);
+            font-weight: 400;
+            font-size: 17px; /* Apple standard */
+            line-height: 1.47059;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px; /* Apple standard input padding */
+            background: var(--surface);
+            border: 0.5px solid var(--divider);
+            border-radius: 10px; /* Apple standard corner radius */
+            color: var(--text-primary);
+            font-size: 17px; /* Apple standard */
+            font-weight: 400;
+            line-height: 1.47059;
+            transition: border-color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            min-height: 44px; /* Apple minimum touch target */
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface-light);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Apple standard spacing */
+        }
+        
+        .form-checkbox input[type="checkbox"] {
+            width: 20px; /* Apple standard checkbox size */
+            height: 20px; /* Apple standard checkbox size */
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        .form-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 17px; /* Apple standard */
+            font-weight: 400;
+            line-height: 1.47059;
+        }
+        
+        /* Alerts - Apple HIG Component */
+        .alert {
+            padding: 16px; /* Apple standard padding */
+            border-radius: 12px; /* Apple standard corner radius */
+            margin-bottom: 16px; /* Apple standard spacing */
+            display: none;
+            font-size: 17px; /* Apple standard */
+            font-weight: 400;
+            line-height: 1.47059;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: rgba(52, 199, 89, 0.1);
+            border: 0.5px solid var(--success);
+            color: var(--success);
+        }
+        
+        .alert-error {
+            background: rgba(255, 59, 48, 0.1);
+            border: 0.5px solid var(--error);
+            color: var(--error);
+        }
+        
+        .alert-info {
+            background: rgba(10, 132, 255, 0.1);
+            border: 0.5px solid var(--info);
+            color: var(--info);
+        }
+        
+        /* Loading States - Apple HIG Component */
+        .loading {
+            text-align: center;
+            padding: 40px 20px; /* Apple standard padding */
+            color: var(--text-secondary);
+            font-size: 17px; /* Apple standard */
+            font-weight: 400;
+        }
+        
+        /* Empty States - Apple HIG Component */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px; /* Apple standard padding */
+            color: var(--text-secondary);
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            opacity: 0.5;
+            margin-bottom: 16px; /* Apple standard spacing */
+        }
+        
+        .empty-state h3 {
+            font-size: 22px; /* Apple Title 2 */
+            font-weight: 700;
+            letter-spacing: 0.352px;
+            line-height: 1.27273;
+            margin-bottom: 8px; /* Apple standard spacing */
+            color: var(--text-primary);
+        }
+        
+        .empty-state p {
+            font-size: 17px; /* Apple standard body */
+            font-weight: 400;
+            line-height: 1.47059;
+            color: var(--text-secondary);
+        }
+        
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Navigation Bar - Apple HIG Component -->
+    <div class="app-bar">
+        <button class="menu-button" onclick="toggleDrawer()" aria-label="Toggle menu">
+            <span class="material-icons">menu</span>
+        </button>
+        <div class="logo">
+            <a href="/" style="display: flex; align-items: center; text-decoration: none; color: var(--text-primary);">
+                <span>📺 StreamTV</span>
+            </a>
+        </div>
+        <div class="search-form" style="position: relative;">
+            <span class="material-icons search-icon">search</span>
+            <input type="text" class="search-bar" placeholder="Search channels, media..." id="searchInput" aria-label="Search">
+        </div>
+        <div class="actions">
+            <a href="/iptv/channels.m3u" class="action-link" target="_blank">M3U</a>
+            <a href="/iptv/xmltv.xml" class="action-link" target="_blank">XMLTV</a>
+            <a href="/docs" class="action-link" target="_blank" style="font-weight: 500;">API</a>
+            <button class="action-button" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+                <span class="material-icons" id="themeIcon">dark_mode</span>
+            </button>
+            <div style="display: flex; align-items: center; margin-left: 8px;">
+                <span class="status-indicator online" id="statusIndicator"></span>
+                <span style="font-size: 13px; color: var(--text-secondary);" id="statusText">Online</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Drawer Overlay (Mobile) -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    
+    <!-- Sidebar Navigation - Apple HIG Component -->
+    <nav class="drawer" id="drawer" role="navigation" aria-label="Main navigation">
+        <div class="nav-menu">
+            <a href="/" class="nav-link {% if request.url.path == '/' %}active{% endif %}" aria-label="Dashboard">
+                <span class="material-icons">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="/player" class="nav-link {% if '/player' in request.url.path %}active{% endif %}" aria-label="Player">
+                <span class="material-icons">play_circle</span>
+                <span>Player</span>
+            </a>
+            
+            <div class="divider"></div>
+            
+            <div class="nav-group">
+                <div class="nav-group-title">Channels</div>
+                <div class="nav-group-content">
+                    <a href="/channels" class="nav-link {% if '/channels' in request.url.path %}active{% endif %}" aria-label="Manage Channels">
+                        <span class="material-icons">tv</span>
+                        <span>Manage Channels</span>
+                    </a>
+                    <a href="/import" class="nav-link {% if '/import' in request.url.path %}active{% endif %}" aria-label="Import Channels">
+                        <span class="material-icons">upload</span>
+                        <span>Import Channels</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-group-title">Media</div>
+                <div class="nav-group-content">
+                    <a href="/media" class="nav-link {% if '/media' in request.url.path %}active{% endif %}" aria-label="Media Items">
+                        <span class="material-icons">video_library</span>
+                        <span>Media Items</span>
+                    </a>
+                    <a href="/playlists" class="nav-link {% if '/playlists' in request.url.path %}active{% endif %}" aria-label="Playlists">
+                        <span class="material-icons">playlist_play</span>
+                        <span>Playlists</span>
+                    </a>
+                    <a href="/collections" class="nav-link {% if '/collections' in request.url.path %}active{% endif %}" aria-label="Collections">
+                        <span class="material-icons">collections</span>
+                        <span>Collections</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-group-title">Scheduling</div>
+                <div class="nav-group-content">
+                    <a href="/playouts" class="nav-link {% if '/playouts' in request.url.path %}active{% endif %}" aria-label="Playouts">
+                        <span class="material-icons">play_circle_outline</span>
+                        <span>Playouts</span>
+                    </a>
+                    <a href="/schedules" class="nav-link {% if '/schedules' in request.url.path %}active{% endif %}" aria-label="Schedules">
+                        <span class="material-icons">schedule</span>
+                        <span>Schedules</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-group-title">Settings</div>
+                <div class="nav-group-content">
+                    <a href="/settings/ffmpeg" class="nav-link {% if '/settings/ffmpeg' in request.url.path %}active{% endif %}" aria-label="FFmpeg Settings">
+                        <span class="material-icons">settings_applications</span>
+                        <span>FFmpeg</span>
+                    </a>
+                    <a href="/settings/hdhr" class="nav-link {% if '/settings/hdhr' in request.url.path %}active{% endif %}" aria-label="HDHomeRun Settings">
+                        <span class="material-icons">tv</span>
+                        <span>HDHomeRun</span>
+                    </a>
+                    <a href="/settings/playout" class="nav-link {% if '/settings/playout' in request.url.path %}active{% endif %}" aria-label="Playout Settings">
+                        <span class="material-icons">schedule</span>
+                        <span>Playout</span>
+                    </a>
+                    <a href="/settings/plex" class="nav-link {% if '/settings/plex' in request.url.path %}active{% endif %}" aria-label="Plex API Integration">
+                        <span class="material-icons">integration_instructions</span>
+                        <span>Plex API</span>
+                    </a>
+                    <a href="/api/auth/archive-org" class="nav-link {% if '/auth/archive-org' in request.url.path %}active{% endif %}" aria-label="Archive.org Login">
+                        <span class="material-icons">account_circle</span>
+                        <span>Archive.org</span>
+                    </a>
+                    <a href="/api/auth/pbs" class="nav-link {% if '/auth/pbs' in request.url.path %}active{% endif %}" aria-label="PBS Login">
+                        <span class="material-icons">live_tv</span>
+                        <span>PBS Live</span>
+                    </a>
+                    <a href="/api/auth/youtube" class="nav-link {% if '/auth/youtube' in request.url.path %}active{% endif %}" aria-label="YouTube Login">
+                        <span class="material-icons">video_library</span>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-group-title">Documentation</div>
+                <div class="nav-group-content">
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle {% if '/docs' in request.url.path %}active{% endif %}" onclick="toggleDropdown(event, 'docsDropdown'); return false;" aria-label="Documentation">
+                            <span class="material-icons">menu_book</span>
+                            <span>Documentation</span>
+                            <span class="material-icons dropdown-icon">chevron_right</span>
+                        </a>
+                        <div class="nav-dropdown-menu" id="docsDropdown">
+                            <a href="/docs/quick_start" class="nav-link {% if '/docs/quick_start' in request.url.path %}active{% endif %}" aria-label="Quick Start">
+                                <span class="material-icons">rocket_launch</span>
+                                <span>Quick Start</span>
+                            </a>
+                            <a href="/docs/beginner" class="nav-link {% if '/docs/beginner' in request.url.path %}active{% endif %}" aria-label="Beginner Guide">
+                                <span class="material-icons">school</span>
+                                <span>Beginner Guide</span>
+                            </a>
+                            <a href="/docs/installation" class="nav-link {% if '/docs/installation' in request.url.path %}active{% endif %}" aria-label="Installation Guide">
+                                <span class="material-icons">install_mobile</span>
+                                <span>Installation Guide</span>
+                            </a>
+                            <a href="/docs/path_independence" class="nav-link {% if '/docs/path_independence' in request.url.path %}active{% endif %}" aria-label="Path Independence">
+                                <span class="material-icons">folder_open</span>
+                                <span>Path Independence</span>
+                            </a>
+                            <div class="divider" style="margin: 8px 0;"></div>
+                            <a href="/docs/gui_installer" class="nav-link {% if '/docs/gui_installer' in request.url.path %}active{% endif %}" aria-label="GUI Installer">
+                                <span class="material-icons">desktop_windows</span>
+                                <span>GUI Installer (Python)</span>
+                            </a>
+                            <a href="/docs/swiftui_installer" class="nav-link {% if '/docs/swiftui_installer' in request.url.path %}active{% endif %}" aria-label="SwiftUI Installer">
+                                <span class="material-icons">phone_iphone</span>
+                                <span>SwiftUI Installer</span>
+                            </a>
+                            <a href="/docs/swiftui_readme" class="nav-link {% if '/docs/swiftui_readme' in request.url.path %}active{% endif %}" aria-label="SwiftUI Complete Guide">
+                                <span class="material-icons">book</span>
+                                <span>SwiftUI Complete Guide</span>
+                            </a>
+                            <a href="/docs/swiftui_quick_start" class="nav-link {% if '/docs/swiftui_quick_start' in request.url.path %}active{% endif %}" aria-label="SwiftUI Quick Start">
+                                <span class="material-icons">flash_on</span>
+                                <span>SwiftUI Quick Start</span>
+                            </a>
+                            <a href="/docs/swiftui_build" class="nav-link {% if '/docs/swiftui_build' in request.url.path %}active{% endif %}" aria-label="Building SwiftUI">
+                                <span class="material-icons">build</span>
+                                <span>Building SwiftUI</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle {% if '/docs/troubleshooting' in request.url.path %}active{% endif %}" onclick="toggleDropdown(event, 'troubleshootingDropdown'); return false;" aria-label="Troubleshooting">
+                            <span class="material-icons">help_outline</span>
+                            <span>Troubleshooting</span>
+                            <span class="material-icons dropdown-icon">chevron_right</span>
+                        </a>
+                        <div class="nav-dropdown-menu" id="troubleshootingDropdown">
+                            <a href="/health-check" class="nav-link {% if '/health-check' in request.url.path %}active{% endif %}" aria-label="Health Check">
+                                <span class="material-icons">health_and_safety</span>
+                                <span>Health Check</span>
+                            </a>
+                            <a href="/docs/troubleshooting" class="nav-link {% if '/docs/troubleshooting' in request.url.path %}active{% endif %}" aria-label="Troubleshooting Guide">
+                                <span class="material-icons">bug_report</span>
+                                <span>Troubleshooting Guide</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-group-title">Resources</div>
+                <div class="nav-group-content">
+                    <a href="/logs" class="nav-link {% if '/logs' in request.url.path %}active{% endif %}" aria-label="Streaming Logs">
+                        <span class="material-icons">terminal</span>
+                        <span>Streaming Logs</span>
+                    </a>
+                    <a href="/plex-logs" class="nav-link {% if '/plex-logs' in request.url.path %}active{% endif %}" aria-label="Plex Server Logs">
+                        <span class="material-icons">dvr</span>
+                        <span>Plex Server Logs</span>
+                    </a>
+                    <a href="/ollama" class="nav-link {% if '/ollama' in request.url.path %}active{% endif %}" aria-label="AI Troubleshooting Assistant">
+                        <span class="material-icons">psychology</span>
+                        <span>AI Troubleshooting</span>
+                    </a>
+                    <a href="/test-stream" class="nav-link {% if '/test-stream' in request.url.path %}active{% endif %}" aria-label="Test Stream">
+                        <span class="material-icons">bug_report</span>
+                        <span>Test Stream</span>
+                    </a>
+                    <a href="/docs" class="nav-link" target="_blank" aria-label="API Documentation">
+                        <span class="material-icons">description</span>
+                        <span>API Documentation</span>
+                    </a>
+                    <a href="/redoc" class="nav-link" target="_blank" aria-label="ReDoc">
+                        <span class="material-icons">article</span>
+                        <span>ReDoc</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="version-info">
+                <div>StreamTV</div>
+                <div style="color: var(--primary);">v1.0.0</div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <script>
+        // Theme Management
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', currentTheme);
+        updateThemeIcon();
+        
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        }
+        
+        function updateThemeIcon() {
+            const theme = document.body.getAttribute('data-theme');
+            const icon = document.getElementById('themeIcon');
+            icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+        }
+        
+        // Drawer Management
+        function toggleDrawer() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.toggle('closed');
+            if (window.innerWidth <= 960) {
+                overlay.classList.toggle('active');
+            }
+        }
+        
+        function closeDrawer() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.add('closed');
+            overlay.classList.remove('active');
+        }
+        
+        // Close drawer on desktop resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 960) {
+                const overlay = document.getElementById('drawerOverlay');
+                overlay.classList.remove('active');
+            }
+        });
+        
+        // Status Check
+        async function checkStatus() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+                
+                if (data.status === 'healthy') {
+                    indicator.className = 'status-indicator online';
+                    text.textContent = 'Online';
+                } else {
+                    indicator.className = 'status-indicator offline';
+                    text.textContent = 'Offline';
+                }
+            } catch (error) {
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+                indicator.className = 'status-indicator offline';
+                text.textContent = 'Offline';
+            }
+        }
+        
+        // Check status on load and every 30 seconds
+        checkStatus();
+        setInterval(checkStatus, 30000);
+        
+        // Enhanced Search functionality
+        let searchTimeout;
+        const searchInput = document.getElementById('searchInput');
+        let searchResults = [];
+        
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                hideSearchResults();
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        });
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = e.target.value.trim();
+                if (query && searchResults.length > 0) {
+                    navigateToResult(searchResults[0]);
+                } else if (query) {
+                    window.location.href = `/channels?search=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-form') && !e.target.closest('.search-results')) {
+                hideSearchResults();
+            }
+        });
+        
+        async function performSearch(query) {
+            try {
+                const results = [];
+                
+                const channelsRes = await fetch('/api/channels');
+                const channels = await channelsRes.json();
+                const channelMatches = channels.filter(c => 
+                    c.name.toLowerCase().includes(query.toLowerCase()) ||
+                    c.number.includes(query) ||
+                    (c.group && c.group.toLowerCase().includes(query.toLowerCase()))
+                );
+                channelMatches.forEach(ch => {
+                    results.push({
+                        type: 'channel',
+                        title: ch.name,
+                        subtitle: `Channel ${ch.number}`,
+                        url: `/channels`,
+                        icon: 'tv'
+                    });
+                });
+                
+                try {
+                    const mediaRes = await fetch('/api/media');
+                    const media = await mediaRes.json();
+                    const mediaMatches = media.filter(m => 
+                        m.title.toLowerCase().includes(query.toLowerCase()) ||
+                        (m.description && m.description.toLowerCase().includes(query.toLowerCase()))
+                    ).slice(0, 5);
+                    mediaMatches.forEach(m => {
+                        results.push({
+                            type: 'media',
+                            title: m.title,
+                            subtitle: m.source,
+                            url: `/api/media/${m.id}`,
+                            icon: 'video_library'
+                        });
+                    });
+                } catch (e) {
+                    // Media search failed, continue
+                }
+                
+                searchResults = results;
+                displaySearchResults(results);
+            } catch (error) {
+                console.error('Search error:', error);
+            }
+        }
+        
+        function displaySearchResults(results) {
+            hideSearchResults();
+            
+            if (results.length === 0) {
+                return;
+            }
+            
+            const searchForm = document.querySelector('.search-form');
+            const resultsDiv = document.createElement('div');
+            resultsDiv.className = 'search-results';
+            resultsDiv.style.cssText = `
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--surface);
+                border: 0.5px solid var(--divider);
+                border-radius: 12px;
+                margin-top: 8px;
+                max-height: 400px;
+                overflow-y: auto;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+                z-index: 1000;
+            `;
+            
+            resultsDiv.innerHTML = results.map(result => `
+                <div class="search-result-item" onclick="navigateToResult(${JSON.stringify(result).replace(/"/g, '&quot;')})" style="
+                    padding: 12px 16px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    transition: background 0.2s;
+                    border-radius: 10px;
+                    margin: 4px;
+                    min-height: 44px;
+                " onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background='transparent'">
+                    <span class="material-icons" style="color: var(--text-secondary); flex-shrink: 0;">${result.icon}</span>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="color: var(--text-primary); font-weight: 500; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${result.title}</div>
+                        <div style="color: var(--text-secondary); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${result.subtitle}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            searchForm.style.position = 'relative';
+            searchForm.appendChild(resultsDiv);
+        }
+        
+        function hideSearchResults() {
+            const existing = document.querySelector('.search-results');
+            if (existing) {
+                existing.remove();
+            }
+        }
+        
+        function navigateToResult(result) {
+            hideSearchResults();
+            if (result.url) {
+                window.location.href = result.url;
+            }
+        }
+        
+        // Dropdown Management
+        function toggleDropdown(event, dropdownId) {
+            event.preventDefault();
+            event.stopPropagation();
+            const dropdown = document.getElementById(dropdownId);
+            const parent = dropdown.closest('.nav-dropdown');
+            if (parent) {
+                parent.classList.toggle('active');
+            }
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
+        });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
