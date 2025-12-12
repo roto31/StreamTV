@@ -22,7 +22,6 @@
 ### Streaming Sources
 - ✅ **YouTube**: Direct streaming with quality selection and OAuth authentication
 - ✅ **Archive.org**: Support for video collections and individual items
-- ✅ **PBS**: Live and on-demand PBS streams
 - 🔄 **Extensible**: Easy to add new streaming sources via adapter pattern
 
 ### Integration
