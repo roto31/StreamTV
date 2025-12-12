@@ -50,3 +50,45 @@ kubernetes-data/
 *.bak
 *.cache
 .wiki-temp/
+.wiki-fix/
+
+# Development files (exclude from main repo, only include distributions)
+# BUT: Include all distribution folders
+!StreamTV-macOS/
+!StreamTV-Windows/
+!StreamTV-Linux/
+!StreamTV-Containers/
+
+# Exclude development files in root
+config.yaml
+data/channels.yaml
+data/cookies/
+archive/
+ersatztv-reference/
+streamtv-clean/
+HomeBridge Plug-ins/
+StreamTVInstaller/
+New-YAMLs/
+# Allow .github templates and workflows
+!.github/ISSUE_TEMPLATE/
+!.github/pull_request_template.md
+!.github/workflows/
+.github/
+docs/
+scripts/
+schemas/
+schedules/
+test_*.py
+install*.py
+install*.sh
+setup*.sh
+build*.sh
+uninstall*.sh
+fix-*.sh
+test-*.sh
+upload-*.sh
+
+# Exclude markdown files in root (but allow in distributions)
+*.md
+!README.md
+!StreamTV-*/**/*.md
