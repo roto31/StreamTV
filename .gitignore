@@ -33,13 +33,13 @@ streamtv.db
 .env.local
 *.env
 
-# Distribution-specific
-*.command
-create-dmg.sh
-build-distribution.sh
-install_*.sh
-*.bat
-*.ps1
+# Distribution-specific scripts (exclude from root only)
+# These patterns only match root directory, not subdirectories
+/*.command
+/create-dmg.sh
+/build-distribution.sh
+/*.bat
+/*.ps1
 
 # Container volumes
 docker-data/
@@ -50,3 +50,34 @@ kubernetes-data/
 *.bak
 *.cache
 .wiki-temp/
+.wiki-fix/
+
+# Development files (exclude from main repo, only include distributions)
+config.yaml
+data/channels.yaml
+data/cookies/
+archive/
+ersatztv-reference/
+streamtv-clean/
+HomeBridge Plug-ins/
+StreamTVInstaller/
+New-YAMLs/
+*.md
+!README.md
+!StreamTV-*/README.md
+!StreamTV-*/docs/**/*.md
+!StreamTV-Containers/**/README.md
+.github/
+docs/
+scripts/
+schemas/
+schedules/
+test_*.py
+install*.py
+install*.sh
+setup*.sh
+build*.sh
+uninstall*.sh
+fix-*.sh
+test-*.sh
+upload-*.sh
