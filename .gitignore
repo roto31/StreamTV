@@ -33,13 +33,13 @@ streamtv.db
 .env.local
 *.env
 
-# Distribution-specific scripts (exclude from root only)
-# These patterns only match root directory, not subdirectories
-/*.command
-/create-dmg.sh
-/build-distribution.sh
-/*.bat
-/*.ps1
+# Distribution-specific
+*.command
+create-dmg.sh
+build-distribution.sh
+install_*.sh
+*.bat
+*.ps1
 
 # Container volumes
 docker-data/
@@ -53,6 +53,13 @@ kubernetes-data/
 .wiki-fix/
 
 # Development files (exclude from main repo, only include distributions)
+# BUT: Include all distribution folders
+!StreamTV-macOS/
+!StreamTV-Windows/
+!StreamTV-Linux/
+!StreamTV-Containers/
+
+# Exclude development files in root
 config.yaml
 data/channels.yaml
 data/cookies/
@@ -62,11 +69,10 @@ streamtv-clean/
 HomeBridge Plug-ins/
 StreamTVInstaller/
 New-YAMLs/
-*.md
-!README.md
-!StreamTV-*/README.md
-!StreamTV-*/docs/**/*.md
-!StreamTV-Containers/**/README.md
+# Allow .github templates and workflows
+!.github/ISSUE_TEMPLATE/
+!.github/pull_request_template.md
+!.github/workflows/
 .github/
 docs/
 scripts/
@@ -81,3 +87,8 @@ uninstall*.sh
 fix-*.sh
 test-*.sh
 upload-*.sh
+
+# Exclude markdown files in root (but allow in distributions)
+*.md
+!README.md
+!StreamTV-*/**/*.md
