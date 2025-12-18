@@ -11,7 +11,7 @@ We release patches for security vulnerabilities. Which versions are eligible for
 
 ## Reporting a Vulnerability
 
-Please report (suspected) security vulnerabilities to **[security@example.com]** (replace with your email or security contact). You will receive a response within 48 hours. If the issue is confirmed, we will release a patch as soon as possible depending on complexity but historically within a few days.
+Please report (suspected) security vulnerabilities via the messaging platform on github. You will receive a response within 48 hours. If the issue is confirmed, we will release a patch as soon as possible depending on complexity but historically within a few days.
 
 ### Reporting Process
 
