@@ -142,7 +142,7 @@ class Schedule(Base):
 
 
 class ChannelPlaybackPosition(Base):
-    """Track playback position for on-demand channels"""
+    """Track playback position for channels (both continuous and on-demand)"""
     __tablename__ = "channel_playback_positions"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -152,6 +152,11 @@ class ChannelPlaybackPosition(Base):
     # Position tracking - resume from beginning of last item
     last_item_index = Column(Integer, default=0, nullable=False)  # Index in schedule items (0-based)
     last_item_media_id = Column(Integer, ForeignKey("media_items.id"), nullable=True)
+    
+    # For CONTINUOUS channels: track when playout started (not midnight-based)
+    # This allows resuming from where it left off after server restart
+    playout_start_time = Column(DateTime, nullable=True)  # When the continuous playout cycle started
+    last_position_update = Column(DateTime, nullable=True)  # Last time position was saved
     
     # Metadata
     last_played_at = Column(DateTime, nullable=True)

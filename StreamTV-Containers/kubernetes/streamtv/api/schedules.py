@@ -1,14 +1,15 @@
 """Schedules API endpoints"""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import List, Dict, Any
-from pathlib import Path
-import yaml
+from typing import List, Optional
+import logging
 
 from ..database import get_db, Schedule, Channel
-from ..api.schemas import ScheduleCreate, ScheduleResponse
+from ..api.schemas import ScheduleCreate, ScheduleResponse, ScheduleUpdate
+from ..config import config
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/schedules", tags=["Schedules"])
 
 
@@ -49,6 +50,28 @@ def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):
     return db_schedule
 
 
+@router.put("/{schedule_id}", response_model=ScheduleResponse)
+def update_schedule(schedule_id: int, schedule: ScheduleUpdate, db: Session = Depends(get_db)):
+    """Update a schedule"""
+    db_schedule = db.query(Schedule).filter(Schedule.id == schedule_id).first()
+    if not db_schedule:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    
+    # Validate channel exists if changed
+    update_data = schedule.dict(exclude_unset=True)
+    if "channel_id" in update_data and update_data["channel_id"] != db_schedule.channel_id:
+        channel = db.query(Channel).filter(Channel.id == update_data["channel_id"]).first()
+        if not channel:
+            raise HTTPException(status_code=404, detail="Channel not found")
+    
+    for key, value in update_data.items():
+        setattr(db_schedule, key, value)
+    
+    db.commit()
+    db.refresh(db_schedule)
+    return db_schedule
+
+
 @router.delete("/{schedule_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     """Delete a schedule"""
@@ -59,55 +82,3 @@ def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     db.delete(schedule)
     db.commit()
     return None
-
-
-@router.get("/files", response_model=List[Dict[str, Any]])
-def get_schedule_files():
-    """Get list of schedule YAML files from the schedules directory"""
-    schedules_dir = Path("schedules")
-    schedule_files = []
-    
-    if not schedules_dir.exists():
-        return []
-    
-    for file_path in schedules_dir.glob("*.yml"):
-        try:
-            with open(file_path, 'r') as f:
-                schedule_data = yaml.safe_load(f)
-                channel_info = schedule_data.get('channel', {}) if schedule_data else {}
-                schedule_files.append({
-                    'file': file_path.name,
-                    'name': channel_info.get('name', file_path.stem),
-                    'channel_number': channel_info.get('number'),
-                    'path': str(file_path)
-                })
-        except Exception as e:
-            # If we can't parse the file, still include it in the list
-            schedule_files.append({
-                'file': file_path.name,
-                'name': file_path.stem,
-                'channel_number': None,
-                'path': str(file_path)
-            })
-    
-    # Also check for .yaml files
-    for file_path in schedules_dir.glob("*.yaml"):
-        try:
-            with open(file_path, 'r') as f:
-                schedule_data = yaml.safe_load(f)
-                channel_info = schedule_data.get('channel', {}) if schedule_data else {}
-                schedule_files.append({
-                    'file': file_path.name,
-                    'name': channel_info.get('name', file_path.stem),
-                    'channel_number': channel_info.get('number'),
-                    'path': str(file_path)
-                })
-        except Exception as e:
-            schedule_files.append({
-                'file': file_path.name,
-                'name': file_path.stem,
-                'channel_number': None,
-                'path': str(file_path)
-            })
-    
-    return schedule_files

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}StreamTV{% endblock %}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
         * {
             margin: 0;
@@ -149,6 +148,12 @@
             top: 0;
             left: 0;
             right: 0;
+            pointer-events: auto;
+        }
+        
+        /* Ensure app bar content is clickable */
+        .app-bar * {
+            pointer-events: auto;
         }
         
         .app-bar .menu-button {
@@ -166,6 +171,9 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            pointer-events: auto;
+            position: relative;
+            z-index: 1;
         }
         
         .app-bar .menu-button:hover {
@@ -250,6 +258,10 @@
             min-height: 32px;
             display: inline-flex;
             align-items: center;
+            pointer-events: auto;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
         }
         
         .app-bar .action-link:hover {
@@ -292,12 +304,19 @@
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-right: 0.5px solid var(--divider);
             overflow-y: auto;
+            overflow-x: hidden;
             z-index: 1000;
             transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            -webkit-overflow-scrolling: touch;
         }
         
         .drawer.closed {
             transform: translateX(-100%);
+        }
+        
+        /* Ensure drawer content is clickable */
+        .drawer * {
+            pointer-events: auto;
         }
         
         .drawer .nav-menu {
@@ -322,6 +341,10 @@
             min-height: 44px; /* Apple minimum touch target */
             box-sizing: border-box;
             gap: 12px; /* Apple standard spacing between icon and text */
+            pointer-events: auto;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
         }
         
         .drawer .nav-link:hover {
@@ -490,6 +513,13 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
             min-height: 44px; /* Apple minimum touch target */
             white-space: nowrap;
+            box-sizing: border-box;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            pointer-events: auto;
+            position: relative;
+            z-index: 1;
         }
         
         .btn-primary {
@@ -534,6 +564,43 @@
         
         .btn-outlined:active {
             background: var(--apple-fill-secondary);
+        }
+        
+        /* Small button variant */
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 15px;
+            min-height: 36px;
+        }
+        
+        /* Large button variant */
+        .btn-lg {
+            padding: 14px 20px;
+            font-size: 19px;
+            min-height: 52px;
+        }
+        
+        /* Button with icon */
+        .btn .material-icons,
+        .btn .icon-emoji {
+            flex-shrink: 0;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .btn-sm .material-icons,
+        .btn-sm .icon-emoji {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .btn-lg .material-icons,
+        .btn-lg .icon-emoji {
+            font-size: 22px;
+            width: 22px;
+            height: 22px;
         }
         
         /* Tables - Apple HIG Component */
@@ -627,48 +694,300 @@
             background: var(--text-disabled);
         }
         
-        /* Material Icons - Apple Style Sizing */
-        .material-icons {
+        /* Material Icons - Apple Style Sizing - Hidden until converted */
+        .material-icons:not(.icon-converted) {
+            font-size: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            visibility: hidden;
+            position: absolute;
+            opacity: 0;
+        }
+        
+        /* Once converted, show the emoji */
+        .icon-emoji.icon-converted {
             font-size: 20px;
             width: 20px;
             height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            visibility: visible;
+            position: relative;
+            opacity: 1;
+        }
+        
+        /* Emoji Icons - Apple Style Sizing */
+        .icon-emoji {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             line-height: 1;
-        }
-        
-        /* Fix for button text wrapping */
-        .btn {
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+            pointer-events: none; /* Icons don't capture clicks, parent does */
+            user-select: none;
             white-space: nowrap;
-            overflow: hidden;
+            overflow: visible;
+            text-overflow: clip;
+            isolation: isolate; /* Create new stacking context */
+            position: relative;
+            z-index: 1;
+            color: inherit;
+            text-indent: 0;
+        }
+        
+        /* Ensure icons don't merge with adjacent text */
+        .icon-emoji + *,
+        * + .icon-emoji {
+            margin-left: 4px;
+        }
+        
+        /* Prevent text duplication and overlap in buttons */
+        .btn, button, .btn-icon {
+            position: relative;
+            overflow: visible;
+        }
+        
+        .btn .material-icons:not(.icon-converted),
+        button .material-icons:not(.icon-converted),
+        .btn-icon .material-icons:not(.icon-converted) {
+            display: none !important;
+        }
+        
+        /* Ensure button text is never converted */
+        .btn > span:not(.material-icons),
+        button > span:not(.material-icons),
+        .btn > text,
+        button > text {
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+        }
+        
+        /* Prevent text overlap */
+        .btn, button {
+            white-space: nowrap;
             text-overflow: ellipsis;
+            overflow: hidden;
         }
         
-        .btn .material-icons {
+        .btn .icon-emoji,
+        button .icon-emoji {
             flex-shrink: 0;
+            margin-right: 6px;
         }
         
-        /* Fix for action buttons */
+        /* Ensure icon-emoji is visible when converted */
+        .icon-emoji.icon-converted {
+            display: inline-flex !important;
+        }
+        
+        /* Auth Status Boxes */
+        .auth-status {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .auth-status .material-icons,
+        .auth-status .icon-emoji {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            pointer-events: none;
+        }
+        
+        .auth-status > div {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .auth-status strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .auth-status p {
+            margin: 0;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        
+        /* Ensure clickable elements remain clickable */
+        a .icon-emoji,
+        button .icon-emoji,
+        .btn .icon-emoji,
+        .btn-icon .icon-emoji,
+        .nav-link .icon-emoji,
+        .action-link .icon-emoji,
+        .action-button .icon-emoji {
+            pointer-events: none !important;
+            user-select: none;
+        }
+        
+        /* All interactive elements must be clickable */
+        a,
+        button,
+        .btn,
+        .btn-icon,
+        .nav-link,
+        .action-link,
+        .action-button,
+        .menu-button,
+        .modal-close {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            position: relative;
+        }
+        
+        /* Ensure navigation links are always clickable */
+        .nav-link,
+        .action-link,
+        .action-button {
+            z-index: 10;
+        }
+        
+        /* Prevent icon conversion from breaking event handlers */
+        .icon-converted {
+            pointer-events: none;
+        }
+        
+        /* Ensure parent elements capture clicks when icons are inside */
+        a:has(.icon-emoji),
+        button:has(.icon-emoji),
+        .btn:has(.icon-emoji),
+        .btn-icon:has(.icon-emoji),
+        .nav-link:has(.icon-emoji) {
+            pointer-events: auto !important;
+        }
+        
+        /* Action buttons container */
         .action-buttons {
             display: flex;
             gap: 8px; /* Apple standard spacing */
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             align-items: center;
+            justify-content: flex-end;
         }
         
+        /* Icon-only buttons */
         .btn-icon {
-            flex-shrink: 0;
-            white-space: nowrap;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 44px; /* Apple minimum touch target */
             height: 44px; /* Apple minimum touch target */
             min-width: 44px;
             min-height: 44px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        
+        .btn-icon .material-icons,
+        .btn-icon .icon-emoji {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .btn-icon:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+        
+        .btn-icon:active {
+            background: var(--apple-fill-secondary);
+            transform: scale(0.96);
+        }
+        
+        .btn-icon:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        /* Edit button - doubled size as requested */
+        .btn-icon.edit {
+            color: var(--info);
+            width: 88px; /* Doubled from 44px */
+            height: 88px; /* Doubled from 44px */
+            min-width: 88px;
+            min-height: 88px;
+            padding: 16px;
+        }
+        
+        .btn-icon.edit .material-icons,
+        .btn-icon.edit .icon-emoji {
+            font-size: 40px; /* Doubled from 20px */
+            width: 40px;
+            height: 40px;
+        }
+        
+        /* Delete button */
+        .btn-icon.delete {
+            color: var(--error);
+        }
+        
+        /* Play button */
+        .btn-icon.play {
+            color: var(--success);
+        }
+        
+        /* Modal close button */
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px; /* Apple standard corner radius */
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+        }
+        
+        .modal-close:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+        
+        .modal-close .material-icons,
+        .modal-close .icon-emoji {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
         }
         
         /* Responsive */
@@ -679,14 +998,79 @@
             
             .drawer.open {
                 transform: translateX(0);
+                z-index: 1001;
             }
             
             .main-content {
                 margin-left: 0;
+                width: 100%;
             }
             
             .app-bar .search-form {
                 display: none;
+            }
+            
+            /* Ensure mobile navigation is clickable */
+            .drawer.open * {
+                pointer-events: auto;
+            }
+            
+            /* Responsive buttons */
+            .btn {
+                font-size: 16px;
+                padding: 10px 14px;
+                min-height: 44px;
+            }
+            
+            .btn-sm {
+                font-size: 14px;
+                padding: 6px 10px;
+                min-height: 36px;
+            }
+            
+            .action-buttons {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            
+            .btn-icon {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                min-height: 40px;
+                padding: 6px;
+            }
+            
+            .btn-icon.edit {
+                width: 80px;
+                height: 80px;
+                min-width: 80px;
+                min-height: 80px;
+                padding: 14px;
+            }
+            
+            .btn-icon.edit .material-icons,
+            .btn-icon.edit .icon-emoji {
+                font-size: 36px;
+                width: 36px;
+                height: 36px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+            }
+            
+            .modal-footer {
+                flex-direction: column;
+            }
+            
+            .modal-footer .btn {
+                width: 100%;
             }
         }
         
@@ -706,6 +1090,157 @@
         
         .drawer-overlay.active {
             display: block;
+        }
+        
+        /* Button groups */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn-group .btn {
+            flex: 0 1 auto;
+        }
+        
+        /* Buttons in tables */
+        .table .action-buttons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: nowrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        .table .btn-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            padding: 6px;
+        }
+        
+        .table .btn-icon .material-icons,
+        .table .btn-icon .icon-emoji {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Buttons in modals */
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 16px;
+            border-top: 0.5px solid var(--divider);
+        }
+        
+        .modal-footer .btn {
+            min-width: 100px;
+        }
+        
+        /* Buttons with flex: 1 (equal width in modals) */
+        .btn[style*="flex: 1"],
+        .btn[style*="flex:1"] {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        
+        /* Ensure buttons don't overflow containers */
+        .btn,
+        .btn-icon {
+            max-width: 100%;
+        }
+        
+        /* Button text overflow handling */
+        .btn span:not(.material-icons):not(.icon-emoji):not(.icon-converted) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Ensure button text is not affected by icon conversion */
+        .btn > span:not(.material-icons):not(.icon-emoji):not(.icon-converted) {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+            display: inline;
+            pointer-events: none;
+            white-space: normal;
+        }
+        
+        /* Prevent icon conversion from affecting button text nodes */
+        .btn .material-icons {
+            flex-shrink: 0;
+        }
+        
+        .btn .icon-emoji {
+            flex-shrink: 0;
+        }
+        
+        /* Ensure button text content is preserved */
+        .btn {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+        }
+        
+        /* Protect text nodes inside buttons */
+        .btn *:not(.material-icons):not(.icon-emoji) {
+            font-family: inherit;
+        }
+        
+        /* Segment buttons (filter buttons) */
+        .segment {
+            background: var(--surface);
+            border: 0.5px solid var(--divider);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            min-height: 36px;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        
+        .segment:hover {
+            background: var(--hover);
+        }
+        
+        .segment.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Status button (for dashboard) */
+        .status-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            min-height: 36px;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        
+        .status-button:hover {
+            background: var(--primary-dark);
+            transform: scale(0.98);
         }
         
         /* Forms - Apple HIG Component */
@@ -774,20 +1309,69 @@
             padding: 16px; /* Apple standard padding */
             border-radius: 12px; /* Apple standard corner radius */
             margin-bottom: 16px; /* Apple standard spacing */
-            display: none;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
             font-size: 17px; /* Apple standard */
             font-weight: 400;
             line-height: 1.47059;
         }
         
+        .alert.hidden,
+        .alert[style*="display: none"] {
+            display: none !important;
+        }
+        
         .alert.show {
+            display: flex;
+        }
+        
+        .alert .material-icons,
+        .alert .icon-emoji {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            pointer-events: none;
+        }
+        
+        .alert > div {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .alert strong {
             display: block;
+            margin-bottom: 4px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .alert p {
+            margin: 0 0 4px 0;
+            font-size: 15px;
+        }
+        
+        .alert small {
+            display: block;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
         }
         
         .alert-success {
             background: rgba(52, 199, 89, 0.1);
             border: 0.5px solid var(--success);
             color: var(--success);
+        }
+        
+        .alert-success.alert {
+            background: var(--success);
+            color: white;
         }
         
         .alert-error {
@@ -1106,18 +1690,34 @@
         function toggleDrawer() {
             const drawer = document.getElementById('drawer');
             const overlay = document.getElementById('drawerOverlay');
+            if (drawer) {
             drawer.classList.toggle('closed');
-            if (window.innerWidth <= 960) {
+                if (window.innerWidth <= 960 && overlay) {
                 overlay.classList.toggle('active');
+                }
             }
         }
         
         function closeDrawer() {
             const drawer = document.getElementById('drawer');
             const overlay = document.getElementById('drawerOverlay');
+            if (drawer) {
             drawer.classList.add('closed');
+            }
+            if (overlay) {
             overlay.classList.remove('active');
         }
+        }
+        
+        // Close drawer when clicking a nav link on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 960) {
+                const navLink = e.target.closest('.nav-link');
+                if (navLink && navLink.href && !navLink.target) {
+                    setTimeout(closeDrawer, 100);
+                }
+            }
+        });
         
         // Close drawer on desktop resize
         window.addEventListener('resize', () => {
@@ -1321,6 +1921,426 @@
                 });
             }
         });
+        
+        // Icon Mapping System - Convert Material Icons to Unicode/Emoji
+        window.iconMap = {
+            // Navigation & UI
+            'menu': '☰',
+            'search': '🔍',
+            'dark_mode': '🌙',
+            'light_mode': '☀️',
+            'chevron_right': '▶',
+            
+            // Main Navigation
+            'dashboard': '📊',
+            'play_circle': '▶️',
+            'tv': '📺',
+            'upload': '⬆️',
+            'video_library': '📹',
+            'playlist_play': '📋',
+            'collections': '🗂️',
+            'play_circle_outline': '⏯️',
+            'schedule': '⏰',
+            
+            // Settings
+            'settings_applications': '⚙️',
+            'integration_instructions': '🔗',
+            'account_circle': '👤',
+            'live_tv': '📡',
+            
+            // Documentation
+            'menu_book': '📚',
+            'rocket_launch': '🚀',
+            'school': '🎓',
+            'install_mobile': '📱',
+            'folder_open': '📂',
+            'desktop_windows': '🖥️',
+            'phone_iphone': '📱',
+            'book': '📖',
+            'flash_on': '⚡',
+            'build': '🔧',
+            'help_outline': '❓',
+            'health_and_safety': '🏥',
+            'bug_report': '🐛',
+            
+            // Resources
+            'terminal': '💻',
+            'dvr': '📺',
+            'psychology': '🧠',
+            'description': '📄',
+            'article': '📰',
+            
+            // Common actions (for dynamic content)
+            'edit': '✏️',
+            'delete': '🗑️',
+            'add': '➕',
+            'close': '✖️',
+            'check': '✓',
+            'cancel': '✕',
+            'arrow_back': '←',
+            'arrow_forward': '→',
+            'refresh': '🔄',
+            'download': '⬇️',
+            'save': '💾',
+            'settings': '⚙️',
+            'info': 'ℹ️',
+            'warning': '⚠️',
+            'error': '❌',
+            'success': '✅',
+            'play': '▶️',
+            'pause': '⏸️',
+            'stop': '⏹️',
+            
+            // Additional icons
+            'dns': '🌐',
+            'videocam': '📹',
+            'storage': '💿',
+            'wifi': '📶',
+            'assessment': '📊',
+            'check_circle': '✅',
+            'logout': '🚪',
+            'login': '🔑',
+            'upload_file': '📤',
+            'fingerprint': '👆',
+            
+            // Toggle and state icons
+            'toggle_on': '🔛',
+            'toggle_off': '⭕',
+            'code': '💻',
+            'merge_type': '🔀',
+            'update': '🔄',
+            'api': '🔌',
+            
+            // AI and filter icons
+            'auto_awesome': '✨',
+            'tune': '🎛️',
+            'filter_list': '🔽',
+            'filter_alt': '🎛️'
+        };
+        
+        // Convert Material Icons to Unicode/Emoji (safe conversion that preserves functionality)
+        function convertMaterialIcons() {
+            document.querySelectorAll('.material-icons:not(.icon-converted)').forEach(icon => {
+                // Skip if already converted
+                if (icon.classList.contains('icon-converted')) return;
+                
+                // CRITICAL: Only convert if this is clearly an icon element, not button text
+                // Check if parent is a button/link and has other text content
+                const parent = icon.parentElement;
+                const isInButton = parent && (parent.tagName === 'BUTTON' || parent.tagName === 'A' || parent.classList.contains('btn'));
+                
+                if (isInButton) {
+                    // Check if button has text nodes or other text content besides this icon
+                    const allText = parent.textContent || '';
+                    const iconText = icon.textContent.trim();
+                    const otherText = allText.replace(iconText, '').trim();
+                    
+                    // If there's other text in the button, this might be button text, not an icon
+                    // Only convert if the icon text is a single word and matches an icon name exactly
+                    if (otherText.length > 0) {
+                        // Very strict check: only convert if it's a known icon name AND no other text
+                        if (!window.iconMap[iconText] || iconText.includes(' ') || iconText.length > 25) {
+                            icon.classList.add('icon-converted');
+                            return;
+                        }
+                    }
+                    // If icon-only button (no other text), proceed with conversion if it's a known icon
+                    // This handles icon-only buttons like AI toggle and filter toggle
+                }
+                
+                // Only convert if it's actually an icon element, not button text
+                const iconName = icon.textContent.trim();
+                
+                // STRICT validation: Skip if this looks like button text
+                // Check for common button words, spaces, or too long
+                const buttonWords = ['check', 'run', 'save', 'cancel', 'remove', 'authentication', 'response', 'update', 'collections', 'api', 'changes'];
+                const hasButtonWord = buttonWords.some(word => iconName.toLowerCase().includes(word));
+                
+                if (iconName.includes(' ') || 
+                    iconName.length > 25 || 
+                    hasButtonWord ||
+                    iconName.toLowerCase().startsWith('code') ||
+                    iconName.toLowerCase().startsWith('merge')) {
+                    // If it contains button words but is a known icon, still convert
+                    if (!window.iconMap[iconName]) {
+                        icon.classList.add('icon-converted');
+                        return;
+                    }
+                }
+                
+                // Only convert if it's a known icon name (single word, no spaces)
+                if (window.iconMap[iconName] && !iconName.includes(' ')) {
+                    // Store original icon name as data attribute
+                    icon.setAttribute('data-icon', iconName);
+                    
+                    // Get emoji from map
+                    const emoji = window.iconMap[iconName];
+                    
+                    // Clear all child nodes and text completely - CRITICAL to prevent duplication
+                    while (icon.firstChild) {
+                        icon.removeChild(icon.firstChild);
+                    }
+                    icon.innerHTML = '';
+                    icon.textContent = '';
+                    
+                    // Create a new text node with only the emoji
+                    const emojiNode = document.createTextNode(emoji);
+                    
+                    // Convert the icon classes FIRST
+                    icon.classList.remove('material-icons');
+                    icon.classList.add('icon-emoji', 'icon-converted');
+                    
+                    // Then add ONLY the emoji
+                    icon.appendChild(emojiNode);
+                    
+                    // Final check: ensure the icon only contains the emoji (no duplication)
+                    if (icon.textContent.trim() !== emoji) {
+                        icon.textContent = '';
+                        icon.appendChild(document.createTextNode(emoji));
+                    }
+                    
+                    // Force reflow to ensure display
+                    icon.offsetHeight;
+                    
+                    // Ensure parent remains clickable
+                    if (isInButton && parent) {
+                        parent.style.pointerEvents = 'auto';
+                        parent.style.cursor = 'pointer';
+                    }
+                } else {
+                    // Mark as processed even if no mapping found to prevent re-processing
+                    icon.classList.add('icon-converted');
+                }
+            });
+        }
+        
+        // Convert icons immediately and on DOM ready
+        function initIconConversion() {
+            // Run conversion multiple times to catch all icons
+            for (let i = 0; i < 5; i++) {
+                convertMaterialIcons();
+            }
+            
+            // Re-enable all interactive elements after conversion
+            document.querySelectorAll('a, button, .btn, .btn-icon, .nav-link').forEach(el => {
+                el.style.pointerEvents = 'auto';
+                el.style.cursor = 'pointer';
+            });
+        }
+        
+        // Run conversion immediately - use IIFE to execute right away
+        (function() {
+            // Run synchronously if body exists
+            if (document.body) {
+                convertMaterialIcons();
+            }
+            
+            // Run on DOM ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    initIconConversion();
+                    setTimeout(() => initIconConversion(), 10);
+                    setTimeout(() => initIconConversion(), 50);
+                    setTimeout(() => initIconConversion(), 200);
+                    setTimeout(() => initIconConversion(), 500);
+                });
+            } else {
+                initIconConversion();
+                setTimeout(() => initIconConversion(), 10);
+                setTimeout(() => initIconConversion(), 50);
+                setTimeout(() => initIconConversion(), 200);
+                setTimeout(() => initIconConversion(), 500);
+            }
+        })();
+        
+        // Make convertMaterialIcons available globally for other scripts
+        window.convertMaterialIcons = convertMaterialIcons;
+        
+        // Also expose init function
+        window.initIconConversion = initIconConversion;
+        
+        // Use MutationObserver to convert dynamically added icons (with debouncing)
+        let conversionTimeout;
+        const observer = new MutationObserver((mutations) => {
+            // Debounce conversions to avoid performance issues
+            clearTimeout(conversionTimeout);
+            conversionTimeout = setTimeout(() => {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1) { // Element node
+                            // Check if node itself is an icon
+                            if (node.classList && node.classList.contains('material-icons') && !node.classList.contains('icon-converted')) {
+                                const iconName = node.textContent.trim();
+                                const parent = node.parentElement;
+                                const isInButton = parent && (parent.tagName === 'BUTTON' || parent.tagName === 'A' || parent.classList.contains('btn'));
+                                
+                                // STRICT: Skip if this looks like button text
+                                const buttonWords = ['check', 'run', 'save', 'cancel', 'remove', 'authentication', 'response', 'update', 'collections', 'api', 'changes', 'code', 'merge'];
+                                const hasButtonWord = buttonWords.some(word => iconName.toLowerCase().includes(word));
+                                
+                                const isButtonText = iconName.includes(' ') || 
+                                    iconName.length > 25 || 
+                                    iconName.length === 0 ||
+                                    (hasButtonWord && !window.iconMap[iconName]);
+                                
+                                // If in a button with other text, be very careful
+                                if (isInButton && parent.textContent) {
+                                    const allText = parent.textContent.trim();
+                                    const otherText = allText.replace(iconName, '').trim();
+                                    if (otherText.length > 0 && !window.iconMap[iconName]) {
+                                        node.classList.add('icon-converted');
+                                        return;
+                                    }
+                                }
+                                
+                                if (!isButtonText && window.iconMap && window.iconMap[iconName]) {
+                                    try {
+                                        node.setAttribute('data-icon', iconName);
+                                        const emoji = window.iconMap[iconName];
+                                        // Clear all content first - prevent duplication
+                                        while (node.firstChild) {
+                                            node.removeChild(node.firstChild);
+                                        }
+                                        node.innerHTML = '';
+                                        node.textContent = '';
+                                        // Set only emoji
+                                        const emojiNode = document.createTextNode(emoji);
+                                        node.appendChild(emojiNode);
+                                        node.classList.remove('material-icons');
+                                        node.classList.add('icon-emoji', 'icon-converted');
+                                        // Final check
+                                        if (node.textContent !== emoji) {
+                                            node.textContent = '';
+                                            node.appendChild(document.createTextNode(emoji));
+                                        }
+                                    } catch (e) {
+                                        node.classList.add('icon-converted');
+                                    }
+                                } else {
+                                    node.classList.add('icon-converted');
+                                }
+                            }
+                            // Check child elements
+                            if (node.querySelectorAll) {
+                                const materialIcons = node.querySelectorAll('.material-icons:not(.icon-converted)');
+                                materialIcons.forEach(icon => {
+                                    const iconName = icon.textContent.trim();
+                                    const parent = icon.parentElement;
+                                    const isInButton = parent && (parent.tagName === 'BUTTON' || parent.tagName === 'A' || parent.classList.contains('btn'));
+                                    
+                                    // STRICT: Skip if this looks like button text
+                                    const buttonWords = ['check', 'run', 'save', 'cancel', 'remove', 'authentication', 'response', 'update', 'collections', 'api', 'changes', 'code', 'merge'];
+                                    const hasButtonWord = buttonWords.some(word => iconName.toLowerCase().includes(word));
+                                    
+                                    const isButtonText = iconName.includes(' ') || 
+                                        iconName.length > 25 || 
+                                        iconName.length === 0 ||
+                                        (hasButtonWord && !window.iconMap[iconName]);
+                                    
+                                    // If in a button with other text, be very careful
+                                    if (isInButton && parent.textContent) {
+                                        const allText = parent.textContent.trim();
+                                        const otherText = allText.replace(iconName, '').trim();
+                                        if (otherText.length > 0 && !window.iconMap[iconName]) {
+                                            icon.classList.add('icon-converted');
+                                            return;
+                                        }
+                                    }
+                                    
+                                    if (!isButtonText && window.iconMap && window.iconMap[iconName]) {
+                                        try {
+                                            icon.setAttribute('data-icon', iconName);
+                                            const emoji = window.iconMap[iconName];
+                                            // Clear all content first - prevent duplication
+                                            while (icon.firstChild) {
+                                                icon.removeChild(icon.firstChild);
+                                            }
+                                            icon.innerHTML = '';
+                                            icon.textContent = '';
+                                            
+                                            // Convert classes FIRST
+                                            icon.classList.remove('material-icons');
+                                            icon.classList.add('icon-emoji', 'icon-converted');
+                                            
+                                            // Then add ONLY emoji
+                                            const emojiNode = document.createTextNode(emoji);
+                                            icon.appendChild(emojiNode);
+                                            
+                                            // Double-check - prevent duplication
+                                            if (icon.textContent.trim() !== emoji) {
+                                                icon.textContent = '';
+                                                icon.appendChild(document.createTextNode(emoji));
+                                            }
+                                            
+                                            // Force reflow
+                                            icon.offsetHeight;
+                                        } catch (e) {
+                                            icon.classList.add('icon-converted');
+                                        }
+                                    } else {
+                                        icon.classList.add('icon-converted');
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            }, 50);
+        });
+        
+        // Start observing with limited scope to avoid performance issues
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        // Ensure all interactive elements remain clickable after icon conversion
+        function ensureClickability() {
+            document.querySelectorAll('a, button, .btn, .btn-icon, .nav-link, .action-link, .action-button').forEach(el => {
+                // Skip if element is disabled
+                if (el.disabled || el.classList.contains('disabled')) return;
+                
+                // Ensure element is clickable
+                el.style.pointerEvents = 'auto';
+                el.style.cursor = 'pointer';
+                
+                // Ensure icons inside don't block clicks
+                const icons = el.querySelectorAll('.icon-emoji, .material-icons');
+                icons.forEach(icon => {
+                    icon.style.pointerEvents = 'none';
+                    // Ensure icon only contains emoji, no text
+                    if (icon.classList.contains('icon-emoji')) {
+                        const iconName = icon.getAttribute('data-icon');
+                        if (iconName && window.iconMap && window.iconMap[iconName]) {
+                            const emoji = window.iconMap[iconName];
+                            // Clear and set only emoji
+                            icon.innerHTML = '';
+                            icon.textContent = '';
+                            const emojiNode = document.createTextNode(emoji);
+                            icon.appendChild(emojiNode);
+                            if (icon.textContent !== emoji) {
+                                icon.textContent = emoji;
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Also run icon conversion again to catch any missed icons
+            convertMaterialIcons();
+        }
+        
+        // Run on load and after icon conversion
+        ensureClickability();
+        setTimeout(ensureClickability, 200);
+        setTimeout(ensureClickability, 500);
+        setTimeout(ensureClickability, 1000);
+        
+        // Re-check periodically for dynamically added content
+        setInterval(ensureClickability, 2000);
+        
+        // Make convertMaterialIcons available globally for other scripts
+        window.convertMaterialIcons = convertMaterialIcons;
     </script>
     
     {% block extra_scripts %}{% endblock %}

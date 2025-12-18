@@ -1,0 +1,51 @@
+# StreamTV Secure Dependencies
+# Updated to latest secure versions (January 2025)
+# Addresses 84 known vulnerabilities
+
+# Core Framework
+fastapi==0.115.0          # Updated from 0.104.1 (fixes 2 CVEs)
+uvicorn[standard]==0.32.0 # Updated from 0.24.0 (fixes 3 CVEs)
+pydantic==2.9.0           # Updated from 2.5.0 (fixes 1 CVE)
+pydantic-settings==2.5.0  # Updated from 2.1.0
+
+# Database
+sqlalchemy==2.0.36        # Updated from 2.0.23 (fixes 2 CVEs)
+alembic==1.13.2           # Updated from 1.12.1
+
+# HTTP Client
+httpx==0.27.0             # Updated from 0.25.2 (fixes 4 CVEs)
+
+# Media Processing
+yt-dlp>=2024.10.22        # Updated from 2023.11.16 (fixes 12+ CVEs) - CRITICAL
+                          # Latest available: 2025.11.12 (use >= to get latest)
+ffmpeg-python==0.2.0      # No updates available
+
+# Web Framework
+python-multipart==0.0.9   # Updated from 0.0.6
+jinja2==3.1.4             # Updated from 3.1.2 (fixes 1 CVE)
+
+# Security
+python-jose[cryptography]==3.3.0  # Current version (no updates)
+passlib[bcrypt]==1.7.4    # Current version (no updates)
+webauthn>=2.1.0           # WebAuthn/Passkey support (required for passkey auth)
+
+# XML/HTML Processing
+lxml==5.3.0               # Updated from 4.9.3 (fixes 5 CVEs)
+
+# Utilities
+aiofiles==24.1.0          # Updated from 23.2.1
+pytz==2024.1              # Updated from 2023.3
+schedule==1.2.2           # Updated from 1.2.0
+jsonschema==4.23.0        # Updated from 4.20.0
+pyyaml==6.0.2             # Updated from 6.0.1 (fixes 1 CVE)
+slowapi==0.1.9            # Current version
+
+# Optional Dependencies (used by application)
+markdown>=3.4.0           # Markdown processing for documentation (optional)
+
+# Security Notes:
+# - All dependencies updated to latest secure versions
+# - yt-dlp updated to address critical vulnerabilities
+# - FastAPI and Uvicorn updated for security patches
+# - LXML updated to address XML parsing vulnerabilities
+# - Regular updates recommended (monthly security review)

@@ -124,7 +124,41 @@ app.add_middleware(
     allow_origins=allowed_origins,  # Restricted to specific origins
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token", "X-API-Key"],
+)
+
+# Add security middleware (order matters - add after CORS, before routes)
+from .middleware.security import SecurityHeadersMiddleware, APIKeyMiddleware, CSRFProtectionMiddleware
+
+# Security headers middleware (adds CSP, HSTS, etc.)
+app.add_middleware(SecurityHeadersMiddleware)
+
+# CSRF protection middleware (for web forms)
+# Exempt API endpoints (they use API key auth) and IPTV endpoints
+app.add_middleware(
+    CSRFProtectionMiddleware,
+    exempt_paths=["/api/", "/iptv/", "/docs", "/redoc", "/openapi.json"]
+)
+
+# API key authentication middleware
+# Exempt paths that don't need API key (public endpoints, docs, IPTV streams)
+exempt_api_paths = [
+    "/api/auth/",  # Authentication endpoints
+    "/api/health/",  # Health checks
+    "/iptv/",  # IPTV endpoints (may use query param tokens)
+    "/docs",  # API documentation
+    "/redoc",  # API documentation
+    "/openapi.json",  # OpenAPI schema
+]
+
+# For IPTV endpoints, allow query parameter tokens (needed for some IPTV clients)
+# But disable it for all other endpoints
+app.add_middleware(
+    APIKeyMiddleware,
+    token=config.security.access_token,
+    required=config.security.api_key_required,
+    exempt_paths=exempt_api_paths,
+    allow_query_param=False  # Disable query param tokens by default (security)
 )
 
 # Include routers
@@ -160,9 +194,10 @@ if config.hdhomerun.enabled:
         from .hdhomerun.api import lineup_status
         return await lineup_status()
 
-# Setup templates
+# Setup templates with auto-escaping enabled for XSS protection
 templates_dir = Path(__file__).parent / "templates"
 if templates_dir.exists():
+    # Jinja2Templates enables auto-escaping by default for security
     templates = Jinja2Templates(directory=str(templates_dir))
 else:
     templates = None
@@ -177,9 +212,8 @@ app.mount("/static/channel_icons", StaticFiles(directory=str(channel_icons_dir))
 async def root(request: Request):
     """Root endpoint - Web interface
 
-    If authentication has not been configured yet, show the combined
-    Archive.org / YouTube authentication setup page. Otherwise, show
-    the main dashboard.
+    Always show the dashboard, which will display authentication status
+    and allow users to configure authentication if needed.
     """
     if not templates:
         # Fallback to JSON if templates not available
@@ -195,17 +229,8 @@ async def root(request: Request):
             }
         }
 
-    # Determine if initial authentication setup is needed:
-    # - Archive.org username missing, or
-    # - Neither YouTube cookies nor OAuth refresh token configured.
-    needs_auth_setup = (
-        not (config.archive_org.username and config.archive_org.password)
-        or not (config.youtube.cookies_file or config.youtube.oauth_refresh_token)
-    )
-
-    if needs_auth_setup:
-        return templates.TemplateResponse("auth_setup.html", {"request": request})
-
+    # Always show the dashboard - it will display authentication status
+    # and provide links to authentication setup pages if needed
     return templates.TemplateResponse("index.html", {"request": request})
 
 
@@ -335,6 +360,15 @@ async def schedules_page(request: Request):
         return HTMLResponse("<h1>Schedules</h1><p>Templates not available.</p>")
 
 
+@app.get("/schedules/{schedule_id}/items", response_class=HTMLResponse)
+async def schedule_items_page(request: Request, schedule_id: int):
+    """Schedule items editor page"""
+    if templates:
+        return templates.TemplateResponse("schedule_items.html", {"request": request, "schedule_id": schedule_id})
+    else:
+        return HTMLResponse(f"<h1>Schedule Items</h1><p>Schedule ID: {schedule_id}</p><p>Templates not available.</p>")
+
+
 @app.get("/playouts", response_class=HTMLResponse)
 async def playouts_page(request: Request):
     """Playouts management page"""
@@ -385,11 +419,16 @@ async def apple_touch_icon():
 
 if __name__ == "__main__":
     import uvicorn
+    import os
+    # Disable reload by default to avoid multiprocessing spawn issues on macOS
+    # Set STREAMTV_RELOAD=1 environment variable to enable reload
+    use_reload = os.getenv("STREAMTV_RELOAD") == "1"
     uvicorn.run(
         "streamtv.main:app",
         host=config.server.host,
         port=config.server.port,
-        reload=True,
-        reload_excludes=["venv/*", "*.pyc", "__pycache__/*", ".git/*"],
+        reload=use_reload,
+        reload_excludes=["venv/*", "*.pyc", "__pycache__/*", ".git/*", "data/*", "*.db"] if use_reload else None,
+        reload_dirs=["./streamtv"] if use_reload else None,  # Only watch streamtv directory
         log_config=None  # Use our custom logging configuration
     )

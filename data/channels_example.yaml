@@ -1,0 +1,85 @@
+# Example Channel Import YAML
+# This file demonstrates how to define channels with all their requirements
+
+channels:
+  # Channel 1980 - Winter Olympics
+  - number: "1980"
+    name: "MN 1980 Winter Olympics (WCCO)"
+    group: "Winter Olympics"
+    description: "Sequential channel that mirrors ABC's Lake Placid coverage but wraps every national feed with WCCO-TV IDs, commercials, and Minneapolis/St. Paul newscasts sourced from TC Media Now."
+    enabled: true
+    streams:
+      - id: 1980_opening
+        collection: "Retro Olympics - 1980 Opening Ceremony (ABC)"
+        type: event
+        year: 1980
+        slot: "Prime-time open & athlete parade intro"
+        broadcast_date: 1980-02-13
+        network: ABC
+        runtime: PT3M44S
+        source: youtube
+        url: https://www.youtube.com/watch?v=uTW6jH3sk1k
+        notes: "Lake Placid teaser used at the top of ABC's opening ceremony telecast."
+      
+      - id: 1980_figures
+        collection: "Retro Olympics - 1980 Ladies Figure Skating Final"
+        type: event
+        year: 1980
+        slot: "Short + long programs and medal ceremony"
+        broadcast_date: 1980-02-20
+        network: ABC
+        runtime: PT49M51S
+        source: youtube
+        url: https://www.youtube.com/watch?v=MMWvqmoHVdE
+        notes: "Complete ABC feed featuring Linda Fratianne, Denise Biellmann, and medal podium coverage."
+      
+      - id: mn80_pre_roll
+        collection: "MN 1980 Pre-Roll IDs (TC Media Now)"
+        type: bumper
+        year: 1980
+        slot: "WCCO 10pm open / local ID"
+        broadcast_date: 1980-01-26
+        network: WCCO Minneapolis
+        runtime: PT1M0S
+        source: youtube
+        url: https://www.youtube.com/watch?v=h5x4Nn8q6sM
+        notes: "tcmedianow upload — WCCO 10pm Weekend Report open used as pre-roll."
+
+  # Channel 1984 - Winter Olympics
+  - number: "1984"
+    name: "MN 1984 Winter Olympics (News11)"
+    group: "Winter Olympics"
+    description: "Sarajevo-era schedule that pairs ABC coverage with Minneapolis/St. Paul newscasts from WTCN/KARE, KSTP, and KMSP."
+    enabled: true
+    streams:
+      - id: 1984_opening
+        collection: "Retro Olympics - 1984 Opening Ceremony (ABC)"
+        type: event
+        year: 1984
+        slot: "Opening ceremony"
+        broadcast_date: 1984-02-08
+        network: ABC
+        runtime: PT2H15M
+        source: youtube
+        url: https://www.youtube.com/watch?v=EXAMPLE
+        notes: "Sarajevo opening ceremony coverage."
+
+  # Channel 1988 - Winter Olympics
+  - number: "1988"
+    name: "MN 1988 Winter Olympics (KSTP/WCCO)"
+    group: "Winter Olympics"
+    description: "Calgary primetime with Minneapolis/St. Paul flavor."
+    enabled: true
+    streams:
+      - id: 1988_opening
+        collection: "Retro Olympics - 1988 Opening Ceremony (Calgary)"
+        type: event
+        year: 1988
+        slot: "Opening ceremony"
+        broadcast_date: 1988-02-13
+        network: ABC
+        runtime: PT2H30M
+        source: archive
+        url: https://archive.org/download/example/example.mp4
+        notes: "Calgary opening ceremony coverage."
+

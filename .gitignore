@@ -92,3 +92,7 @@ upload-*.sh
 *.md
 !README.md
 !StreamTV-*/**/*.md
+!CONTRIBUTING.md
+!CHANGELOG.md
+!SECURITY.md
+!LICENSE
