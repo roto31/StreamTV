@@ -258,7 +258,7 @@
             </ul>
         </div>
         {% endif %}
-        <button class="self-heal-button" data-onclick="runSelfHeal()" id="selfHealBtn">
+        <button class="self-heal-button" data-action="runSelfHeal" id="selfHealBtn">
             <span class="material-icons">healing</span>
             Run Self-Heal
         </button>
@@ -430,6 +430,8 @@
     function showAutoFixPrompt(autoFixesData, resultsDiv) {
         const fixes = autoFixesData.fixes;
         const fixesList = fixes.map(f => `• ${f.description}${f.requires_sudo ? ' (requires admin password)' : ''}`).join('<br>');
+        const fixActionsJson = JSON.stringify(fixes.map(f => f.action));
+        const scriptIdJson = JSON.stringify(autoFixesData.scriptId);
         
         const promptHTML = `
             <div class="script-result" style="margin-top: 20px; border-color: var(--primary); background: rgba(10, 132, 255, 0.1);">
@@ -447,12 +449,12 @@
                     Would you like to apply these fixes automatically?
                 </p>
                 <div style="margin-top: 16px; display: flex; gap: 12px;">
-                    <button data-onclick="applyAutoFixes('${autoFixesData.scriptId}', ${JSON.stringify(fixes.map(f => f.action)).replace(/"/g, '&quot;')})" 
+                    <button data-action="applyAutoFixes" data-args='[${scriptIdJson}, ${fixActionsJson}]' data-pass-event="true"
                             class="self-heal-button" style="margin: 0;">
                         <span class="material-icons">check</span>
                         Yes, Apply Fixes
                     </button>
-                    <button data-onclick="this.parentElement.parentElement.remove()" 
+                    <button data-action="removeAncestor" data-args='[2]'
                             style="padding: 12px 20px; background: var(--surface); color: var(--text-primary); border: 0.5px solid var(--divider); border-radius: 10px; font-size: 17px; font-weight: 600; cursor: pointer;">
                         <span class="material-icons">close</span>
                         No, Thanks
@@ -464,9 +466,9 @@
         resultsDiv.insertAdjacentHTML('beforeend', promptHTML);
     }
     
-    async function applyAutoFixes(scriptId, fixActions) {
+    async function applyAutoFixes(scriptId, fixActions, event) {
         const resultsDiv = document.getElementById('scriptResults');
-        const promptDiv = event.target.closest('.script-result');
+        const promptDiv = event?.target?.closest('.script-result');
         
         // Show loading state
         promptDiv.innerHTML = `
@@ -577,6 +579,16 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    function removeAncestor(levels = 1) {
+        let node = this;
+        for (let i = 0; i < levels && node; i++) {
+            node = node.parentElement;
+        }
+        if (node && typeof node.remove === 'function') {
+            node.remove();
+        }
     }
 </script>
 {% endblock %}
