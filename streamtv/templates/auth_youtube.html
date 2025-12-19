@@ -20,7 +20,7 @@
         </div>
         
         <div class="form-actions">
-            <button class="btn btn-secondary" onclick="logout()">
+            <button class="btn btn-secondary" id="youtubeLogoutButton">
                 <span class="material-icons">logout</span>
                 Remove Authentication
             </button>
@@ -36,7 +36,7 @@
                     <li>Export cookies to a file (cookies.txt)</li>
                     <li>Upload the file below</li>
                 </ol>
-                <form id="cookiesForm" onsubmit="uploadCookies(event)">
+                <form id="cookiesForm">
                     <div class="form-group">
                         <label for="cookiesFile">Cookies File</label>
                         <input type="file" id="cookiesFile" name="cookiesFile" accept=".txt" required>
@@ -282,7 +282,7 @@
 }
 </style>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 async function uploadCookies(event) {
     event.preventDefault();
     
@@ -338,6 +338,18 @@ async function logout() {
         alert('Error: ' + error.message);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('cookiesForm');
+    if (form) {
+        form.addEventListener('submit', uploadCookies);
+    }
+
+    const logoutButton = document.getElementById('youtubeLogoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+});
 </script>
 {% endblock %}
 

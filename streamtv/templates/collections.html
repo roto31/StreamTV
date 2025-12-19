@@ -9,7 +9,7 @@
             <p class="page-subtitle">Manage Manual, Smart, and Multi Collections for your channels.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-primary" type="button" onclick="refreshCollections()">
+            <button class="btn btn-primary" type="button" data-action="refreshCollections">
                 <span class="material-icons">refresh</span>
                 Refresh
             </button>
@@ -27,7 +27,7 @@
         <div class="frame-content">
             <div class="collection-select-group">
                 <label class="form-label" for="manualCollectionSelect">Select Manual Collection</label>
-                <select class="form-select" id="manualCollectionSelect" onchange="loadManualCollectionDetails()">
+                <select class="form-select" id="manualCollectionSelect" data-action="loadManualCollectionDetails" data-action-event="change">
                     <option value="">-- Select a manual collection --</option>
                 </select>
         </div>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="collection-actions">
-                    <button class="btn btn-outlined" onclick="deleteManualCollection()">
+                    <button class="btn btn-outlined" data-action="deleteManualCollection">
                         <span class="material-icons">delete</span>
                         Delete Collection
                     </button>
@@ -71,7 +71,7 @@
         <div class="frame-content">
             <div class="collection-select-group">
                 <label class="form-label" for="smartCollectionSelect">Select Smart Collection</label>
-                <select class="form-select" id="smartCollectionSelect" onchange="loadSmartCollectionDetails()">
+                <select class="form-select" id="smartCollectionSelect" data-action="loadSmartCollectionDetails" data-action-event="change">
                     <option value="">-- Select a smart collection --</option>
                 </select>
             </div>
@@ -99,7 +99,7 @@
                     </div>
                 </div>
                 <div class="collection-actions">
-                    <button class="btn btn-outlined" onclick="deleteSmartCollection()">
+                    <button class="btn btn-outlined" data-action="deleteSmartCollection">
                         <span class="material-icons">delete</span>
                         Delete Collection
                     </button>
@@ -118,7 +118,7 @@
         </div>
         <div class="frame-content">
             <div class="multi-collection-controls">
-                <button class="btn btn-primary" type="button" onclick="showCreateMultiCollectionModal()">
+                <button class="btn btn-primary" type="button" data-action="showCreateMultiCollectionModal">
                     <span class="material-icons">add</span>
                     Create Multi Collection
                 </button>
@@ -126,7 +126,7 @@
             
             <div class="collection-select-group" style="margin-top: 20px;">
                 <label class="form-label" for="multiCollectionSelect">Select Multi Collection</label>
-                <select class="form-select" id="multiCollectionSelect" onchange="loadMultiCollectionDetails()">
+                <select class="form-select" id="multiCollectionSelect" data-action="loadMultiCollectionDetails" data-action-event="change">
                     <option value="">-- Select a multi collection --</option>
                 </select>
             </div>
@@ -150,11 +150,11 @@
                     </div>
                 </div>
                 <div class="collection-actions">
-                    <button class="btn btn-outlined" onclick="addItemsToMultiCollection()">
+                    <button class="btn btn-outlined" data-action="addItemsToMultiCollection">
                         <span class="material-icons">add</span>
                         Add Items
                     </button>
-                    <button class="btn btn-outlined" onclick="deleteMultiCollection()">
+                    <button class="btn btn-outlined" data-action="deleteMultiCollection">
                         <span class="material-icons">delete</span>
                         Delete Collection
                     </button>
@@ -165,11 +165,11 @@
     </div>
     
 <!-- Create Multi Collection Modal -->
-<div id="createMultiCollectionModal" class="modal" onclick="if(event.target === this) closeCreateMultiCollectionModal()">
+<div id="createMultiCollectionModal" class="modal" data-action="closeCreateMultiCollectionModal" data-self-only="true">
     <div class="modal-content" style="max-width: 800px;">
         <div class="modal-header">
             <h2>Create Multi Collection</h2>
-            <button class="modal-close" onclick="closeCreateMultiCollectionModal()">
+            <button class="modal-close" data-action="closeCreateMultiCollectionModal">
                 <span class="material-icons">close</span>
             </button>
         </div>
@@ -193,7 +193,7 @@
                         <option value="plex_show">Plex TV Show</option>
                         <option value="plex_movie">Plex Movie</option>
                     </select>
-                    <button class="btn btn-outlined" onclick="loadMultiCollectionItemOptions()">
+                    <button class="btn btn-outlined" data-action="loadMultiCollectionItemOptions">
                         <span class="material-icons">refresh</span>
                         Load
                     </button>
@@ -203,7 +203,7 @@
                     <select class="form-select" id="multiCollectionItemValue" style="width: 100%;">
                         <option value="">-- Select an item --</option>
                     </select>
-                    <button class="btn btn-primary" style="margin-top: 8px;" onclick="addItemToMultiCollectionList()">
+                    <button class="btn btn-primary" style="margin-top: 8px;" data-action="addItemToMultiCollectionList">
                         <span class="material-icons">add</span>
                         Add to Collection
                     </button>
@@ -218,11 +218,11 @@
             </div>
         </div>
         <div class="modal-actions">
-            <button class="btn btn-primary" onclick="createMultiCollection()">
+            <button class="btn btn-primary" data-action="createMultiCollection">
                 <span class="material-icons">check</span>
                 Create Multi Collection
             </button>
-            <button class="btn btn-outlined" onclick="closeCreateMultiCollectionModal()">
+            <button class="btn btn-outlined" data-action="closeCreateMultiCollectionModal">
                 Cancel
             </button>
         </div>
@@ -455,7 +455,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
     let allCollections = [];
     let multiCollectionItems = [];
     
@@ -833,11 +833,12 @@
                     <div class="item-list-item-name">${item.name}</div>
                     <div class="item-list-item-type">${item.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
                 </div>
-                <button class="btn-icon-small" onclick="removeItemFromMultiCollectionList(${index})" title="Remove">
+                <button class="btn-icon-small" data-action="removeItemFromMultiCollectionList" data-args='[${index}]' title="Remove">
                     <span class="material-icons" style="font-size: 18px;">close</span>
                 </button>
                 </div>
         `).join('');
+        bindActionHandlers(listDiv);
     }
     
     function removeItemFromMultiCollectionList(index) {

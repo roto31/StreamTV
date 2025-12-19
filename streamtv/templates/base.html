@@ -238,6 +238,22 @@
             font-size: 17px;
             pointer-events: none;
         }
+
+        .search-result-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+            border-radius: 10px;
+            margin: 4px;
+            min-height: 44px;
+        }
+
+        .search-result-item:hover {
+            background: var(--hover);
+        }
         
         .app-bar .actions {
             display: flex;
@@ -1430,7 +1446,7 @@
 <body data-theme="dark">
     <!-- Navigation Bar - Apple HIG Component -->
     <div class="app-bar">
-        <button class="menu-button" onclick="toggleDrawer()" aria-label="Toggle menu">
+            <button class="menu-button" id="drawerToggleButton" aria-label="Toggle menu">
             <span class="material-icons">menu</span>
         </button>
         <div class="logo">
@@ -1446,7 +1462,7 @@
             <a href="/iptv/channels.m3u" class="action-link" target="_blank">M3U</a>
             <a href="/iptv/xmltv.xml" class="action-link" target="_blank">XMLTV</a>
             <a href="/docs" class="action-link" target="_blank" style="font-weight: 500;">API</a>
-            <button class="action-button" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+            <button class="action-button" id="themeToggleButton" title="Toggle theme" aria-label="Toggle theme">
                 <span class="material-icons" id="themeIcon">dark_mode</span>
             </button>
             <div style="display: flex; align-items: center; margin-left: 8px;">
@@ -1457,7 +1473,7 @@
     </div>
     
     <!-- Drawer Overlay (Mobile) -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
     
     <!-- Sidebar Navigation - Apple HIG Component -->
     <nav class="drawer" id="drawer" role="navigation" aria-label="Main navigation">
@@ -1557,7 +1573,7 @@
                 <div class="nav-group-title">Documentation</div>
                 <div class="nav-group-content">
                     <div class="nav-dropdown">
-                        <a href="#" class="nav-link nav-dropdown-toggle {% if '/docs' in request.url.path %}active{% endif %}" onclick="toggleDropdown(event, 'docsDropdown'); return false;" aria-label="Documentation">
+                        <a href="#" class="nav-link nav-dropdown-toggle {% if '/docs' in request.url.path %}active{% endif %}" data-dropdown-target="docsDropdown" aria-label="Documentation">
                             <span class="material-icons">menu_book</span>
                             <span>Documentation</span>
                             <span class="material-icons dropdown-icon">chevron_right</span>
@@ -1603,7 +1619,7 @@
                         </div>
                     </div>
                     <div class="nav-dropdown">
-                        <a href="#" class="nav-link nav-dropdown-toggle {% if '/docs/troubleshooting' in request.url.path %}active{% endif %}" onclick="toggleDropdown(event, 'troubleshootingDropdown'); return false;" aria-label="Troubleshooting">
+                        <a href="#" class="nav-link nav-dropdown-toggle {% if '/docs/troubleshooting' in request.url.path %}active{% endif %}" data-dropdown-target="troubleshootingDropdown" aria-label="Troubleshooting">
                             <span class="material-icons">help_outline</span>
                             <span>Troubleshooting</span>
                             <span class="material-icons dropdown-icon">chevron_right</span>
@@ -1666,7 +1682,7 @@
         {% block content %}{% endblock %}
     </main>
     
-    <script>
+    <script nonce="{{ request.state.csp_nonce }}">
         // Theme Management
         const currentTheme = localStorage.getItem('theme') || 'dark';
         document.body.setAttribute('data-theme', currentTheme);
@@ -1685,6 +1701,143 @@
             const icon = document.getElementById('themeIcon');
             icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
         }
+        
+        // API authentication helpers
+        const API_KEY_STORAGE_KEY = 'streamtv_api_key';
+        
+        function getApiKey() {
+            try {
+                return localStorage.getItem(API_KEY_STORAGE_KEY) || '';
+            } catch (e) {
+                console.warn('Unable to read API key from storage', e);
+                return '';
+            }
+        }
+        
+        function setApiKey(value) {
+            try {
+                const trimmedValue = (value || '').trim();
+                if (trimmedValue) {
+                    localStorage.setItem(API_KEY_STORAGE_KEY, trimmedValue);
+                } else {
+                    localStorage.removeItem(API_KEY_STORAGE_KEY);
+                }
+                document.dispatchEvent(new CustomEvent('streamtv:api-key-changed', {
+                    detail: { hasKey: !!trimmedValue }
+                }));
+            } catch (e) {
+                console.warn('Unable to persist API key', e);
+            }
+        }
+        
+        function getCsrfToken() {
+            try {
+                return document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('csrf_token='))
+                    ?.split('=')[1] || '';
+            } catch (e) {
+                return '';
+            }
+        }
+        
+        async function authenticatedFetch(url, options = {}) {
+            const opts = { ...options };
+            const method = (opts.method || 'GET').toString().toUpperCase();
+            opts.method = method;
+            const headers = new Headers(opts.headers || {});
+            
+            const apiKey = getApiKey();
+            if (apiKey) {
+                headers.set('Authorization', `Bearer ${apiKey}`);
+                headers.set('X-API-Key', apiKey);
+            }
+            
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                const csrfToken = getCsrfToken();
+                if (csrfToken) {
+                    headers.set('X-CSRF-Token', csrfToken);
+                }
+            }
+            
+            headers.set('X-Requested-With', 'XMLHttpRequest');
+            
+            opts.headers = headers;
+            if (!opts.credentials) {
+                opts.credentials = 'same-origin';
+            }
+            
+            return fetch(url, opts);
+        }
+        
+        // Expose helpers globally for all pages
+        window.authenticatedFetch = authenticatedFetch;
+        window.getApiKey = getApiKey;
+        window.setApiKey = setApiKey;
+        window.getCsrfToken = getCsrfToken;
+
+        function resolveAction(actionName) {
+            if (!actionName) {
+                return null;
+            }
+            const parts = actionName.split('.');
+            let context = window;
+            for (const part of parts) {
+                context = context?.[part];
+            }
+            return typeof context === 'function' ? context : null;
+        }
+
+        function parseActionArgs(element) {
+            const rawArgs = element.dataset.args;
+            if (!rawArgs) {
+                return [];
+            }
+            try {
+                return JSON.parse(rawArgs);
+            } catch (error) {
+                console.error('Failed to parse data-args for action element:', element, error);
+                return [];
+            }
+        }
+
+        function bindActionHandlers(root = document) {
+            root.querySelectorAll('[data-action]').forEach(element => {
+                if (element.dataset.actionBound === 'true') {
+                    return;
+                }
+
+                const eventType = element.dataset.actionEvent || 'click';
+                const handler = (event) => {
+                    if (element.dataset.selfOnly === 'true' && event.target !== element) {
+                        return;
+                    }
+                    if (element.dataset.preventDefault === 'true') {
+                        event.preventDefault();
+                    }
+                    if (element.dataset.stopPropagation === 'true') {
+                        event.stopPropagation();
+                    }
+
+                    const actionFn = resolveAction(element.dataset.action);
+                    if (!actionFn) {
+                        console.warn(`Action handler "${element.dataset.action}" not found for`, element);
+                        return;
+                    }
+
+                    const args = parseActionArgs(element);
+                    const callArgs = element.dataset.passEvent === 'true'
+                        ? [...args, event]
+                        : args;
+                    actionFn.apply(element, callArgs);
+                };
+
+                element.addEventListener(eventType, handler);
+                element.dataset.actionBound = 'true';
+            });
+        }
+
+        window.bindActionHandlers = bindActionHandlers;
         
         // Drawer Management
         function toggleDrawer() {
@@ -1864,28 +2017,42 @@
                 z-index: 1000;
             `;
             
-            resultsDiv.innerHTML = results.map(result => `
-                <div class="search-result-item" onclick="navigateToResult(${JSON.stringify(result).replace(/"/g, '&quot;')})" style="
-                    padding: 12px 16px;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    transition: background 0.2s;
-                    border-radius: 10px;
-                    margin: 4px;
-                    min-height: 44px;
-                " onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background='transparent'">
-                    <span class="material-icons" style="color: var(--text-secondary); flex-shrink: 0;">${result.icon}</span>
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="color: var(--text-primary); font-weight: 500; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${result.title}</div>
-                        <div style="color: var(--text-secondary); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${result.subtitle}</div>
-                    </div>
-                </div>
-            `).join('');
-            
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.dataset.action = 'navigateToResult';
+                item.dataset.args = JSON.stringify([result]);
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'material-icons';
+                iconSpan.style.color = 'var(--text-secondary)';
+                iconSpan.style.flexShrink = '0';
+                iconSpan.textContent = result.icon;
+
+                const textWrapper = document.createElement('div');
+                textWrapper.style.flex = '1';
+                textWrapper.style.minWidth = '0';
+
+                const title = document.createElement('div');
+                title.style.cssText = 'color: var(--text-primary); font-weight: 500; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+                title.textContent = result.title;
+
+                const subtitle = document.createElement('div');
+                subtitle.style.cssText = 'color: var(--text-secondary); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+                subtitle.textContent = result.subtitle;
+
+                textWrapper.appendChild(title);
+                textWrapper.appendChild(subtitle);
+
+                item.appendChild(iconSpan);
+                item.appendChild(textWrapper);
+
+                resultsDiv.appendChild(item);
+            });
+
             searchForm.style.position = 'relative';
             searchForm.appendChild(resultsDiv);
+            bindActionHandlers(resultsDiv);
         }
         
         function hideSearchResults() {
@@ -1921,6 +2088,36 @@
                 });
             }
         });
+
+        // Initialize declarative handlers after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const drawerToggleButton = document.getElementById('drawerToggleButton');
+            if (drawerToggleButton) {
+                drawerToggleButton.addEventListener('click', toggleDrawer);
+            }
+            const drawerOverlay = document.getElementById('drawerOverlay');
+            if (drawerOverlay) {
+                drawerOverlay.addEventListener('click', closeDrawer);
+            }
+
+            document.querySelectorAll('[data-dropdown-target]').forEach(link => {
+                const target = link.getAttribute('data-dropdown-target');
+                link.addEventListener('click', (event) => toggleDropdown(event, target));
+            });
+
+            bindActionHandlers();
+        });
+
+        const actionObserver = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === 1) {
+                        bindActionHandlers(node);
+                    }
+                });
+            });
+        });
+        actionObserver.observe(document.documentElement, { childList: true, subtree: true });
         
         // Icon Mapping System - Convert Material Icons to Unicode/Emoji
         window.iconMap = {

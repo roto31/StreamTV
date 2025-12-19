@@ -20,13 +20,13 @@
         </div>
         
         <div class="form-actions">
-            <button class="btn btn-secondary" onclick="logout()">
+            <button class="btn btn-secondary" id="archiveOrgLogoutButton">
                 <span class="material-icons">logout</span>
                 Logout
             </button>
         </div>
         {% else %}
-        <form id="loginForm" onsubmit="login(event)">
+        <form id="loginForm">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter Archive.org username">
@@ -192,7 +192,7 @@
 }
 </style>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 async function login(event) {
     event.preventDefault();
     
@@ -243,6 +243,18 @@ async function logout() {
         alert('Error: ' + error.message);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('loginForm');
+    if (form) {
+        form.addEventListener('submit', login);
+    }
+
+    const logoutButton = document.getElementById('archiveOrgLogoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+});
 </script>
 {% endblock %}
 
