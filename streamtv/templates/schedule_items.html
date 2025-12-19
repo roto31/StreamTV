@@ -570,7 +570,70 @@
             loadPlaylists();
             loadItems();
             
-            // Add event listener for Plex show selection to load seasons
+            const openButton = document.getElementById('openItemModalButton');
+            if (openButton) {
+                openButton.addEventListener('click', openItemModal);
+            }
+            
+            const saveScheduleButton = document.getElementById('saveScheduleButton');
+            if (saveScheduleButton) {
+                saveScheduleButton.addEventListener('click', saveSchedule);
+            }
+            
+            document.querySelectorAll('.js-close-item-modal').forEach(button => {
+                button.addEventListener('click', closeItemModal);
+            });
+            
+            const itemForm = document.getElementById('itemForm');
+            if (itemForm) {
+                itemForm.addEventListener('submit', saveItem);
+            }
+            
+            const startTypeSelect = document.getElementById('startType');
+            if (startTypeSelect) {
+                startTypeSelect.addEventListener('change', updateStartType);
+            }
+            
+            const collectionTypeSelect = document.getElementById('collectionType');
+            if (collectionTypeSelect) {
+                collectionTypeSelect.addEventListener('change', updateCollectionType);
+            }
+            
+            const playbackOrderSelect = document.getElementById('playbackOrder');
+            if (playbackOrderSelect) {
+                playbackOrderSelect.addEventListener('change', updatePlaybackOrder);
+            }
+            
+            const playoutModeSelect = document.getElementById('playoutMode');
+            if (playoutModeSelect) {
+                playoutModeSelect.addEventListener('change', updatePlayoutMode);
+            }
+            
+            const multipleModeSelect = document.getElementById('multipleMode');
+            if (multipleModeSelect) {
+                multipleModeSelect.addEventListener('change', updateMultipleMode);
+            }
+            
+            const fillWithGroupModeSelect = document.getElementById('fillWithGroupMode');
+            if (fillWithGroupModeSelect) {
+                fillWithGroupModeSelect.addEventListener('change', updateFillWithGroupMode);
+            }
+            
+            const tailModeSelect = document.getElementById('tailMode');
+            if (tailModeSelect) {
+                tailModeSelect.addEventListener('change', updateTailMode);
+            }
+            
+            const loadPlexShowsButton = document.getElementById('loadPlexShowsButton');
+            if (loadPlexShowsButton) {
+                loadPlexShowsButton.addEventListener('click', loadPlexShows);
+            }
+            
+            const loadPlexSeasonsButton = document.getElementById('loadPlexSeasonsButton');
+            if (loadPlexSeasonsButton) {
+                loadPlexSeasonsButton.addEventListener('click', loadPlexSeasons);
+            }
+            
             const plexShowSelect = document.getElementById('plexShowKey');
             if (plexShowSelect) {
                 plexShowSelect.addEventListener('change', function() {
@@ -583,7 +646,6 @@
                 });
             }
             
-            // Convert icons
             if (window.convertMaterialIcons) {
                 setTimeout(() => window.convertMaterialIcons(), 100);
             }
