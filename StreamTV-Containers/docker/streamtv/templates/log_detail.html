@@ -258,7 +258,7 @@
             </ul>
         </div>
         {% endif %}
-        <button class="self-heal-button" onclick="runSelfHeal()" id="selfHealBtn">
+        <button class="self-heal-button" data-action="runSelfHeal" id="selfHealBtn">
             <span class="material-icons">healing</span>
             Run Self-Heal
         </button>
@@ -309,7 +309,7 @@
     {% endif %}
 </div>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
     const matchedScripts = {{ entry.matched_scripts|tojson }};
     const entryLevel = '{{ entry.level }}';
     const isError = {{ entry.is_error|tojson }};
@@ -323,6 +323,7 @@
         btn.innerHTML = '<span class="material-icons">hourglass_empty</span> Running Self-Heal...';
         resultsDiv.style.display = 'block';
         resultsDiv.innerHTML = '<div class="script-result"><div class="script-result-header"><span class="material-icons">hourglass_empty</span>Running self-heal scripts...</div></div>';
+        if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
         
         // If we have matched scripts, run them
         let scriptsToRun = matchedScripts;
@@ -347,6 +348,7 @@
             `;
             btn.disabled = false;
             btn.innerHTML = '<span class="material-icons">healing</span> Run Self-Heal';
+            if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
             return;
         }
         
@@ -419,6 +421,7 @@
         // Re-enable button
         btn.disabled = false;
         btn.innerHTML = '<span class="material-icons">healing</span> Run Self-Heal Again';
+        if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
         
         // Scroll to results
         resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -427,6 +430,8 @@
     function showAutoFixPrompt(autoFixesData, resultsDiv) {
         const fixes = autoFixesData.fixes;
         const fixesList = fixes.map(f => `• ${f.description}${f.requires_sudo ? ' (requires admin password)' : ''}`).join('<br>');
+        const fixActionsJson = JSON.stringify(fixes.map(f => f.action));
+        const scriptIdJson = JSON.stringify(autoFixesData.scriptId);
         
         const promptHTML = `
             <div class="script-result" style="margin-top: 20px; border-color: var(--primary); background: rgba(10, 132, 255, 0.1);">
@@ -444,12 +449,12 @@
                     Would you like to apply these fixes automatically?
                 </p>
                 <div style="margin-top: 16px; display: flex; gap: 12px;">
-                    <button onclick="applyAutoFixes('${autoFixesData.scriptId}', ${JSON.stringify(fixes.map(f => f.action)).replace(/"/g, '&quot;')})" 
+                    <button data-action="applyAutoFixes" data-args='[${scriptIdJson}, ${fixActionsJson}]' data-pass-event="true"
                             class="self-heal-button" style="margin: 0;">
                         <span class="material-icons">check</span>
                         Yes, Apply Fixes
                     </button>
-                    <button onclick="this.parentElement.parentElement.remove()" 
+                    <button data-action="removeAncestor" data-args='[2]' data-pass-event="true"
                             style="padding: 12px 20px; background: var(--surface); color: var(--text-primary); border: 0.5px solid var(--divider); border-radius: 10px; font-size: 17px; font-weight: 600; cursor: pointer;">
                         <span class="material-icons">close</span>
                         No, Thanks
@@ -461,9 +466,16 @@
         resultsDiv.insertAdjacentHTML('beforeend', promptHTML);
     }
     
-    async function applyAutoFixes(scriptId, fixActions) {
+    async function applyAutoFixes(scriptId, fixActions, event) {
         const resultsDiv = document.getElementById('scriptResults');
-        const promptDiv = event.target.closest('.script-result');
+        let promptDiv = event?.currentTarget?.closest('.script-result') || event?.target?.closest('.script-result');
+        if (!promptDiv) {
+            promptDiv = resultsDiv?.querySelector('.script-result:last-of-type') || resultsDiv;
+        }
+        if (!promptDiv) {
+            console.warn('Unable to locate script result container for auto-fix output.');
+            return;
+        }
         
         // Show loading state
         promptDiv.innerHTML = `
@@ -574,6 +586,29 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    function removeAncestor(levels = 1, origin) {
+        let node = null;
+        
+        if (origin instanceof Event) {
+            node = origin.currentTarget || origin.target || null;
+        } else if (origin instanceof HTMLElement) {
+            node = origin;
+        }
+        
+        if (!node) {
+            console.warn('removeAncestor could not determine a starting element.');
+            return;
+        }
+        
+        for (let i = 0; i < levels && node; i++) {
+            node = node.parentElement;
+        }
+        
+        if (node && typeof node.remove === 'function') {
+            node.remove();
+        }
     }
 </script>
 {% endblock %}

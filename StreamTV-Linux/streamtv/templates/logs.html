@@ -162,9 +162,9 @@
                 <option value="CRITICAL">CRITICAL</option>
             </select>
             <input type="number" id="linesCount" value="500" min="100" max="10000" step="100" style="width: 100px;">
-            <button class="btn btn-outlined" onclick="loadLogs()">Refresh</button>
-            <button class="btn btn-outlined" onclick="toggleAutoScroll()" id="autoScrollBtn">Auto-scroll: ON</button>
-            <button class="btn btn-outlined" onclick="clearLogs()">Clear</button>
+            <button class="btn btn-outlined" data-action="loadLogs">Refresh</button>
+            <button class="btn btn-outlined" data-action="toggleAutoScroll" id="autoScrollBtn">Auto-scroll: ON</button>
+            <button class="btn btn-outlined" data-action="clearLogs">Clear</button>
         </div>
     </div>
     
@@ -179,7 +179,7 @@
     Auto-scroll paused. Click to resume.
 </div>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
     let autoScroll = true;
     let logEntries = [];
     

@@ -111,9 +111,7 @@ class PlexConfig(BaseSettings):
     
     class Config:
         env_prefix = "STREAMTV_PLEX_"
-        fields = {
-            'token': {'env': 'STREAMTV_PLEX_TOKEN'}
-        }
+        case_sensitive = False
 
 
 class MetadataConfig(BaseSettings):

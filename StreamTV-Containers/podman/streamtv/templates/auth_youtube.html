@@ -20,7 +20,7 @@
         </div>
         
         <div class="form-actions">
-            <button class="btn btn-secondary" onclick="logout()">
+            <button class="btn btn-secondary" id="youtubeLogoutButton">
                 <span class="material-icons">logout</span>
                 Remove Authentication
             </button>
@@ -36,7 +36,7 @@
                     <li>Export cookies to a file (cookies.txt)</li>
                     <li>Upload the file below</li>
                 </ol>
-                <form id="cookiesForm" onsubmit="uploadCookies(event)">
+                <form id="cookiesForm">
                     <div class="form-group">
                         <label for="cookiesFile">Cookies File</label>
                         <input type="file" id="cookiesFile" name="cookiesFile" accept=".txt" required>
@@ -97,7 +97,7 @@
 <style>
 .auth-status {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     padding: 16px;
     border-radius: 8px;
@@ -109,8 +109,34 @@
     color: white;
 }
 
-.auth-status .material-icons {
+.auth-status .material-icons,
+.auth-status .icon-emoji {
     font-size: 32px;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.auth-status > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.auth-status strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.auth-status p {
+    margin: 0;
+    font-size: 15px;
+    opacity: 0.9;
 }
 
 .auth-methods {
@@ -180,6 +206,7 @@
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 12px 24px;
     border: none;
@@ -189,6 +216,27 @@
     cursor: pointer;
     transition: all 0.2s;
     font-family: inherit;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.btn .material-icons,
+.btn .icon-emoji {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.btn > span:not(.material-icons):not(.icon-emoji) {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .btn-primary {
@@ -234,7 +282,7 @@
 }
 </style>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 async function uploadCookies(event) {
     event.preventDefault();
     
@@ -290,6 +338,18 @@ async function logout() {
         alert('Error: ' + error.message);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('cookiesForm');
+    if (form) {
+        form.addEventListener('submit', uploadCookies);
+    }
+
+    const logoutButton = document.getElementById('youtubeLogoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+});
 </script>
 {% endblock %}
 

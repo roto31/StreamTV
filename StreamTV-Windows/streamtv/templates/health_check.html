@@ -16,7 +16,7 @@
 <div class="card">
     <div class="card-header">
         <h2 class="card-title">Quick Health Check</h2>
-        <button class="btn btn-primary" onclick="runQuickHealthCheck()" id="quickCheckBtn">
+        <button class="btn btn-primary" data-action="runQuickHealthCheck" id="quickCheckBtn">
             <span class="material-icons">refresh</span>
             Run Quick Check
         </button>
@@ -34,7 +34,7 @@
                 <input type="checkbox" id="analyzeLogs" checked>
                 <span>Analyze Logs</span>
             </label>
-            <button class="btn btn-primary" onclick="runDetailedHealthCheck()" id="detailedCheckBtn">
+            <button class="btn btn-primary" data-action="runDetailedHealthCheck" id="detailedCheckBtn">
                 <span class="material-icons">assessment</span>
                 Run Detailed Check
             </button>
@@ -53,7 +53,7 @@
         <div class="card" style="margin: 0;">
             <h3 style="font-size: 17px; margin-bottom: 8px;">Server Status</h3>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">Check if server is running</p>
-            <button class="btn btn-outlined" onclick="runComponentCheck('server')" style="width: 100%;">
+            <button class="btn btn-outlined" data-action="runComponentCheck" data-args='["server"]' style="width: 100%;">
                 <span class="material-icons">dns</span>
                 Check Server
             </button>
@@ -63,7 +63,7 @@
         <div class="card" style="margin: 0;">
             <h3 style="font-size: 17px; margin-bottom: 8px;">FFmpeg</h3>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">Verify FFmpeg installation</p>
-            <button class="btn btn-outlined" onclick="runComponentCheck('ffmpeg')" style="width: 100%;">
+            <button class="btn btn-outlined" data-action="runComponentCheck" data-args='["ffmpeg"]' style="width: 100%;">
                 <span class="material-icons">videocam</span>
                 Check FFmpeg
             </button>
@@ -73,7 +73,7 @@
         <div class="card" style="margin: 0;">
             <h3 style="font-size: 17px; margin-bottom: 8px;">Database</h3>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">Check database connectivity</p>
-            <button class="btn btn-outlined" onclick="runComponentCheck('database')" style="width: 100%;">
+            <button class="btn btn-outlined" data-action="runComponentCheck" data-args='["database"]' style="width: 100%;">
                 <span class="material-icons">storage</span>
                 Check Database
             </button>
@@ -83,7 +83,7 @@
         <div class="card" style="margin: 0;">
             <h3 style="font-size: 17px; margin-bottom: 8px;">Network</h3>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">Test network connectivity</p>
-            <button class="btn btn-outlined" onclick="runComponentCheck('network')" style="width: 100%;">
+            <button class="btn btn-outlined" data-action="runComponentCheck" data-args='["network"]' style="width: 100%;">
                 <span class="material-icons">wifi</span>
                 Check Network
             </button>
@@ -93,7 +93,7 @@
         <div class="card" style="margin: 0;">
             <h3 style="font-size: 17px; margin-bottom: 8px;">Channels</h3>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">Verify channel status</p>
-            <button class="btn btn-outlined" onclick="runComponentCheck('channels')" style="width: 100%;">
+            <button class="btn btn-outlined" data-action="runComponentCheck" data-args='["channels"]' style="width: 100%;">
                 <span class="material-icons">tv</span>
                 Check Channels
             </button>
@@ -103,7 +103,7 @@
         <div class="card" style="margin: 0;">
             <h3 style="font-size: 17px; margin-bottom: 8px;">Logs</h3>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">Analyze error logs</p>
-            <button class="btn btn-outlined" onclick="runComponentCheck('logs')" style="width: 100%;">
+            <button class="btn btn-outlined" data-action="runComponentCheck" data-args='["logs"]' style="width: 100%;">
                 <span class="material-icons">description</span>
                 Analyze Logs
             </button>
@@ -192,7 +192,7 @@
 }
 </style>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 async function runQuickHealthCheck() {
     const btn = document.getElementById('quickCheckBtn');
     const resultsDiv = document.getElementById('quickCheckResults');
@@ -245,6 +245,7 @@ async function runQuickHealthCheck() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<span class="material-icons">refresh</span>Run Quick Check';
+        if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
     }
 }
 
@@ -305,6 +306,7 @@ async function runDetailedHealthCheck() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<span class="material-icons">assessment</span>Run Detailed Check';
+        if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
     }
 }
 

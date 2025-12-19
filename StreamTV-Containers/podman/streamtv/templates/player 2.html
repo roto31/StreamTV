@@ -1,0 +1,700 @@
+{% extends "base.html" %}
+
+{% block title %}Player - StreamTV{% endblock %}
+
+{% block extra_styles %}
+    .player-container {
+        background: var(--surface);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 20px; /* Apple HIG standard */
+        margin-bottom: 16px; /* Apple 8pt grid */
+        border: 0.5px solid var(--divider);
+    }
+    
+    .player-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #000;
+        border-radius: 12px; /* Apple HIG standard */
+        overflow: hidden;
+    }
+    
+    #videoPlayer {
+        width: 100%;
+        display: block;
+    }
+    
+    .player-info {
+        background: var(--hover);
+        padding: 16px; /* Apple HIG standard */
+        border-radius: 12px; /* Apple HIG standard */
+        margin-bottom: 16px; /* Apple 8pt grid */
+        border: 0.5px solid var(--divider);
+    }
+    
+    .player-info h3 {
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+    
+    .player-info .metadata {
+        font-size: 12px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+    
+    .player-info .metadata strong {
+        color: var(--text-primary);
+    }
+    
+    .player-info .metadata-scroll {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 12px;
+        padding: 12px;
+        background: var(--background);
+        border-radius: 4px;
+    }
+    
+    .alert {
+        padding: 16px; /* Apple HIG standard */
+        border-radius: 12px; /* Apple HIG standard */
+        margin-bottom: 16px; /* Apple 8pt grid */
+        display: none;
+        font-size: 17px; /* Apple HIG standard */
+        font-weight: 400;
+        line-height: 1.47059;
+    }
+    
+    .alert.show {
+        display: block;
+    }
+    
+    .alert-info {
+        background: rgba(0, 192, 192, 0.1);
+        border: 1px solid var(--info);
+        color: var(--info);
+    }
+    
+    .alert-error {
+        background: rgba(244, 67, 54, 0.1);
+        border: 1px solid var(--error);
+        color: var(--error);
+    }
+    
+    .channels-section {
+        background: var(--surface);
+        border-radius: 12px; /* Apple HIG standard */
+        padding: 20px; /* Apple HIG standard */
+        border: 0.5px solid var(--divider);
+    }
+    
+    .channels-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+    }
+    
+    .channel-card {
+        background: var(--background);
+        border: 1px solid var(--divider);
+        border-radius: 4px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .channel-card:hover {
+        background: var(--hover);
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+    
+    .channel-card.active {
+        background: var(--hover);
+        border-color: var(--primary);
+        border-width: 2px;
+    }
+    
+    .channel-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+    
+    .channel-number {
+        font-size: 24px;
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .channel-name {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    
+    .channel-group {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+    
+    .channel-status {
+        margin-top: 8px;
+    }
+    
+    .loading {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-secondary);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+    
+    .empty-state-icon {
+        font-size: 64px;
+        opacity: 0.5;
+        margin-bottom: 16px;
+    }
+{% endblock %}
+
+{% block content %}
+    <div class="content-header">
+        <h1>Player</h1>
+        <p>Stream your channels directly in the browser</p>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- Player Container -->
+    <div class="player-container">
+        <div id="info" class="player-info" style="display: none;"></div>
+        <div id="error" class="alert alert-error"></div>
+        <div id="browser-warning" class="alert alert-info" style="display: none;">
+            <strong>⚠️ Browser Playback Limitation:</strong><br>
+            <small>YouTube streams may not play directly in browsers due to codec compatibility. 
+            For best results, use <a href="/iptv/channels.m3u" download style="color: var(--info);">VLC Media Player</a> or another IPTV client with the M3U playlist.</small>
+        </div>
+        <div class="player-wrapper">
+            <video id="videoPlayer" controls preload="metadata" style="width: 100%;">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    
+    <!-- Channels Section -->
+    <div class="channels-section">
+        <div class="card-header">
+            <div class="card-title">Available Channels</div>
+        </div>
+        <div id="loading" class="loading">Loading channels...</div>
+        <div id="channels-container" class="channels-grid" style="display: none;"></div>
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📺</div>
+            <h3 style="margin-bottom: 8px;">No channels available</h3>
+            <p>Create channels to start streaming</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <!-- HLS.js library for MPEG-TS stream support -->
+    <script nonce="{{ request.state.csp_nonce }}" src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script nonce="{{ request.state.csp_nonce }}">
+        let currentChannel = null;
+        let currentPlaylist = [];
+        let currentVideoIndex = 0;
+        let hasTriggeredNext = false;
+        let isPlaying = false;
+        let hlsPlayer = null;
+        const videoPlayer = document.getElementById('videoPlayer');
+        
+        // Helper for logging (fallback if console not available)
+        const logger = {
+            info: (msg) => console.log ? console.log(msg) : null,
+            error: (msg) => console.error ? console.error(msg) : null
+        };
+        
+        // Load channels on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChannels();
+            setupVideoPlayer();
+        });
+        
+        async function loadChannels() {
+            try {
+                const response = await fetch('/api/channels');
+                const channels = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                const container = document.getElementById('channels-container');
+                const emptyState = document.getElementById('empty-state');
+                
+                if (channels.length === 0) {
+                    container.style.display = 'none';
+                    emptyState.style.display = 'block';
+                } else {
+                    container.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                    container.innerHTML = channels
+                        .filter(c => c.enabled)
+                        .map(channel => `
+                            <div class="channel-card" data-onclick="loadChannel('${channel.number}', '${channel.name.replace(/'/g, "\\'")}')">
+                                <div class="channel-card-header">
+                                    <div class="channel-number">${channel.number}</div>
+                                    <span class="badge ${channel.enabled ? 'badge-success' : 'badge-error'}">
+                                        ${channel.enabled ? 'Enabled' : 'Disabled'}
+                                    </span>
+                                </div>
+                                <div class="channel-name">${channel.name}</div>
+                                ${channel.group ? `<div class="channel-group">${channel.group}</div>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                showError('Error loading channels: ' + error.message);
+            }
+        }
+        
+        function setupVideoPlayer() {
+            videoPlayer.addEventListener('ended', handleVideoEnded);
+            videoPlayer.addEventListener('error', handleVideoError);
+        }
+        
+        async function loadChannel(channelNumber, name) {
+            currentChannel = channelNumber;
+            currentPlaylist = [];
+            currentVideoIndex = 0;
+            hasTriggeredNext = false;
+            
+            // Clean up previous HLS.js instance
+            if (hlsPlayer) {
+                hlsPlayer.destroy();
+                hlsPlayer = null;
+            }
+            
+            // Update active channel card
+            document.querySelectorAll('.channel-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.channel-card')?.classList.add('active');
+            
+            try {
+                // First, try to get the channel's media items to check for direct HLS URLs
+                let directHlsUrl = null;
+                let hasDirectHlsSource = false;
+                try {
+                    const channelResponse = await fetch(`/api/channels/number/${channelNumber}`);
+                    if (channelResponse.ok) {
+                        const channelData = await channelResponse.json();
+                        // Get playlists for this channel
+                        if (channelData.playlists && channelData.playlists.length > 0) {
+                            const playlistId = channelData.playlists[0].id;
+                            const playlistResponse = await fetch(`/api/playlists/${playlistId}/items`);
+                            if (playlistResponse.ok) {
+                                const playlistItems = await playlistResponse.json();
+                                // Find the first media item with a direct HLS URL
+                                for (const item of playlistItems) {
+                                    if (item.media_item && item.media_item.url && item.media_item.url.includes('.m3u8')) {
+                                        directHlsUrl = item.media_item.url;
+                                        hasDirectHlsSource = true;
+                                        console.log(`Found direct HLS URL for channel ${channelNumber}: ${directHlsUrl}`);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.log('Could not fetch channel media items:', e);
+                }
+                
+                // For channels with MPEG-TS streams (like Archive.org channels), try direct TS stream first
+                // This works better than trying to parse the HLS playlist
+                if (!hasDirectHlsSource) {
+                    console.log(`Channel ${channelNumber} appears to use MPEG-TS stream, trying direct stream endpoint`);
+                    const tsStreamUrl = `/iptv/channel/${channelNumber}.ts`;
+                    
+                    // Try direct MPEG-TS playback
+                    videoPlayer.src = tsStreamUrl;
+                    videoPlayer.type = 'video/mp2t';
+                    
+                    const infoDiv = document.getElementById('info');
+                    infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Loading MPEG-TS stream (Live transcoded stream)...</div>`;
+                    infoDiv.style.display = 'block';
+                    
+                    // Hide browser warning initially
+                    const browserWarning = document.getElementById('browser-warning');
+                    if (browserWarning) {
+                        browserWarning.style.display = 'none';
+                    }
+                    
+                    videoPlayer.play().then(() => {
+                        isPlaying = true;
+                        console.log('Successfully playing MPEG-TS stream natively');
+                        infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Streaming MPEG-TS (Live transcoded stream)</div>`;
+                    }).catch(playError => {
+                        console.log('Native MPEG-TS playback failed, trying HLS.js:', playError);
+                        useHlsJsForMpegTs(tsStreamUrl, name);
+                    });
+                    
+                    // Set up error handler
+                    videoPlayer.addEventListener('error', (e) => {
+                        console.error('Video player error:', e);
+                        // If native playback fails, try HLS.js
+                        if (!hlsPlayer) {
+                            useHlsJsForMpegTs(tsStreamUrl, name);
+                        }
+                    }, { once: true });
+                    
+                    return; // Exit early, don't try HLS playlist
+                }
+                
+                const response = await fetch(`/iptv/channel/${channelNumber}.m3u8`);
+                if (!response.ok) {
+                    throw new Error(`Failed to load channel: ${response.statusText}`);
+                }
+                
+                const playlistText = await response.text();
+                const parsedData = parsePlaylist(playlistText);
+                
+                // Check if playlist contains MPEG-TS endpoint
+                // Note: MPEG-TS streams are not necessarily DRM-protected - they're just transcoded streams
+                const hasTsEndpoint = currentPlaylist.some(v => v.url && (v.url.includes('.ts') || v.url.includes('/iptv/channel/')));
+                // Check if it's actually a DRM-protected HLS stream (has .m3u8 in original URL)
+                const hasDrmHls = parsedData.originalUrl && parsedData.originalUrl.includes('.m3u8');
+                
+                if (hasTsEndpoint && currentPlaylist.length > 0) {
+                    // For MPEG-TS streams (transcoded), try to use direct stream URL
+                    const streamUrl = currentPlaylist[0].url;
+                    if (hasDrmHls) {
+                        console.log(`Channel ${channelNumber} uses DRM-protected HLS stream - stream URL: ${streamUrl}`);
+                    } else {
+                        console.log(`Channel ${channelNumber} uses MPEG-TS stream (transcoded) - stream URL: ${streamUrl}`);
+                    }
+                    
+                    // Check if we have an original HLS URL from the playlist comments
+                    const originalHlsUrl = parsedData.originalUrl || directHlsUrl;
+                    
+                    // If we have a direct HLS URL, try using it directly first
+                    if (originalHlsUrl) {
+                        console.log(`Attempting to use original HLS URL: ${originalHlsUrl}`);
+                        try {
+                            // Try native HLS playback first
+                            if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                                videoPlayer.src = originalHlsUrl;
+                                videoPlayer.type = 'application/vnd.apple.mpegurl';
+                                
+                                const infoDiv = document.getElementById('info');
+                                infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Streaming via Direct HLS (Live stream)</div>`;
+                                infoDiv.style.display = 'block';
+                                
+                                videoPlayer.play().then(() => {
+                                    isPlaying = true;
+                                }).catch(playError => {
+                                    console.log('Native HLS playback failed, trying HLS.js:', playError);
+                                    // Fall through to HLS.js
+                                    useHlsJsForMpegTs(streamUrl, name);
+                                });
+                            } else {
+                                // Browser doesn't support native HLS, use HLS.js
+                                useHlsJsForMpegTs(streamUrl, name);
+                            }
+                        } catch (e) {
+                            console.log('Direct HLS URL failed, falling back to HLS.js:', e);
+                            useHlsJsForMpegTs(streamUrl, name);
+                        }
+                    } else {
+                        // No direct HLS URL available, use HLS.js for MPEG-TS stream
+                        // For regular MPEG-TS streams (not DRM), try direct playback first
+                        if (!hasDrmHls) {
+                            // Try direct MPEG-TS playback for non-DRM streams
+                            console.log(`Attempting direct MPEG-TS playback for channel ${channelNumber}`);
+                            videoPlayer.src = streamUrl;
+                            videoPlayer.type = 'video/mp2t';
+                            
+                            const infoDiv = document.getElementById('info');
+                            infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Attempting to play MPEG-TS stream (Live transcoded stream)</div>`;
+                            infoDiv.style.display = 'block';
+                            
+                            videoPlayer.play().then(() => {
+                                isPlaying = true;
+                                console.log('Successfully playing MPEG-TS stream natively');
+                            }).catch(playError => {
+                                console.log('Native MPEG-TS playback failed, trying HLS.js:', playError);
+                                useHlsJsForMpegTs(streamUrl, name);
+                            });
+                        } else {
+                            // DRM-protected stream, use HLS.js
+                            useHlsJsForMpegTs(streamUrl, name);
+                        }
+                    }
+                } else if (currentPlaylist.length > 0) {
+                    await playNextVideo();
+                } else {
+                    showError('No videos found in playlist');
+                }
+            } catch (error) {
+                console.error('Error loading channel:', error);
+                showError('Error loading channel: ' + error.message);
+                // Show browser warning for MPEG-TS streams (browsers have limited support)
+                const browserWarning = document.getElementById('browser-warning');
+                if (browserWarning) {
+                    browserWarning.style.display = 'block';
+                    // Try to determine if it's DRM-protected or just MPEG-TS
+                    const isDrmStream = error.message && (error.message.includes('DRM') || error.message.includes('HLS'));
+                    if (isDrmStream) {
+                        browserWarning.innerHTML = `
+                            <strong>⚠️ Browser Playback Limitation:</strong><br>
+                            <small>This channel uses HLS/DRM-protected streams that may not play directly in browsers. 
+                            For best results, use <a href="/iptv/channels.m3u" download style="color: var(--info);">VLC Media Player</a> 
+                            or another IPTV client with the M3U playlist, or try the <a href="/iptv/channel/${channelNumber}.ts" style="color: var(--info);">MPEG-TS stream</a>.</small>
+                        `;
+                    } else {
+                        browserWarning.innerHTML = `
+                            <strong>⚠️ Browser Playback Limitation:</strong><br>
+                            <small>This channel uses MPEG-TS streams that may not play directly in browsers. 
+                            For best results, use <a href="/iptv/channels.m3u" download style="color: var(--info);">VLC Media Player</a> 
+                            or another IPTV client with the M3U playlist. You can also try the <a href="/iptv/channel/${channelNumber}.ts" target="_blank" style="color: var(--info);">direct MPEG-TS stream</a>.</small>
+                        `;
+                    }
+                }
+            }
+        }
+        
+        function useHlsJsForMpegTs(streamUrl, name) {
+            // For MPEG-TS streams, browsers have limited support
+            // Try using HLS.js, but it may not work well with continuous MPEG-TS streams
+            // Show a helpful message to the user
+            console.log(`Attempting to play MPEG-TS stream: ${streamUrl}`);
+            
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Attempting to play MPEG-TS stream (Live transcoded stream)</div>`;
+            infoDiv.style.display = 'block';
+            
+            // Try native video element first (some browsers might handle it)
+            videoPlayer.src = streamUrl;
+            videoPlayer.type = 'video/mp2t';
+            
+            videoPlayer.play().then(() => {
+                isPlaying = true;
+                console.log('Successfully playing MPEG-TS stream natively');
+            }).catch(playError => {
+                console.log('Native MPEG-TS playback failed:', playError);
+                
+                // Try HLS.js if available
+                if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                    console.log('Trying HLS.js for MPEG-TS stream...');
+                    
+                    // Create a simple HLS playlist pointing to the MPEG-TS stream
+                    // Note: This may not work well with continuous streams, but worth trying
+                    const hlsPlaylist = `#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-TARGETDURATION:999999
+#EXTINF:999999.0,
+${streamUrl}
+#EXT-X-ENDLIST`;
+                    
+                    const blob = new Blob([hlsPlaylist], { type: 'application/vnd.apple.mpegurl' });
+                    const hlsPlaylistUrl = URL.createObjectURL(blob);
+                    
+                    hlsPlayer = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: false,  // Disable low latency for continuous streams
+                        backBufferLength: 90,
+                        maxBufferLength: 30,
+                        maxMaxBufferLength: 60,
+                    });
+                    
+                    hlsPlayer.loadSource(hlsPlaylistUrl);
+                    hlsPlayer.attachMedia(videoPlayer);
+                    
+                    hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => {
+                        console.log('HLS.js manifest parsed, attempting playback');
+                        videoPlayer.play().then(() => {
+                            isPlaying = true;
+                            infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Streaming via HLS.js (MPEG-TS transcoded stream)</div>`;
+                        }).catch(e => {
+                            console.error('HLS.js playback failed:', e);
+                            showError('Cannot play MPEG-TS stream in browser. Please use <a href="/iptv/channels.m3u" download>VLC Media Player</a> or Plex for better compatibility.');
+                        });
+                    });
+                    
+                    hlsPlayer.on(Hls.Events.ERROR, (event, data) => {
+                        console.error('HLS.js error:', data);
+                        if (data.fatal) {
+                            hlsPlayer.destroy();
+                            showError('Cannot play MPEG-TS stream in browser. Please use <a href="/iptv/channels.m3u" download>VLC Media Player</a> or Plex for better compatibility.');
+                        }
+                    });
+                } else {
+                    // No HLS.js support
+                    showError('Cannot play MPEG-TS stream in browser. Please use <a href="/iptv/channels.m3u" download>VLC Media Player</a> or Plex for better compatibility.');
+                }
+            });
+        }
+        
+        function parsePlaylist(playlistText) {
+            const lines = playlistText.split('\n');
+            let currentTitle = null;
+            let currentMetadata = {};
+            let originalUrl = null;
+            
+            for (const line of lines) {
+                // Check for original HLS URL comment
+                if (line.startsWith('#EXT-X-ORIGINAL-URL:')) {
+                    originalUrl = line.substring('#EXT-X-ORIGINAL-URL:'.length).trim();
+                    console.log(`Found original HLS URL in playlist: ${originalUrl}`);
+                } else if (line.startsWith('#EXTINF:')) {
+                    const titleMatch = line.match(/tvg-name="([^"]+)"/);
+                    if (titleMatch) {
+                        currentTitle = titleMatch[1];
+                    }
+                    const metadataMatch = line.match(/tvg-metadata="([^"]+)"/);
+                    if (metadataMatch) {
+                        try {
+                            currentMetadata = JSON.parse(decodeURIComponent(metadataMatch[1]));
+                        } catch (e) {
+                            console.error("Error parsing metadata JSON:", e);
+                            currentMetadata = {};
+                        }
+                    }
+                } else if (line.startsWith('http://') || line.startsWith('https://')) {
+                    currentPlaylist.push({
+                        url: line,
+                        title: currentTitle || `Video ${currentPlaylist.length + 1}`,
+                        metadata: currentMetadata
+                    });
+                    currentTitle = null;
+                    currentMetadata = {};
+                }
+            }
+            
+            return { originalUrl: originalUrl };
+        }
+        
+        async function playNextVideo() {
+            if (currentPlaylist.length === 0) return;
+            
+            if (currentVideoIndex >= currentPlaylist.length) {
+                currentVideoIndex = 0;
+            }
+            
+            const video = currentPlaylist[currentVideoIndex];
+            const infoDiv = document.getElementById('info');
+            
+            try {
+                // For HLS streams (.m3u8), try to play directly
+                // Note: DRM-protected streams may not work in browsers
+                if (video.url.includes('.m3u8')) {
+                    // HLS stream - try to play directly
+                    // Some browsers may not support DRM-protected HLS
+                    videoPlayer.src = video.url;
+                    videoPlayer.type = 'application/vnd.apple.mpegurl';
+                } else {
+                    // Non-HLS stream - test accessibility first
+                    const testResponse = await fetch(video.url, { method: 'HEAD' });
+                    if (!testResponse.ok) {
+                        throw new Error(`Stream not accessible: ${testResponse.status}`);
+                    }
+                    videoPlayer.src = video.url;
+                }
+                
+                hasTriggeredNext = false;
+                isPlaying = false;
+                
+                const onMetadataLoaded = function() {
+                    const duration = videoPlayer.duration || video.metadata?.duration || 'unknown';
+                    let infoHTML = `<h3>${video.title}</h3>`;
+                    infoHTML += `<div class="metadata">Video ${currentVideoIndex + 1} of ${currentPlaylist.length} - Duration: ${duration}s</div>`;
+                    
+                    if (video.metadata) {
+                        infoHTML += `<div class="metadata-scroll">`;
+                        infoHTML += `<strong>📋 Complete Metadata:</strong><br>`;
+                        for (const [key, value] of Object.entries(video.metadata)) {
+                            if (value && key !== 'title') {
+                                infoHTML += `<strong>${key}:</strong> ${value}<br>`;
+                            }
+                        }
+                        infoHTML += `</div>`;
+                    }
+                    
+                    infoDiv.innerHTML = infoHTML;
+                    infoDiv.style.display = 'block';
+                    
+                    videoPlayer.play().then(() => {
+                        isPlaying = true;
+                        startContinuousPlayback();
+                    }).catch(playError => {
+                        console.log('Auto-play prevented:', playError);
+                    });
+                };
+                
+                videoPlayer.addEventListener('loadedmetadata', onMetadataLoaded, { once: true });
+                videoPlayer.load();
+            } catch (fetchError) {
+                console.error('Error loading video:', fetchError);
+                currentVideoIndex++;
+                if (currentVideoIndex < currentPlaylist.length) {
+                    await playNextVideo();
+                } else {
+                    showError('Cannot access stream: ' + fetchError.message);
+                }
+            }
+        }
+        
+        async function handleVideoEnded() {
+            if (hasTriggeredNext || currentPlaylist.length === 0) return;
+            
+            hasTriggeredNext = true;
+            currentVideoIndex++;
+            
+            if (currentVideoIndex < currentPlaylist.length) {
+                await playNextVideo();
+            } else {
+                currentVideoIndex = 0;
+                await playNextVideo();
+            }
+        }
+        
+        function handleVideoError(e) {
+            console.error('Video error:', e);
+            if (currentVideoIndex < currentPlaylist.length - 1) {
+                currentVideoIndex++;
+                playNextVideo();
+            } else {
+                showError('Error playing video. Please try another channel.');
+            }
+        }
+        
+        function startContinuousPlayback() {
+            if (!isPlaying) return;
+            
+            const checkTime = setInterval(() => {
+                if (videoPlayer.ended && !hasTriggeredNext) {
+                    clearInterval(checkTime);
+                    handleVideoEnded();
+                }
+            }, 100);
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => {
+                errorDiv.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+{% endblock %}

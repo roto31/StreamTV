@@ -9,11 +9,11 @@
             <p class="page-subtitle">Configure transcoding paths, hardware acceleration, and runtime flags.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" onclick="loadSettings(true)">
+            <button class="btn btn-outlined" type="button" id="refreshFfmpegSettingsButton">
                 <span class="material-icons">refresh</span>
                 Reload
             </button>
-            <button class="btn btn-primary" type="button" onclick="saveSettings()">
+            <button class="btn btn-primary" type="button" id="saveFfmpegSettingsButton">
                 <span class="material-icons">save</span>
                 Save Changes
             </button>
@@ -195,8 +195,20 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => loadSettings());
+<script nonce="{{ request.state.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', () => {
+        const refreshButton = document.getElementById('refreshFfmpegSettingsButton');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', () => loadSettings(true));
+        }
+
+        const saveButton = document.getElementById('saveFfmpegSettingsButton');
+        if (saveButton) {
+            saveButton.addEventListener('click', saveSettings);
+        }
+
+        loadSettings();
+    });
     
     async function loadSettings(showStatus = false) {
         try {

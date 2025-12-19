@@ -4,20 +4,44 @@ import httpx
 from typing import Optional, AsyncIterator
 import logging
 from enum import Enum
+import json
+from datetime import datetime
 
 from .youtube_adapter import YouTubeAdapter
 from .archive_org_adapter import ArchiveOrgAdapter
 from .pbs_adapter import PBSAdapter
+from .plex_adapter import PlexAdapter
 from ..config import config
 from ..utils.macos_credentials import get_credentials_from_keychain
 
 logger = logging.getLogger(__name__)
+
+# #region agent log
+DEBUG_LOG_PATH = "/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log"
+def _debug_log(location: str, message: str, data: dict, hypothesis_id: str):
+    """Write debug log entry"""
+    try:
+        with open(DEBUG_LOG_PATH, "a") as f:
+            log_entry = {
+                "sessionId": "debug-session",
+                "runId": "run1",
+                "hypothesisId": hypothesis_id,
+                "location": location,
+                "message": message,
+                "data": data,
+                "timestamp": int(datetime.now().timestamp() * 1000)
+            }
+            f.write(json.dumps(log_entry) + "\n")
+    except Exception:
+        pass
+# #endregion
 
 
 class StreamSource(Enum):
     YOUTUBE = "youtube"
     ARCHIVE_ORG = "archive_org"
     PBS = "pbs"
+    PLEX = "plex"
     UNKNOWN = "unknown"
 
 
@@ -74,6 +98,12 @@ class StreamManager:
             cookies_file=config.pbs.cookies_file,
             use_headless_browser=config.pbs.use_headless_browser
         ) if config.pbs.enabled else None
+        
+        # Plex adapter
+        self.plex_adapter = PlexAdapter(
+            base_url=config.plex.base_url,
+            token=config.plex.token
+        ) if config.plex.enabled and config.plex.base_url else None
     
     def update_archive_org_credentials(self, username: str, password: str):
         """Update Archive.org adapter credentials (e.g., after AppleScript prompt)"""
@@ -93,24 +123,73 @@ class StreamManager:
             return StreamSource.ARCHIVE_ORG
         elif self.pbs_adapter and self.pbs_adapter.is_valid_url(url):
             return StreamSource.PBS
+        elif self.plex_adapter and ('plex://' in url or '/library/metadata/' in url):
+            return StreamSource.PLEX
         return StreamSource.UNKNOWN
     
     async def get_stream_url(self, url: str, source: Optional[StreamSource] = None, channel_name: Optional[str] = None) -> str:
         """Get streaming URL for a media URL"""
+        # #region agent log
+        _debug_log("stream_manager.py:get_stream_url:entry", "Getting stream URL", {
+            "url_base": url.split('?')[0][:100] if url else None,
+            "is_plex": '/library/metadata/' in url if url else False,
+            "has_plex_adapter": self.plex_adapter is not None
+        }, "D")
+        # #endregion
+        
         if source is None:
             source = self.detect_source(url)
         
+        # #region agent log
+        _debug_log("stream_manager.py:get_stream_url:source_detected", "Source detected", {
+            "source": source.name if source else None
+        }, "D")
+        # #endregion
+        
         if source == StreamSource.YOUTUBE and self.youtube_adapter:
-            return await self.youtube_adapter.get_stream_url(url)
+            result = await self.youtube_adapter.get_stream_url(url)
+            # #region agent log
+            _debug_log("stream_manager.py:get_stream_url:youtube", "YouTube URL generated", {
+                "result_length": len(result) if result else 0
+            }, "D")
+            # #endregion
+            return result
         elif source == StreamSource.ARCHIVE_ORG and self.archive_org_adapter:
             identifier = self.archive_org_adapter.extract_identifier(url)
             if identifier:
                 filename = self.archive_org_adapter.extract_filename(url)
-                return await self.archive_org_adapter.get_stream_url(identifier, filename)
+                result = await self.archive_org_adapter.get_stream_url(identifier, filename)
+                # #region agent log
+                _debug_log("stream_manager.py:get_stream_url:archive", "Archive.org URL generated", {
+                    "result_length": len(result) if result else 0
+                }, "D")
+                # #endregion
+                return result
         elif source == StreamSource.PBS and self.pbs_adapter:
             # Pass channel name to help PBS adapter select correct stream from window.previews
-            return await self.pbs_adapter.get_stream_url(url, channel_name=channel_name)
+            result = await self.pbs_adapter.get_stream_url(url, channel_name=channel_name)
+            # #region agent log
+            _debug_log("stream_manager.py:get_stream_url:pbs", "PBS URL generated", {
+                "result_length": len(result) if result else 0
+            }, "D")
+            # #endregion
+            return result
+        elif source == StreamSource.PLEX and self.plex_adapter:
+            result = await self.plex_adapter.get_stream_url(url)
+            # #region agent log
+            _debug_log("stream_manager.py:get_stream_url:plex", "Plex URL generated", {
+                "result_has_token": 'X-Plex-Token' in result if result else False,
+                "result_length": len(result) if result else 0,
+                "result_base": result.split('?')[0][:100] if result else None
+            }, "D")
+            # #endregion
+            return result
         
+        # #region agent log
+        _debug_log("stream_manager.py:get_stream_url:error", "Unsupported source", {
+            "source": source.name if source else None
+        }, "D")
+        # #endregion
         raise ValueError(f"Unsupported source or URL: {url}")
     
     async def get_media_info(self, url: str, source: Optional[StreamSource] = None) -> dict:
@@ -124,6 +203,8 @@ class StreamManager:
             identifier = self.archive_org_adapter.extract_identifier(url)
             if identifier:
                 return await self.archive_org_adapter.get_item_info(identifier)
+        elif source == StreamSource.PLEX and self.plex_adapter:
+            return await self.plex_adapter.get_media_info(url)
         
         raise ValueError(f"Unsupported source or URL: {url}")
     
@@ -179,6 +260,10 @@ class StreamManager:
                         response.raise_for_status()
                         async for chunk in response.aiter_bytes(chunk_size=config.streaming.chunk_size):
                             yield chunk
+        # For Plex, use Plex adapter
+        elif source == StreamSource.PLEX and self.plex_adapter:
+            async for chunk in self.plex_adapter.stream_chunked(stream_url, start, end):
+                yield chunk
         else:
             # Standard streaming for other sources (YouTube, etc.)
             # NOTE: httpx streams directly in memory, no files are written to disk

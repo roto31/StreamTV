@@ -145,8 +145,11 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
-        margin: 8px 0;
+        margin: 4px 8px 4px 0;
         font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+        min-height: 44px;
+        box-sizing: border-box;
+        vertical-align: top;
     }
     
     .troubleshooting-script-btn:hover {
@@ -158,14 +161,33 @@
         transform: scale(0.96);
     }
     
-    .troubleshooting-script-btn::before {
-        content: "play_arrow";
-        font-family: 'Material Icons';
-        font-size: 20px;
-    }
-    
     .troubleshooting-script-btn .material-icons {
         font-size: 20px;
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        line-height: 1;
+    }
+    
+    .troubleshooting-script-btn > span:not(.material-icons) {
+        white-space: normal;
+        flex: 0 1 auto;
+        text-align: left;
+        line-height: 1.4;
+    }
+    
+    /* List items containing script buttons - display as block for better layout */
+    .doc-content li:has(.troubleshooting-script-btn) {
+        display: block;
+        margin-bottom: 8px;
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+    }
+    
+    /* Fallback for browsers that don't support :has() */
+    .doc-content li {
+        margin-bottom: 8px;
     }
     
     /* Script Results */
@@ -213,22 +235,21 @@
     <div id="scriptResults"></div>
 </div>
 
-<script>
-    // Move scriptResults div to right after Quick Diagnostics section
+<script nonce="{{ request.state.csp_nonce }}">
+    // Move scriptResults div to right after Quick Diagnostics section or script buttons
     document.addEventListener('DOMContentLoaded', function() {
         const docContent = document.querySelector('.doc-content');
         const scriptResults = document.getElementById('scriptResults');
         
         if (!docContent || !scriptResults) return;
         
-        // Find the Quick Diagnostics heading (h2)
+        // First, try to find "Quick Diagnostics" heading
         const headings = Array.from(docContent.querySelectorAll('h2'));
         const quickDiagnosticsHeading = headings.find(h => 
             h.textContent.toLowerCase().includes('quick diagnostic')
         );
         
-        if (!quickDiagnosticsHeading) return;
-        
+        if (quickDiagnosticsHeading) {
         // Find all script buttons after the Quick Diagnostics heading
         let current = quickDiagnosticsHeading.nextElementSibling;
         let lastScriptButton = null;
@@ -245,10 +266,9 @@
         
         // Insert scriptResults right after the script buttons
         if (lastScriptButtonParent) {
-            // Insert after the parent element containing the script buttons
             lastScriptButtonParent.parentNode.insertBefore(scriptResults, lastScriptButtonParent.nextSibling);
         } else {
-            // Fallback: find the paragraph after the heading that contains "How to use"
+                // Find the paragraph after the heading that contains "How to use"
             current = quickDiagnosticsHeading.nextElementSibling;
             while (current && current.tagName !== 'H2') {
                 if (current.tagName === 'P' && current.textContent.includes('How to use')) {
@@ -266,12 +286,42 @@
                 } else {
                     quickDiagnosticsHeading.parentNode.insertBefore(scriptResults, quickDiagnosticsHeading.nextSibling);
                 }
+                }
+            }
+        } else {
+            // If no "Quick Diagnostics" heading, find first script button and insert after it
+            const firstScriptButton = docContent.querySelector('.troubleshooting-script-btn');
+            if (firstScriptButton) {
+                const parent = firstScriptButton.parentElement;
+                // Find the last script button in the same parent
+                const scriptButtons = Array.from(parent.querySelectorAll('.troubleshooting-script-btn'));
+                const lastButton = scriptButtons[scriptButtons.length - 1];
+                if (lastButton && lastButton.nextSibling) {
+                    lastButton.parentNode.insertBefore(scriptResults, lastButton.nextSibling);
+                } else {
+                    // Insert after the parent element (usually a <p> or <ul>)
+                    if (parent.nextSibling) {
+                        parent.parentNode.insertBefore(scriptResults, parent.nextSibling);
+                    } else {
+                        parent.appendChild(scriptResults);
+                    }
+                }
+            } else {
+                // If no script buttons found, just append to doc content
+                docContent.appendChild(scriptResults);
             }
         }
         
         // Add some spacing styling
         scriptResults.style.marginTop = '24px';
         scriptResults.style.marginBottom = '32px';
+        
+        // Convert icons in script buttons after they're created
+        if (window.convertMaterialIcons) {
+            setTimeout(() => {
+                window.convertMaterialIcons();
+            }, 100);
+        }
     });
 
     async function runTroubleshootingScript(scriptId) {
@@ -284,7 +334,8 @@
         
         // Show loading state
         const resultsDiv = document.getElementById('scriptResults');
-        resultsDiv.innerHTML = '<div class="script-result"><div class="script-result-header"><span class="material-icons">hourglass_empty</span>Running script...</div></div>';
+        const loadingIcon = window.iconMap && window.iconMap['hourglass_empty'] ? window.iconMap['hourglass_empty'] : '⏳';
+        resultsDiv.innerHTML = `<div class="script-result"><div class="script-result-header"><span class="material-icons">${loadingIcon}</span>Running script...</div></div>`;
         
         // Ensure results div is visible
         resultsDiv.style.display = 'block';
@@ -301,19 +352,26 @@
             
             // Display results
             const resultClass = result.success ? 'success' : 'error';
-            const icon = result.success ? 'check_circle' : 'error';
+            const iconSymbol = result.success ? (window.iconMap && window.iconMap['check_circle'] ? window.iconMap['check_circle'] : '✓') : (window.iconMap && window.iconMap['error'] ? window.iconMap['error'] : '❌');
             const statusText = result.success ? 'Script completed successfully' : 'Script completed with errors';
             
             resultsDiv.innerHTML = `
                 <div class="script-result ${resultClass}">
                     <div class="script-result-header">
-                        <span class="material-icons">${icon}</span>
-                        <span>${result.script_name} - ${statusText}</span>
+                        <span class="material-icons">${iconSymbol}</span>
+                        <span>${escapeHtml(result.script_name)} - ${statusText}</span>
                     </div>
                     ${result.stdout ? `<div class="script-result-output">${escapeHtml(result.stdout)}</div>` : ''}
                     ${result.stderr ? `<div class="script-result-output" style="color: var(--error);">${escapeHtml(result.stderr)}</div>` : ''}
                 </div>
             `;
+            
+            // Convert icons after rendering
+            if (window.convertMaterialIcons) {
+                setTimeout(() => {
+                    window.convertMaterialIcons();
+                }, 100);
+            }
             
             // Scroll to results smoothly
             setTimeout(() => {
@@ -321,15 +379,23 @@
             }, 100);
             
         } catch (error) {
+            const errorIcon = window.iconMap && window.iconMap['error'] ? window.iconMap['error'] : '❌';
             resultsDiv.innerHTML = `
                 <div class="script-result error">
                     <div class="script-result-header">
-                        <span class="material-icons">error</span>
+                        <span class="material-icons">${errorIcon}</span>
                         <span>Error running script</span>
                     </div>
                     <div class="script-result-output">${escapeHtml(error.message)}</div>
                 </div>
             `;
+            
+            // Convert icons after rendering
+            if (window.convertMaterialIcons) {
+                setTimeout(() => {
+                    window.convertMaterialIcons();
+                }, 100);
+            }
             setTimeout(() => {
                 resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
