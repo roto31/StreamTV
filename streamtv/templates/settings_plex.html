@@ -9,15 +9,15 @@
             <p class="page-subtitle">Configure Plex Media Server API integration for enhanced EPG and schedule management.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" data-onclick="testConnection()">
+            <button class="btn btn-outlined" type="button" id="testPlexConnectionButton">
                 <span class="material-icons">network_check</span>
                 Test Connection
             </button>
-            <button class="btn btn-outlined" type="button" data-onclick="loadSettings(true)">
+            <button class="btn btn-outlined" type="button" id="refreshPlexSettingsButton">
                 <span class="material-icons">refresh</span>
                 Reload
             </button>
-            <button class="btn btn-primary" type="button" data-onclick="saveSettings()">
+            <button class="btn btn-primary" type="button" id="savePlexSettingsButton">
                 <span class="material-icons">save</span>
                 Save Changes
             </button>
@@ -51,7 +51,7 @@
                 <label for="token">Authentication Token</label>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <input type="password" id="token" placeholder="Your Plex authentication token" style="flex: 1;">
-                    <button class="btn btn-outlined" type="button" data-onclick="toggleTokenVisibility()" style="white-space: nowrap;">
+                    <button class="btn btn-outlined" type="button" id="togglePlexTokenButton" style="white-space: nowrap;">
                         <span class="material-icons" id="tokenVisibilityIcon">visibility</span>
                     </button>
                 </div>
@@ -389,7 +389,29 @@
 
 {% block extra_scripts %}
 <script nonce="{{ request.state.csp_nonce }}">
-    document.addEventListener('DOMContentLoaded', () => loadSettings());
+    document.addEventListener('DOMContentLoaded', () => {
+        const testButton = document.getElementById('testPlexConnectionButton');
+        if (testButton) {
+            testButton.addEventListener('click', testConnection);
+        }
+
+        const refreshButton = document.getElementById('refreshPlexSettingsButton');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', () => loadSettings(true));
+        }
+
+        const saveButton = document.getElementById('savePlexSettingsButton');
+        if (saveButton) {
+            saveButton.addEventListener('click', saveSettings);
+        }
+
+        const toggleTokenButton = document.getElementById('togglePlexTokenButton');
+        if (toggleTokenButton) {
+            toggleTokenButton.addEventListener('click', toggleTokenVisibility);
+        }
+
+        loadSettings();
+    });
     
     let tokenVisible = false;
     

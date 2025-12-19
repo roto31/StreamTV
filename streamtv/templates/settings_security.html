@@ -9,7 +9,7 @@
             <p class="page-subtitle">Configure API key authentication for StreamTV.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" data-onclick="loadSettings()">
+            <button class="btn btn-outlined" type="button" id="refreshSecuritySettingsButton">
                 <span class="material-icons">refresh</span>
                 Reload
             </button>
@@ -26,8 +26,7 @@
             <div class="card-title">Server Configuration</div>
             <div class="form-group">
                 <label style="display: flex; align-items: center; gap: 8px;">
-                    <input type="checkbox" id="apiKeyRequiredCheckbox" 
-                           data-onchange="updateApiKeyRequired()">
+                    <input type="checkbox" id="apiKeyRequiredCheckbox">
                     <span>Require API Key Authentication</span>
                 </label>
                 <small>When enabled, all non-GET API requests require a valid API key or bearer token.</small>
@@ -39,12 +38,12 @@
                     <input type="password" id="serverTokenInput" class="form-input" 
                            placeholder="Enter server access token (stored in config.yaml)" 
                            value="">
-                    <button class="btn btn-outlined" type="button" data-onclick="generateServerToken()" 
+                    <button class="btn btn-outlined" type="button" id="generateServerTokenButton" 
                             style="white-space: nowrap;">
                         <span class="material-icons">autorenew</span>
                         Generate
                     </button>
-                    <button class="btn btn-outlined" type="button" data-onclick="toggleServerTokenVisibility()">
+                    <button class="btn btn-outlined" type="button" id="toggleServerTokenButton">
                         <span class="material-icons" id="serverVisibilityIcon">visibility</span>
                     </button>
                 </div>
@@ -52,7 +51,7 @@
             </div>
             
             <div class="form-actions" style="margin-top: 16px;">
-                <button class="btn btn-primary" type="button" data-onclick="saveServerSettings()">
+                <button class="btn btn-primary" type="button" id="saveServerSettingsButton">
                     <span class="material-icons">save</span>
                     Save Server Settings
                 </button>
@@ -72,7 +71,7 @@
                     <input type="password" id="apiKeyInput" class="form-input" 
                            placeholder="Enter your API key (stored in browser)" 
                            value="">
-                    <button class="btn btn-outlined" type="button" data-onclick="toggleApiKeyVisibility()">
+                    <button class="btn btn-outlined" type="button" id="toggleApiKeyButton">
                         <span class="material-icons" id="visibilityIcon">visibility</span>
                     </button>
                 </div>
@@ -80,15 +79,15 @@
             </div>
             
             <div class="form-actions" style="margin-top: 16px;">
-                <button class="btn btn-primary" type="button" data-onclick="saveApiKey()">
+                <button class="btn btn-primary" type="button" id="saveApiKeyButton">
                     <span class="material-icons">save</span>
                     Save Client API Key
                 </button>
-                <button class="btn btn-outlined" type="button" data-onclick="clearApiKey()">
+                <button class="btn btn-outlined" type="button" id="clearApiKeyButton">
                     <span class="material-icons">clear</span>
                     Clear
                 </button>
-                <button class="btn btn-outlined" type="button" data-onclick="copyServerTokenToClient()">
+                <button class="btn btn-outlined" type="button" id="copyServerTokenButton">
                     <span class="material-icons">content_copy</span>
                     Copy Server Token
                 </button>
@@ -318,6 +317,51 @@ function showApiKeyStatus(message, type) {
 
 // Load settings on page load
 document.addEventListener('DOMContentLoaded', () => {
+    const refreshButton = document.getElementById('refreshSecuritySettingsButton');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', () => loadSettings(true));
+    }
+
+    const apiKeyCheckbox = document.getElementById('apiKeyRequiredCheckbox');
+    if (apiKeyCheckbox) {
+        apiKeyCheckbox.addEventListener('change', updateApiKeyRequired);
+    }
+
+    const generateTokenButton = document.getElementById('generateServerTokenButton');
+    if (generateTokenButton) {
+        generateTokenButton.addEventListener('click', generateServerToken);
+    }
+
+    const toggleServerTokenButton = document.getElementById('toggleServerTokenButton');
+    if (toggleServerTokenButton) {
+        toggleServerTokenButton.addEventListener('click', toggleServerTokenVisibility);
+    }
+
+    const saveServerButton = document.getElementById('saveServerSettingsButton');
+    if (saveServerButton) {
+        saveServerButton.addEventListener('click', saveServerSettings);
+    }
+
+    const toggleApiKeyButton = document.getElementById('toggleApiKeyButton');
+    if (toggleApiKeyButton) {
+        toggleApiKeyButton.addEventListener('click', toggleApiKeyVisibility);
+    }
+
+    const saveApiKeyButton = document.getElementById('saveApiKeyButton');
+    if (saveApiKeyButton) {
+        saveApiKeyButton.addEventListener('click', saveApiKey);
+    }
+
+    const clearApiKeyButton = document.getElementById('clearApiKeyButton');
+    if (clearApiKeyButton) {
+        clearApiKeyButton.addEventListener('click', clearApiKey);
+    }
+
+    const copyServerTokenButton = document.getElementById('copyServerTokenButton');
+    if (copyServerTokenButton) {
+        copyServerTokenButton.addEventListener('click', copyServerTokenToClient);
+    }
+
     loadSettings();
 });
 </script>
