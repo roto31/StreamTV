@@ -89,6 +89,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add common security headers to all responses."""
 
     async def dispatch(self, request: Request, call_next):
+        # Generate nonce before the request is processed so templates can access it
+        nonce = secrets.token_urlsafe(16)
+        request.state.csp_nonce = nonce
+
         response = await call_next(request)
         response.headers.setdefault("X-Content-Type-Options", "nosniff")
         response.headers.setdefault("X-Frame-Options", "DENY")
@@ -96,10 +100,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()")
         response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
         response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
-        
-        # Generate nonce for inline scripts (CSP nonce support)
-        nonce = secrets.token_urlsafe(16)
-        request.state.csp_nonce = nonce
         
         # Tightened CSP - removed 'unsafe-inline' from script-src for better XSS protection
         # Using nonces for inline scripts instead
@@ -136,47 +136,38 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
         self.exempt_methods = {"GET", "HEAD", "OPTIONS"}
     
     async def dispatch(self, request: Request, call_next):
-        # Skip CSRF check for exempt paths and safe methods
-        if request.method in self.exempt_methods:
-            return await call_next(request)
-        
-        if any(request.url.path.startswith(path) for path in self.exempt_paths):
-            return await call_next(request)
-        
-        # Generate CSRF token if not present
-        if not hasattr(request.state, 'csrf_token'):
+        path_is_exempt = any(request.url.path.startswith(path) for path in self.exempt_paths)
+
+        # Reuse existing CSRF token from cookie when available, otherwise generate a new one
+        csrf_cookie = request.cookies.get("csrf_token")
+        if csrf_cookie:
+            request.state.csrf_token = csrf_cookie
+        elif not hasattr(request.state, 'csrf_token'):
             request.state.csrf_token = secrets.token_urlsafe(32)
         
-        # For POST/PUT/DELETE requests, validate CSRF token
-        if request.method in {"POST", "PUT", "DELETE", "PATCH"}:
-            # Check for CSRF token in header (preferred) or form data
+        should_validate = (
+            request.method not in self.exempt_methods
+            and not path_is_exempt
+            and request.method in {"POST", "PUT", "DELETE", "PATCH"}
+        )
+
+        if should_validate:
             csrf_token_header = request.headers.get("X-CSRF-Token")
             csrf_token_form = None
             
-            # Try to get from form data if content type is form-urlencoded or multipart
             content_type = request.headers.get("Content-Type", "")
             if "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
                 try:
                     form_data = await request.form()
                     csrf_token_form = form_data.get("csrf_token")
                 except Exception:
-                    pass
+                    csrf_token_form = None
             
             provided_token = csrf_token_header or csrf_token_form
-            
-            # Get expected token from session/cookie (simplified - in production use proper session management)
-            # For now, we'll use a simple approach: token must match what we expect
-            # In a full implementation, this would be stored in a secure session cookie
-            expected_token = request.cookies.get("csrf_token")
+            expected_token = csrf_cookie or getattr(request.state, 'csrf_token', None)
             
             if not provided_token or not expected_token or provided_token != expected_token:
-                # For API requests, be more lenient (they use API keys)
-                if request.url.path.startswith("/api/"):
-                    # API endpoints use API key auth, so CSRF is less critical
-                    # But we still want to validate if token is provided
-                    pass
-                else:
-                    # For web forms, require CSRF token
+                if not request.url.path.startswith("/api/"):
                     return JSONResponse(
                         status_code=403,
                         content={"detail": "CSRF token validation failed"}
@@ -184,7 +175,6 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
         
         response = await call_next(request)
         
-        # Set CSRF token cookie for future requests
         if hasattr(request.state, 'csrf_token'):
             response.set_cookie(
                 "csrf_token",
@@ -192,6 +182,6 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
                 httponly=True,
                 samesite="strict",
                 secure=request.url.scheme == "https"
-        )
+            )
         
         return response

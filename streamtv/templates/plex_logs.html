@@ -153,7 +153,7 @@
             <p style="color: var(--text-secondary); margin-top: 4px;">View Plex Media Server logs for troubleshooting</p>
         </div>
         <div class="logs-controls">
-            <select id="logFile" class="log-file-selector" data-onchange="loadLogs()">
+            <select id="logFile" class="log-file-selector">
                 <option value="">Loading files...</option>
             </select>
             <select id="filterLevel">
@@ -165,8 +165,8 @@
                 <option value="CRITICAL">CRITICAL</option>
             </select>
             <input type="number" id="linesCount" value="500" min="100" max="10000" step="100" style="width: 100px;">
-            <button class="btn btn-outlined" data-onclick="loadLogs()">Refresh</button>
-            <button class="btn btn-outlined" data-onclick="toggleAutoScroll()" id="autoScrollBtn">Auto-scroll: ON</button>
+            <button class="btn btn-outlined" id="refreshLogsButton">Refresh</button>
+            <button class="btn btn-outlined" id="autoScrollBtn">Auto-scroll: ON</button>
         </div>
     </div>
     
@@ -177,7 +177,7 @@
     </div>
 </div>
 
-<div class="auto-scroll-indicator" id="autoScrollIndicator" data-onclick="toggleAutoScroll()">
+<div class="auto-scroll-indicator" id="autoScrollIndicator">
     Auto-scroll paused. Click to resume.
 </div>
 
@@ -188,6 +188,36 @@
     
     // Load log files on page load
     document.addEventListener('DOMContentLoaded', async () => {
+        const logFileSelect = document.getElementById('logFile');
+        if (logFileSelect) {
+            logFileSelect.addEventListener('change', () => loadLogs());
+        }
+
+        const filterLevelSelect = document.getElementById('filterLevel');
+        if (filterLevelSelect) {
+            filterLevelSelect.addEventListener('change', () => loadLogs());
+        }
+
+        const linesCountInput = document.getElementById('linesCount');
+        if (linesCountInput) {
+            linesCountInput.addEventListener('change', () => loadLogs());
+        }
+
+        const refreshButton = document.getElementById('refreshLogsButton');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', () => loadLogs());
+        }
+
+        const autoScrollButton = document.getElementById('autoScrollBtn');
+        if (autoScrollButton) {
+            autoScrollButton.addEventListener('click', toggleAutoScroll);
+        }
+
+        const autoScrollIndicator = document.getElementById('autoScrollIndicator');
+        if (autoScrollIndicator) {
+            autoScrollIndicator.addEventListener('click', toggleAutoScroll);
+        }
+
         await loadLogFiles();
         await loadLogs();
     });

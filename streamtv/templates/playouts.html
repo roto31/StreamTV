@@ -304,10 +304,10 @@
     <div class="playouts-toolbar">
         <div class="search-box" style="position: relative;">
             <span class="material-icons search-icon">search</span>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search playouts..." data-oninput="filterPlayouts()">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search playouts...">
         </div>
         <div style="flex: 1;"></div>
-        <button class="btn btn-primary" data-onclick="refreshAllPlayouts()">
+        <button class="btn btn-primary" id="refreshAllPlayoutsButton">
             <span class="material-icons" style="font-size: 18px;">refresh</span>
             Refresh All
         </button>
@@ -351,7 +351,19 @@
         let selectedChannelNumber = null;
         const scheduleCache = new Map();
         
-        document.addEventListener('DOMContentLoaded', loadPlayouts);
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterPlayouts);
+            }
+
+            const refreshAllButton = document.getElementById('refreshAllPlayoutsButton');
+            if (refreshAllButton) {
+                refreshAllButton.addEventListener('click', refreshAllPlayouts);
+            }
+
+            loadPlayouts();
+        });
         
         async function loadPlayouts() {
             try {
@@ -417,17 +429,17 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-icon view" data-onclick="viewSchedule('${playout.channelNumber}')" title="View Schedule">
+                            <button class="btn-icon view" data-action="viewSchedule" data-args='["${playout.channelNumber}"]' title="View Schedule">
                                 <span class="material-icons">visibility</span>
                             </button>
-                            <button class="btn-icon refresh" data-onclick="refreshPlayout('${playout.channelNumber}')" title="Refresh Playout">
+                            <button class="btn-icon refresh" data-action="refreshPlayout" data-args='["${playout.channelNumber}"]' title="Refresh Playout">
                                 <span class="material-icons">refresh</span>
                             </button>
                             <a href="/channels" class="btn-icon edit" title="Manage Channel">
                                 <span class="material-icons">settings</span>
                             </a>
                             ${playout.channelEnabled ? `
-                                <a href="/player" class="btn-icon" data-onclick="localStorage.setItem('autoPlayChannel', '${playout.channelNumber}')" title="Play Channel">
+                                <a href="/player" class="btn-icon" data-action="setAutoPlayChannel" data-args='["${playout.channelNumber}"]' title="Play Channel">
                                     <span class="material-icons">play_circle</span>
                                 </a>
                             ` : ''}
@@ -437,6 +449,9 @@
             `).join('');
             
             playouts.forEach(playout => loadScheduleSummary(playout.channelNumber));
+            if (typeof bindActionHandlers === 'function') {
+                bindActionHandlers(tableBody);
+            }
             attachPlayoutRowHandlers();
             autoSelectRow();
         }
@@ -512,8 +527,8 @@
                 </div>
                 <div id="scheduleMeta"></div>
                 <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="btn btn-outlined" type="button" style="flex: 1 1 200px;" data-onclick="viewSchedule('${playout.channelNumber}')">View Schedule</button>
-                    ${playout.channelEnabled ? `<a href="/player" class="btn btn-primary" style="flex: 1 1 200px; text-align: center;" data-onclick="localStorage.setItem('autoPlayChannel', '${playout.channelNumber}')">Play Channel ${playout.channelNumber}</a>` : ''}
+                    <button class="btn btn-outlined" type="button" style="flex: 1 1 200px;" data-action="viewSchedule" data-args='["${playout.channelNumber}"]'>View Schedule</button>
+                    ${playout.channelEnabled ? `<a href="/player" class="btn btn-primary" style="flex: 1 1 200px; text-align: center;" data-action="setAutoPlayChannel" data-args='["${playout.channelNumber}"]'>Play Channel ${playout.channelNumber}</a>` : ''}
                 </div>
                 <div id="scheduleDetail" class="schedule-blocks" style="margin-top: 16px;">
                     <p style="color: var(--text-secondary); font-size: 15px;">Loading schedule…</p>
@@ -707,6 +722,13 @@
                 alert('Refreshing all playouts...');
                 loadPlayouts();
             }
+        }
+
+        function setAutoPlayChannel(channelNumber) {
+            if (!channelNumber) {
+                return;
+            }
+            localStorage.setItem('autoPlayChannel', channelNumber);
         }
     </script>
 {% endblock %}

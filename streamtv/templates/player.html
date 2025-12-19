@@ -248,7 +248,7 @@
                     container.innerHTML = channels
                         .filter(c => c.enabled)
                         .map(channel => `
-                            <div class="channel-card" data-onclick="loadChannel('${channel.number}', '${channel.name.replace(/'/g, "\\'")}')">
+                            <div class="channel-card" data-action="loadChannel" data-args='[${JSON.stringify(channel.number)}, ${JSON.stringify(channel.name)}]'>
                                 <div class="channel-card-header">
                                     <div class="channel-number">${channel.number}</div>
                                     <span class="badge ${channel.enabled ? 'badge-success' : 'badge-error'}">
@@ -259,6 +259,9 @@
                                 ${channel.group ? `<div class="channel-group">${channel.group}</div>` : ''}
                             </div>
                         `).join('');
+                    if (window.bindActionHandlers) {
+                        bindActionHandlers(container);
+                    }
                 }
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';

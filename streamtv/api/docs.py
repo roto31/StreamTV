@@ -6,6 +6,8 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
+import html
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -28,6 +30,21 @@ except ImportError:
 def markdown_to_html(markdown_content: str) -> str:
     """Convert markdown to HTML with script link support"""
     import re
+    
+    def build_script_button(script_id: str, label: str) -> str:
+        """Generate a troubleshooting button without inline JS."""
+        safe_script_id = html.escape(script_id, quote=True)
+        args_attr = html.escape(json.dumps([script_id]), quote=True)
+        safe_label = html.escape(label, quote=False)
+        return (
+            '<button class="troubleshooting-script-btn" '
+            f'data-script-id="{safe_script_id}" '
+            'data-action="runTroubleshootingScript" '
+            f'data-args="{args_attr}">'
+            '<span class="material-icons">play_arrow</span>'
+            f'<span>{safe_label}</span>'
+            '</button>'
+        )
     
     # First, extract script links with their full context (including text after the link)
     # Pattern: - [Run Script: script_id](script:script_id) - Description text
@@ -100,7 +117,7 @@ def markdown_to_html(markdown_content: str) -> str:
             full_text = f"{clean_text} - {desc}"
         else:
             full_text = clean_text
-        button_html = f'<button class="troubleshooting-script-btn" data-script-id="{script_info["script_id"]}" onclick="runTroubleshootingScript(\'{script_info["script_id"]}\')"><span class="material-icons">play_arrow</span><span>{full_text}</span></button>'
+        button_html = build_script_button(script_info["script_id"], full_text)
         html_content = html_content.replace(script_info['placeholder'], button_html)
     
     # Also handle any remaining script: links that weren't caught by the pattern
@@ -109,7 +126,7 @@ def markdown_to_html(markdown_content: str) -> str:
         script_id = match.group(1)
         link_text = match.group(2)
         clean_text = link_text.replace("Run Script: ", "").strip()
-        return f'<button class="troubleshooting-script-btn" data-script-id="{script_id}" onclick="runTroubleshootingScript(\'{script_id}\')"><span class="material-icons">play_arrow</span><span>{clean_text}</span></button>'
+        return build_script_button(script_id, clean_text)
     
     html_content = re.sub(script_pattern, replace_script_link, html_content)
     

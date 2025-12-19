@@ -584,6 +584,9 @@
             `;
             
             modelsList.appendChild(modelItem);
+            if (window.bindActionHandlers) {
+                bindActionHandlers(modelItem);
+            }
         });
     }
 
@@ -602,6 +605,9 @@
                 </button>
             `;
             installedModelsList.appendChild(modelItem);
+            if (window.bindActionHandlers) {
+                bindActionHandlers(modelItem);
+            }
         });
     }
 
@@ -820,6 +826,13 @@
             });
         }
     });
+
+    function hideElementById(elementId) {
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.style.display = 'none';
+        }
+    }
 </script>
 {% endblock %}
 

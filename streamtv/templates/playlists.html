@@ -9,11 +9,11 @@
             <p class="page-subtitle">Browse, filter, and inspect channel playlists with Apple HIG-aligned controls.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" data-onclick="window.open('/api/playlists', '_blank')">
+            <button class="btn btn-outlined" type="button" id="playlistsApiButton">
                 <span class="material-icons">code</span>
                 API Response
             </button>
-            <button class="btn btn-primary" type="button" data-onclick="refreshPlaylists()">
+            <button class="btn btn-primary" type="button" id="refreshPlaylistsButton">
                 <span class="material-icons">refresh</span>
                 Refresh
             </button>
@@ -46,12 +46,12 @@
     <div class="card controls-card">
         <div class="input-group">
             <span class="material-icons">search</span>
-            <input type="text" id="searchInput" placeholder="Search playlists, channels, or descriptions" data-oninput="filterPlaylists()">
+            <input type="text" id="searchInput" placeholder="Search playlists, channels, or descriptions">
         </div>
         <div class="segmented-control">
-            <button class="segment active" id="filterAll" data-onclick="setAssignmentFilter('all')">All</button>
-            <button class="segment" id="filterAssigned" data-onclick="setAssignmentFilter('assigned')">Assigned</button>
-            <button class="segment" id="filterUnassigned" data-onclick="setAssignmentFilter('unassigned')">Unassigned</button>
+            <button class="segment active" id="filterAll" data-filter-value="all">All</button>
+            <button class="segment" id="filterAssigned" data-filter-value="assigned">Assigned</button>
+            <button class="segment" id="filterUnassigned" data-filter-value="unassigned">Unassigned</button>
         </div>
     </div>
     
@@ -399,7 +399,33 @@
     let channelMap = {};
     let assignmentFilter = 'all';
     
-    document.addEventListener('DOMContentLoaded', loadPlaylists);
+    document.addEventListener('DOMContentLoaded', () => {
+        const apiButton = document.getElementById('playlistsApiButton');
+        if (apiButton) {
+            apiButton.addEventListener('click', openPlaylistsApi);
+        }
+
+        const refreshButton = document.getElementById('refreshPlaylistsButton');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', refreshPlaylists);
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterPlaylists);
+        }
+
+        document.querySelectorAll('[data-filter-value]').forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.dataset.filterValue;
+                if (value) {
+                    setAssignmentFilter(value);
+                }
+            });
+        });
+
+        loadPlaylists();
+    });
     
     async function loadPlaylists() {
         try {
@@ -505,7 +531,7 @@
                     <td>${formatRelativeTime(playlist.updated_at)}</td>
                     <td>
                         <div class="action-buttons" style="justify-content: flex-end;">
-                            <button class="btn-icon" title="Open API" data-onclick="event.stopPropagation(); window.open('/api/playlists/${playlist.id}', '_blank')">
+                            <button class="btn-icon" title="Open API" data-action="openPlaylistApi" data-stop-propagation="true" data-args='[${playlist.id}]'>
                                 <span class="material-icons">open_in_new</span>
                             </button>
                         </div>
@@ -520,6 +546,9 @@
                 selectRow(row, playlist);
             });
         });
+        if (typeof bindActionHandlers === 'function') {
+            bindActionHandlers(tableBody);
+        }
         
         if (playlists.length > 0 && !selectedRow) {
             const firstRow = document.querySelector('.playlist-row');
@@ -630,6 +659,17 @@
         selectedRow = null;
         selectedPlaylistId = null;
         loadPlaylists();
+    }
+
+    function openPlaylistsApi() {
+        window.open('/api/playlists', '_blank');
+    }
+
+    function openPlaylistApi(playlistId) {
+        if (!playlistId && playlistId !== 0) {
+            return;
+        }
+        window.open(`/api/playlists/${playlistId}`, '_blank');
     }
     
     function formatRelativeTime(value) {

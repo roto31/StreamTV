@@ -214,7 +214,7 @@ class PlexAdapter:
                 # Try to find Part element - could be direct child or nested
                 part_elem = media_elem.find('Part')
                 if part_elem is None:
-                    part_elem = media_elem.find('.//Part')
+                part_elem = media_elem.find('.//Part')
                 
                 # #region agent log
                 _debug_log("plex_adapter.py:get_stream_url:part_elem", "Part element search", {
