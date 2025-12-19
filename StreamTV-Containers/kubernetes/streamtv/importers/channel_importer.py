@@ -59,7 +59,7 @@ class ChannelImporter:
             logger.warning(f"Could not parse duration '{duration_str}': {e}")
             return None
     
-    def get_or_create_media_item(self, stream_data: Dict[str, Any]) -> MediaItem:
+    async def get_or_create_media_item(self, stream_data: Dict[str, Any]) -> MediaItem:
         """Get existing media item or create new one"""
         url = stream_data.get('url')
         if not url:
@@ -72,7 +72,9 @@ class ChannelImporter:
         
         # Determine source
         source_str = stream_data.get('source', '').lower()
-        if 'youtube' in source_str or 'youtu.be' in url or 'youtube.com' in url:
+        if source_str == 'plex' or 'plex://' in url:
+            source = StreamSource.PLEX
+        elif 'youtube' in source_str or 'youtu.be' in url or 'youtube.com' in url:
             source = StreamSource.YOUTUBE
         elif 'archive' in source_str or 'archive.org' in url:
             source = StreamSource.ARCHIVE_ORG
@@ -81,6 +83,69 @@ class ChannelImporter:
         
         # Extract source ID
         source_id = ""
+        if source == StreamSource.PLEX:
+            # Extract rating key from Plex URL
+            plex_rating_key = stream_data.get('plex_rating_key')
+            if plex_rating_key:
+                source_id = str(plex_rating_key)
+            else:
+                # Try to extract from URL
+                match = re.search(r'/library/metadata/(\d+)', url)
+                if match:
+                    source_id = match.group(1)
+                else:
+                    source_id = url
+        
+        # For Plex sources, fetch full metadata from Plex API
+        title = stream_data.get('collection', 'Untitled')
+        description = stream_data.get('notes', '')
+        duration = self.parse_duration(stream_data.get('runtime'))
+        thumbnail = None
+        
+        if source == StreamSource.PLEX and self.stream_manager and self.stream_manager.plex_adapter:
+            try:
+                plex_info = await self.stream_manager.plex_adapter.get_media_info(url)
+                if plex_info:
+                    # Use Plex metadata if available
+                    if plex_info.get('title'):
+                        title = plex_info['title']
+                    if plex_info.get('summary'):
+                        description = plex_info['summary']
+                    if plex_info.get('duration'):
+                        duration = plex_info['duration']
+                    
+                    # Format thumbnail URL - make it absolute if it's a relative path
+                    if plex_info.get('thumb'):
+                        thumb_path = plex_info['thumb']
+                        if thumb_path.startswith('/'):
+                            # Relative path - make it absolute using Plex base URL
+                            if self.stream_manager.plex_adapter.base_url:
+                                thumbnail = f"{self.stream_manager.plex_adapter.base_url}{thumb_path}?X-Plex-Token={self.stream_manager.plex_adapter.token or ''}"
+                            else:
+                                thumbnail = thumb_path
+                        elif thumb_path.startswith('http'):
+                            # Already absolute
+                            thumbnail = thumb_path
+                        else:
+                            # Relative path without leading slash
+                            if self.stream_manager.plex_adapter.base_url:
+                                thumbnail = f"{self.stream_manager.plex_adapter.base_url}/{thumb_path}?X-Plex-Token={self.stream_manager.plex_adapter.token or ''}"
+                            else:
+                                thumbnail = thumb_path
+                    
+                    logger.debug(f"  Fetched Plex metadata for {title[:50]}")
+            except Exception as e:
+                logger.warning(f"  Could not fetch Plex metadata for {url}: {e}. Using YAML data.")
+        
+        # Fallback to YAML data if Plex metadata fetch failed
+        if not title or title == 'Untitled':
+            title = stream_data.get('id', 'Media Item')
+        
+        # Parse duration from YAML if not set from Plex
+        if not duration:
+            duration = self.parse_duration(stream_data.get('runtime'))
+        
+        # Extract source ID for non-Plex sources
         if source == StreamSource.YOUTUBE:
             match = re.search(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*', url)
             if match:
@@ -90,22 +155,15 @@ class ChannelImporter:
             if match:
                 source_id = match.group(1)
         
-        # Get title
-        title = stream_data.get('collection', 'Untitled')
-        if not title or title == 'Untitled':
-            title = stream_data.get('id', 'Media Item')
-        
-        # Parse duration
-        duration = self.parse_duration(stream_data.get('runtime'))
-        
         # Create media item
         media_item = MediaItem(
             source=source,
             source_id=source_id or url,
             url=url,
             title=title,
-            description=stream_data.get('notes', ''),
+            description=description,
             duration=duration,
+            thumbnail=thumbnail,
             uploader=stream_data.get('network', None),
             upload_date=str(stream_data.get('broadcast_date', '')) if stream_data.get('broadcast_date') else None
         )
@@ -160,7 +218,7 @@ class ChannelImporter:
         self.db.add(collection_item)
         self.db.commit()
     
-    def import_channel_from_config(self, channel_config: Dict[str, Any]) -> Channel:
+    async def import_channel_from_config(self, channel_config: Dict[str, Any]) -> Channel:
         """Import a single channel from configuration"""
         channel_number = str(channel_config.get('number', ''))
         channel_name = channel_config.get('name', f'Channel {channel_number}')
@@ -214,7 +272,7 @@ class ChannelImporter:
                 
                 for order, stream_data in stream_list:
                     try:
-                        media_item = self.get_or_create_media_item(stream_data)
+                        media_item = await self.get_or_create_media_item(stream_data)
                         self.add_media_to_collection(collection, media_item, order)
                     except Exception as e:
                         logger.error(f"  ✗ Error importing media item: {e}")
@@ -241,7 +299,7 @@ class ChannelImporter:
                 all_media = []
                 for stream_data in streams:
                     try:
-                        media_item = self.get_or_create_media_item(stream_data)
+                        media_item = await self.get_or_create_media_item(stream_data)
                         all_media.append(media_item)
                     except Exception as e:
                         logger.error(f"  ✗ Error adding to playlist: {e}")
@@ -260,7 +318,7 @@ class ChannelImporter:
         
         return channel
     
-    def import_from_yaml(self, yaml_path: Path, validate: bool = True) -> List[Channel]:
+    async def import_from_yaml(self, yaml_path: Path, validate: bool = True) -> List[Channel]:
         """
         Import channels from YAML file
         
@@ -304,7 +362,7 @@ class ChannelImporter:
         imported_channels = []
         for channel_config in channels_config:
             try:
-                channel = self.import_channel_from_config(channel_config)
+                channel = await self.import_channel_from_config(channel_config)
                 imported_channels.append(channel)
             except Exception as e:
                 logger.error(f"Error importing channel: {e}")
@@ -324,7 +382,7 @@ class ChannelImporter:
             self.db.close()
 
 
-def import_channels_from_yaml(yaml_path: Path, validate: bool = True) -> List[Channel]:
+async def import_channels_from_yaml(yaml_path: Path, validate: bool = True) -> List[Channel]:
     """
     Convenience function to import channels from YAML file
     
@@ -337,7 +395,7 @@ def import_channels_from_yaml(yaml_path: Path, validate: bool = True) -> List[Ch
     """
     importer = ChannelImporter()
     try:
-        return importer.import_from_yaml(yaml_path, validate=validate)
+        return await importer.import_from_yaml(yaml_path, validate=validate)
     finally:
         importer.close()
 

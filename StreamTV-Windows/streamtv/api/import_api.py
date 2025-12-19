@@ -9,7 +9,10 @@ import shutil
 from typing import List, Optional
 import yaml
 import logging
-import magic
+try:
+    import magic
+except ImportError:
+    magic = None  # Optional dependency; handled gracefully
 import os
 
 logger = logging.getLogger(__name__)
@@ -141,8 +144,8 @@ async def import_channels_yaml(
                         detail=f"File too large (max {MAX_FILE_SIZE} bytes)"
                     )
                 tmp_file.write(chunk)
-            tmp_path = Path(tmp_file.name)
-        
+        tmp_path = Path(tmp_file.name)
+    
         # Validate file content
         validate_file_content(tmp_path)
     

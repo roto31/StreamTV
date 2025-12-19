@@ -48,19 +48,47 @@ class ChannelStream:
             if self._is_running:
                 return
             
-            # Initialize playout timeline using ErsatzTV-style approach
-            # For CONTINUOUS: Use midnight of today (daily reset) - ensures channels always start from beginning of cycle
-            # For ON_DEMAND: Timeline doesn't matter (always starts from item 0)
+            # Initialize playout timeline - try to resume from saved position, otherwise start from beginning
             # Uses system time (UTC) for all calculations
             async with self._timeline_lock:
                 if not self._playout_start_time:
-                    # Use midnight of TODAY (UTC) as timeline start - this ensures:
-                    # 1. All channels start from beginning each day
-                    # 2. Timeline resets daily (ErsatzTV-style cycle)
-                    # 3. Channels created on different days still sync to today's midnight
-                    today = datetime.utcnow().date()
-                    self._playout_start_time = datetime.combine(today, time.min)
-                    logger.info(f"Initialized playout timeline for channel {self.channel_number} starting at midnight UTC today: {self._playout_start_time} (ErsatzTV-style daily reset)")
+                    # Try to load saved playout start time from database
+                    db = self.db_session_factory()
+                    try:
+                        from streamtv.database.models import ChannelPlaybackPosition
+                        playback_pos = db.query(ChannelPlaybackPosition).filter(
+                            ChannelPlaybackPosition.channel_id == self.channel_id
+                        ).first()
+                        
+                        if playback_pos and playback_pos.playout_start_time:
+                            # Resume from saved position
+                            self._playout_start_time = playback_pos.playout_start_time
+                            logger.info(f"Resuming channel {self.channel_number} from saved playout start time: {self._playout_start_time}")
+                        else:
+                            # First time or no saved position - start from now
+                            self._playout_start_time = datetime.utcnow()
+                            logger.info(f"Starting channel {self.channel_number} from current time: {self._playout_start_time}")
+                            
+                            # Save the start time for future resumes
+                            if not playback_pos:
+                                playback_pos = ChannelPlaybackPosition(
+                                    channel_id=self.channel_id,
+                                    channel_number=self.channel_number,
+                                    playout_start_time=self._playout_start_time,
+                                    last_position_update=datetime.utcnow()
+                                )
+                                db.add(playback_pos)
+                            else:
+                                playback_pos.playout_start_time = self._playout_start_time
+                                playback_pos.last_position_update = datetime.utcnow()
+                            db.commit()
+                    except Exception as e:
+                        logger.error(f"Error loading saved position for channel {self.channel_number}: {e}", exc_info=True)
+                        # Fallback to starting from now
+                        self._playout_start_time = datetime.utcnow()
+                        logger.info(f"Starting channel {self.channel_number} from current time (fallback): {self._playout_start_time}")
+                    finally:
+                        db.close()
             
             self._is_running = True
             self._stream_task = asyncio.create_task(self._run_continuous_stream())
@@ -84,10 +112,45 @@ class ChannelStream:
                 except asyncio.CancelledError:
                     pass
             
+            # Save current position before stopping
+            try:
+                db = self.db_session_factory()
+                try:
+                    from streamtv.database.models import ChannelPlaybackPosition
+                    position = await self._get_current_position()
+                    current_index = position.get('item_index', 0)
+                    
+                    playback_pos = db.query(ChannelPlaybackPosition).filter(
+                        ChannelPlaybackPosition.channel_id == self.channel_id
+                    ).first()
+                    
+                    if not playback_pos:
+                        playback_pos = ChannelPlaybackPosition(
+                            channel_id=self.channel_id,
+                            channel_number=self.channel_number,
+                            playout_start_time=self._playout_start_time,
+                            last_item_index=current_index,
+                            last_position_update=datetime.utcnow()
+                        )
+                        db.add(playback_pos)
+                    else:
+                        playback_pos.playout_start_time = self._playout_start_time
+                        playback_pos.last_item_index = current_index
+                        playback_pos.last_position_update = datetime.utcnow()
+                    db.commit()
+                    logger.info(f"Saved position for channel {self.channel_number}: item {current_index}, playout_start_time={self._playout_start_time}")
+                except Exception as e:
+                    logger.error(f"Error saving position for channel {self.channel_number}: {e}", exc_info=True)
+                    db.rollback()
+                finally:
+                    db.close()
+            except Exception as e:
+                logger.error(f"Error saving position on stop for channel {self.channel_number}: {e}", exc_info=True)
+            
             # Clear all client queues
             self._client_queues.clear()
-            # DON'T reset playout_start_time - keep timeline continuous
-            logger.info(f"Stopped continuous stream for channel {self.channel_number} (timeline preserved)")
+            # DON'T reset playout_start_time - keep timeline continuous for resume
+            logger.info(f"Stopped continuous stream for channel {self.channel_number} (position saved for resume)")
     
     async def get_stream(self) -> AsyncIterator[bytes]:
         """Get the current stream - joins existing continuous stream at current position (ErsatzTV-style)"""
@@ -193,7 +256,7 @@ class ChannelStream:
                             url_path = url_lower.split('?')[0].split('#')[0]
                             if '.mp4' not in url_path:
                                 logger.debug(f"ON_DEMAND: Skipping non-MP4 file for channel 80: {media_item.title} ({media_item.url[:80]})")
-                                continue
+                            continue
                         
                         logger.info(f"ON_DEMAND: Streaming item {idx}/{len(schedule_items)}: {media_item.title[:60]} (URL: {media_item.url[:80]})")
                         
@@ -344,7 +407,7 @@ class ChannelStream:
             db_session.rollback()
     
     async def _get_current_position(self) -> Dict:
-        """Calculate current position in playout timeline using ErsatzTV-style cycle-based approach"""
+        """Calculate current position in playout timeline based on saved playout start time"""
         async with self._timeline_lock:
             if not self._schedule_items:
                 return {'item_index': 0, 'elapsed_seconds': 0}
@@ -359,16 +422,18 @@ class ChannelStream:
             if total_duration <= 0:
                 return {'item_index': 0, 'elapsed_seconds': 0}
             
-            # ErsatzTV-style: Always use TODAY's midnight as the timeline reference point
-            # This ensures channels always reset to the beginning each day, regardless of creation date
+            # Use saved playout_start_time instead of today's midnight
+            # This allows resuming from where we left off after server restart
             now = datetime.utcnow()
-            today_midnight = datetime.combine(now.date(), time.min)
+            if not self._playout_start_time:
+                # Fallback: use now as start time (shouldn't happen if start() was called)
+                self._playout_start_time = now
             
-            # Calculate elapsed time from midnight of today (daily reset)
-            elapsed = (now - today_midnight).total_seconds()
+            # Calculate elapsed time from when playout started (not midnight)
+            elapsed = (now - self._playout_start_time).total_seconds()
             
-            # ErsatzTV-style: Calculate position within the current cycle using modulo
-            # This ensures channels always loop correctly and start from beginning each day
+            # Calculate position within the current cycle using modulo
+            # This ensures channels loop correctly while maintaining position across restarts
             cycle_position = elapsed % total_duration if total_duration > 0 else 0
             
             # Calculate which item should be playing based on position within cycle
@@ -401,7 +466,7 @@ class ChannelStream:
                 'current_item_start': current_time,
                 'cycle_position': cycle_position,
                 'total_duration': total_duration,
-                'today_midnight': today_midnight
+                'playout_start_time': self._playout_start_time
             }
     
     async def _run_continuous_stream(self):
@@ -453,15 +518,30 @@ class ChannelStream:
                 self._is_running = False
                 return
             
-            # Initialize timeline (for logging purposes - actual calculation uses today's midnight)
+            # Ensure playout_start_time is set (should be set in start(), but double-check)
             async with self._timeline_lock:
                 if not self._playout_start_time:
-                    today = datetime.utcnow().date()
-                    self._playout_start_time = datetime.combine(today, time.min)
-                    logger.info(f"Initialized playout timeline for channel {self.channel_number} using today's midnight UTC: {self._playout_start_time}")
+                    # Try to load from database one more time
+                    try:
+                        from streamtv.database.models import ChannelPlaybackPosition
+                        playback_pos = db.query(ChannelPlaybackPosition).filter(
+                            ChannelPlaybackPosition.channel_id == self.channel_id
+                        ).first()
+                        
+                        if playback_pos and playback_pos.playout_start_time:
+                            self._playout_start_time = playback_pos.playout_start_time
+                            logger.info(f"Loaded playout start time for channel {self.channel_number} from database: {self._playout_start_time}")
+                        else:
+                            # Fallback: use now
+                            self._playout_start_time = datetime.utcnow()
+                            logger.info(f"Using current time as playout start for channel {self.channel_number}: {self._playout_start_time}")
+                    except Exception as e:
+                        logger.error(f"Error loading playout start time in _run_continuous_stream: {e}")
+                        self._playout_start_time = datetime.utcnow()
+                
                 self._current_item_start_time = datetime.utcnow()
             
-            logger.info(f"Streaming playout for channel {self.channel_number} with {len(self._schedule_items)} items (using ErsatzTV-style daily cycle)")
+            logger.info(f"Streaming playout for channel {self.channel_number} with {len(self._schedule_items)} items (resuming from saved position)")
             
             # Create streamer with this session
             self.streamer = MPEGTSStreamer(db)
@@ -489,9 +569,8 @@ class ChannelStream:
             minutes = int((elapsed % 3600) // 60)
             cycle_hours = int(cycle_position // 3600)
             cycle_minutes = int((cycle_position % 3600) // 60)
-            now = datetime.utcnow()
-            today_midnight = start_position.get('today_midnight', datetime.combine(now.date(), time.min))
-            logger.info(f"Channel {self.channel_number} CONTINUOUS timeline (ErsatzTV-style): {hours}h {minutes}m elapsed from today's midnight UTC ({today_midnight}), position in cycle: {cycle_hours}h {cycle_minutes}m, starting from item {start_index}/{len(self._schedule_items)} (cycle duration: {total_duration/3600:.1f}h)")
+            playout_start = start_position.get('playout_start_time', self._playout_start_time)
+            logger.info(f"Channel {self.channel_number} CONTINUOUS timeline: {hours}h {minutes}m elapsed from playout start ({playout_start}), position in cycle: {cycle_hours}h {cycle_minutes}m, starting from item {start_index}/{len(self._schedule_items)} (cycle duration: {total_duration/3600:.1f}h)")
             
             # Stream continuously, starting from calculated position
             # After first loop, always start from 0
@@ -536,6 +615,33 @@ class ChannelStream:
                     async with self._timeline_lock:
                         self._current_item_index = idx
                         self._current_item_start_time = datetime.utcnow()  # Use system time
+                    
+                    # Periodically save position (every 5 items or every 30 minutes)
+                    if idx % 5 == 0 or (self._current_item_start_time and (datetime.utcnow() - self._current_item_start_time).total_seconds() > 1800):
+                        try:
+                            from streamtv.database.models import ChannelPlaybackPosition
+                            playback_pos = db.query(ChannelPlaybackPosition).filter(
+                                ChannelPlaybackPosition.channel_id == self.channel_id
+                            ).first()
+                            
+                            if not playback_pos:
+                                playback_pos = ChannelPlaybackPosition(
+                                    channel_id=self.channel_id,
+                                    channel_number=self.channel_number,
+                                    playout_start_time=self._playout_start_time,
+                                    last_item_index=idx,
+                                    last_position_update=datetime.utcnow()
+                                )
+                                db.add(playback_pos)
+                            else:
+                                playback_pos.playout_start_time = self._playout_start_time
+                                playback_pos.last_item_index = idx
+                                playback_pos.last_position_update = datetime.utcnow()
+                            db.commit()
+                            logger.debug(f"Periodically saved position for channel {self.channel_number}: item {idx}")
+                        except Exception as e:
+                            logger.debug(f"Error periodically saving position for channel {self.channel_number}: {e}")
+                            db.rollback()
                     
                     try:
                         # Stream this item

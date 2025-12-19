@@ -1912,31 +1912,35 @@
         const searchInput = document.getElementById('searchInput');
         let searchResults = [];
         
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            const query = e.target.value.trim();
-            
-            if (query.length < 2) {
-                hideSearchResults();
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => {
-                performSearch(query);
-            }, 300);
-        });
-        
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
                 const query = e.target.value.trim();
-                if (query && searchResults.length > 0) {
-                    navigateToResult(searchResults[0]);
-                } else if (query) {
-                    window.location.href = `/channels?search=${encodeURIComponent(query)}`;
+                
+                if (query.length < 2) {
+                    hideSearchResults();
+                    return;
                 }
-            }
-        });
+                
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const query = e.target.value.trim();
+                    if (query && searchResults.length > 0) {
+                        navigateToResult(searchResults[0]);
+                    } else if (query) {
+                        window.location.href = `/channels?search=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        } else {
+            console.warn('Search input not found; search functionality disabled on this page.');
+        }
         
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-form') && !e.target.closest('.search-results')) {
@@ -2000,6 +2004,9 @@
             }
             
             const searchForm = document.querySelector('.search-form');
+            if (!searchForm) {
+                return;
+            }
             const resultsDiv = document.createElement('div');
             resultsDiv.className = 'search-results';
             resultsDiv.style.cssText = `

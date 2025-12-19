@@ -9,11 +9,11 @@
             <p class="page-subtitle">Configure how many days ahead playout schedules are built for EPG and streaming.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" onclick="loadSettings(true)">
+            <button class="btn btn-outlined" type="button" id="refreshPlayoutSettingsButton">
                 <span class="material-icons">refresh</span>
                 Reload
             </button>
-            <button class="btn btn-primary" type="button" onclick="saveSettings()">
+            <button class="btn btn-primary" type="button" id="savePlayoutSettingsButton">
                 <span class="material-icons">save</span>
                 Save Changes
             </button>
@@ -189,8 +189,20 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => loadSettings());
+<script nonce="{{ request.state.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', () => {
+        const refreshButton = document.getElementById('refreshPlayoutSettingsButton');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', () => loadSettings(true));
+        }
+
+        const saveButton = document.getElementById('savePlayoutSettingsButton');
+        if (saveButton) {
+            saveButton.addEventListener('click', saveSettings);
+        }
+
+        loadSettings();
+    });
     
     async function loadSettings(showStatus = false) {
         try {
@@ -255,4 +267,3 @@
     }
 </script>
 {% endblock %}
-

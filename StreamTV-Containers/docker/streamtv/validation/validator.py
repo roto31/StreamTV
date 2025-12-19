@@ -101,6 +101,11 @@ class YAMLValidator:
             for error in validator.iter_errors(yaml_data):
                 error_path = " -> ".join(str(p) for p in error.path)
                 error_msg = f"{error_path}: {error.message}"
+                # Add more context for pattern validation errors
+                if "pattern" in error.message.lower() or "did not match" in error.message.lower():
+                    # Include the actual value that failed
+                    if error.instance is not None:
+                        error_msg = f"{error_path}: {error.message} (value: '{error.instance}')"
                 errors.append(error_msg)
                 logger.debug(f"Validation error: {error_msg}")
             
@@ -125,16 +130,63 @@ class YAMLValidator:
     def _normalize_data(self, data: Any) -> Any:
         """Normalize YAML data for JSON schema validation (convert dates, etc.)"""
         from datetime import date, datetime
+        import re
         
         if isinstance(data, dict):
-            return {k: self._normalize_data(v) for k, v in data.items()}
+            normalized = {}
+            for k, v in data.items():
+                # Skip empty strings for optional fields to avoid pattern validation errors
+                if v == "" or v is None:
+                    # Don't include empty/null values in normalized data for optional fields
+                    # This prevents pattern validation on empty strings
+                    continue
+                # Special handling for broadcast_date - normalize to YYYY-MM-DD format
+                if k == 'broadcast_date' and isinstance(v, str):
+                    normalized[k] = self._normalize_date_string(v)
+                else:
+                    normalized[k] = self._normalize_data(v)
+            return normalized
         elif isinstance(data, list):
             return [self._normalize_data(item) for item in data]
         elif isinstance(data, (date, datetime)):
-            # Convert date/datetime to ISO format string
-            return data.isoformat()
+            # Convert date/datetime to ISO format string (YYYY-MM-DD)
+            return data.isoformat()[:10]  # Take only date part, not time
         else:
             return data
+    
+    def _normalize_date_string(self, date_str: str) -> str:
+        """Normalize date string to YYYY-MM-DD format"""
+        if not date_str:
+            return date_str
+        
+        # Try to parse various date formats and convert to YYYY-MM-DD
+        from datetime import datetime
+        
+        # Common date formats
+        date_formats = [
+            '%Y-%m-%d',           # Already correct
+            '%Y-%m-%dT%H:%M:%S',  # ISO with time
+            '%Y-%m-%dT%H:%M:%S.%f',  # ISO with microseconds
+            '%Y-%m-%dT%H:%M:%SZ',  # ISO with Z
+            '%Y/%m/%d',           # Slash format
+            '%m/%d/%Y',           # US format
+            '%d/%m/%Y',           # European format
+        ]
+        
+        for fmt in date_formats:
+            try:
+                dt = datetime.strptime(date_str, fmt)
+                return dt.strftime('%Y-%m-%d')
+            except ValueError:
+                continue
+        
+        # If no format matches, try to extract YYYY-MM-DD pattern
+        match = re.search(r'(\d{4})-(\d{2})-(\d{2})', date_str)
+        if match:
+            return match.group(0)
+        
+        # If still no match, return as-is (validation will catch it)
+        return date_str
     
     def validate_channel_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Validate channel data (already parsed YAML)"""

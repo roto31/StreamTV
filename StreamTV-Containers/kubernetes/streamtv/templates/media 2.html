@@ -1,0 +1,593 @@
+{% extends "base.html" %}
+{% block title %}Media Library - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Media Library</div>
+            <p class="page-subtitle">Browse all ingested assets, filter by source, and inspect full metadata.</p>
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-outlined" type="button" data-onclick="window.open('/api/media', '_blank')">
+                <span class="material-icons">code</span>
+                API Response
+            </button>
+            <button class="btn btn-primary" type="button" data-onclick="refreshMedia()">
+                <span class="material-icons">refresh</span>
+                Refresh
+            </button>
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Items</div>
+            <div class="stat-value" id="statTotal">--</div>
+            <div class="stat-subtext" id="statTotalSub">Loading…</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">YouTube</div>
+            <div class="stat-value" id="statYouTube">--</div>
+            <div class="stat-subtext" id="statYouTubeSub">Loading…</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Archive.org</div>
+            <div class="stat-value" id="statArchive">--</div>
+            <div class="stat-subtext" id="statArchiveSub">Loading…</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg Duration</div>
+            <div class="stat-value" id="statDuration">--</div>
+            <div class="stat-subtext">mm:ss</div>
+        </div>
+    </div>
+    
+    <div class="card controls-card">
+        <div class="input-group">
+            <span class="material-icons">search</span>
+            <input type="text" id="searchInput" placeholder="Search title, uploader, or URL" data-oninput="filterMedia()">
+        </div>
+        <div class="segmented-control">
+            <button class="segment active" id="filterAll" data-onclick="setSourceFilter('all')">All</button>
+            <button class="segment" id="filterYouTube" data-onclick="setSourceFilter('youtube')">YouTube</button>
+            <button class="segment" id="filterArchive" data-onclick="setSourceFilter('archive_org')">Archive.org</button>
+        </div>
+    </div>
+    
+    <div class="card table-card">
+        <div class="table-header">
+            <div>
+                <div class="card-title">Media Items</div>
+                <p class="card-subtitle">Select a row to view full metadata, including uploader info and JSON payloads.</p>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="table" id="mediaTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Source</th>
+                        <th>Duration</th>
+                        <th>Uploaded</th>
+                        <th>Views</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="mediaTableBody"></tbody>
+            </table>
+            <div id="loading" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading media…</p>
+            </div>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">🎬</div>
+                <h3 style="margin-bottom: 8px;">No media found</h3>
+                <p>Import channel YAMLs or scan sources to populate the library.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="media-detail-card" id="mediaDetail">
+        <div class="card-header">
+            <div class="card-title">Media Detail</div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 17px;">Select an item above to see description, uploader data, and metadata payloads.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .page {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.36px;
+    }
+    
+    .page-subtitle {
+        color: var(--text-secondary);
+        margin-top: 4px;
+        font-size: 17px;
+    }
+    
+    .page-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+    
+    .stat-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .stat-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        letter-spacing: 0.08px;
+    }
+    
+    .stat-value {
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 0.37px;
+    }
+    
+    .stat-subtext {
+        font-size: 15px;
+        color: var(--text-secondary);
+    }
+    
+    .controls-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .input-group {
+        flex: 1;
+        min-width: 240px;
+        display: flex;
+        align-items: center;
+        background: var(--surface-light);
+        border-radius: 10px;
+        border: 0.5px solid var(--divider);
+        padding: 0 12px;
+        min-height: 44px;
+        gap: 8px;
+    }
+    
+    .input-group input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 17px;
+        outline: none;
+    }
+    
+    .segmented-control {
+        display: inline-flex;
+        border-radius: 10px;
+        border: 0.5px solid var(--divider);
+        overflow: hidden;
+    }
+    
+    .segment {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 10px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        min-width: 100px;
+    }
+    
+    .segment.active {
+        background: var(--apple-fill-secondary);
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+    
+    .table-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .table-header {
+        padding: 16px 16px 0 16px;
+    }
+    
+    .table-wrapper {
+        overflow-x: auto;
+        padding: 16px;
+    }
+    
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+        min-width: 760px;
+    }
+    
+    .table th,
+    .table td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 0.5px solid var(--divider);
+        vertical-align: middle;
+    }
+    
+    .table th {
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.08px;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+    
+    .table tr {
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    
+    .table tr:hover {
+        background: var(--hover);
+    }
+    
+    .table tr.selected {
+        background: var(--apple-fill-secondary);
+    }
+    
+    .media-detail-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 20px;
+    }
+    
+    .media-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+    
+    .detail-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        letter-spacing: 0.08px;
+        margin-bottom: 4px;
+    }
+    
+    .detail-value {
+        font-size: 17px;
+        font-weight: 500;
+        word-break: break-word;
+    }
+    
+    .metadata-section {
+        margin-top: 20px;
+        border-top: 0.5px solid var(--divider);
+        padding-top: 16px;
+    }
+    
+    .metadata-json {
+        background: var(--surface-light);
+        border-radius: 10px;
+        border: 0.5px solid var(--divider);
+        padding: 12px;
+        font-family: SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.4;
+        max-height: 240px;
+        overflow: auto;
+        white-space: pre-wrap;
+    }
+    
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08px;
+        border: 0.5px solid var(--divider);
+        margin-right: 8px;
+    }
+    
+    .tag.youtube {
+        color: #ff375f;
+        border-color: rgba(255, 55, 95, 0.6);
+        background: rgba(255, 55, 95, 0.1);
+    }
+    
+    .tag.archive {
+        color: #ffd60a;
+        border-color: rgba(255, 214, 10, 0.6);
+        background: rgba(255, 214, 10, 0.1);
+    }
+    
+    @media (max-width: 960px) {
+        .table-wrapper {
+            padding: 12px;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+    let allMedia = [];
+    let filteredMedia = [];
+    let selectedRow = null;
+    let selectedMediaId = null;
+    let sourceFilter = 'all';
+    
+    document.addEventListener('DOMContentLoaded', loadMedia);
+    
+    async function loadMedia() {
+        try {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            const response = await fetch('/api/media');
+            allMedia = await response.json();
+            
+            updateStats(allMedia);
+            applyFilters();
+        } catch (error) {
+            console.error('Error loading media:', error);
+            document.getElementById('loading').innerHTML = '<p style="color: var(--error);">Failed to load media.</p>';
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+    
+    function updateStats(items) {
+        const total = items.length;
+        const youtube = items.filter(item => item.source === 'youtube').length;
+        const archive = items.filter(item => item.source === 'archive_org').length;
+        const avgDuration = items.reduce((sum, item) => sum + (item.duration || 0), 0) / (total || 1);
+        
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statTotalSub').textContent = total === 1 ? 'Media item' : 'Media items';
+        
+        document.getElementById('statYouTube').textContent = youtube;
+        document.getElementById('statYouTubeSub').textContent = 'YouTube items';
+        
+        document.getElementById('statArchive').textContent = archive;
+        document.getElementById('statArchiveSub').textContent = 'Archive.org items';
+        
+        document.getElementById('statDuration').textContent = formatDuration(Math.round(avgDuration));
+    }
+    
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredMedia = allMedia.filter(item => {
+            if (sourceFilter !== 'all' && item.source !== sourceFilter) return false;
+            
+            const haystack = [
+                item.title,
+                item.description || '',
+                item.uploader || '',
+                item.url || ''
+            ].join(' ').toLowerCase();
+            
+            return haystack.includes(searchTerm);
+        });
+        
+        displayMedia(filteredMedia);
+    }
+    
+    function displayMedia(items) {
+        const table = document.getElementById('mediaTable');
+        const tableBody = document.getElementById('mediaTableBody');
+        const emptyState = document.getElementById('emptyState');
+        
+        if (items.length === 0) {
+            table.style.display = 'none';
+            emptyState.style.display = 'flex';
+            renderDefaultDetail();
+            return;
+        }
+        
+        table.style.display = 'table';
+        emptyState.style.display = 'none';
+        
+        tableBody.innerHTML = items.map(item => `
+            <tr class="media-row ${selectedMediaId === item.id ? 'selected' : ''}" data-id="${item.id}">
+                <td>
+                    <div class="channel-name" style="font-size: 17px; font-weight: 600;">${item.title}</div>
+                    <div class="schedule-name" style="color: var(--text-secondary); font-size: 13px;">
+                        ${item.uploader || 'Unknown uploader'}
+                    </div>
+                </td>
+                <td>
+                    <span class="tag ${item.source === 'youtube' ? 'youtube' : 'archive'}">
+                        ${formatSource(item.source)}
+                    </span>
+                </td>
+                <td>${item.duration ? formatDuration(item.duration) : '--:--'}</td>
+                <td>${item.upload_date || '—'}</td>
+                <td>${item.view_count != null ? item.view_count.toLocaleString() : '—'}</td>
+                <td>
+                    <div class="action-buttons" style="justify-content: flex-end;">
+                        ${item.url ? `
+                            <a href="${item.url}" class="btn-icon" title="Open Source" target="_blank" rel="noopener">
+                                <span class="material-icons">open_in_new</span>
+                            </a>` : ''}
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+        
+        document.querySelectorAll('.media-row').forEach((row, index) => {
+            row.addEventListener('click', () => selectRow(row, items[index]));
+        });
+        
+        if (items.length > 0 && !selectedRow) {
+            selectRow(document.querySelector('.media-row'), items[0], false);
+        }
+    }
+    
+    function selectRow(row, item, scroll = true) {
+        if (selectedRow) {
+            selectedRow.classList.remove('selected');
+        }
+        row.classList.add('selected');
+        selectedRow = row;
+        selectedMediaId = item.id;
+        showMediaDetail(item, scroll);
+    }
+    
+    function renderDefaultDetail() {
+        const detail = document.getElementById('mediaDetail');
+        detail.innerHTML = `
+            <div class="card-header">
+                <div class="card-title">Media Detail</div>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 17px;">Select an item above to see description, uploader data, and metadata payloads.</p>
+        `;
+    }
+    
+    function showMediaDetail(item, scroll = true) {
+        const detail = document.getElementById('mediaDetail');
+        detail.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${item.title}</div>
+                    <div class="card-subtitle" style="margin-top: 4px;">${item.description || 'No description provided.'}</div>
+                </div>
+                <span class="tag ${item.source === 'youtube' ? 'youtube' : 'archive'}">${formatSource(item.source)}</span>
+            </div>
+            
+            <div class="media-detail-grid">
+                <div>
+                    <div class="detail-label">Source URL</div>
+                    <div class="detail-value">
+                        ${item.url ? `<a href="${item.url}" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: none;">${item.url}</a>` : '—'}
+                    </div>
+                </div>
+                <div>
+                    <div class="detail-label">Source ID</div>
+                    <div class="detail-value">${item.source_id || '—'}</div>
+                </div>
+                <div>
+                    <div class="detail-label">Uploader</div>
+                    <div class="detail-value">${item.uploader || '—'}</div>
+                </div>
+                <div>
+                    <div class="detail-label">Upload Date</div>
+                    <div class="detail-value">${item.upload_date || '—'}</div>
+                </div>
+                <div>
+                    <div class="detail-label">Duration</div>
+                    <div class="detail-value">${item.duration ? formatDuration(item.duration) : '--:--'}</div>
+                </div>
+                <div>
+                    <div class="detail-label">View Count</div>
+                    <div class="detail-value">${item.view_count != null ? item.view_count.toLocaleString() : '—'}</div>
+                </div>
+            </div>
+            
+            <div class="metadata-section">
+                <div class="detail-label" style="margin-bottom: 8px;">Metadata</div>
+                <div class="metadata-json">${formatMetaData(item.meta_data)}</div>
+            </div>
+        `;
+        
+        if (scroll) {
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+    
+    function filterMedia() {
+        applyFilters();
+    }
+    
+    function setSourceFilter(filter) {
+        sourceFilter = filter;
+        document.querySelectorAll('.segment').forEach(button => button.classList.remove('active'));
+        const id = filter === 'all' ? 'filterAll' : filter === 'youtube' ? 'filterYouTube' : 'filterArchive';
+        document.getElementById(id).classList.add('active');
+        applyFilters();
+    }
+    
+    function refreshMedia() {
+        selectedRow = null;
+        selectedMediaId = null;
+        loadMedia();
+    }
+    
+    function formatSource(source) {
+        if (!source) return 'Unknown';
+        return source === 'youtube' ? 'YouTube' : source === 'archive_org' ? 'Archive.org' : source;
+    }
+    
+    function formatDuration(seconds) {
+        if (!seconds) return '00:00';
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        if (hrs > 0) {
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function formatMetaData(meta) {
+        if (!meta) return 'No metadata payload.';
+        try {
+            const parsed = typeof meta === 'string' ? JSON.parse(meta) : meta;
+            return JSON.stringify(parsed, null, 2);
+        } catch {
+            return meta;
+        }
+    }
+</script>
+{% endblock %}
+

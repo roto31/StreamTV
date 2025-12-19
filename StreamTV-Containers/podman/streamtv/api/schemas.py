@@ -81,6 +81,8 @@ class MediaItemResponse(MediaItemBase):
 class CollectionBase(BaseModel):
     name: str
     description: Optional[str] = None
+    collection_type: Optional[str] = "manual"  # "manual", "smart", "multi"
+    search_query: Optional[str] = None  # For smart collections
 
 
 class CollectionCreate(CollectionBase):
@@ -105,6 +107,7 @@ class CollectionResponse(CollectionBase):
     
     class Config:
         from_attributes = True
+        # Pydantic will automatically serialize enum values to their string values
 
 
 # Playlist Schemas
@@ -140,10 +143,16 @@ class PlaylistResponse(PlaylistBase):
 
 # Schedule Schemas
 class ScheduleBase(BaseModel):
+    name: str
     channel_id: int
+    keep_multi_part_episodes_together: bool = False
+    treat_collections_as_shows: bool = False
+    shuffle_schedule_items: bool = False
+    random_start_point: bool = False
+    # Legacy fields (optional for backward compatibility)
     playlist_id: Optional[int] = None
     collection_id: Optional[int] = None
-    start_time: datetime
+    start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     repeat: bool = False
 
@@ -152,7 +161,124 @@ class ScheduleCreate(ScheduleBase):
     pass
 
 
+class ScheduleUpdate(BaseModel):
+    name: Optional[str] = None
+    channel_id: Optional[int] = None
+    keep_multi_part_episodes_together: Optional[bool] = None
+    treat_collections_as_shows: Optional[bool] = None
+    shuffle_schedule_items: Optional[bool] = None
+    random_start_point: Optional[bool] = None
+
+
 class ScheduleResponse(ScheduleBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+# Schedule Item Schemas
+class ScheduleItemBase(BaseModel):
+    schedule_id: int
+    index: Optional[int] = None
+    
+    # Start Type
+    start_type: Optional[str] = "dynamic"  # "dynamic" or "fixed"
+    start_time: Optional[datetime] = None
+    fixed_start_time_behavior: Optional[str] = None  # "start_immediately", "skip_item", "wait_for_next"
+    
+    # Collection Type
+    collection_type: Optional[str] = "collection"  # "collection", "television_show", "television_season", "artist", "multi_collection", "smart_collection", "playlist"
+    collection_id: Optional[int] = None
+    media_item_id: Optional[int] = None
+    playlist_id: Optional[int] = None
+    search_title: Optional[str] = None
+    search_query: Optional[str] = None
+    # Plex-specific collection types
+    plex_show_key: Optional[str] = None  # For TELEVISION_SHOW
+    plex_season_key: Optional[str] = None  # For TELEVISION_SEASON
+    plex_artist_key: Optional[str] = None  # For ARTIST
+    
+    # Playback Order
+    playback_order: Optional[str] = "chronological"  # "chronological", "random", "shuffle", "shuffle_in_order", "season_episode"
+    
+    # Playout Mode
+    playout_mode: Optional[str] = "one"  # "flood", "one", "multiple", "duration"
+    multiple_mode: Optional[str] = None  # "count", "collection_size", "multi_episode_group_size", "playlist_item_size"
+    multiple_count: Optional[int] = None
+    playout_duration_hours: Optional[int] = 0
+    playout_duration_minutes: Optional[int] = 0
+    
+    # Fill Options
+    fill_with_group_mode: Optional[str] = None  # "none", "ordered_groups", "shuffled_groups"
+    tail_mode: Optional[str] = None  # "none", "offline", "filler"
+    tail_filler_collection_id: Optional[int] = None
+    discard_to_fill_attempts: Optional[int] = None
+    
+    # Custom Title and Guide
+    custom_title: Optional[str] = None
+    guide_mode: Optional[str] = "normal"  # "normal", "custom", "hide"
+    
+    # Fillers
+    pre_roll_filler_id: Optional[int] = None
+    mid_roll_filler_id: Optional[int] = None
+    post_roll_filler_id: Optional[int] = None
+    tail_filler_id: Optional[int] = None
+    fallback_filler_id: Optional[int] = None
+    
+    # Overrides
+    watermark_id: Optional[int] = None
+    preferred_audio_language: Optional[str] = None
+    preferred_audio_title: Optional[str] = None
+    preferred_subtitle_language: Optional[str] = None
+    subtitle_mode: Optional[str] = None
+
+
+class ScheduleItemCreate(ScheduleItemBase):
+    pass
+
+
+class ScheduleItemUpdate(BaseModel):
+    index: Optional[int] = None
+    start_type: Optional[str] = None
+    start_time: Optional[datetime] = None
+    fixed_start_time_behavior: Optional[str] = None
+    collection_type: Optional[str] = None
+    collection_id: Optional[int] = None
+    media_item_id: Optional[int] = None
+    playlist_id: Optional[int] = None
+    search_title: Optional[str] = None
+    search_query: Optional[str] = None
+    plex_show_key: Optional[str] = None
+    plex_season_key: Optional[str] = None
+    plex_artist_key: Optional[str] = None
+    playback_order: Optional[str] = None
+    playout_mode: Optional[str] = None
+    multiple_mode: Optional[str] = None
+    multiple_count: Optional[int] = None
+    playout_duration_hours: Optional[int] = None
+    playout_duration_minutes: Optional[int] = None
+    fill_with_group_mode: Optional[str] = None
+    tail_mode: Optional[str] = None
+    tail_filler_collection_id: Optional[int] = None
+    discard_to_fill_attempts: Optional[int] = None
+    custom_title: Optional[str] = None
+    guide_mode: Optional[str] = None
+    pre_roll_filler_id: Optional[int] = None
+    mid_roll_filler_id: Optional[int] = None
+    post_roll_filler_id: Optional[int] = None
+    tail_filler_id: Optional[int] = None
+    fallback_filler_id: Optional[int] = None
+    watermark_id: Optional[int] = None
+    preferred_audio_language: Optional[str] = None
+    preferred_audio_title: Optional[str] = None
+    preferred_subtitle_language: Optional[str] = None
+    subtitle_mode: Optional[str] = None
+
+
+class ScheduleItemResponse(ScheduleItemBase):
     id: int
     created_at: datetime
     updated_at: datetime

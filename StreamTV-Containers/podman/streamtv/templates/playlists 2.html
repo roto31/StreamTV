@@ -1,0 +1,668 @@
+{% extends "base.html" %}
+{% block title %}Playlists - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Playlists</div>
+            <p class="page-subtitle">Browse, filter, and inspect channel playlists with Apple HIG-aligned controls.</p>
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-outlined" type="button" data-onclick="window.open('/api/playlists', '_blank')">
+                <span class="material-icons">code</span>
+                API Response
+            </button>
+            <button class="btn btn-primary" type="button" data-onclick="refreshPlaylists()">
+                <span class="material-icons">refresh</span>
+                Refresh
+            </button>
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Playlists</div>
+            <div class="stat-value" id="statPlaylists">--</div>
+            <div class="stat-subtext" id="statPlaylistsSub">Loading…</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Channel Coverage</div>
+            <div class="stat-value" id="statChannels">--</div>
+            <div class="stat-subtext" id="statChannelsSub">Loading…</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Items</div>
+            <div class="stat-value" id="statItems">--</div>
+            <div class="stat-subtext" id="statItemsSub">Loading…</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Last Refreshed</div>
+            <div class="stat-value" id="statUpdated">--</div>
+            <div class="stat-subtext">Local time</div>
+        </div>
+    </div>
+    
+    <div class="card controls-card">
+        <div class="input-group">
+            <span class="material-icons">search</span>
+            <input type="text" id="searchInput" placeholder="Search playlists, channels, or descriptions" data-oninput="filterPlaylists()">
+        </div>
+        <div class="segmented-control">
+            <button class="segment active" id="filterAll" data-onclick="setAssignmentFilter('all')">All</button>
+            <button class="segment" id="filterAssigned" data-onclick="setAssignmentFilter('assigned')">Assigned</button>
+            <button class="segment" id="filterUnassigned" data-onclick="setAssignmentFilter('unassigned')">Unassigned</button>
+        </div>
+    </div>
+    
+    <div class="card table-card">
+        <div class="table-header">
+            <div>
+                <div class="card-title">Playlist Library</div>
+                <p class="card-subtitle">Select a playlist to view its metadata, channel mapping, and contents.</p>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="table" id="playlistsTable">
+                <thead>
+                    <tr>
+                        <th>Playlist</th>
+                        <th>Channel</th>
+                        <th>Items</th>
+                        <th>Updated</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="playlistsTableBody"></tbody>
+            </table>
+            <div id="loading" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading playlists…</p>
+            </div>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">🎶</div>
+                <h3 style="margin-bottom: 8px;">No playlists</h3>
+                <p>Create or import channels to populate playlists.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="playlist-detail-card" id="playlistDetail">
+        <div class="card-header">
+            <div class="card-title">Playlist Detail</div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 17px;">Select a playlist above to reveal metadata, channel mapping, and the ordered item list.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .page {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.36px;
+    }
+    
+    .page-subtitle {
+        color: var(--text-secondary);
+        margin-top: 4px;
+        font-size: 17px;
+    }
+    
+    .page-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+    
+    .stat-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .stat-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        letter-spacing: 0.08px;
+    }
+    
+    .stat-value {
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 0.37px;
+    }
+    
+    .stat-subtext {
+        font-size: 15px;
+        color: var(--text-secondary);
+    }
+    
+    .controls-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .input-group {
+        flex: 1;
+        min-width: 240px;
+        display: flex;
+        align-items: center;
+        background: var(--surface-light);
+        border-radius: 10px;
+        border: 0.5px solid var(--divider);
+        padding: 0 12px;
+        min-height: 44px;
+        gap: 8px;
+    }
+    
+    .input-group .material-icons {
+        color: var(--text-secondary);
+    }
+    
+    .input-group input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 17px;
+        outline: none;
+    }
+    
+    .segmented-control {
+        display: inline-flex;
+        border-radius: 10px;
+        border: 0.5px solid var(--divider);
+        overflow: hidden;
+    }
+    
+    .segment {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 10px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        min-width: 90px;
+    }
+    
+    .segment.active {
+        background: var(--apple-fill-secondary);
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+    
+    .table-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .table-header {
+        padding: 16px 16px 0 16px;
+    }
+    
+    .table-wrapper {
+        overflow-x: auto;
+        padding: 16px;
+    }
+    
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+        min-width: 720px;
+    }
+    
+    .table th,
+    .table td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 0.5px solid var(--divider);
+        vertical-align: middle;
+    }
+    
+    .table th {
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.08px;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+    
+    .table tr {
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    
+    .table tr:hover {
+        background: var(--hover);
+    }
+    
+    .table tr.selected {
+        background: var(--apple-fill-secondary);
+    }
+    
+    .playlist-detail-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 20px;
+    }
+    
+    .playlist-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+    
+    .detail-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        letter-spacing: 0.08px;
+        margin-bottom: 4px;
+    }
+    
+    .detail-value {
+        font-size: 17px;
+        font-weight: 500;
+    }
+    
+    .item-list {
+        margin-top: 20px;
+        border-top: 0.5px solid var(--divider);
+        padding-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 360px;
+        overflow-y: auto;
+    }
+    
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px;
+        border-radius: 10px;
+        background: var(--surface-light);
+        border: 0.5px solid var(--divider);
+    }
+    
+    .item-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+    
+    .item-meta .title {
+        font-weight: 600;
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .item-meta .subtitle {
+        color: var(--text-secondary);
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .item-timing {
+        text-align: right;
+        font-size: 13px;
+        color: var(--text-secondary);
+        min-width: 120px;
+    }
+    
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .status-pill.assigned {
+        background: rgba(52, 199, 89, 0.15);
+        color: var(--success);
+        border-color: rgba(52, 199, 89, 0.4);
+    }
+    
+    .status-pill.unassigned {
+        background: rgba(255, 149, 0, 0.15);
+        color: var(--warning);
+        border-color: rgba(255, 149, 0, 0.4);
+    }
+    
+    @media (max-width: 960px) {
+        .table-wrapper {
+            padding: 12px;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+    let allPlaylists = [];
+    let filteredPlaylists = [];
+    let selectedRow = null;
+    let selectedPlaylistId = null;
+    let channelMap = {};
+    let assignmentFilter = 'all';
+    
+    document.addEventListener('DOMContentLoaded', loadPlaylists);
+    
+    async function loadPlaylists() {
+        try {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('emptyState').style.display = 'none';
+            
+            const [playlistsRes, channelsRes] = await Promise.all([
+                fetch('/api/playlists'),
+                fetch('/api/channels')
+            ]);
+            
+            allPlaylists = await playlistsRes.json();
+            const channels = await channelsRes.json();
+            channelMap = {};
+            channels.forEach(channel => channelMap[channel.id] = channel);
+            
+            updateStats(allPlaylists);
+            applyFilters();
+        } catch (error) {
+            console.error('Error loading playlists:', error);
+            document.getElementById('loading').innerHTML = '<p style="color: var(--error);">Failed to load playlists.</p>';
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+    
+    function updateStats(playlists) {
+        const totalPlaylists = playlists.length;
+        const withChannel = playlists.filter(p => !!p.channel_id).length;
+        const totalItems = playlists.reduce((sum, playlist) => sum + (playlist.items?.length || 0), 0);
+        
+        document.getElementById('statPlaylists').textContent = totalPlaylists;
+        document.getElementById('statPlaylistsSub').textContent = totalPlaylists === 1 ? 'Playlist available' : 'Playlists available';
+        
+        document.getElementById('statChannels').textContent = withChannel;
+        document.getElementById('statChannelsSub').textContent = `${withChannel} mapped to channels`;
+        
+        document.getElementById('statItems').textContent = totalItems;
+        document.getElementById('statItemsSub').textContent = totalItems === 1 ? 'Media item scheduled' : 'Media items scheduled';
+        
+        document.getElementById('statUpdated').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredPlaylists = allPlaylists.filter(playlist => {
+            if (assignmentFilter === 'assigned' && !playlist.channel_id) return false;
+            if (assignmentFilter === 'unassigned' && playlist.channel_id) return false;
+            
+            const channel = channelMap[playlist.channel_id];
+            const haystack = [
+                playlist.name,
+                playlist.description || '',
+                channel?.name || '',
+                channel?.number || ''
+            ].join(' ').toLowerCase();
+            
+            return haystack.includes(searchTerm);
+        });
+        
+        displayPlaylists(filteredPlaylists);
+    }
+    
+    function displayPlaylists(playlists) {
+        const table = document.getElementById('playlistsTable');
+        const tableBody = document.getElementById('playlistsTableBody');
+        const emptyState = document.getElementById('emptyState');
+        
+        if (playlists.length === 0) {
+            table.style.display = 'none';
+            emptyState.style.display = 'flex';
+            renderDefaultDetail();
+            return;
+        }
+        
+        table.style.display = 'table';
+        emptyState.style.display = 'none';
+        
+        tableBody.innerHTML = playlists.map(playlist => {
+            const channel = channelMap[playlist.channel_id];
+            const itemCount = playlist.items?.length || 0;
+            return `
+                <tr class="playlist-row ${selectedPlaylistId === playlist.id ? 'selected' : ''}"
+                    data-playlist='${JSON.stringify({ id: playlist.id })}'>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <div class="channel-name" style="font-size: 17px; font-weight: 600;">${playlist.name}</div>
+                            <div class="schedule-name" style="color: var(--text-secondary); font-size: 13px;">
+                                ${playlist.description || 'No description'}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        ${channel ? `
+                            <div class="channel-info" style="gap: 12px;">
+                                <div class="channel-number">${channel.number}</div>
+                                <div class="channel-name">${channel.name}</div>
+                            </div>
+                        ` : '<span class="status-pill unassigned">Unassigned</span>'}
+                    </td>
+                    <td>${itemCount}</td>
+                    <td>${formatRelativeTime(playlist.updated_at)}</td>
+                    <td>
+                        <div class="action-buttons" style="justify-content: flex-end;">
+                            <button class="btn-icon" title="Open API" data-onclick="event.stopPropagation(); window.open('/api/playlists/${playlist.id}', '_blank')">
+                                <span class="material-icons">open_in_new</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        
+        document.querySelectorAll('.playlist-row').forEach((row, index) => {
+            row.addEventListener('click', () => {
+                const playlist = playlists[index];
+                selectRow(row, playlist);
+            });
+        });
+        
+        if (playlists.length > 0 && !selectedRow) {
+            const firstRow = document.querySelector('.playlist-row');
+            if (firstRow) {
+                const playlist = playlists[0];
+                selectRow(firstRow, playlist, false);
+            }
+        }
+    }
+    
+    function selectRow(row, playlist, scroll = true) {
+        if (selectedRow) {
+            selectedRow.classList.remove('selected');
+        }
+        row.classList.add('selected');
+        selectedRow = row;
+        selectedPlaylistId = playlist.id;
+        showPlaylistDetail(playlist, scroll);
+    }
+    
+    function renderDefaultDetail() {
+        const detail = document.getElementById('playlistDetail');
+        detail.innerHTML = `
+            <div class="card-header">
+                <div class="card-title">Playlist Detail</div>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 17px;">Select a playlist above to reveal metadata, channel mapping, and the ordered item list.</p>
+        `;
+    }
+    
+    function showPlaylistDetail(playlist, scroll = true) {
+        const detail = document.getElementById('playlistDetail');
+        const channel = channelMap[playlist.channel_id];
+        const itemCount = playlist.items?.length || 0;
+        
+        detail.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${playlist.name}</div>
+                    <div class="card-subtitle" style="margin-top: 4px;">${playlist.description || 'No description provided.'}</div>
+                </div>
+                <span class="status-pill ${channel ? 'assigned' : 'unassigned'}">
+                    ${channel ? 'Channel Assigned' : 'Unassigned'}
+                </span>
+            </div>
+            
+            <div class="playlist-detail-grid">
+                <div>
+                    <div class="detail-label">Channel</div>
+                    <div class="detail-value">
+                        ${channel ? `${channel.number} · ${channel.name}` : 'Not linked to any channel'}
+                    </div>
+                </div>
+                <div>
+                    <div class="detail-label">Items</div>
+                    <div class="detail-value">${itemCount}</div>
+                </div>
+                <div>
+                    <div class="detail-label">Created</div>
+                    <div class="detail-value">${formatAbsoluteDate(playlist.created_at)}</div>
+                </div>
+                <div>
+                    <div class="detail-label">Updated</div>
+                    <div class="detail-value">${formatAbsoluteDate(playlist.updated_at)}</div>
+                </div>
+            </div>
+            
+            <div class="item-list">
+                ${itemCount > 0 ? playlist.items.map(item => renderPlaylistItem(item)).join('') : `
+                    <p style="color: var(--text-secondary); font-size: 15px;">No items in this playlist.</p>
+                `}
+            </div>
+        `;
+        
+        if (scroll) {
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+    
+    function renderPlaylistItem(item) {
+        const media = item.media_item || {};
+        return `
+            <div class="item-row">
+                <div class="item-meta">
+                    <div class="title">${item.order + 1}. ${media.title || 'Untitled item'}</div>
+                    <div class="subtitle">${media.source ? media.source.toUpperCase() : 'Unknown source'} · ${media.uploader || 'Unknown uploader'}</div>
+                </div>
+                <div class="item-timing">
+                    <div>${media.duration ? formatDuration(media.duration) : '--:--'}</div>
+                    <div style="margin-top: 4px;">Media ID: ${media.id || '—'}</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function filterPlaylists() {
+        applyFilters();
+    }
+    
+    function setAssignmentFilter(filter) {
+        assignmentFilter = filter;
+        document.querySelectorAll('.segment').forEach(button => button.classList.remove('active'));
+        document.getElementById(`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`).classList.add('active');
+        applyFilters();
+    }
+    
+    function refreshPlaylists() {
+        selectedRow = null;
+        selectedPlaylistId = null;
+        loadPlaylists();
+    }
+    
+    function formatRelativeTime(value) {
+        try {
+            const date = new Date(value);
+            const diff = Date.now() - date.getTime();
+            const minutes = Math.floor(diff / 60000);
+            if (minutes < 1) return 'just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        } catch {
+            return '--';
+        }
+    }
+    
+    function formatAbsoluteDate(value) {
+        try {
+            const date = new Date(value);
+            return date.toLocaleString();
+        } catch {
+            return value || '--';
+        }
+    }
+    
+    function formatDuration(seconds) {
+        if (!seconds) return '00:00';
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    }
+</script>
+{% endblock %}
+

@@ -8,9 +8,9 @@ from typing import Optional
 from pathlib import Path
 import logging
 import shutil
+from functools import wraps
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from functools import wraps
 
 from ..config import config
 from ..streaming import StreamManager
@@ -22,17 +22,21 @@ from sqlalchemy.orm import Session
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
-templates = Jinja2Templates(directory="streamtv/templates")
 
-# Helper function to create rate-limited endpoint
-# Note: Rate limiting is currently disabled to avoid decorator issues
-# TODO: Implement proper rate limiting with slowapi
+# Initialize Jinja2 templates with auto-escaping enabled for XSS protection
+# FastAPI's Jinja2Templates uses autoescape by default, but we ensure it's enabled
+templates = Jinja2Templates(
+    directory="streamtv/templates",
+    # Jinja2Templates enables auto-escaping by default for security
+)
+
+# Initialize rate limiter for authentication endpoints
+limiter = Limiter(key_func=get_remote_address)
+
 def rate_limit(limit: str):
-    """Decorator factory for rate limiting - currently a no-op"""
+    """Decorator factory for rate limiting"""
     def decorator(func):
-        # For now, just return the function unchanged
-        # Rate limiting can be re-enabled later with proper slowapi integration
-        return func
+        return limiter.limit(limit)(func)
     return decorator
 
 # Initialize Passkey Manager

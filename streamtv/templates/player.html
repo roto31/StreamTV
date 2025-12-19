@@ -274,7 +274,7 @@
             videoPlayer.addEventListener('error', handleVideoError);
         }
         
-        async function loadChannel(channelNumber, name) {
+        async function loadChannel(channelNumber, name, ev) {
             currentChannel = channelNumber;
             currentPlaylist = [];
             currentVideoIndex = 0;
@@ -290,7 +290,11 @@
             document.querySelectorAll('.channel-card').forEach(card => {
                 card.classList.remove('active');
             });
-            event.target.closest('.channel-card')?.classList.add('active');
+            const origin = ev?.currentTarget || ev?.target || this;
+            const activeCard = origin?.closest ? origin.closest('.channel-card') : null;
+            if (activeCard) {
+                activeCard.classList.add('active');
+            }
             
             try {
                 // First, try to get the channel's media items to check for direct HLS URLs

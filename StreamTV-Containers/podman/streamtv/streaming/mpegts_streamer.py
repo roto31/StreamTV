@@ -6,6 +6,8 @@ import subprocess
 import shutil
 from typing import AsyncIterator, Optional, List, Dict, Any
 from pathlib import Path
+import json
+from datetime import datetime
 
 from streamtv.config import config
 from streamtv.database import Channel, MediaItem
@@ -14,6 +16,26 @@ from streamtv.scheduling.engine import ScheduleEngine
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
+
+# #region agent log
+DEBUG_LOG_PATH = "/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log"
+def _debug_log(location: str, message: str, data: dict, hypothesis_id: str):
+    """Write debug log entry"""
+    try:
+        with open(DEBUG_LOG_PATH, "a") as f:
+            log_entry = {
+                "sessionId": "debug-session",
+                "runId": "run1",
+                "hypothesisId": hypothesis_id,
+                "location": location,
+                "message": message,
+                "data": data,
+                "timestamp": int(datetime.now().timestamp() * 1000)
+            }
+            f.write(json.dumps(log_entry) + "\n")
+    except Exception:
+        pass
+# #endregion
 
 
 class MPEGTSStreamer:
@@ -352,6 +374,15 @@ class MPEGTSStreamer:
         # Build FFmpeg command (with smart codec detection)
         ffmpeg_cmd = self._build_ffmpeg_command(stream_url, codec_info)
         
+        # #region agent log
+        _debug_log("mpegts_streamer.py:_transcode_to_mpegts:before_start", "Starting FFmpeg", {
+            "stream_url_has_token": 'X-Plex-Token' in stream_url if stream_url else False,
+            "stream_url_base": stream_url.split('?')[0][:100] if stream_url else None,
+            "cmd_length": len(ffmpeg_cmd),
+            "is_plex_url": '/library/metadata/' in stream_url if stream_url else False
+        }, "B")
+        # #endregion
+        
         logger.debug(f"FFmpeg command: {' '.join(ffmpeg_cmd)}")
         
         # Start FFmpeg process
@@ -363,6 +394,12 @@ class MPEGTSStreamer:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
+            
+            # #region agent log
+            _debug_log("mpegts_streamer.py:_transcode_to_mpegts:process_created", "FFmpeg process created", {
+                "pid": process.pid if process else None
+            }, "B")
+            # #endregion
             
             # Check for cancellation immediately after creating subprocess (catch late cancellations)
             try:
@@ -391,6 +428,19 @@ class MPEGTSStreamer:
                             break
                         line_str = line.decode().strip()
                         stderr_lines.append(line_str)
+                        
+                        # #region agent log
+                        if '401' in line_str or 'Unauthorized' in line_str or '403' in line_str:
+                            _debug_log("mpegts_streamer.py:_transcode_to_mpegts:auth_error", "FFmpeg auth error detected", {
+                                "error_line": line_str[:200],
+                                "line_number": len(stderr_lines)
+                            }, "D")
+                        if 'error opening input' in line_str.lower() or 'error=8' in line_str:
+                            _debug_log("mpegts_streamer.py:_transcode_to_mpegts:input_error", "FFmpeg input error", {
+                                "error_line": line_str[:200],
+                                "line_number": len(stderr_lines)
+                            }, "B")
+                        # #endregion
                         # Log errors and warnings
                         # Downgrade expected hardware acceleration errors for unsupported codecs to warnings
                         if 'failed setup for format videotoolbox' in line_str.lower() or \
@@ -408,6 +458,12 @@ class MPEGTSStreamer:
                             # This is FFmpeg's automatic reconnection mechanism working as intended
                             # Live HLS streams have segments that end, triggering reconnection attempts
                             logger.debug(f"FFmpeg: {line_str} (Normal HLS reconnection - continuing)")
+                        # Downgrade Plex HTTP reconnection messages - these can happen with network issues
+                        # FFmpeg will automatically retry, so we don't need to log every attempt
+                        elif 'will reconnect' in line_str.lower() and 'error=input/output error' in line_str.lower():
+                            # Network I/O errors can happen, FFmpeg will retry automatically
+                            # Only log if it's happening repeatedly (we'll track this)
+                            logger.debug(f"FFmpeg: {line_str} (HTTP I/O error - FFmpeg will retry)")
                         # Detect fatal demuxing errors (especially for AVI files)
                         elif 'error during demuxing' in line_str.lower() or \
                              ('demuxing' in line_str.lower() and 'input/output error' in line_str.lower()):
@@ -428,6 +484,16 @@ class MPEGTSStreamer:
                 # Process failed immediately
                 await stderr_task
                 error_msg = '\n'.join(stderr_lines[-10:])  # Last 10 lines
+                
+                # #region agent log
+                _debug_log("mpegts_streamer.py:_transcode_to_mpegts:immediate_failure", "FFmpeg failed immediately", {
+                    "exit_code": process.returncode,
+                    "error_msg": error_msg[:500],
+                    "stderr_line_count": len(stderr_lines),
+                    "stream_url_has_token": 'X-Plex-Token' in stream_url if stream_url else False
+                }, "B")
+                # #endregion
+                
                 raise RuntimeError(f"FFmpeg failed immediately (exit code {process.returncode}): {error_msg}")
             
             # Stream output in chunks
@@ -538,6 +604,15 @@ class MPEGTSStreamer:
     
     def _build_ffmpeg_command(self, input_url: str, codec_info: Optional[Dict[str, Any]] = None) -> List[str]:
         """Build FFmpeg command for MPEG-TS transcoding with smart codec selection"""
+        # #region agent log
+        _debug_log("mpegts_streamer.py:_build_ffmpeg_command:entry", "Building FFmpeg command", {
+            "input_url_has_token": 'X-Plex-Token' in input_url if input_url else False,
+            "input_url_base": input_url.split('?')[0][:100] if input_url else None,
+            "is_plex": '/library/metadata/' in input_url if input_url else False,
+            "url_length": len(input_url) if input_url else 0
+        }, "B")
+        # #endregion
+        
         cmd = [self._ffmpeg_path]
         
         # Determine if we can use copy mode (no transcoding)
@@ -591,8 +666,17 @@ class MPEGTSStreamer:
         if input_url.startswith("http"):
             # Use longer timeouts and more aggressive reconnection for Archive.org
             is_archive_org = 'archive.org' in input_url
-            timeout = "60000000" if is_archive_org else "30000000"  # 60s for Archive.org, 30s others
-            reconnect_delay = "10" if is_archive_org else "5"  # Longer delay for Archive.org
+            is_plex = '/library/metadata/' in input_url or 'plex' in input_url.lower()
+            
+            if is_archive_org:
+                timeout = "60000000"  # 60s for Archive.org
+                reconnect_delay = "10"  # Longer delay for Archive.org
+            elif is_plex:
+                timeout = "60000000"  # 60s for Plex (longer timeout for large files)
+                reconnect_delay = "3"  # Shorter delay for Plex (faster reconnection)
+            else:
+                timeout = "30000000"  # 30s for others
+                reconnect_delay = "5"  # Standard delay
             
             cmd.extend([
                 "-timeout", timeout,  # Timeout in microseconds
@@ -603,6 +687,12 @@ class MPEGTSStreamer:
                 "-reconnect_delay_max", reconnect_delay,  # Max delay between reconnection attempts
                 "-multiple_requests", "1",  # Allow multiple HTTP requests for seeking
             ])
+            
+            # Plex-specific options for better connection stability
+            if is_plex:
+                # Note: Plex supports HTTP range requests, so we can seek
+                # FFmpeg will handle reconnection automatically with the reconnect options above
+                logger.debug("Using Plex-optimized HTTP settings (extended timeout, faster reconnect)")
         
             # Add Archive.org authentication cookies if available
             if is_archive_org and self._stream_manager and self._stream_manager.archive_org_adapter:
@@ -621,6 +711,16 @@ class MPEGTSStreamer:
         # Check if this is a DRM-protected HLS stream (common with PBS live streams)
         is_drm_hls = '.m3u8' in input_url.lower() and ('drm' in input_url.lower() or 'lls.pbs.org' in input_url.lower())
         
+        # #region agent log
+        _debug_log("mpegts_streamer.py:_build_ffmpeg_command:before_input", "Before adding input URL to FFmpeg", {
+            "input_url_has_token": 'X-Plex-Token' in input_url if input_url else False,
+            "input_url_length": len(input_url) if input_url else 0,
+            "is_plex": '/library/metadata/' in input_url if input_url else False,
+            "is_mpeg4": is_mpeg4,
+            "is_drm_hls": is_drm_hls
+        }, "B")
+        # #endregion
+        
         # Use more lenient settings for MPEG-4/AVI files (often have timing issues)
         if is_mpeg4:
             cmd.extend([
@@ -632,6 +732,13 @@ class MPEGTSStreamer:
                 "-analyzeduration", "5000000",  # Analyze 5 seconds for MPEG-4
                 "-i", input_url,
             ])
+            
+            # #region agent log
+            _debug_log("mpegts_streamer.py:_build_ffmpeg_command:input_added", "Input URL added to FFmpeg command", {
+                "cmd_has_url": input_url in cmd,
+                "url_position": cmd.index(input_url) if input_url in cmd else -1
+            }, "B")
+            # #endregion
             logger.debug("Using lenient input settings for MPEG-4/AVI")
         elif is_drm_hls:
             # DRM-protected HLS streams may have decoding errors - be more resilient
@@ -645,6 +752,13 @@ class MPEGTSStreamer:
                 "-i", input_url,
             ])
             logger.debug("Using error-resilient settings for DRM-protected HLS stream")
+            
+            # #region agent log
+            _debug_log("mpegts_streamer.py:_build_ffmpeg_command:input_added_drm", "Input URL added (DRM HLS)", {
+                "cmd_has_url": input_url in cmd,
+                "url_position": cmd.index(input_url) if input_url in cmd else -1
+            }, "B")
+            # #endregion
         else:
             cmd.extend([
                 "-fflags", "+genpts+discardcorrupt+fastseek",  # Generate PTS, discard corrupt, fast seek
@@ -654,6 +768,13 @@ class MPEGTSStreamer:
                 "-analyzeduration", "2000000",  # Analyze 2 seconds for faster start
                 "-i", input_url,
             ])
+            
+            # #region agent log
+            _debug_log("mpegts_streamer.py:_build_ffmpeg_command:input_added_standard", "Input URL added (standard)", {
+                "cmd_has_url": input_url in cmd,
+                "url_position": cmd.index(input_url) if input_url in cmd else -1
+            }, "B")
+            # #endregion
         
         # Output options (come AFTER -i)
         # Threads (applies to encoding) - only if transcoding

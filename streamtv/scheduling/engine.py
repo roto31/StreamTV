@@ -82,28 +82,28 @@ class ScheduleEngine:
             self._collection_cache[collection_name] = []
             
         logger.warning(f"Collection/Playlist not found: {collection_name}")
-            
-            # List available collections/playlists to help with debugging
-            all_collections = self.db.query(Collection).all()
-            all_playlists = self.db.query(Playlist).all()
-            
-            if all_collections or all_playlists:
-                available_names = [c.name for c in all_collections] + [p.name for p in all_playlists]
-                # Find similar names (case-insensitive partial match)
-                similar = [name for name in available_names if collection_name.lower() in name.lower() or name.lower() in collection_name.lower()]
-                if similar:
-                    # Remove duplicates while preserving order
-                    seen = set()
-                    unique_similar = []
-                    for name in similar:
-                        if name not in seen:
-                            seen.add(name)
-                            unique_similar.append(name)
-                    logger.info(f"  Similar collections/playlists found: {', '.join(unique_similar[:5])}")
-                else:
-                    logger.info(f"  Available collections/playlists ({len(available_names)} total): {', '.join(sorted(available_names)[:10])}")
-                    if len(available_names) > 10:
-                        logger.info(f"  ... and {len(available_names) - 10} more")
+        
+        # List available collections/playlists to help with debugging
+        all_collections = self.db.query(Collection).all()
+        all_playlists = self.db.query(Playlist).all()
+        
+        if all_collections or all_playlists:
+            available_names = [c.name for c in all_collections] + [p.name for p in all_playlists]
+            # Find similar names (case-insensitive partial match)
+            similar = [name for name in available_names if collection_name.lower() in name.lower() or name.lower() in collection_name.lower()]
+            if similar:
+                # Remove duplicates while preserving order
+                seen = set()
+                unique_similar = []
+                for name in similar:
+                    if name not in seen:
+                        seen.add(name)
+                        unique_similar.append(name)
+                logger.info(f"  Similar collections/playlists found: {', '.join(unique_similar[:5])}")
+            else:
+                logger.info(f"  Available collections/playlists ({len(available_names)} total): {', '.join(sorted(available_names)[:10])}")
+                if len(available_names) > 10:
+                    logger.info(f"  ... and {len(available_names) - 10} more")
         
         return []
     

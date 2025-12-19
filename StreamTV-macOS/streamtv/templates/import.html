@@ -210,7 +210,7 @@
             <h2>Drag & Drop YAML File</h2>
             <p>or</p>
             <div class="file-input-wrapper">
-                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                <button class="btn btn-primary" data-action="triggerImportFilePicker">
                     <span class="material-icons" style="font-size: 18px;">upload</span>
                     Choose File
                 </button>
@@ -219,7 +219,9 @@
                     id="fileInput" 
                     class="file-input" 
                     accept=".yaml,.yml"
-                    onchange="handleFileSelect(event)"
+                    data-action="handleFileSelect"
+                    data-action-event="change"
+                    data-pass-event="true"
                 >
             </div>
             <p style="margin-top: 16px; font-size: 12px; color: var(--text-secondary);">
@@ -230,7 +232,7 @@
         <div class="selected-file" id="selectedFile">
             <div class="selected-file-name" id="fileName"></div>
             <div class="selected-file-size" id="fileSize"></div>
-            <button class="btn btn-outlined" onclick="clearSelection()" style="margin-top: 12px;">
+            <button class="btn btn-outlined" data-action="clearSelection" style="margin-top: 12px;">
                 Clear Selection
             </button>
         </div>
@@ -245,7 +247,7 @@
         <div class="result" id="result"></div>
         
         <div style="text-align: center; margin-top: 24px;">
-            <button class="btn btn-primary" id="importBtn" onclick="importChannels()" disabled>
+            <button class="btn btn-primary" id="importBtn" data-action="importChannels" disabled>
                 <span class="material-icons" style="font-size: 18px;">import_export</span>
                 Import Channels
             </button>
@@ -254,7 +256,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-    <script>
+    <script nonce="{{ request.state.csp_nonce }}">
         let selectedFile = null;
         
         // Drag and drop handlers
@@ -359,7 +361,7 @@
                 progressText.textContent = 'Sending to server...';
                 
                 // Upload file
-                const response = await fetch('/api/import/channels/yaml', {
+                const response = await authenticatedFetch('/api/import/channels/yaml', {
                     method: 'POST',
                     body: formData
                 });
@@ -412,6 +414,13 @@
         function hideResult() {
             const resultDiv = document.getElementById('result');
             resultDiv.classList.remove('show');
+        }
+
+        function triggerImportFilePicker() {
+            const input = document.getElementById('fileInput');
+            if (input) {
+                input.click();
+            }
         }
     </script>
 {% endblock %}

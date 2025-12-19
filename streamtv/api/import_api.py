@@ -127,7 +127,7 @@ async def import_channels_yaml(
     # Save uploaded file temporarily
     tmp_path = None
     try:
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.yaml') as tmp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.yaml') as tmp_file:
             # Read file in chunks to prevent memory issues
             chunk_size = 8192
             total_size = 0
@@ -193,7 +193,7 @@ async def import_channels_yaml(
                 # Overwrite file before deletion (security best practice)
                 with open(tmp_path, 'wb') as f:
                     f.write(b'\x00' * min(tmp_path.stat().st_size, 1024))  # Overwrite first KB
-            tmp_path.unlink()
+                tmp_path.unlink()
             except Exception as e:
                 logger.warning(f"Could not securely delete temporary file {tmp_path}: {e}")
 

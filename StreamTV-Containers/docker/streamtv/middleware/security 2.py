@@ -192,6 +192,6 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
                 httponly=True,
                 samesite="strict",
                 secure=request.url.scheme == "https"
-            )
+        )
         
         return response

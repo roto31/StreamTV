@@ -3,114 +3,189 @@
 {% block title %}Schedules - StreamTV{% endblock %}
 
 {% block extra_styles %}
+<style>
+    .schedules-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
     .schedules-toolbar {
         background: var(--surface);
-        border-radius: 12px; /* Apple HIG standard */
-        padding: 16px; /* Apple HIG standard */
-        margin-bottom: 16px; /* Apple 8pt grid */
+        border-radius: 12px;
+        padding: 16px;
         display: flex;
         align-items: center;
-        gap: 16px; /* Apple HIG standard spacing */
+        gap: 16px;
         border: 0.5px solid var(--divider);
     }
     
-    .schedules-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 24px;
-    }
-    
-    .schedule-card {
+    .schedules-list {
         background: var(--surface);
-        border-radius: 12px; /* Apple HIG standard */
-        padding: 20px; /* Apple HIG standard */
+        border-radius: 12px;
+        overflow: hidden;
         border: 0.5px solid var(--divider);
-        transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
     }
     
-    .schedule-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-    
-    .schedule-header {
+    .schedule-row {
         display: flex;
-        justify-content: space-between;
-        align-items: start;
-        margin-bottom: 16px;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 0.5px solid var(--divider);
+        transition: background 0.2s;
+        cursor: pointer;
     }
     
-    .schedule-title {
-        font-size: 18px;
-        font-weight: 500;
-        color: var(--text-primary);
-        margin-bottom: 4px;
+    .schedule-row:hover {
+        background: var(--hover);
     }
     
-    .schedule-channel {
-        font-size: 14px;
-        color: var(--text-secondary);
+    .schedule-row:last-child {
+        border-bottom: none;
     }
     
     .schedule-info {
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-bottom: 16px;
+        gap: 4px;
     }
     
-    .schedule-info-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
+    .schedule-name {
+        font-weight: 500;
+        color: var(--text-primary);
+        font-size: 17px;
+    }
+    
+    .schedule-details {
+        font-size: 13px;
         color: var(--text-secondary);
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
     }
     
-    .schedule-info-item .material-icons {
-        font-size: 18px;
+    .schedule-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: var(--background);
+        border-radius: 6px;
+        font-size: 12px;
     }
     
     .schedule-actions {
         display: flex;
         gap: 8px;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid var(--divider);
     }
     
-    .file-list {
-        background: var(--background);
-        border-radius: 12px; /* Apple HIG standard */
-        padding: 16px; /* Apple HIG standard */
-        margin-top: 16px; /* Apple 8pt grid */
-    }
-    
-    .file-item {
-        display: flex;
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
         align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .modal.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 700px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+        display: flex;
         justify-content: space-between;
-        padding: 12px 16px; /* Apple HIG standard */
-        border-bottom: 0.5px solid var(--divider);
-        transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); /* Apple HIG standard */
-        min-height: 44px; /* Apple minimum touch target */
+        align-items: center;
+        margin-bottom: 24px;
     }
     
-    .file-item:hover {
-        background: var(--hover);
-    }
-    
-    .file-item:last-child {
-        border-bottom: none;
-    }
-    
-    .file-name {
-        font-weight: 500;
+    .modal-title {
+        font-size: 22px;
+        font-weight: 700;
         color: var(--text-primary);
     }
     
-    .file-path {
-        font-size: 12px;
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-weight: 500;
+        font-size: 15px;
+    }
+    
+    .form-label .help-text {
+        font-weight: 400;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-left: 8px;
+    }
+    
+    .form-input, .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--background);
+        border: 0.5px solid var(--divider);
+        border-radius: 10px;
+        color: var(--text-primary);
+        font-size: 17px;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+    
+    .form-checkbox {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        background: var(--background);
+        border-radius: 10px;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .form-checkbox input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--primary);
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+    
+    .form-checkbox label {
+        flex: 1;
+        font-size: 15px;
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+    
+    .form-checkbox .help-text {
+        display: block;
+        font-size: 13px;
         color: var(--text-secondary);
         margin-top: 4px;
     }
@@ -122,175 +197,315 @@
     }
     
     .empty-state-icon {
-        font-size: 64px;
-        opacity: 0.5;
+        font-size: 48px;
         margin-bottom: 16px;
     }
+    
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
     <div class="content-header">
         <h1>Schedules</h1>
-        <p>Manage YAML schedule files for your channels</p>
+    <p>Create and manage ErsatzTV-style classic schedules for your channels</p>
     </div>
     
     <div class="divider"></div>
     
-    <!-- Toolbar -->
-    <div class="schedules-toolbar">
-        <button class="btn btn-primary" onclick="refreshSchedules()">
-            <span class="material-icons" style="font-size: 18px;">refresh</span>
-            Refresh
-        </button>
-        <div style="flex: 1;"></div>
-        <a href="/import" class="btn btn-outlined">
-            <span class="material-icons" style="font-size: 18px;">upload</span>
-            Import Channel
-        </a>
-    </div>
-    
-    <!-- Schedule Files -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">Schedule Files</div>
+    <div class="schedules-container">
+        <div class="schedules-toolbar">
+            <button class="btn btn-primary" id="openScheduleModalButton">
+            <span class="material-icons">add</span>
+            Add Schedule
+            </button>
+            <div style="flex: 1;"></div>
+            <button class="btn btn-outlined" id="refreshSchedulesButton">
+            <span class="material-icons">refresh</span>
+                Refresh
+            </button>
         </div>
-        <div id="loading" class="loading">Loading schedules...</div>
-        <div id="schedules-container" class="schedules-grid" style="display: none;"></div>
-        <div id="empty-state" class="empty-state" style="display: none;">
-            <div class="empty-state-icon">📅</div>
-            <h3 style="margin-bottom: 8px;">No schedule files found</h3>
-            <p>Schedule files are located in the <code>schedules/</code> directory</p>
+        
+        <div class="schedules-list" id="schedulesList">
+            <div class="loading" id="loading">Loading schedules...</div>
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-state-icon">📅</div>
+                <h3>No schedules found</h3>
+                <p>Create a new schedule to get started</p>
+            </div>
         </div>
     </div>
     
-    <!-- YAML Files List -->
-    <div class="card file-list">
-        <div class="card-header">
-            <div class="card-title">Available YAML Files</div>
+    <!-- Create/Edit Schedule Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Add Schedule</h2>
+            <button class="btn-icon js-close-schedule-modal" type="button">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="scheduleForm">
+                <input type="hidden" id="scheduleId" name="id">
+            
+            <div class="form-group">
+                <label class="form-label" for="scheduleName">Schedule Name *</label>
+                <input type="text" id="scheduleName" name="name" class="form-input" required>
+            </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="channelId">Channel *</label>
+                <select id="channelId" name="channel_id" class="form-select" required>
+                        <option value="">Select a channel...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                <div class="form-checkbox">
+                    <input type="checkbox" id="keepMultiPart" name="keep_multi_part_episodes_together">
+                    <label for="keepMultiPart">
+                        Keep Multi-Part Episodes Together
+                        <span class="help-text">Only applies to shuffled schedule items. Groups multi-part episodes so they are always scheduled together and play in correct order.</span>
+                    </label>
+                </div>
+                </div>
+                
+                <div class="form-group">
+                <div class="form-checkbox">
+                    <input type="checkbox" id="treatCollectionsAsShows" name="treat_collections_as_shows">
+                    <label for="treatCollectionsAsShows">
+                        Treat Collections As Shows
+                        <span class="help-text">Only applies when Keep Multi-Part Episodes Together is enabled. Groups multi-part episodes across shows within the collection.</span>
+                    </label>
+                </div>
+                </div>
+                
+                <div class="form-group">
+                <div class="form-checkbox">
+                    <input type="checkbox" id="shuffleItems" name="shuffle_schedule_items">
+                    <label for="shuffleItems">
+                        Shuffle Schedule Items
+                        <span class="help-text">Shuffles the order of schedule items when building a playout. Mostly used on channels with a mix of shows. Disables fixed start times and flood mode.</span>
+                    </label>
+                </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-checkbox">
+                    <input type="checkbox" id="randomStartPoint" name="random_start_point">
+                    <label for="randomStartPoint">
+                        Random Start Point
+                        <span class="help-text">Starts each schedule item at a random place within the collection.</span>
+                    </label>
+                    </div>
+                </div>
+                
+            <div class="btn-group">
+                    <button type="button" class="btn btn-outlined js-close-schedule-modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Schedule</button>
+                </div>
+            </form>
         </div>
-        <div id="files-container"></div>
     </div>
 {% endblock %}
 
 {% block extra_scripts %}
-    <script>
-        // Load schedules on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSchedules();
-            loadYamlFiles();
-        });
+    <script nonce="{{ request.state.csp_nonce }}">
+let schedules = [];
+        let channels = [];
         
-        async function loadSchedules() {
+        async function loadChannels() {
             try {
-                // Load channels to get schedule associations
-                const channelsRes = await fetch('/api/channels');
-                const channels = await channelsRes.json();
+        const response = await authenticatedFetch('/api/channels');
+        if (!response.ok) throw new Error('Failed to load channels');
+        channels = await response.json();
+        
+                const select = document.getElementById('channelId');
+        select.innerHTML = '<option value="">Select a channel...</option>';
+        channels.forEach(channel => {
+            const option = document.createElement('option');
+            option.value = channel.id;
+            option.textContent = `${channel.number} - ${channel.name}`;
+            select.appendChild(option);
+        });
+            } catch (error) {
+                console.error('Error loading channels:', error);
+        showAlert('Failed to load channels', 'error');
+            }
+        }
+        
+async function loadSchedules() {
+    const loading = document.getElementById('loading');
+    const emptyState = document.getElementById('emptyState');
+    const list = document.getElementById('schedulesList');
+    
+    loading.style.display = 'block';
+    emptyState.style.display = 'none';
+    
+    try {
+        const response = await authenticatedFetch('/api/schedules');
+        if (!response.ok) throw new Error('Failed to load schedules');
+        schedules = await response.json();
                 
-                // Load schedule files from API
-                let scheduleFiles = [];
-                try {
-                    const schedulesRes = await fetch('/api/schedules/files');
-                    if (schedulesRes.ok) {
-                        scheduleFiles = await schedulesRes.json();
-                    }
-                } catch (e) {
-                    console.warn('Could not load schedule files from API:', e);
+        loading.style.display = 'none';
+                
+                if (schedules.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
                 }
                 
-                document.getElementById('loading').style.display = 'none';
-                const container = document.getElementById('schedules-container');
-                const emptyState = document.getElementById('empty-state');
-                
-                if (scheduleFiles.length === 0) {
-                    container.style.display = 'none';
-                    emptyState.style.display = 'block';
-                } else {
-                    container.style.display = 'grid';
-                    emptyState.style.display = 'none';
+        list.innerHTML = schedules.map(schedule => {
+                    const channel = channels.find(c => c.id === schedule.channel_id);
+            const channelName = channel ? `${channel.number} - ${channel.name}` : 'Unknown';
+            const itemCount = schedule.items ? schedule.items.length : 0;
+            
+            const badges = [];
+            if (schedule.keep_multi_part_episodes_together) badges.push('Multi-Part');
+            if (schedule.shuffle_schedule_items) badges.push('Shuffled');
+            if (schedule.random_start_point) badges.push('Random Start');
                     
-                    container.innerHTML = scheduleFiles.map(schedule => {
-                        // Try to find associated channel by schedule file name or channel number
-                        const channel = channels.find(c => 
-                            c.schedule_file === schedule.file || 
-                            c.number === schedule.channel_number
-                        );
-                        const channelNumber = schedule.channel_number || (channel ? channel.number : null);
-                        return `
-                            <div class="schedule-card">
-                                <div class="schedule-header">
-                                    <div>
-                                        <div class="schedule-title">${schedule.name || schedule.file}</div>
-                                        ${channelNumber ? `<div class="schedule-channel">Channel ${channelNumber}</div>` : ''}
-                                    </div>
-                                    ${channel ? `<span class="badge ${channel.enabled ? 'badge-success' : 'badge-error'}">${channel.enabled ? 'Active' : 'Disabled'}</span>` : '<span class="badge badge-warning">No Channel</span>'}
-                                </div>
-                                <div class="schedule-info">
-                                    <div class="schedule-info-item">
-                                        <span class="material-icons">description</span>
-                                        <span>File: ${schedule.file}</span>
-                                    </div>
-                                    ${channel ? `
-                                        <div class="schedule-info-item">
-                                            <span class="material-icons">tv</span>
-                                            <span>Channel: ${channel.name}</span>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                <div class="schedule-actions">
-                                    ${channel ? `
-                                        <a href="/player" class="btn btn-outlined" style="flex: 1; text-align: center;" onclick="localStorage.setItem('autoPlayChannel', '${channel.number}')">
-                                            <span class="material-icons" style="font-size: 18px;">play_circle</span>
-                                            Play
-                                        </a>
-                                    ` : ''}
-                                    <a href="/channels" class="btn btn-outlined" style="flex: 1; text-align: center;">
-                                        <span class="material-icons" style="font-size: 18px;">settings</span>
-                                        Manage
-                                    </a>
+                    return `
+                <div class="schedule-row" data-action="editSchedule" data-args='[${schedule.id}]'>
+                            <div class="schedule-info">
+                        <div class="schedule-name">${escapeHtml(schedule.name)}</div>
+                                <div class="schedule-details">
+                            <span>Channel: ${escapeHtml(channelName)}</span>
+                            <span>Items: ${itemCount}</span>
+                            ${badges.length > 0 ? badges.map(b => `<span class="schedule-badge">${escapeHtml(b)}</span>`).join('') : ''}
                                 </div>
                             </div>
-                        `;
-                    }).join('');
-                }
+                    <div class="schedule-actions">
+                        <button class="btn-icon" data-action="editScheduleItems" data-args='[${schedule.id}]' data-stop-propagation="true" title="Edit Schedule Items">
+                            <span class="material-icons">list</span>
+                        </button>
+                        <button class="btn-icon" data-action="editSchedule" data-args='[${schedule.id}]' data-stop-propagation="true" title="Edit Schedule">
+                            <span class="material-icons">edit</span>
+                                </button>
+                        <button class="btn-icon" data-action="deleteSchedule" data-args='[${schedule.id}]' data-stop-propagation="true" title="Delete Schedule">
+                            <span class="material-icons">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        if (typeof bindActionHandlers === 'function') {
+            bindActionHandlers(list);
+        }
             } catch (error) {
-                document.getElementById('loading').style.display = 'none';
                 console.error('Error loading schedules:', error);
+        loading.style.display = 'none';
+        showAlert('Failed to load schedules', 'error');
             }
         }
         
-        async function loadYamlFiles() {
+        function openCreateModal() {
+    document.getElementById('scheduleId').value = '';
+            document.getElementById('scheduleForm').reset();
+    document.getElementById('modalTitle').textContent = 'Add Schedule';
+            document.getElementById('scheduleModal').classList.add('active');
+        }
+        
+function editSchedule(scheduleId) {
+    const schedule = schedules.find(s => s.id === scheduleId);
+    if (!schedule) return;
+    
+    document.getElementById('scheduleId').value = schedule.id;
+    document.getElementById('scheduleName').value = schedule.name || '';
+    document.getElementById('channelId').value = schedule.channel_id || '';
+    document.getElementById('keepMultiPart').checked = schedule.keep_multi_part_episodes_together || false;
+    document.getElementById('treatCollectionsAsShows').checked = schedule.treat_collections_as_shows || false;
+    document.getElementById('shuffleItems').checked = schedule.shuffle_schedule_items || false;
+    document.getElementById('randomStartPoint').checked = schedule.random_start_point || false;
+    
+                    document.getElementById('modalTitle').textContent = 'Edit Schedule';
+                    document.getElementById('scheduleModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('scheduleModal').classList.remove('active');
+        }
+        
+        async function saveSchedule(event) {
+            event.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('scheduleName').value,
+        channel_id: parseInt(document.getElementById('channelId').value),
+        keep_multi_part_episodes_together: document.getElementById('keepMultiPart').checked,
+        treat_collections_as_shows: document.getElementById('treatCollectionsAsShows').checked,
+        shuffle_schedule_items: document.getElementById('shuffleItems').checked,
+        random_start_point: document.getElementById('randomStartPoint').checked
+            };
+            
+    const scheduleId = document.getElementById('scheduleId').value;
+    const url = scheduleId ? `/api/schedules/${scheduleId}` : '/api/schedules';
+    const method = scheduleId ? 'PUT' : 'POST';
+            
             try {
-                const res = await fetch('/api/schedules/files');
-                if (res.ok) {
-                    const files = await res.json();
-            const container = document.getElementById('files-container');
-                    if (files.length === 0) {
-                        container.innerHTML = '<div class="file-item"><div><div class="file-name">No schedule files found</div><div class="file-path">Create schedule files in the schedules/ directory</div></div></div>';
-                    } else {
-                        container.innerHTML = files.map(schedule => `
-                <div class="file-item">
-                    <div>
-                                    <div class="file-name">${schedule.file}</div>
-                                    <div class="file-path">schedules/${schedule.file}</div>
-                    </div>
-                    <span class="badge badge-info">YAML</span>
-                </div>
-            `).join('');
-                    }
-                } else {
-                    document.getElementById('files-container').innerHTML = '<div class="file-item"><div><div class="file-name">Could not load schedule files</div></div></div>';
-                }
+        const response = await authenticatedFetch(url, {
+            method: method,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(formData)
+                });
+                
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to save schedule');
+        }
+        
+                    closeModal();
+        await loadSchedules();
+        showAlert('Schedule saved successfully', 'success');
             } catch (error) {
-                console.error('Error loading YAML files:', error);
-                document.getElementById('files-container').innerHTML = '<div class="file-item"><div><div class="file-name">Error loading schedule files</div></div></div>';
+                console.error('Error saving schedule:', error);
+        showAlert(error.message || 'Failed to save schedule', 'error');
             }
         }
         
-        function refreshSchedules() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('schedules-container').style.display = 'none';
-            loadSchedules();
+async function deleteSchedule(scheduleId) {
+    if (!confirm('Are you sure you want to delete this schedule? This will also delete all schedule items.')) {
+        return;
+    }
+            
+            try {
+        const response = await authenticatedFetch(`/api/schedules/${scheduleId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Failed to delete schedule');
+        
+        await loadSchedules();
+        showAlert('Schedule deleted successfully', 'success');
+            } catch (error) {
+                console.error('Error deleting schedule:', error);
+        showAlert('Failed to delete schedule', 'error');
+            }
         }
+
+function editScheduleItems(scheduleId) {
+    window.location.href = `/schedules/${scheduleId}/items`;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadChannels();
+    await loadSchedules();
+    
+    // Convert icons
+    if (window.convertMaterialIcons) {
+        setTimeout(() => window.convertMaterialIcons(), 100);
+    }
+});
     </script>
 {% endblock %}
-

@@ -1,0 +1,10 @@
+# Netscape HTTP Cookie File
+# https://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file! Do not edit.
+
+.archive.org	TRUE	/	FALSE	1796446644	donation-identifier	7f9f8f89cebc318bdccb99aaff3857b7
+.archive.org	TRUE	/	FALSE	1796446644	abtest-identifier	cf51ba939ba7dc3802a5911ed9492537
+archive.org	FALSE	/	FALSE	1780462649	g_state	{"i_l":0,"i_ll":1764910649010,"i_b":"HDWXx7xspX+c8C360+FHw1fBA+SQhp+kCBNHnBr+QFg"}
+.archive.org	TRUE	/	FALSE	1796446659	logged-in-sig	1796446658%201764910658%20N5aR1%2BRoahwNlNHg9FDnX3%2BnDlzf6JaH%2FMAfIG1%2F9RJg7wPETOjGsoTIp3gkytnJNUvMjS2hmvrNlqjam7sR8Tr5HZ40eSEvvwMGELFRby93bZJjUeFRTZlkSJ4gRziaky486h%2BOYXKiy46O0bKctTrpSWTv2i6AN08wBWD5uip2yfVvSv3eActV4LahM05lSGuQkOAz02wTprjnHR6Mh0eD1EGFEAufw5%2BIegtDpVxI5IRtKz%2F1x7EyZrf7IgWcofKT8ZCW6uc%2FQNrj7oIMZh4CNwKsXrXkpkgNORH8CKTtVb1urdcmt1tN0%2B%2BpQDieZoeVQaBvrgxznzkYq%2BDu7Q%3D%3D
+.archive.org	TRUE	/	FALSE	1796446659	logged-in-user	roto1231%40mac.com
+.archive.org	TRUE	/	FALSE	1768873448	donation	x
