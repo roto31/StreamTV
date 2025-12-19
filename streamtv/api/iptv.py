@@ -443,8 +443,8 @@ async def get_epg(
                                 schedule_time = now
                                 item_index = 0
                         else:
-                        schedule_time = now
-                        item_index = 0
+                            schedule_time = now
+                            item_index = 0
                         
                         while schedule_time < end_time and items and len(schedule_items) < 500:
                             item = items[item_index % len(items)]

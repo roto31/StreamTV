@@ -81,7 +81,7 @@ class ScheduleEngine:
             # Mark as checked (even though it's empty) to prevent repeated logging
             self._collection_cache[collection_name] = []
             
-        logger.warning(f"Collection/Playlist not found: {collection_name}")
+            logger.warning(f"Collection/Playlist not found: {collection_name}")
             
             # List available collections/playlists to help with debugging
             all_collections = self.db.query(Collection).all()
