@@ -468,7 +468,14 @@
     
     async function applyAutoFixes(scriptId, fixActions, event) {
         const resultsDiv = document.getElementById('scriptResults');
-        const promptDiv = event?.target?.closest('.script-result');
+        let promptDiv = event?.currentTarget?.closest('.script-result') || event?.target?.closest('.script-result');
+        if (!promptDiv) {
+            promptDiv = resultsDiv?.querySelector('.script-result:last-of-type') || resultsDiv;
+        }
+        if (!promptDiv) {
+            console.warn('Unable to locate script result container for auto-fix output.');
+            return;
+        }
         
         // Show loading state
         promptDiv.innerHTML = `
@@ -588,8 +595,11 @@
             node = origin.currentTarget || origin.target || null;
         } else if (origin instanceof HTMLElement) {
             node = origin;
-        } else if (this instanceof HTMLElement) {
-            node = this;
+        }
+        
+        if (!node) {
+            console.warn('removeAncestor could not determine a starting element.');
+            return;
         }
         
         for (let i = 0; i < levels && node; i++) {
