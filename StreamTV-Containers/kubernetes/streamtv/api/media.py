@@ -1,12 +1,17 @@
 """Media API endpoints"""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from pydantic import BaseModel
 
 from ..database import get_db, MediaItem, StreamSource
 from ..api.schemas import MediaItemCreate, MediaItemResponse
 from ..streaming import StreamManager
+
+
+class PlexRatingKeyRequest(BaseModel):
+    rating_key: str
 
 router = APIRouter(prefix="/media", tags=["Media"])
 
@@ -84,6 +89,65 @@ async def create_media(media: MediaItemCreate, db: Session = Depends(get_db)):
         return db_media
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error adding media: {str(e)}")
+
+
+@router.post("/plex/from-rating-key", response_model=MediaItemResponse, status_code=status.HTTP_201_CREATED)
+async def create_media_from_plex_rating_key(
+    request: PlexRatingKeyRequest = Body(...),
+    db: Session = Depends(get_db)
+):
+    """Create a MediaItem from a Plex rating key"""
+    from ..config import config
+    
+    rating_key = request.rating_key
+    
+    if not config.plex.enabled or not config.plex.base_url:
+        raise HTTPException(status_code=400, detail="Plex not configured")
+    
+    # Check if MediaItem already exists for this rating key
+    existing = db.query(MediaItem).filter(
+        MediaItem.source == StreamSource.PLEX,
+        MediaItem.source_id == rating_key
+    ).first()
+    if existing:
+        return existing
+    
+    try:
+        # Get media info from Plex
+        plex_url = f"plex://{config.plex.base_url.replace('http://', '').replace('https://', '')}/library/metadata/{rating_key}"
+        plex_info = await stream_manager.plex_adapter.get_media_info(plex_url)
+        
+        if not plex_info:
+            raise HTTPException(status_code=404, detail="Plex media not found")
+        
+        # Format thumbnail URL
+        thumbnail = None
+        if plex_info.get('thumb'):
+            thumb_path = plex_info['thumb']
+            if thumb_path.startswith('/'):
+                thumbnail = f"{config.plex.base_url}{thumb_path}?X-Plex-Token={config.plex.token or ''}"
+            elif thumb_path.startswith('http'):
+                thumbnail = thumb_path
+            else:
+                thumbnail = f"{config.plex.base_url}/{thumb_path}?X-Plex-Token={config.plex.token or ''}"
+        
+        # Create media item
+        db_media = MediaItem(
+            source=StreamSource.PLEX,
+            source_id=rating_key,
+            url=plex_url,
+            title=plex_info.get('title', 'Untitled'),
+            description=plex_info.get('summary', ''),
+            duration=plex_info.get('duration'),
+            thumbnail=thumbnail
+        )
+        
+        db.add(db_media)
+        db.commit()
+        db.refresh(db_media)
+        return db_media
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error creating media from Plex: {str(e)}")
 
 
 @router.delete("/{media_id}", status_code=status.HTTP_204_NO_CONTENT)

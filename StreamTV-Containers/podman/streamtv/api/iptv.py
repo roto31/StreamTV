@@ -186,6 +186,24 @@ async def get_epg(
             schedule_file = ScheduleParser.find_schedule_file(channel.number)
             schedule_items = []
             
+            # Get playout_start_time from database to match actual stream timing
+            # This ensures EPG metadata matches what's actually being streamed
+            from streamtv.database.models import ChannelPlaybackPosition
+            playback_pos = db.query(ChannelPlaybackPosition).filter(
+                ChannelPlaybackPosition.channel_id == channel.id
+            ).first()
+            
+            # Use playout_start_time if available (for CONTINUOUS channels), otherwise use now
+            # This matches the logic in channel_manager._get_current_position()
+            playout_start_time = None
+            if playback_pos and playback_pos.playout_start_time:
+                playout_start_time = playback_pos.playout_start_time
+                logger.debug(f"Channel {channel.number}: Using playout_start_time {playout_start_time} for EPG")
+            else:
+                # No saved playout_start_time - use now (first time or ON_DEMAND channel)
+                playout_start_time = now
+                logger.debug(f"Channel {channel.number}: No saved playout_start_time, using now ({now}) for EPG")
+            
             if schedule_file:
                 try:
                     parsed_schedule = ScheduleParser.parse_file(schedule_file, schedule_file.parent)
@@ -196,12 +214,78 @@ async def get_epg(
                     )
                     logger.info(f"Generated {len(schedule_items)} schedule items for channel {channel.number}")
                     
+                    # Calculate total cycle duration (sum of all item durations)
+                    total_duration = sum(
+                        (item.get('media_item', {}).duration or 1800)
+                        for item in schedule_items
+                        if item.get('media_item')
+                    )
+                    
+                    # Calculate which item should be playing "now" using same logic as stream
+                    # This ensures EPG matches what's actually streaming
+                    if total_duration > 0 and playout_start_time:
+                        elapsed = (now - playout_start_time).total_seconds()
+                        cycle_position = elapsed % total_duration if total_duration > 0 else 0
+                        
+                        # Find which item index corresponds to cycle_position
+                        current_time = 0
+                        current_item_index = 0
+                        for idx, item in enumerate(schedule_items):
+                            media_item = item.get('media_item')
+                            if not media_item:
+                                continue
+                            duration = media_item.duration or 1800
+                            if current_time + duration > cycle_position:
+                                current_item_index = idx
+                                break
+                            current_time += duration
+                            current_item_index = idx + 1
+                        
+                        if current_item_index >= len(schedule_items):
+                            current_item_index = 0
+                        
+                        logger.debug(f"Channel {channel.number}: EPG calculated current item index {current_item_index} based on playout_start_time")
+                    
                     # Assign start times if not set (for repeat=True schedules)
+                    # Start from the item that should be playing "now" based on playout_start_time
                     items_without_time = sum(1 for item in schedule_items if not item.get('start_time'))
                     if items_without_time > 0:
                         logger.info(f"Assigning start times to {items_without_time} items without start_time for channel {channel.number}")
-                        current_item_time = now
-                        for item in schedule_items:
+                        
+                        # Calculate when the current item started playing
+                        if total_duration > 0 and playout_start_time:
+                            # Calculate how many full cycles have elapsed
+                            elapsed = (now - playout_start_time).total_seconds()
+                            cycles_completed = int(elapsed // total_duration) if total_duration > 0 else 0
+                            cycle_position = elapsed % total_duration if total_duration > 0 else 0
+                            
+                            # Find start time of current item within the cycle
+                            current_time_in_cycle = 0
+                            current_item_start_in_cycle = 0
+                            for idx, item in enumerate(schedule_items):
+                                media_item = item.get('media_item')
+                                if not media_item:
+                                    continue
+                                duration = media_item.duration or 1800
+                                if current_time_in_cycle + duration > cycle_position:
+                                    current_item_start_in_cycle = current_time_in_cycle
+                                    break
+                                current_time_in_cycle += duration
+                            
+                            # Calculate absolute start time of current item
+                            current_item_start_time = playout_start_time + timedelta(
+                                seconds=(cycles_completed * total_duration) + current_item_start_in_cycle
+                            )
+                        else:
+                            # Fallback: start from now
+                            current_item_start_time = now
+                        
+                        # Assign start times starting from current item
+                        current_item_time = current_item_start_time
+                        # Start from current_item_index to maintain continuity
+                        for i in range(len(schedule_items)):
+                            idx = (current_item_index + i) % len(schedule_items)
+                            item = schedule_items[idx]
                             if not item.get('start_time'):
                                 item['start_time'] = current_item_time
                                 media_item = item.get('media_item')
@@ -242,9 +326,11 @@ async def get_epg(
                     Schedule.channel_id == channel.id,
                     Schedule.start_time <= end_time
                 ).all()
+                logger.debug(f"Channel {channel.number} ({channel.name}): Found {len(schedules)} database schedules")
                 
                 # Get playlists for this channel with eager loading
                 playlists = db.query(Playlist).filter(Playlist.channel_id == channel.id).all()
+                logger.debug(f"Channel {channel.number} ({channel.name}): Found {len(playlists)} playlists")
                 
                 # Generate programs from schedules
                 for schedule in schedules:
@@ -284,9 +370,11 @@ async def get_epg(
                 if not schedule_items and playlists:
                     # Use first playlist to fill schedule
                     playlist = playlists[0]
+                    logger.info(f"Channel {channel.number} ({channel.name}): Using playlist '{playlist.name}' (ID: {playlist.id}) for EPG generation")
                     items = db.query(PlaylistItem).filter(
                         PlaylistItem.playlist_id == playlist.id
                     ).order_by(PlaylistItem.order).limit(200).all()
+                    logger.debug(f"Channel {channel.number} ({channel.name}): Found {len(items)} playlist items")
                     
                     if items:
                         # Batch load all media items
@@ -298,8 +386,65 @@ async def get_epg(
                         else:
                             media_items_dict = {}
                         
-                        schedule_time = now
-                        item_index = 0
+                        # Use playout_start_time if available (for CONTINUOUS channels), otherwise use now
+                        # This ensures EPG matches what's actually being streamed
+                        if playback_pos and playback_pos.playout_start_time:
+                            playout_start_time = playback_pos.playout_start_time
+                            
+                            # Calculate which item should be playing "now" using same logic as stream
+                            total_duration = sum(
+                                (media_items_dict.get(item.media_item_id, {}).duration or 1800)
+                                for item in items
+                                if media_items_dict.get(item.media_item_id)
+                            )
+                            
+                            if total_duration > 0:
+                                elapsed = (now - playout_start_time).total_seconds()
+                                cycle_position = elapsed % total_duration
+                                
+                                # Find which item index corresponds to cycle_position
+                                current_time = 0
+                                current_item_index = 0
+                                for idx, item in enumerate(items):
+                                    media_item = media_items_dict.get(item.media_item_id)
+                                    if not media_item:
+                                        continue
+                                    duration = media_item.duration or 1800
+                                    if current_time + duration > cycle_position:
+                                        current_item_index = idx
+                                        break
+                                    current_time += duration
+                                    current_item_index = idx + 1
+                                
+                                if current_item_index >= len(items):
+                                    current_item_index = 0
+                                
+                                # Calculate when the current item started playing
+                                cycles_completed = int(elapsed // total_duration) if total_duration > 0 else 0
+                                current_time_in_cycle = 0
+                                current_item_start_in_cycle = 0
+                                for idx, item in enumerate(items):
+                                    media_item = media_items_dict.get(item.media_item_id)
+                                    if not media_item:
+                                        continue
+                                    duration = media_item.duration or 1800
+                                    if current_time_in_cycle + duration > cycle_position:
+                                        current_item_start_in_cycle = current_time_in_cycle
+                                        break
+                                    current_time_in_cycle += duration
+                                
+                                # Calculate absolute start time of current item
+                                schedule_time = playout_start_time + timedelta(
+                                    seconds=(cycles_completed * total_duration) + current_item_start_in_cycle
+                                )
+                                item_index = current_item_index
+                                logger.debug(f"Channel {channel.number}: EPG fallback using playout_start_time, starting from item {item_index} at {schedule_time}")
+                            else:
+                                schedule_time = now
+                                item_index = 0
+                        else:
+                            schedule_time = now
+                            item_index = 0
                         
                         while schedule_time < end_time and items and len(schedule_items) < 500:
                             item = items[item_index % len(items)]
@@ -314,22 +459,28 @@ async def get_epg(
                                 schedule_time = schedule_time + timedelta(seconds=media_item.duration or 1800)
                                 item_index += 1
                             else:
+                                logger.warning(f"Channel {channel.number} ({channel.name}): Playlist item {item.id} has no associated media_item")
                                 break
+                    
+                    if not schedule_items and items:
+                        logger.warning(f"Channel {channel.number} ({channel.name}): Playlist has {len(items)} items but no valid media_items found")
             
             # Generate EPG entries from schedule items
             # If no schedule items, add a placeholder programme so Plex can map the channel
             # Plex requires at least one programme entry per channel
             if not schedule_items:
                 logger.warning(f"No schedule items found for channel {channel.number} ({channel.name}) - adding placeholder")
-                # Add a placeholder programme for the next 24 hours to ensure Plex shows something
-                placeholder_end = min(now + timedelta(hours=24), end_time)
+                # Add a placeholder programme for the full EPG build period to ensure Plex shows something
+                # Use the full end_time instead of just 24 hours to cover the entire EPG period
                 start_str = now.strftime("%Y%m%d%H%M%S +0000")
-                end_str = placeholder_end.strftime("%Y%m%d%H%M%S +0000")
+                end_str = end_time.strftime("%Y%m%d%H%M%S +0000")
                 channel_id = str(channel.number).strip()
                 xml_content += f'  <programme start="{_xml(start_str)}" stop="{_xml(end_str)}" channel="{_xml(channel_id)}">\n'
-                xml_content += f'    <title lang="en">{_xml(channel.name)}</title>\n'
-                xml_content += f'    <desc lang="en">Live programming on {_xml(channel.name)}</desc>\n'
+                # Use a more descriptive title that Plex will recognize
+                xml_content += f'    <title lang="en">{_xml(channel.name)} - Live Stream</title>\n'
+                xml_content += f'    <desc lang="en">Continuous live programming on {_xml(channel.name)}. This channel streams content 24/7.</desc>\n'
                 xml_content += '    <category lang="en">General</category>\n'
+                xml_content += '    <category lang="en">Live</category>\n'
                 xml_content += '  </programme>\n'
             else:
                 # Log first and last programme times for debugging
@@ -497,8 +648,10 @@ async def get_epg(
                     if media_item.thumbnail:
                         # Ensure thumbnail URL is absolute
                         if media_item.thumbnail.startswith('http'):
+                            # Already absolute, use as-is (may already include Plex token)
                             thumb_url = media_item.thumbnail
                         else:
+                            # Relative path - make absolute
                             thumb_url = f"{base_url}{media_item.thumbnail}" if media_item.thumbnail.startswith('/') else f"{base_url}/{media_item.thumbnail}"
                         xml_content += f'    <icon src="{_xml(thumb_url)}"/>\n'
                     
@@ -1029,7 +1182,15 @@ async def stream_media(
             source = stream_manager.detect_source(media_item.url)
         except Exception as e:
             logger.warning(f"Error detecting source for media {media_id}, using UNKNOWN: {e}")
-            source = StreamSource.UNKNOWN
+            # Detect source from URL
+            if 'youtube.com' in media_item.url or 'youtu.be' in media_item.url:
+                source = StreamSource.YOUTUBE
+            elif 'archive.org' in media_item.url:
+                source = StreamSource.ARCHIVE_ORG
+            elif 'plex://' in media_item.url or '/library/metadata/' in media_item.url:
+                source = StreamSource.PLEX
+            else:
+                source = StreamSource.UNKNOWN
         
         # Handle range requests for seeking
         range_header = request.headers.get("Range") if request else None
@@ -1111,6 +1272,9 @@ async def stream_media(
                     content_type = "video/webm"
                 else:
                     content_type = "video/mp4"
+            elif source == StreamSource.PLEX:
+                # Plex typically serves MP4 or MKV, default to MP4
+                content_type = "video/mp4"
             else:
                 content_type = "video/mp4"
         

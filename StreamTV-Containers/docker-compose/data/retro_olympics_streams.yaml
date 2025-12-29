@@ -1,0 +1,439 @@
+streams:
+  # 1980 national primetime coverage (ErsatzTV sequential content)
+  - id: 1980_opening
+    collection: "Retro Olympics - 1980 Opening Ceremony (ABC)"
+    type: event
+    year: 1980
+    slot: "Prime-time open & athlete parade intro"
+    broadcast_date: 1980-02-13
+    network: ABC
+    runtime: PT3M44S
+    source: youtube
+    url: https://www.youtube.com/watch?v=uTW6jH3sk1k
+    notes: "Lake Placid teaser used at the top of ABC's opening ceremony telecast."
+
+  - id: 1980_figures
+    collection: "Retro Olympics - 1980 Ladies Figure Skating Final"
+    type: event
+    year: 1980
+    slot: "Short + long programs and medal ceremony"
+    broadcast_date: 1980-02-20
+    network: ABC
+    runtime: PT49M51S
+    source: youtube
+    url: https://www.youtube.com/watch?v=MMWvqmoHVdE
+    notes: "Complete ABC feed featuring Linda Fratianne, Denise Biellmann, and medal podium coverage."
+
+  - id: 1980_miracle
+    collection: "Retro Olympics - 1980 Miracle on Ice (Prime Replay)"
+    type: event
+    year: 1980
+    slot: "USA vs USSR full delayed broadcast"
+    broadcast_date: 1980-02-22
+    network: ABC
+    runtime: PT2H4M55S
+    source: archive
+    url: https://archive.org/download/olympics-feb-22-1980-abc/Olympics%20Feb%2022%201980%20ABC.mp4
+    notes: "ABC primetime edit featuring Al Michaels and Ken Dryden. Archive download length 7,494 s."
+
+  # TC Media Now inserts for 1980 local flavor
+  - id: mn80_pre_roll
+    collection: "MN 1980 Pre-Roll IDs (TC Media Now)"
+    type: bumper
+    year: 1980
+    slot: "WCCO 10pm open / local ID"
+    broadcast_date: 1980-01-26
+    network: WCCO Minneapolis
+    runtime: PT1M0S
+    source: youtube
+    url: https://www.youtube.com/watch?v=h5x4Nn8q6sM
+    notes: "tcmedianow upload — WCCO 10pm Weekend Report open used as pre-roll."
+
+  - id: mn80_mid_roll
+    collection: "MN 1980 Commercial Pod (TC Media Now)"
+    type: commercial
+    year: 1980
+    slot: "Station promos & sponsor spots"
+    broadcast_date: 1980-02-01
+    network: WCCO Minneapolis
+    runtime: PT32S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Ew9qrpq6Y1s
+    notes: "Bundle with tcmedianow promos: WCCO Midday Promotion (0:32), Ralph John Fritz (0:31), Ron Handberg (0:33)."
+
+  - id: mn80_post_roll
+    collection: "MN 1980 Sign-Offs (TC Media Now)"
+    type: bumper
+    year: 1980
+    slot: "Late news teases & closes"
+    broadcast_date: 1980-02-01
+    network: WCCO Minneapolis
+    runtime: PT31S
+    source: youtube
+    url: https://www.youtube.com/watch?v=bErI0LWxy2I
+    notes: "tcmedianow promo for WCCO personality Ralph John Fritz doubles as end-roll."
+
+  - id: mn80_late_news
+    collection: "MN 1980 WCCO Late News (TC Media Now)"
+    type: news
+    year: 1980
+    slot: "10pm Report"
+    broadcast_date: 1980-01-26
+    network: WCCO Minneapolis
+    runtime: PT35M33S
+    source: youtube
+    url: https://www.youtube.com/watch?v=3vAlNXvH8tI
+    notes: "Full WCCO-TV 10pm Report with Pat Miles, used between Olympic blocks."
+
+  - id: mn80_midday
+    collection: "MN 1980 Midday Live (TC Media Now)"
+    type: news
+    year: 1980
+    slot: "State Fair remote"
+    broadcast_date: 1980-08-22
+    network: WCCO Minneapolis
+    runtime: PT30M51S
+    source: youtube
+    url: https://www.youtube.com/watch?v=FQK6yICl0pM
+    notes: "WCCO Midday Live with Bill Carlson & Cindy Osborne brings local daytime flavor."
+
+  - id: ads_1980_wjcl
+    collection: "Retro Ads - 1980 Pod A"
+    type: commercial
+    year: 1980
+    slot: "Station break promo pack"
+    broadcast_date: 1980-02-12
+    network: ABC affiliates
+    runtime: PT1M39S
+    source: youtube
+    url: https://www.youtube.com/watch?v=CixFchHBhWs
+    notes: "WJCL (Savannah) Olympic-themed local break with national spots and ABC slide."
+
+  # 1984 national primetime coverage
+  - id: 1984_opening
+    collection: "Retro Olympics - 1984 Opening Ceremony (ABC)"
+    type: event
+    year: 1984
+    slot: "Opening pageantry & commentary"
+    broadcast_date: 1984-02-08
+    network: ABC
+    runtime: PT58M29S
+    source: youtube
+    url: https://www.youtube.com/watch?v=qla1lKkbeg8
+    notes: "Complete Sarajevo ceremony coverage from the ABC primetime special."
+
+  - id: 1984_day3
+    collection: "Retro Olympics - 1984 Day 3 Afternoon (ABC Tape)"
+    type: event
+    year: 1984
+    slot: "Day 3 midday block"
+    broadcast_date: 1984-02-11
+    network: ABC
+    runtime: PT56M42S
+    source: archive
+    url: https://archive.org/download/abc-1984-winter-olympics-coverage-day-3-partial/ABC%201984%20Winter%20Olympics%20coverage%2C%20Day%203%20%28partial%29.mp4
+    notes: "Archive capture of ABC's Sunday afternoon show with alpine, luge, and studio hits."
+
+  - id: 1984_downhill
+    collection: "Retro Olympics - 1984 Bill Johnson Downhill"
+    type: event
+    year: 1984
+    slot: "Men's downhill final"
+    broadcast_date: 1984-02-16
+    network: ABC
+    runtime: PT8M59S
+    source: youtube
+    url: https://www.youtube.com/watch?v=g_6Pssv-hUg
+    notes: "ABC call of Bill Johnson's gold medal run plus post-race interviews."
+
+  - id: 1984_bolero
+    collection: "Retro Olympics - 1984 Torvill & Dean Bolero"
+    type: event
+    year: 1984
+    slot: "Ice dance free skate"
+    broadcast_date: 1984-02-14
+    network: ABC
+    runtime: PT8M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=E8obUdxnTlc
+    notes: "Legendary Bolero performance with US commentary and crowd reaction."
+
+  # TC Media Now inserts for 1984
+  - id: mn84_pre_roll
+    collection: "MN 1984 Pre-Roll IDs (TC Media Now)"
+    type: bumper
+    year: 1984
+    slot: "News11 update with Diana Pierce"
+    broadcast_date: 1984-06-10
+    network: WTCN/KARE Minneapolis
+    runtime: PT1M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=UtwVh2Hq0UQ
+    notes: "tcmedianow upload — Diana Pierce update used to open Olympic blocks."
+
+  - id: mn84_mid_roll
+    collection: "MN 1984 Commercial Pod (TC Media Now)"
+    type: commercial
+    year: 1984
+    slot: "Twin Cities sponsor reel"
+    broadcast_date: 1984-02-10
+    network: Twin Cities independents
+    runtime: PT30S
+    source: youtube
+    url: https://www.youtube.com/watch?v=ph6q3mIueIg
+    notes: "Fill pod with tcmedianow clips: WCCO Radio (0:30), Q Superette (0:31), KSTP AM wake-up (0:32), McDonald's Good Times (0:33)."
+
+  - id: mn84_post_roll
+    collection: "MN 1984 End Roll Newsbites (TC Media Now)"
+    type: bumper
+    year: 1984
+    slot: "Late movie ad stack"
+    broadcast_date: 1984-10-02
+    network: KSTP Minneapolis
+    runtime: PT5M15S
+    source: youtube
+    url: https://www.youtube.com/watch?v=DGfywX1u9rs
+    notes: "KSTP 'The Lady Eve' commercial stack works as an Olympic sign-off break."
+
+  - id: mn84_kare_sunrise
+    collection: "MN 1984 Sunrise (TC Media Now)"
+    type: news
+    year: 1984
+    slot: "WTCN Sunrise"
+    broadcast_date: 1984-06-11
+    network: WTCN/KARE Minneapolis
+    runtime: PT33M37S
+    source: youtube
+    url: https://www.youtube.com/watch?v=LwTkcFhNlQQ
+    notes: "Paul Magers & meteorologist Paul Douglas anchor this morning block."
+
+  - id: mn84_news11
+    collection: "MN 1984 News11 (TC Media Now)"
+    type: news
+    year: 1984
+    slot: "August News11 prime"
+    broadcast_date: 1984-08-01
+    network: WTCN/KARE Minneapolis
+    runtime: PT24M23S
+    source: youtube
+    url: https://www.youtube.com/watch?v=QrXn855uyoI
+    notes: "Complete News11 broadcast used as mid-evening local cut-in."
+
+  - id: mn84_prime_news
+    collection: "MN 1984 KMSP Prime Time (TC Media Now)"
+    type: news
+    year: 1984
+    slot: "KMSP Prime Time News"
+    broadcast_date: 1984-02-27
+    network: KMSP Minneapolis
+    runtime: PT1H3M36S
+    source: youtube
+    url: https://www.youtube.com/watch?v=ofBE0TS_Mts
+    notes: "Audio is low but this tcmedianow capture matches the late-night Olympic recap slot."
+
+  # 1988 national primetime coverage
+  - id: 1988_opening
+    collection: "Retro Olympics - 1988 Opening Ceremony (Calgary)"
+    type: event
+    year: 1988
+    slot: "Full stadium show & Parade of Nations"
+    broadcast_date: 1988-02-13
+    network: ABC
+    runtime: PT2H33M55S
+    source: youtube
+    url: https://www.youtube.com/watch?v=ibno530gH8k
+    notes: "Complete Calgary ceremony feed sourced from ABC's primetime broadcast."
+
+  - id: 1988_ladies_long
+    collection: "Retro Olympics - 1988 Ladies Long Program (ABC)"
+    type: event
+    year: 1988
+    slot: "Battle of the Carmens"
+    broadcast_date: 1988-02-27
+    network: ABC
+    runtime: PT2H20M24S
+    source: youtube
+    url: https://www.youtube.com/watch?v=q5EZ5ej6Xto
+    notes: "ABC primetime package with Katarina Witt, Debi Thomas, and Elizabeth Manley."
+
+  - id: 1988_boitano
+    collection: "Retro Olympics - 1988 Battle of the Brians"
+    type: event
+    year: 1988
+    slot: "Men's long program highlight"
+    broadcast_date: 1988-02-20
+    network: ABC
+    runtime: PT8M9S
+    source: youtube
+    url: https://www.youtube.com/watch?v=z8p3EhqI94s
+    notes: "Brian Boitano's gold medal free skate with ABC commentary."
+
+  - id: 1988_bobsled
+    collection: "Retro Olympics - 1988 Jamaican Bobsled Debut"
+    type: event
+    year: 1988
+    slot: "Calgary heats recap"
+    broadcast_date: 1988-02-26
+    network: ABC
+    runtime: PT2M43S
+    source: youtube
+    url: https://www.youtube.com/watch?v=nm4DjRcmoPY
+    notes: "News feature on Jamaica's first Olympic bobsled runs."
+
+  # TC Media Now inserts for 1988
+  - id: mn88_pre_roll
+    collection: "MN 1988 Pre-Roll Blocks (TC Media Now)"
+    type: bumper
+    year: 1988
+    slot: "KARE/KSTP lifestyle hits"
+    broadcast_date: 1988-08-02
+    network: KARE Minneapolis
+    runtime: PT6M6S
+    source: youtube
+    url: https://www.youtube.com/watch?v=YDWQWJ47XX4
+    notes: "Good Company Olive Garden review acts as local warm-up; append other tcmedianow teases as needed."
+
+  - id: mn88_mid_roll
+    collection: "MN 1988 Commercial Pod (TC Media Now)"
+    type: commercial
+    year: 1988
+    slot: "Twin Cities ad breaks"
+    broadcast_date: 1988-08-13
+    network: WCCO / KTMA Minneapolis
+    runtime: PT6M54S
+    source: youtube
+    url: https://www.youtube.com/watch?v=h92KFsSygHE
+    notes: "Use Benny Hill break (6:54) alongside KTMA TV 23 spots (6:11) for chunky mid-rolls."
+
+  - id: mn88_post_roll
+    collection: "MN 1988 End Roll Newsbites (TC Media Now)"
+    type: bumper
+    year: 1988
+    slot: "Political desk wrap"
+    broadcast_date: 1988-07-18
+    network: WCCO Minneapolis
+    runtime: PT4M34S
+    source: youtube
+    url: https://www.youtube.com/watch?v=2W7ShW2p4Oo
+    notes: "WCCO's DNC segment works as an end-of-block closer with local reporters."
+
+  - id: mn88_kstp_update
+    collection: "MN 1988 KSTP Late Update (TC Media Now)"
+    type: news
+    year: 1988
+    slot: "Eyewitness News 10pm"
+    broadcast_date: 1988-03-09
+    network: KSTP Minneapolis
+    runtime: PT21M30S
+    source: youtube
+    url: https://www.youtube.com/watch?v=4TkhapMWPD4
+    notes: "Stan Turner & Angela Astore anchor this March 1988 10pm update."
+
+  - id: mn88_wcco_noon
+    collection: "MN 1988 WCCO Noon Report (TC Media Now)"
+    type: news
+    year: 1988
+    slot: "Noon Report"
+    broadcast_date: 1988-05-06
+    network: WCCO Minneapolis
+    runtime: PT29M41S
+    source: youtube
+    url: https://www.youtube.com/watch?v=MEa8ZeSoiUc
+    notes: "Complete midday news block with local cut-ins."
+
+  - id: mn88_wcco_election
+    collection: "MN 1988 Election Desk (TC Media Now)"
+    type: news
+    year: 1988
+    slot: "Election night special"
+    broadcast_date: 1988-11-08
+    network: WCCO Minneapolis
+    runtime: PT46M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=K1WvYWOOpQ8
+    notes: "Part two of WCCO/CBS election coverage used as overnight local block."
+
+  # Legacy archive ad pods (used for non-local filler)
+  - id: ads_1980_amex
+    collection: "Retro Ads - 1980 Pod A"
+    type: commercial
+    year: 1980
+    slot: "American Express Herb Brooks"
+    broadcast_date: 1980-02-24
+    network: ABC
+    runtime: PT30S
+    source: youtube
+    url: https://www.youtube.com/watch?v=FvV6-lAzxIo
+    notes: "Period American Express spot featuring the U.S. hockey team coach."
+
+  - id: ads_1984_subaru
+    collection: "Retro Ads - 1984 Pod A"
+    type: commercial
+    year: 1984
+    slot: "Subaru Ski Team"
+    broadcast_date: 1984-02-10
+    network: ABC
+    runtime: PT32S
+    source: youtube
+    url: https://www.youtube.com/watch?v=K_wh44LRHLw
+    notes: "Winterized Subaru GL spot aired inside Sarajevo coverage."
+
+  - id: ads_1984_break
+    collection: "Retro Ads - 1984 Pod A"
+    type: commercial
+    year: 1984
+    slot: "ABC Olympic pods compilation"
+    broadcast_date: 1984-02-12
+    network: ABC
+    runtime: PT4M0S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Z0tPqu_4gw0
+    notes: "Four-minute reel of 1980-84 Olympic sponsor spots (Coke, Kodak, McDonald's)."
+
+  - id: ads_1988_prime_break
+    collection: "Retro Ads - 1988 Pod A"
+    type: commercial
+    year: 1988
+    slot: "Calgary promo reel"
+    broadcast_date: 1988-02-15
+    network: ABC
+    runtime: PT1M32S
+    source: youtube
+    url: https://www.youtube.com/watch?v=gRspUn4v34U
+    notes: "Compilation of national spots recorded during ABC's Calgary coverage."
+
+  - id: ads_1988_coke
+    collection: "Retro Ads - 1988 Pod A"
+    type: commercial
+    year: 1988
+    slot: "Coca-Cola Can't Beat the Feeling"
+    broadcast_date: 1988-02-18
+    network: ABC
+    runtime: PT31S
+    source: youtube
+    url: https://www.youtube.com/watch?v=9QYlugixp7s
+    notes: "Hockey player and figure skater spot tied to Calgary 1988."
+
+  - id: ads_1988_visa
+    collection: "Retro Ads - 1988 Pod A"
+    type: commercial
+    year: 1988
+    slot: "Visa Olympic campaign"
+    broadcast_date: 1988-02-18
+    network: ABC
+    runtime: PT31S
+    source: youtube
+    url: https://www.youtube.com/watch?v=OXp8MkUKh4Y
+    notes: "Visa's official card of the 1988 Winter Olympics commercial."
+
+  - id: ads_1988_archive
+    collection: "Retro Ads - 1988 KABC Overnight Pod"
+    type: commercial
+    year: 1988
+    slot: "KABC late-night break"
+    broadcast_date: 1988-02-28
+    network: KABC/ABC
+    runtime: PT7M55S
+    source: archive
+    url: https://archive.org/download/capture-a-2412/CaptureA_2412.mp4
+    notes: "Uncut master of KABC's February 28, 1988 overnight commercial block used as archive filler."

@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <button id="installOllamaBtn" class="btn btn-primary" onclick="installOllama()">
+            <button id="installOllamaBtn" class="btn btn-primary" data-action="installOllama">
                 <span class="material-icons">download</span>
                 Install Ollama (~5 GB)
             </button>
@@ -123,7 +123,7 @@
                 ></textarea>
             </div>
 
-            <button id="queryBtn" class="btn btn-primary" onclick="queryAI()" style="width: 100%;">
+            <button id="queryBtn" class="btn btn-primary" data-action="queryAI" style="width: 100%;">
                 <span class="material-icons">send</span>
                 Ask AI Assistant
             </button>
@@ -131,7 +131,7 @@
             <div id="queryResult" style="display: none; margin-top: 24px; padding: 16px; background: var(--bg-secondary); border-radius: 6px; border: 1px solid var(--border);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h3 style="margin: 0; font-size: 16px;">AI Response</h3>
-                    <button onclick="document.getElementById('queryResult').style.display='none'" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
+                    <button data-action="hideElementById" data-args='["queryResult"]' style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px;">
                         <span class="material-icons" style="font-size: 20px;">close</span>
                     </button>
                 </div>
@@ -462,7 +462,7 @@
     }
 </style>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
     let ollamaStatus = null;
     let installingOllama = false;
     let installingModel = null;
@@ -491,7 +491,7 @@
         const statusContent = document.getElementById('statusContent');
 
         if (data.installed) {
-            statusIcon.textContent = 'check_circle';
+            statusIcon.textContent = window.iconMap && window.iconMap['check'] ? window.iconMap['check'] : '✓';
             statusIcon.style.color = '#4caf50';
             statusTitle.textContent = 'Ollama Installed';
             statusContent.innerHTML = '<p>Ollama is installed and ready to use.</p>';
@@ -568,14 +568,14 @@
                 ${!model.can_install ? `<div style="color: #f44336; font-size: 12px; margin-bottom: 8px;">${model.reason || ''}</div>` : ''}
                 <div class="model-actions">
                     ${isInstalled ? 
-                        `<button class="btn btn-danger" onclick="deleteModel('${model.id}')">
-                            <span class="material-icons">delete</span>
-                            Remove
+                        `<button class="btn btn-danger" data-action="deleteModel" data-args='[${JSON.stringify(model.id)}]' style="display: inline-flex; align-items: center; gap: 6px;">
+                            <span class="material-icons" style="font-size: 18px;">delete</span>
+                            <span>Remove</span>
                         </button>` :
                         (model.can_install ? 
-                            `<button class="btn btn-primary" onclick="installModel('${model.id}')" ${installingModel ? 'disabled' : ''}>
-                                <span class="material-icons">download</span>
-                                Install
+                            `<button class="btn btn-primary" data-action="installModel" data-args='[${JSON.stringify(model.id)}]' ${installingModel ? 'disabled' : ''} style="display: inline-flex; align-items: center; gap: 6px;">
+                                <span class="material-icons" style="font-size: 18px;">download</span>
+                                <span>Install</span>
                             </button>` :
                             '<button class="btn" disabled>Not Available</button>'
                         )
@@ -584,6 +584,9 @@
             `;
             
             modelsList.appendChild(modelItem);
+            if (window.bindActionHandlers) {
+                bindActionHandlers(modelItem);
+            }
         });
     }
 
@@ -596,12 +599,15 @@
             modelItem.className = 'installed-model-item';
             modelItem.innerHTML = `
                 <div class="installed-model-name">${modelId}</div>
-                <button class="btn btn-danger" onclick="deleteModel('${modelId}')">
-                    <span class="material-icons">delete</span>
-                    Remove
+                <button class="btn btn-danger" data-action="deleteModel" data-args='[${JSON.stringify(modelId)}]' style="display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="material-icons" style="font-size: 18px;">delete</span>
+                    <span>Remove</span>
                 </button>
             `;
             installedModelsList.appendChild(modelItem);
+            if (window.bindActionHandlers) {
+                bindActionHandlers(modelItem);
+            }
         });
     }
 
@@ -745,6 +751,7 @@
         queryLoading.style.display = 'block';
         queryResult.style.display = 'none';
         queryBtn.innerHTML = '<span class="material-icons">hourglass_empty</span> Analyzing...';
+        if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
 
         try {
             const requestBody = {
@@ -801,6 +808,7 @@
         } finally {
             queryBtn.disabled = false;
             queryBtn.innerHTML = '<span class="material-icons">send</span> Ask AI Assistant';
+            if (window.convertMaterialIcons) setTimeout(window.convertMaterialIcons, 50);
         }
     }
 
@@ -818,6 +826,13 @@
             });
         }
     });
+
+    function hideElementById(elementId) {
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.style.display = 'none';
+        }
+    }
 </script>
 {% endblock %}
 

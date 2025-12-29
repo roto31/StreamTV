@@ -9,11 +9,11 @@
             <p class="page-subtitle">Browse all ingested assets, filter by source, and inspect full metadata.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" onclick="window.open('/api/media', '_blank')">
+            <button class="btn btn-outlined" type="button" data-action="openWindow" data-args='["/api/media","_blank"]'>
                 <span class="material-icons">code</span>
                 API Response
             </button>
-            <button class="btn btn-primary" type="button" onclick="refreshMedia()">
+            <button class="btn btn-primary" type="button" data-action="refreshMedia">
                 <span class="material-icons">refresh</span>
                 Refresh
             </button>
@@ -46,12 +46,12 @@
     <div class="card controls-card">
         <div class="input-group">
             <span class="material-icons">search</span>
-            <input type="text" id="searchInput" placeholder="Search title, uploader, or URL" oninput="filterMedia()">
+            <input type="text" id="searchInput" placeholder="Search title, uploader, or URL" data-action="filterMedia" data-action-event="input">
         </div>
         <div class="segmented-control">
-            <button class="segment active" id="filterAll" onclick="setSourceFilter('all')">All</button>
-            <button class="segment" id="filterYouTube" onclick="setSourceFilter('youtube')">YouTube</button>
-            <button class="segment" id="filterArchive" onclick="setSourceFilter('archive_org')">Archive.org</button>
+            <button class="segment active" id="filterAll" data-action="setSourceFilter" data-args='["all"]'>All</button>
+            <button class="segment" id="filterYouTube" data-action="setSourceFilter" data-args='["youtube"]'>YouTube</button>
+            <button class="segment" id="filterArchive" data-action="setSourceFilter" data-args='["archive_org"]'>Archive.org</button>
         </div>
     </div>
     
@@ -359,7 +359,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
     let allMedia = [];
     let filteredMedia = [];
     let selectedRow = null;

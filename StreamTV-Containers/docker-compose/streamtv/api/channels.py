@@ -18,11 +18,43 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/channels", tags=["Channels"])
 
 
-@router.get("", response_model=List[ChannelResponse])
-def get_all_channels(db: Session = Depends(get_db)):
-    """Get all channels"""
+@router.get("")
+def get_all_channels(db: Session = Depends(get_db), include_content_status: bool = False):
+    """Get all channels
+    
+    Args:
+        include_content_status: If True, includes 'has_content' field indicating if channel has schedules
+    """
+    from ..database.models import Schedule
     channels = db.query(Channel).all()
-    return channels
+    
+    if include_content_status:
+        # Check which channels have schedules (content)
+        channel_ids_with_schedules = {
+            schedule.channel_id 
+            for schedule in db.query(Schedule.channel_id).distinct()
+        }
+        
+        # Convert to dict with has_content flag
+        result = []
+        for channel in channels:
+            channel_dict = {
+                'id': channel.id,
+                'number': channel.number,
+                'name': channel.name,
+                'group': channel.group,
+                'enabled': channel.enabled,
+                'logo_path': channel.logo_path,
+                'playout_mode': channel.playout_mode.value if channel.playout_mode else None,
+                'created_at': channel.created_at.isoformat() if channel.created_at else None,
+                'updated_at': channel.updated_at.isoformat() if channel.updated_at else None,
+                'has_content': channel.id in channel_ids_with_schedules
+            }
+            result.append(channel_dict)
+        return result
+    else:
+        # Return standard ChannelResponse format
+        return channels
 
 
 @router.get("/{channel_id}", response_model=ChannelResponse)

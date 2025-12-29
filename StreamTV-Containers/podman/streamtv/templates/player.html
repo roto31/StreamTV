@@ -208,8 +208,8 @@
 
 {% block extra_scripts %}
     <!-- HLS.js library for MPEG-TS stream support -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
+    <script nonce="{{ request.state.csp_nonce }}" src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script nonce="{{ request.state.csp_nonce }}">
         let currentChannel = null;
         let currentPlaylist = [];
         let currentVideoIndex = 0;
@@ -248,7 +248,7 @@
                     container.innerHTML = channels
                         .filter(c => c.enabled)
                         .map(channel => `
-                            <div class="channel-card" onclick="loadChannel('${channel.number}', '${channel.name.replace(/'/g, "\\'")}')">
+                            <div class="channel-card" data-action="loadChannel" data-args='[${JSON.stringify(channel.number)}, ${JSON.stringify(channel.name)}]'>
                                 <div class="channel-card-header">
                                     <div class="channel-number">${channel.number}</div>
                                     <span class="badge ${channel.enabled ? 'badge-success' : 'badge-error'}">
@@ -259,6 +259,9 @@
                                 ${channel.group ? `<div class="channel-group">${channel.group}</div>` : ''}
                             </div>
                         `).join('');
+                    if (window.bindActionHandlers) {
+                        bindActionHandlers(container);
+                    }
                 }
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';
@@ -271,7 +274,7 @@
             videoPlayer.addEventListener('error', handleVideoError);
         }
         
-        async function loadChannel(channelNumber, name) {
+        async function loadChannel(channelNumber, name, ev) {
             currentChannel = channelNumber;
             currentPlaylist = [];
             currentVideoIndex = 0;
@@ -287,11 +290,16 @@
             document.querySelectorAll('.channel-card').forEach(card => {
                 card.classList.remove('active');
             });
-            event.target.closest('.channel-card')?.classList.add('active');
+            const origin = ev?.currentTarget || ev?.target || this;
+            const activeCard = origin?.closest ? origin.closest('.channel-card') : null;
+            if (activeCard) {
+                activeCard.classList.add('active');
+            }
             
             try {
                 // First, try to get the channel's media items to check for direct HLS URLs
                 let directHlsUrl = null;
+                let hasDirectHlsSource = false;
                 try {
                     const channelResponse = await fetch(`/api/channels/number/${channelNumber}`);
                     if (channelResponse.ok) {
@@ -306,6 +314,7 @@
                                 for (const item of playlistItems) {
                                     if (item.media_item && item.media_item.url && item.media_item.url.includes('.m3u8')) {
                                         directHlsUrl = item.media_item.url;
+                                        hasDirectHlsSource = true;
                                         console.log(`Found direct HLS URL for channel ${channelNumber}: ${directHlsUrl}`);
                                         break;
                                     }
@@ -317,6 +326,47 @@
                     console.log('Could not fetch channel media items:', e);
                 }
                 
+                // For channels with MPEG-TS streams (like Archive.org channels), try direct TS stream first
+                // This works better than trying to parse the HLS playlist
+                if (!hasDirectHlsSource) {
+                    console.log(`Channel ${channelNumber} appears to use MPEG-TS stream, trying direct stream endpoint`);
+                    const tsStreamUrl = `/iptv/channel/${channelNumber}.ts`;
+                    
+                    // Try direct MPEG-TS playback
+                    videoPlayer.src = tsStreamUrl;
+                    videoPlayer.type = 'video/mp2t';
+                    
+                    const infoDiv = document.getElementById('info');
+                    infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Loading MPEG-TS stream (Live transcoded stream)...</div>`;
+                    infoDiv.style.display = 'block';
+                    
+                    // Hide browser warning initially
+                    const browserWarning = document.getElementById('browser-warning');
+                    if (browserWarning) {
+                        browserWarning.style.display = 'none';
+                    }
+                    
+                    videoPlayer.play().then(() => {
+                        isPlaying = true;
+                        console.log('Successfully playing MPEG-TS stream natively');
+                        infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Streaming MPEG-TS (Live transcoded stream)</div>`;
+                    }).catch(playError => {
+                        console.log('Native MPEG-TS playback failed, trying HLS.js:', playError);
+                        useHlsJsForMpegTs(tsStreamUrl, name);
+                    });
+                    
+                    // Set up error handler
+                    videoPlayer.addEventListener('error', (e) => {
+                        console.error('Video player error:', e);
+                        // If native playback fails, try HLS.js
+                        if (!hlsPlayer) {
+                            useHlsJsForMpegTs(tsStreamUrl, name);
+                        }
+                    }, { once: true });
+                    
+                    return; // Exit early, don't try HLS playlist
+                }
+                
                 const response = await fetch(`/iptv/channel/${channelNumber}.m3u8`);
                 if (!response.ok) {
                     throw new Error(`Failed to load channel: ${response.statusText}`);
@@ -325,13 +375,20 @@
                 const playlistText = await response.text();
                 const parsedData = parsePlaylist(playlistText);
                 
-                // Check if playlist contains MPEG-TS endpoint (indicates HLS/DRM stream)
+                // Check if playlist contains MPEG-TS endpoint
+                // Note: MPEG-TS streams are not necessarily DRM-protected - they're just transcoded streams
                 const hasTsEndpoint = currentPlaylist.some(v => v.url && (v.url.includes('.ts') || v.url.includes('/iptv/channel/')));
+                // Check if it's actually a DRM-protected HLS stream (has .m3u8 in original URL)
+                const hasDrmHls = parsedData.originalUrl && parsedData.originalUrl.includes('.m3u8');
                 
                 if (hasTsEndpoint && currentPlaylist.length > 0) {
-                    // For HLS/DRM streams, try to use direct HLS URL first, then fall back to HLS.js for MPEG-TS
+                    // For MPEG-TS streams (transcoded), try to use direct stream URL
                     const streamUrl = currentPlaylist[0].url;
-                    console.log(`Channel ${channelNumber} uses HLS/DRM stream - stream URL: ${streamUrl}`);
+                    if (hasDrmHls) {
+                        console.log(`Channel ${channelNumber} uses DRM-protected HLS stream - stream URL: ${streamUrl}`);
+                    } else {
+                        console.log(`Channel ${channelNumber} uses MPEG-TS stream (transcoded) - stream URL: ${streamUrl}`);
+                    }
                     
                     // Check if we have an original HLS URL from the playlist comments
                     const originalHlsUrl = parsedData.originalUrl || directHlsUrl;
@@ -366,7 +423,28 @@
                         }
                     } else {
                         // No direct HLS URL available, use HLS.js for MPEG-TS stream
-                        useHlsJsForMpegTs(streamUrl, name);
+                        // For regular MPEG-TS streams (not DRM), try direct playback first
+                        if (!hasDrmHls) {
+                            // Try direct MPEG-TS playback for non-DRM streams
+                            console.log(`Attempting direct MPEG-TS playback for channel ${channelNumber}`);
+                            videoPlayer.src = streamUrl;
+                            videoPlayer.type = 'video/mp2t';
+                            
+                            const infoDiv = document.getElementById('info');
+                            infoDiv.innerHTML = `<h3>${name}</h3><div class="metadata">Attempting to play MPEG-TS stream (Live transcoded stream)</div>`;
+                            infoDiv.style.display = 'block';
+                            
+                            videoPlayer.play().then(() => {
+                                isPlaying = true;
+                                console.log('Successfully playing MPEG-TS stream natively');
+                            }).catch(playError => {
+                                console.log('Native MPEG-TS playback failed, trying HLS.js:', playError);
+                                useHlsJsForMpegTs(streamUrl, name);
+                            });
+                        } else {
+                            // DRM-protected stream, use HLS.js
+                            useHlsJsForMpegTs(streamUrl, name);
+                        }
                     }
                 } else if (currentPlaylist.length > 0) {
                     await playNextVideo();
@@ -376,16 +454,27 @@
             } catch (error) {
                 console.error('Error loading channel:', error);
                 showError('Error loading channel: ' + error.message);
-                // Show browser warning for HLS/DRM streams
+                // Show browser warning for MPEG-TS streams (browsers have limited support)
                 const browserWarning = document.getElementById('browser-warning');
                 if (browserWarning) {
                     browserWarning.style.display = 'block';
-                    browserWarning.innerHTML = `
-                        <strong>⚠️ Browser Playback Limitation:</strong><br>
-                        <small>This channel uses HLS/DRM-protected streams that may not play directly in browsers. 
-                        For best results, use <a href="/iptv/channels.m3u" download style="color: var(--info);">VLC Media Player</a> 
-                        or another IPTV client with the M3U playlist, or try the <a href="/iptv/channel/${channelNumber}.ts" style="color: var(--info);">MPEG-TS stream</a>.</small>
-                    `;
+                    // Try to determine if it's DRM-protected or just MPEG-TS
+                    const isDrmStream = error.message && (error.message.includes('DRM') || error.message.includes('HLS'));
+                    if (isDrmStream) {
+                        browserWarning.innerHTML = `
+                            <strong>⚠️ Browser Playback Limitation:</strong><br>
+                            <small>This channel uses HLS/DRM-protected streams that may not play directly in browsers. 
+                            For best results, use <a href="/iptv/channels.m3u" download style="color: var(--info);">VLC Media Player</a> 
+                            or another IPTV client with the M3U playlist, or try the <a href="/iptv/channel/${channelNumber}.ts" style="color: var(--info);">MPEG-TS stream</a>.</small>
+                        `;
+                    } else {
+                        browserWarning.innerHTML = `
+                            <strong>⚠️ Browser Playback Limitation:</strong><br>
+                            <small>This channel uses MPEG-TS streams that may not play directly in browsers. 
+                            For best results, use <a href="/iptv/channels.m3u" download style="color: var(--info);">VLC Media Player</a> 
+                            or another IPTV client with the M3U playlist. You can also try the <a href="/iptv/channel/${channelNumber}.ts" target="_blank" style="color: var(--info);">direct MPEG-TS stream</a>.</small>
+                        `;
+                    }
                 }
             }
         }

@@ -1,0 +1,3588 @@
+# Magnum P.I. Channel Configuration
+# Generated: 2025-12-03 19:02:28
+# Source: https://archive.org/details/JHiggens
+# Total Episodes: 298
+
+channels:
+  - number: "80"
+    name: "Magnum P.I. Complete Series"
+    group: "Classic Television"
+    description: "Complete Magnum P.I. series (1980-1988) featuring Thomas Magnum, a private investigator in Hawaii. All episodes from Archive.org."
+    enabled: true
+    streams:
+
+      - id: magnum_special_00
+        collection: "Magnum P.I. - Specials"
+        type: event
+        year: 1980
+        slot: "S00E00 - Murder She Wrote - Magnum On Ice"
+        broadcast_date: 1980-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMurder%20She%20Wrote%20-%20Magnum%20on%20ice.mp4
+        notes: "Season 0 Episode 0"
+
+      - id: magnum_special_00
+        collection: "Magnum P.I. - Specials"
+        type: event
+        year: 1980
+        slot: "S00E00 - Bonus Track - The Rockford Files - White On White And Nearly Perfect"
+        broadcast_date: 1980-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FBonus%20Track%20-%20The%20Rockford%20Files%20-%20White%20on%20White%20and%20Nearly%20Perfect.avi
+        notes: "Season 0 Episode 0"
+
+      - id: magnum_special_00
+        collection: "Magnum P.I. - Specials"
+        type: event
+        year: 1980
+        slot: "S00E00 - Bonus Track - The Rockford Files - White On White And Nearly Perfect"
+        broadcast_date: 1980-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FBonus%20Track%20-%20The%20Rockford%20Files%20-%20White%20on%20White%20and%20Nearly%20Perfect.mp4
+        notes: "Season 0 Episode 0"
+
+      - id: magnum_s01e01
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E01 - Please Don't Eat The Snow In Hawaii (1)"
+        broadcast_date: 1981-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x01%20-%20Please%20Don%27t%20Eat%20The%20Snow%20In%20Hawaii%20%281%29.avi
+        notes: "Season 1 Episode 1"
+
+      - id: magnum_s01e01
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E01 - Please Don't Eat The Snow In Hawaii (1)"
+        broadcast_date: 1981-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x01%20-%20Please%20Don%27t%20Eat%20The%20Snow%20In%20Hawaii%20%281%29.mp4
+        notes: "Season 1 Episode 1"
+
+      - id: magnum_s01e02
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E02 - Please Don't Eat The Snow In Hawaii (2)"
+        broadcast_date: 1981-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x02%20-%20Please%20Don%27t%20Eat%20The%20Snow%20In%20Hawaii%20%282%29.avi
+        notes: "Season 1 Episode 2"
+
+      - id: magnum_s01e02
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E02 - Please Don't Eat The Snow In Hawaii (2)"
+        broadcast_date: 1981-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x02%20-%20Please%20Don%27t%20Eat%20The%20Snow%20In%20Hawaii%20%282%29.mp4
+        notes: "Season 1 Episode 2"
+
+      - id: magnum_s01e03
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E03 - China Doll"
+        broadcast_date: 1981-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x03%20-%20China%20Doll.avi
+        notes: "Season 1 Episode 3"
+
+      - id: magnum_s01e03
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E03 - China Doll"
+        broadcast_date: 1981-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x03%20-%20China%20Doll.mp4
+        notes: "Season 1 Episode 3"
+
+      - id: magnum_s01e04
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E04 - Thank Heaven For Little Girls, And Big"
+        broadcast_date: 1981-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x04%20-%20Thank%20Heaven%20For%20Little%20Girls%2C%20And%20Big%20.avi
+        notes: "Season 1 Episode 4"
+
+      - id: magnum_s01e04
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E04 - Thank Heaven For Little Girls, And Big"
+        broadcast_date: 1981-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x04%20-%20Thank%20Heaven%20For%20Little%20Girls%2C%20And%20Big%20.mp4
+        notes: "Season 1 Episode 4"
+
+      - id: magnum_s01e05
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E05 - No Need To Know"
+        broadcast_date: 1981-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x05%20-%20No%20Need%20To%20Know.avi
+        notes: "Season 1 Episode 5"
+
+      - id: magnum_s01e05
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E05 - No Need To Know"
+        broadcast_date: 1981-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x05%20-%20No%20Need%20To%20Know.mp4
+        notes: "Season 1 Episode 5"
+
+      - id: magnum_s01e06
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E06 - Skin Deep"
+        broadcast_date: 1981-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x06%20-%20Skin%20Deep.avi
+        notes: "Season 1 Episode 6"
+
+      - id: magnum_s01e06
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E06 - Skin Deep"
+        broadcast_date: 1981-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x06%20-%20Skin%20Deep.mp4
+        notes: "Season 1 Episode 6"
+
+      - id: magnum_s01e07
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E07 - Never Again, Never Again"
+        broadcast_date: 1981-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x07%20-%20Never%20Again%2C%20Never%20Again.avi
+        notes: "Season 1 Episode 7"
+
+      - id: magnum_s01e07
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E07 - Never Again, Never Again"
+        broadcast_date: 1981-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x07%20-%20Never%20Again%2C%20Never%20Again.mp4
+        notes: "Season 1 Episode 7"
+
+      - id: magnum_s01e08
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E08 - The Ugliest Dog In Hawaii"
+        broadcast_date: 1981-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x08%20-%20The%20Ugliest%20Dog%20In%20Hawaii.avi
+        notes: "Season 1 Episode 8"
+
+      - id: magnum_s01e08
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E08 - The Ugliest Dog In Hawaii"
+        broadcast_date: 1981-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x08%20-%20The%20Ugliest%20Dog%20In%20Hawaii.mp4
+        notes: "Season 1 Episode 8"
+
+      - id: magnum_s01e09
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E09 - Missing In Action"
+        broadcast_date: 1981-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x09%20-%20Missing%20In%20Action.avi
+        notes: "Season 1 Episode 9"
+
+      - id: magnum_s01e09
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E09 - Missing In Action"
+        broadcast_date: 1981-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x09%20-%20Missing%20In%20Action.mp4
+        notes: "Season 1 Episode 9"
+
+      - id: magnum_s01e10
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E10 - Lest We Forget"
+        broadcast_date: 1981-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x10%20-%20Lest%20We%20Forget.avi
+        notes: "Season 1 Episode 10"
+
+      - id: magnum_s01e10
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E10 - Lest We Forget"
+        broadcast_date: 1981-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x10%20-%20Lest%20We%20Forget.mp4
+        notes: "Season 1 Episode 10"
+
+      - id: magnum_s01e11
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E11 - The Curse Of The King Kamehameha Club"
+        broadcast_date: 1981-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x11%20-%20The%20Curse%20Of%20The%20King%20Kamehameha%20Club.avi
+        notes: "Season 1 Episode 11"
+
+      - id: magnum_s01e11
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E11 - The Curse Of The King Kamehameha Club"
+        broadcast_date: 1981-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x11%20-%20The%20Curse%20Of%20The%20King%20Kamehameha%20Club.mp4
+        notes: "Season 1 Episode 11"
+
+      - id: magnum_s01e12
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E12 - Thicker Than Blood"
+        broadcast_date: 1981-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x12%20-%20Thicker%20Than%20Blood.avi
+        notes: "Season 1 Episode 12"
+
+      - id: magnum_s01e12
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E12 - Thicker Than Blood"
+        broadcast_date: 1981-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x12%20-%20Thicker%20Than%20Blood.mp4
+        notes: "Season 1 Episode 12"
+
+      - id: magnum_s01e13
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E13 - All Roads Lead To Floyd"
+        broadcast_date: 1981-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x13%20-%20All%20Roads%20Lead%20To%20Floyd.avi
+        notes: "Season 1 Episode 13"
+
+      - id: magnum_s01e13
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E13 - All Roads Lead To Floyd"
+        broadcast_date: 1981-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x13%20-%20All%20Roads%20Lead%20To%20Floyd.mp4
+        notes: "Season 1 Episode 13"
+
+      - id: magnum_s01e14
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E14 - Adelaide"
+        broadcast_date: 1981-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x14%20-%20Adelaide.avi
+        notes: "Season 1 Episode 14"
+
+      - id: magnum_s01e14
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E14 - Adelaide"
+        broadcast_date: 1981-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x14%20-%20Adelaide.mp4
+        notes: "Season 1 Episode 14"
+
+      - id: magnum_s01e15
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E15 - Dont Say Goodbye"
+        broadcast_date: 1981-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x15%20-%20Dont%20Say%20Goodbye.avi
+        notes: "Season 1 Episode 15"
+
+      - id: magnum_s01e15
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1981
+        slot: "S01E15 - Dont Say Goodbye"
+        broadcast_date: 1981-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x15%20-%20Dont%20Say%20Goodbye.mp4
+        notes: "Season 1 Episode 15"
+
+      - id: magnum_s01e16
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1982
+        slot: "S01E16 - The Black Orchid"
+        broadcast_date: 1982-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x16%20-%20The%20Black%20Orchid.avi
+        notes: "Season 1 Episode 16"
+
+      - id: magnum_s01e16
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1982
+        slot: "S01E16 - The Black Orchid"
+        broadcast_date: 1982-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x16%20-%20The%20Black%20Orchid.mp4
+        notes: "Season 1 Episode 16"
+
+      - id: magnum_s01e17
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1982
+        slot: "S01E17 - J Digger Doyle"
+        broadcast_date: 1982-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x17%20-%20J.%20Digger%20Doyle.avi
+        notes: "Season 1 Episode 17"
+
+      - id: magnum_s01e17
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1982
+        slot: "S01E17 - J Digger Doyle"
+        broadcast_date: 1982-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x17%20-%20J.%20Digger%20Doyle.mp4
+        notes: "Season 1 Episode 17"
+
+      - id: magnum_s01e18
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1982
+        slot: "S01E18 - Beauty Knows No Pain"
+        broadcast_date: 1982-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x18%20-%20Beauty%20Knows%20No%20Pain.avi
+        notes: "Season 1 Episode 18"
+
+      - id: magnum_s01e18
+        collection: "Magnum P.I. - Season 1"
+        type: event
+        year: 1982
+        slot: "S01E18 - Beauty Knows No Pain"
+        broadcast_date: 1982-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%201%20Season%2FMagnum%20P.I.%20-%201x18%20-%20Beauty%20Knows%20No%20Pain.mp4
+        notes: "Season 1 Episode 18"
+
+      - id: magnum_s02e01
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E01 - Billy Joe Bob English"
+        broadcast_date: 1982-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x01%20-%20Billy%20Joe%20Bob%20English.avi
+        notes: "Season 2 Episode 1"
+
+      - id: magnum_s02e01
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E01 - Billy Joe Bob English"
+        broadcast_date: 1982-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x01%20-%20Billy%20Joe%20Bob%20English.mp4
+        notes: "Season 2 Episode 1"
+
+      - id: magnum_s02e02
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E02 - Dead Man's Channel"
+        broadcast_date: 1982-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x02%20-%20Dead%20Man%27s%20Channel.avi
+        notes: "Season 2 Episode 2"
+
+      - id: magnum_s02e02
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E02 - Dead Man's Channel"
+        broadcast_date: 1982-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x02%20-%20Dead%20Man%27s%20Channel.mp4
+        notes: "Season 2 Episode 2"
+
+      - id: magnum_s02e03
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E03 - Woman On The Beach"
+        broadcast_date: 1982-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x03%20-%20Woman%20On%20The%20Beach.avi
+        notes: "Season 2 Episode 3"
+
+      - id: magnum_s02e03
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E03 - Woman On The Beach"
+        broadcast_date: 1982-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x03%20-%20Woman%20On%20The%20Beach.mp4
+        notes: "Season 2 Episode 3"
+
+      - id: magnum_s02e04
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E04 - From Moscow To Maui"
+        broadcast_date: 1982-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x04%20-%20From%20Moscow%20To%20Maui.avi
+        notes: "Season 2 Episode 4"
+
+      - id: magnum_s02e04
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E04 - From Moscow To Maui"
+        broadcast_date: 1982-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x04%20-%20From%20Moscow%20To%20Maui.mp4
+        notes: "Season 2 Episode 4"
+
+      - id: magnum_s02e05
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E05 - ,memories Are Forever"
+        broadcast_date: 1982-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x05%2C2x06%20-%20Memories%20Are%20Forever.avi
+        notes: "Season 2 Episode 5"
+
+      - id: magnum_s02e05
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E05 - ,memories Are Forever"
+        broadcast_date: 1982-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x05%2C2x06%20-%20Memories%20Are%20Forever.mp4
+        notes: "Season 2 Episode 5"
+
+      - id: magnum_s02e07
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E07 - Tropical Madness"
+        broadcast_date: 1982-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x07%20-%20Tropical%20Madness.avi
+        notes: "Season 2 Episode 7"
+
+      - id: magnum_s02e07
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E07 - Tropical Madness"
+        broadcast_date: 1982-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x07%20-%20Tropical%20Madness.mp4
+        notes: "Season 2 Episode 7"
+
+      - id: magnum_s02e08
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E08 - Wave Goodbye"
+        broadcast_date: 1982-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x08%20-%20Wave%20Goodbye.avi
+        notes: "Season 2 Episode 8"
+
+      - id: magnum_s02e08
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E08 - Wave Goodbye"
+        broadcast_date: 1982-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x08%20-%20Wave%20Goodbye.mp4
+        notes: "Season 2 Episode 8"
+
+      - id: magnum_s02e09
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E09 - Mad Buck Gibson"
+        broadcast_date: 1982-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x09%20-%20Mad%20Buck%20Gibson.avi
+        notes: "Season 2 Episode 9"
+
+      - id: magnum_s02e09
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E09 - Mad Buck Gibson"
+        broadcast_date: 1982-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x09%20-%20Mad%20Buck%20Gibson.mp4
+        notes: "Season 2 Episode 9"
+
+      - id: magnum_s02e10
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E10 - The Taking Of Dick Mcwilliams"
+        broadcast_date: 1982-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x10%20-%20The%20Taking%20Of%20Dick%20McWilliams.avi
+        notes: "Season 2 Episode 10"
+
+      - id: magnum_s02e10
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E10 - The Taking Of Dick Mcwilliams"
+        broadcast_date: 1982-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x10%20-%20The%20Taking%20Of%20Dick%20McWilliams.mp4
+        notes: "Season 2 Episode 10"
+
+      - id: magnum_s02e11
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E11 - The Sixth Position"
+        broadcast_date: 1982-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x11%20-%20The%20Sixth%20Position.avi
+        notes: "Season 2 Episode 11"
+
+      - id: magnum_s02e11
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E11 - The Sixth Position"
+        broadcast_date: 1982-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x11%20-%20The%20Sixth%20Position.mp4
+        notes: "Season 2 Episode 11"
+
+      - id: magnum_s02e12
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E12 - Ghost Writer"
+        broadcast_date: 1982-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x12%20-%20Ghost%20Writer.avi
+        notes: "Season 2 Episode 12"
+
+      - id: magnum_s02e12
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E12 - Ghost Writer"
+        broadcast_date: 1982-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x12%20-%20Ghost%20Writer.mp4
+        notes: "Season 2 Episode 12"
+
+      - id: magnum_s02e13
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E13 - The Jororo Kill"
+        broadcast_date: 1982-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x13%20-%20The%20Jororo%20Kill.avi
+        notes: "Season 2 Episode 13"
+
+      - id: magnum_s02e13
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E13 - The Jororo Kill"
+        broadcast_date: 1982-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x13%20-%20The%20Jororo%20Kill.mp4
+        notes: "Season 2 Episode 13"
+
+      - id: magnum_s02e14
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E14 - Computer Date"
+        broadcast_date: 1982-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x14%20-%20Computer%20Date.avi
+        notes: "Season 2 Episode 14"
+
+      - id: magnum_s02e14
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E14 - Computer Date"
+        broadcast_date: 1982-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x14%20-%20Computer%20Date.mp4
+        notes: "Season 2 Episode 14"
+
+      - id: magnum_s02e15
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E15 - Try To Remember"
+        broadcast_date: 1982-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x15%20-%20Try%20To%20Remember.avi
+        notes: "Season 2 Episode 15"
+
+      - id: magnum_s02e15
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1982
+        slot: "S02E15 - Try To Remember"
+        broadcast_date: 1982-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x15%20-%20Try%20To%20Remember.mp4
+        notes: "Season 2 Episode 15"
+
+      - id: magnum_s02e16
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E16 - Italian Ice"
+        broadcast_date: 1983-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x16%20-%20Italian%20Ice.avi
+        notes: "Season 2 Episode 16"
+
+      - id: magnum_s02e16
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E16 - Italian Ice"
+        broadcast_date: 1983-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x16%20-%20Italian%20Ice.mp4
+        notes: "Season 2 Episode 16"
+
+      - id: magnum_s02e17
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E17 - One More Summer"
+        broadcast_date: 1983-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x17%20-%20One%20More%20Summer.avi
+        notes: "Season 2 Episode 17"
+
+      - id: magnum_s02e17
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E17 - One More Summer"
+        broadcast_date: 1983-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x17%20-%20One%20More%20Summer.mp4
+        notes: "Season 2 Episode 17"
+
+      - id: magnum_s02e18
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E18 - Texas Lightning"
+        broadcast_date: 1983-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x18%20-%20Texas%20Lightning.avi
+        notes: "Season 2 Episode 18"
+
+      - id: magnum_s02e18
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E18 - Texas Lightning"
+        broadcast_date: 1983-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x18%20-%20Texas%20Lightning.mp4
+        notes: "Season 2 Episode 18"
+
+      - id: magnum_s02e19
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E19 - Double Jeopardy"
+        broadcast_date: 1983-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x19%20-%20Double%20Jeopardy.avi
+        notes: "Season 2 Episode 19"
+
+      - id: magnum_s02e19
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E19 - Double Jeopardy"
+        broadcast_date: 1983-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x19%20-%20Double%20Jeopardy.mp4
+        notes: "Season 2 Episode 19"
+
+      - id: magnum_s02e20
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E20 - The Last Page"
+        broadcast_date: 1983-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x20%20-%20The%20Last%20Page.avi
+        notes: "Season 2 Episode 20"
+
+      - id: magnum_s02e20
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E20 - The Last Page"
+        broadcast_date: 1983-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x20%20-%20The%20Last%20Page.mp4
+        notes: "Season 2 Episode 20"
+
+      - id: magnum_s02e21
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E21 - The Elmo Ziller Story"
+        broadcast_date: 1983-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x21%20-%20The%20Elmo%20Ziller%20Story.avi
+        notes: "Season 2 Episode 21"
+
+      - id: magnum_s02e21
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E21 - The Elmo Ziller Story"
+        broadcast_date: 1983-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x21%20-%20The%20Elmo%20Ziller%20Story.mp4
+        notes: "Season 2 Episode 21"
+
+      - id: magnum_s02e22
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E22 - Three Minus Two"
+        broadcast_date: 1983-02-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x22%20-%20Three%20Minus%20Two.avi
+        notes: "Season 2 Episode 22"
+
+      - id: magnum_s02e22
+        collection: "Magnum P.I. - Season 2"
+        type: event
+        year: 1983
+        slot: "S02E22 - Three Minus Two"
+        broadcast_date: 1983-02-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%202%20Season%2FMagnum%20P.I.%20%20-%202x22%20-%20Three%20Minus%20Two.mp4
+        notes: "Season 2 Episode 22"
+
+      - id: magnum_s03e01
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E01 - ,did You See The Sunrise (1)&(2)"
+        broadcast_date: 1983-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x01%2C3x02%20-%20Did%20You%20See%20the%20Sunrise%20%281%29%26%282%29.avi
+        notes: "Season 3 Episode 1"
+
+      - id: magnum_s03e01
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E01 - ,did You See The Sunrise (1)&(2)"
+        broadcast_date: 1983-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x01%2C3x02%20-%20Did%20You%20See%20the%20Sunrise%20%281%29%26%282%29.mp4
+        notes: "Season 3 Episode 1"
+
+      - id: magnum_s03e03
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E03 - Ki'is Don't Lie"
+        broadcast_date: 1983-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x03%20-%20Ki%27is%20Don%27t%20Lie.avi
+        notes: "Season 3 Episode 3"
+
+      - id: magnum_s03e03
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E03 - Ki'is Don't Lie"
+        broadcast_date: 1983-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x03%20-%20Ki%27is%20Don%27t%20Lie.mp4
+        notes: "Season 3 Episode 3"
+
+      - id: magnum_s03e04
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E04 - The Eighth Part Of The Village"
+        broadcast_date: 1983-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x04%20-%20The%20Eighth%20Part%20Of%20The%20Village.avi
+        notes: "Season 3 Episode 4"
+
+      - id: magnum_s03e04
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E04 - The Eighth Part Of The Village"
+        broadcast_date: 1983-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x04%20-%20The%20Eighth%20Part%20Of%20The%20Village.mp4
+        notes: "Season 3 Episode 4"
+
+      - id: magnum_s03e05
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E05 - Past Tense"
+        broadcast_date: 1983-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x05%20-%20Past%20Tense.avi
+        notes: "Season 3 Episode 5"
+
+      - id: magnum_s03e05
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E05 - Past Tense"
+        broadcast_date: 1983-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x05%20-%20Past%20Tense.mp4
+        notes: "Season 3 Episode 5"
+
+      - id: magnum_s03e06
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E06 - Black On White"
+        broadcast_date: 1983-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x06%20-%20Black%20on%20White.avi
+        notes: "Season 3 Episode 6"
+
+      - id: magnum_s03e06
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E06 - Black On White"
+        broadcast_date: 1983-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x06%20-%20Black%20on%20White.mp4
+        notes: "Season 3 Episode 6"
+
+      - id: magnum_s03e07
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E07 - Flashback"
+        broadcast_date: 1983-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x07%20-%20Flashback.avi
+        notes: "Season 3 Episode 7"
+
+      - id: magnum_s03e07
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E07 - Flashback"
+        broadcast_date: 1983-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x07%20-%20Flashback.mp4
+        notes: "Season 3 Episode 7"
+
+      - id: magnum_s03e08
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E08 - Foiled Again"
+        broadcast_date: 1983-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x08%20-Foiled%20Again.avi
+        notes: "Season 3 Episode 8"
+
+      - id: magnum_s03e08
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E08 - Foiled Again"
+        broadcast_date: 1983-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x08%20-Foiled%20Again.mp4
+        notes: "Season 3 Episode 8"
+
+      - id: magnum_s03e09
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E09 - Mr White Death"
+        broadcast_date: 1983-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x09%20-%20Mr.%20White%20Death.avi
+        notes: "Season 3 Episode 9"
+
+      - id: magnum_s03e09
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E09 - Mr White Death"
+        broadcast_date: 1983-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x09%20-%20Mr.%20White%20Death.mp4
+        notes: "Season 3 Episode 9"
+
+      - id: magnum_s03e10
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E10 - Mixed Doubles"
+        broadcast_date: 1983-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x10%20-%20Mixed%20Doubles.avi
+        notes: "Season 3 Episode 10"
+
+      - id: magnum_s03e10
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E10 - Mixed Doubles"
+        broadcast_date: 1983-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x10%20-%20Mixed%20Doubles.mp4
+        notes: "Season 3 Episode 10"
+
+      - id: magnum_s03e11
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E11 - Almost Home"
+        broadcast_date: 1983-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x11%20-%20Almost%20Home.avi
+        notes: "Season 3 Episode 11"
+
+      - id: magnum_s03e11
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E11 - Almost Home"
+        broadcast_date: 1983-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x11%20-%20Almost%20Home.mp4
+        notes: "Season 3 Episode 11"
+
+      - id: magnum_s03e12
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E12 - Heal Thyself"
+        broadcast_date: 1983-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x12%20-%20Heal%20Thyself.avi
+        notes: "Season 3 Episode 12"
+
+      - id: magnum_s03e12
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E12 - Heal Thyself"
+        broadcast_date: 1983-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x12%20-%20Heal%20Thyself.mp4
+        notes: "Season 3 Episode 12"
+
+      - id: magnum_s03e13
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E13 - Of Sound Mind"
+        broadcast_date: 1983-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x13%20-%20Of%20Sound%20Mind.avi
+        notes: "Season 3 Episode 13"
+
+      - id: magnum_s03e13
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E13 - Of Sound Mind"
+        broadcast_date: 1983-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x13%20-%20Of%20Sound%20Mind.mp4
+        notes: "Season 3 Episode 13"
+
+      - id: magnum_s03e14
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E14 - The Arrow That Is Not Aimed"
+        broadcast_date: 1983-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x14%20-%20The%20Arrow%20That%20is%20Not%20Aimed.avi
+        notes: "Season 3 Episode 14"
+
+      - id: magnum_s03e14
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E14 - The Arrow That Is Not Aimed"
+        broadcast_date: 1983-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x14%20-%20The%20Arrow%20That%20is%20Not%20Aimed.mp4
+        notes: "Season 3 Episode 14"
+
+      - id: magnum_s03e15
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E15 - Basket Case"
+        broadcast_date: 1983-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x15%20-%20Basket%20Case.avi
+        notes: "Season 3 Episode 15"
+
+      - id: magnum_s03e15
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1983
+        slot: "S03E15 - Basket Case"
+        broadcast_date: 1983-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x15%20-%20Basket%20Case.mp4
+        notes: "Season 3 Episode 15"
+
+      - id: magnum_s03e16
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E16 - Birdman Of Budapest"
+        broadcast_date: 1984-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x16%20-%20Birdman%20of%20Budapest.avi
+        notes: "Season 3 Episode 16"
+
+      - id: magnum_s03e16
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E16 - Birdman Of Budapest"
+        broadcast_date: 1984-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x16%20-%20Birdman%20of%20Budapest.mp4
+        notes: "Season 3 Episode 16"
+
+      - id: magnum_s03e17
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E17 - I Do"
+        broadcast_date: 1984-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x17%20-%20I%20Do.avi
+        notes: "Season 3 Episode 17"
+
+      - id: magnum_s03e17
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E17 - I Do"
+        broadcast_date: 1984-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x17%20-%20I%20Do.mp4
+        notes: "Season 3 Episode 17"
+
+      - id: magnum_s03e18
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E18 - Forty Years From Sand Island"
+        broadcast_date: 1984-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x18%20-%20Forty%20Years%20From%20Sand%20Island.avi
+        notes: "Season 3 Episode 18"
+
+      - id: magnum_s03e18
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E18 - Forty Years From Sand Island"
+        broadcast_date: 1984-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x18%20-%20Forty%20Years%20From%20Sand%20Island.mp4
+        notes: "Season 3 Episode 18"
+
+      - id: magnum_s03e19
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E19 - Legacy From A Friend"
+        broadcast_date: 1984-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x19%20-%20Legacy%20From%20a%20Friend.avi
+        notes: "Season 3 Episode 19"
+
+      - id: magnum_s03e19
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E19 - Legacy From A Friend"
+        broadcast_date: 1984-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x19%20-%20Legacy%20From%20a%20Friend.mp4
+        notes: "Season 3 Episode 19"
+
+      - id: magnum_s03e20
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E20 - Two Birds Of A Feather"
+        broadcast_date: 1984-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x20%20-%20Two%20Birds%20of%20a%20Feather.avi
+        notes: "Season 3 Episode 20"
+
+      - id: magnum_s03e20
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E20 - Two Birds Of A Feather"
+        broadcast_date: 1984-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x20%20-%20Two%20Birds%20of%20a%20Feather.mp4
+        notes: "Season 3 Episode 20"
+
+      - id: magnum_s03e21
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E21 - By Its Cover"
+        broadcast_date: 1984-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x21%20-%20...By%20Its%20Cover.avi
+        notes: "Season 3 Episode 21"
+
+      - id: magnum_s03e21
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E21 - By Its Cover"
+        broadcast_date: 1984-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x21%20-%20...By%20Its%20Cover.mp4
+        notes: "Season 3 Episode 21"
+
+      - id: magnum_s03e22
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E22 - The Big Blow"
+        broadcast_date: 1984-02-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x22%20-%20The%20Big%20Blow.avi
+        notes: "Season 3 Episode 22"
+
+      - id: magnum_s03e22
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E22 - The Big Blow"
+        broadcast_date: 1984-02-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x22%20-%20The%20Big%20Blow.mp4
+        notes: "Season 3 Episode 22"
+
+      - id: magnum_s03e23
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E23 - Faith And Begorrah"
+        broadcast_date: 1984-02-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x23%20-%20Faith%20and%20Begorrah.avi
+        notes: "Season 3 Episode 23"
+
+      - id: magnum_s03e23
+        collection: "Magnum P.I. - Season 3"
+        type: event
+        year: 1984
+        slot: "S03E23 - Faith And Begorrah"
+        broadcast_date: 1984-02-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%203%20Season%2FMagnum%20P.I.%20-%203x23%20-%20Faith%20and%20Begorrah.mp4
+        notes: "Season 3 Episode 23"
+
+      - id: magnum_s04e01
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E01 - Home From The Sea"
+        broadcast_date: 1984-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x01%20-%20Home%20From%20The%20Sea.avi
+        notes: "Season 4 Episode 1"
+
+      - id: magnum_s04e01
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E01 - Home From The Sea"
+        broadcast_date: 1984-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x01%20-%20Home%20From%20The%20Sea.mp4
+        notes: "Season 4 Episode 1"
+
+      - id: magnum_s04e02
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E02 - Luther Gillis File 521"
+        broadcast_date: 1984-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x02%20-%20Luther%20Gillis%20File%20521.avi
+        notes: "Season 4 Episode 2"
+
+      - id: magnum_s04e02
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E02 - Luther Gillis File 521"
+        broadcast_date: 1984-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x02%20-%20Luther%20Gillis%20File%20521.mp4
+        notes: "Season 4 Episode 2"
+
+      - id: magnum_s04e03
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E03 - Smaller Than Life"
+        broadcast_date: 1984-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x03%20-%20Smaller%20Than%20Life.avi
+        notes: "Season 4 Episode 3"
+
+      - id: magnum_s04e03
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E03 - Smaller Than Life"
+        broadcast_date: 1984-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x03%20-%20Smaller%20Than%20Life.mp4
+        notes: "Season 4 Episode 3"
+
+      - id: magnum_s04e04
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E04 - Distant Relative"
+        broadcast_date: 1984-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x04%20-%20Distant%20Relative.avi
+        notes: "Season 4 Episode 4"
+
+      - id: magnum_s04e04
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E04 - Distant Relative"
+        broadcast_date: 1984-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x04%20-%20Distant%20Relative.mp4
+        notes: "Season 4 Episode 4"
+
+      - id: magnum_s04e05
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E05 - Limited Engagement"
+        broadcast_date: 1984-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x05%20-%20Limited%20Engagement.avi
+        notes: "Season 4 Episode 5"
+
+      - id: magnum_s04e05
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E05 - Limited Engagement"
+        broadcast_date: 1984-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x05%20-%20Limited%20Engagement.mp4
+        notes: "Season 4 Episode 5"
+
+      - id: magnum_s04e06
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E06 - Letter To A Duchess"
+        broadcast_date: 1984-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x06%20-%20Letter%20To%20A%20Duchess.avi
+        notes: "Season 4 Episode 6"
+
+      - id: magnum_s04e06
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E06 - Letter To A Duchess"
+        broadcast_date: 1984-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x06%20-%20Letter%20To%20A%20Duchess.mp4
+        notes: "Season 4 Episode 6"
+
+      - id: magnum_s04e07
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E07 - Squeeze Play"
+        broadcast_date: 1984-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x07%20-%20Squeeze%20Play.avi
+        notes: "Season 4 Episode 7"
+
+      - id: magnum_s04e07
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E07 - Squeeze Play"
+        broadcast_date: 1984-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x07%20-%20Squeeze%20Play.mp4
+        notes: "Season 4 Episode 7"
+
+      - id: magnum_s04e08
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E08 - A Sense Of Debt"
+        broadcast_date: 1984-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x08%20-%20A%20Sense%20of%20Debt.avi
+        notes: "Season 4 Episode 8"
+
+      - id: magnum_s04e08
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E08 - A Sense Of Debt"
+        broadcast_date: 1984-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x08%20-%20A%20Sense%20of%20Debt.mp4
+        notes: "Season 4 Episode 8"
+
+      - id: magnum_s04e09
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E09 - The Look English"
+        broadcast_date: 1984-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x09%20-%20The%20Look%20English.avi
+        notes: "Season 4 Episode 9"
+
+      - id: magnum_s04e09
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E09 - The Look English"
+        broadcast_date: 1984-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x09%20-%20The%20Look%20English.mp4
+        notes: "Season 4 Episode 9"
+
+      - id: magnum_s04e10
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E10 - Operation Silent Night"
+        broadcast_date: 1984-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x10%20-%20Operation%20Silent%20Night.avi
+        notes: "Season 4 Episode 10"
+
+      - id: magnum_s04e10
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E10 - Operation Silent Night"
+        broadcast_date: 1984-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x10%20-%20Operation%20Silent%20Night.mp4
+        notes: "Season 4 Episode 10"
+
+      - id: magnum_s04e11
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E11 - Jororo Farewell"
+        broadcast_date: 1984-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x11%20-%20Jororo%20Farewell.avi
+        notes: "Season 4 Episode 11"
+
+      - id: magnum_s04e11
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E11 - Jororo Farewell"
+        broadcast_date: 1984-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x11%20-%20Jororo%20Farewell.mp4
+        notes: "Season 4 Episode 11"
+
+      - id: magnum_s04e12
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E12 - The Case Of The Red Faced Thespian"
+        broadcast_date: 1984-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x12%20-%20The%20Case%20of%20The%20Red%20Faced%20Thespian.avi
+        notes: "Season 4 Episode 12"
+
+      - id: magnum_s04e12
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E12 - The Case Of The Red Faced Thespian"
+        broadcast_date: 1984-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x12%20-%20The%20Case%20of%20The%20Red%20Faced%20Thespian.mp4
+        notes: "Season 4 Episode 12"
+
+      - id: magnum_s04e13
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E13 - No More Mr Nice Guy"
+        broadcast_date: 1984-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x13%20-%20No%20More%20Mr.%20Nice%20Guy.avi
+        notes: "Season 4 Episode 13"
+
+      - id: magnum_s04e13
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E13 - No More Mr Nice Guy"
+        broadcast_date: 1984-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x13%20-%20No%20More%20Mr.%20Nice%20Guy.mp4
+        notes: "Season 4 Episode 13"
+
+      - id: magnum_s04e14
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E14 - Rembrandt's Girl"
+        broadcast_date: 1984-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x14%20-%20Rembrandt%27s%20Girl.avi
+        notes: "Season 4 Episode 14"
+
+      - id: magnum_s04e14
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E14 - Rembrandt's Girl"
+        broadcast_date: 1984-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x14%20-%20Rembrandt%27s%20Girl.mp4
+        notes: "Season 4 Episode 14"
+
+      - id: magnum_s04e15
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E15 - Paradise Blues"
+        broadcast_date: 1984-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x15%20-%20Paradise%20Blues.avi
+        notes: "Season 4 Episode 15"
+
+      - id: magnum_s04e15
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1984
+        slot: "S04E15 - Paradise Blues"
+        broadcast_date: 1984-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x15%20-%20Paradise%20Blues.mp4
+        notes: "Season 4 Episode 15"
+
+      - id: magnum_s04e16
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E16 - The Return Of Luther Gillis"
+        broadcast_date: 1985-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x16%20-%20The%20Return%20of%20Luther%20Gillis.avi
+        notes: "Season 4 Episode 16"
+
+      - id: magnum_s04e16
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E16 - The Return Of Luther Gillis"
+        broadcast_date: 1985-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x16%20-%20The%20Return%20of%20Luther%20Gillis.mp4
+        notes: "Season 4 Episode 16"
+
+      - id: magnum_s04e17
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E17 - Let The Punishment Fit The Crime"
+        broadcast_date: 1985-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x17%20-%20Let%20the%20Punishment%20Fit%20the%20Crime.avi
+        notes: "Season 4 Episode 17"
+
+      - id: magnum_s04e17
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E17 - Let The Punishment Fit The Crime"
+        broadcast_date: 1985-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x17%20-%20Let%20the%20Punishment%20Fit%20the%20Crime.mp4
+        notes: "Season 4 Episode 17"
+
+      - id: magnum_s04e18
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E18 - Holmes Is Where The Heart Is"
+        broadcast_date: 1985-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x18%20-%20Holmes%20is%20Where%20the%20Heart%20is.avi
+        notes: "Season 4 Episode 18"
+
+      - id: magnum_s04e18
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E18 - Holmes Is Where The Heart Is"
+        broadcast_date: 1985-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x18%20-%20Holmes%20is%20Where%20the%20Heart%20is.mp4
+        notes: "Season 4 Episode 18"
+
+      - id: magnum_s04e19
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E19 - On Face Value"
+        broadcast_date: 1985-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x19%20-%20On%20Face%20Value.avi
+        notes: "Season 4 Episode 19"
+
+      - id: magnum_s04e19
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E19 - On Face Value"
+        broadcast_date: 1985-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x19%20-%20On%20Face%20Value.mp4
+        notes: "Season 4 Episode 19"
+
+      - id: magnum_s04e20
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E20 - Dream A Little Dream"
+        broadcast_date: 1985-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x20%20-%20Dream%20a%20Little%20Dream.avi
+        notes: "Season 4 Episode 20"
+
+      - id: magnum_s04e20
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E20 - Dream A Little Dream"
+        broadcast_date: 1985-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x20%20-%20Dream%20a%20Little%20Dream.mp4
+        notes: "Season 4 Episode 20"
+
+      - id: magnum_s04e21
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E21 - I Witness"
+        broadcast_date: 1985-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x21%20-%20I%20Witness.avi
+        notes: "Season 4 Episode 21"
+
+      - id: magnum_s04e21
+        collection: "Magnum P.I. - Season 4"
+        type: event
+        year: 1985
+        slot: "S04E21 - I Witness"
+        broadcast_date: 1985-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%204%20Season%2FMagnum%20P.I.%20-%204x21%20-%20I%20Witness.mp4
+        notes: "Season 4 Episode 21"
+
+      - id: magnum_s05e01
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E01 - Echoes Of The Mind (part 1)"
+        broadcast_date: 1985-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x01%20-%20Echoes%20Of%20The%20Mind%20%28Part%201%29.avi
+        notes: "Season 5 Episode 1"
+
+      - id: magnum_s05e01
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E01 - Echoes Of The Mind (part 1)"
+        broadcast_date: 1985-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x01%20-%20Echoes%20Of%20The%20Mind%20%28Part%201%29.mp4
+        notes: "Season 5 Episode 1"
+
+      - id: magnum_s05e02
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E02 - Echoes Of The Mind (part 2)"
+        broadcast_date: 1985-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x02%20-%20Echoes%20Of%20The%20Mind%20%28Part%202%29.avi
+        notes: "Season 5 Episode 2"
+
+      - id: magnum_s05e02
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E02 - Echoes Of The Mind (part 2)"
+        broadcast_date: 1985-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x02%20-%20Echoes%20Of%20The%20Mind%20%28Part%202%29.mp4
+        notes: "Season 5 Episode 2"
+
+      - id: magnum_s05e03
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E03 - Mac's Back"
+        broadcast_date: 1985-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x03%20-%20Mac%27s%20Back.avi
+        notes: "Season 5 Episode 3"
+
+      - id: magnum_s05e03
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E03 - Mac's Back"
+        broadcast_date: 1985-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x03%20-%20Mac%27s%20Back.mp4
+        notes: "Season 5 Episode 3"
+
+      - id: magnum_s05e04
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E04 - The Legacy Of Garwood Huddle"
+        broadcast_date: 1985-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x04%20-%20The%20Legacy%20Of%20Garwood%20Huddle.avi
+        notes: "Season 5 Episode 4"
+
+      - id: magnum_s05e04
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E04 - The Legacy Of Garwood Huddle"
+        broadcast_date: 1985-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x04%20-%20The%20Legacy%20Of%20Garwood%20Huddle.mp4
+        notes: "Season 5 Episode 4"
+
+      - id: magnum_s05e05
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E05 - Under World"
+        broadcast_date: 1985-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x05%20-%20Under%20World.avi
+        notes: "Season 5 Episode 5"
+
+      - id: magnum_s05e05
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E05 - Under World"
+        broadcast_date: 1985-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x05%20-%20Under%20World.mp4
+        notes: "Season 5 Episode 5"
+
+      - id: magnum_s05e06
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E06 - Fragments"
+        broadcast_date: 1985-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x06%20-%20Fragments.avi
+        notes: "Season 5 Episode 6"
+
+      - id: magnum_s05e06
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E06 - Fragments"
+        broadcast_date: 1985-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x06%20-%20Fragments.mp4
+        notes: "Season 5 Episode 6"
+
+      - id: magnum_s05e07
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E07 - Blind Justice"
+        broadcast_date: 1985-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x07%20-%20Blind%20Justice.avi
+        notes: "Season 5 Episode 7"
+
+      - id: magnum_s05e07
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E07 - Blind Justice"
+        broadcast_date: 1985-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x07%20-%20Blind%20Justice.mp4
+        notes: "Season 5 Episode 7"
+
+      - id: magnum_s05e08
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E08 - Murder 101"
+        broadcast_date: 1985-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x08%20-%20Murder%20101.avi
+        notes: "Season 5 Episode 8"
+
+      - id: magnum_s05e08
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E08 - Murder 101"
+        broadcast_date: 1985-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x08%20-%20Murder%20101.mp4
+        notes: "Season 5 Episode 8"
+
+      - id: magnum_s05e09
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E09 - Tran Quoc Jones"
+        broadcast_date: 1985-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x09%20-%20Tran%20Quoc%20Jones.avi
+        notes: "Season 5 Episode 9"
+
+      - id: magnum_s05e09
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E09 - Tran Quoc Jones"
+        broadcast_date: 1985-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x09%20-%20Tran%20Quoc%20Jones.mp4
+        notes: "Season 5 Episode 9"
+
+      - id: magnum_s05e10
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E10 - Luther Gillis - File -#001"
+        broadcast_date: 1985-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x10%20-%20Luther%20Gillis%20-%20File%20-%23001.avi
+        notes: "Season 5 Episode 10"
+
+      - id: magnum_s05e10
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E10 - Luther Gillis - File -#001"
+        broadcast_date: 1985-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x10%20-%20Luther%20Gillis%20-%20File%20-%23001.mp4
+        notes: "Season 5 Episode 10"
+
+      - id: magnum_s05e11
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E11 - Kiss Of The Sabre"
+        broadcast_date: 1985-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x11%20-%20Kiss%20Of%20The%20Sabre.avi
+        notes: "Season 5 Episode 11"
+
+      - id: magnum_s05e11
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E11 - Kiss Of The Sabre"
+        broadcast_date: 1985-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x11%20-%20Kiss%20Of%20The%20Sabre.mp4
+        notes: "Season 5 Episode 11"
+
+      - id: magnum_s05e12
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E12 - Little Games"
+        broadcast_date: 1985-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x12%20-%20Little%20Games.avi
+        notes: "Season 5 Episode 12"
+
+      - id: magnum_s05e12
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E12 - Little Games"
+        broadcast_date: 1985-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x12%20-%20Little%20Games.mp4
+        notes: "Season 5 Episode 12"
+
+      - id: magnum_s05e13
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E13 - Professor Jonathan Higgins"
+        broadcast_date: 1985-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x13%20-%20Professor%20Jonathan%20Higgins.avi
+        notes: "Season 5 Episode 13"
+
+      - id: magnum_s05e13
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E13 - Professor Jonathan Higgins"
+        broadcast_date: 1985-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x13%20-%20Professor%20Jonathan%20Higgins.mp4
+        notes: "Season 5 Episode 13"
+
+      - id: magnum_s05e14
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E14 - Compulsion"
+        broadcast_date: 1985-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x14%20-%20Compulsion.avi
+        notes: "Season 5 Episode 14"
+
+      - id: magnum_s05e14
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E14 - Compulsion"
+        broadcast_date: 1985-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x14%20-%20Compulsion.mp4
+        notes: "Season 5 Episode 14"
+
+      - id: magnum_s05e15
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E15 - All For One (part 1)"
+        broadcast_date: 1985-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x15%20-%20All%20For%20One%20%28Part%201%29.avi
+        notes: "Season 5 Episode 15"
+
+      - id: magnum_s05e15
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1985
+        slot: "S05E15 - All For One (part 1)"
+        broadcast_date: 1985-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x15%20-%20All%20For%20One%20%28Part%201%29.mp4
+        notes: "Season 5 Episode 15"
+
+      - id: magnum_s05e16
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E16 - All For One (part 2)"
+        broadcast_date: 1986-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x16%20-%20All%20For%20One%20%28Part%202%29.avi
+        notes: "Season 5 Episode 16"
+
+      - id: magnum_s05e16
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E16 - All For One (part 2)"
+        broadcast_date: 1986-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x16%20-%20All%20For%20One%20%28Part%202%29.mp4
+        notes: "Season 5 Episode 16"
+
+      - id: magnum_s05e17
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E17 - The Love For Sale Boat"
+        broadcast_date: 1986-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x17%20-%20The%20Love%20For%20Sale%20Boat.avi
+        notes: "Season 5 Episode 17"
+
+      - id: magnum_s05e17
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E17 - The Love For Sale Boat"
+        broadcast_date: 1986-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x17%20-%20The%20Love%20For%20Sale%20Boat.mp4
+        notes: "Season 5 Episode 17"
+
+      - id: magnum_s05e18
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E18 - Let Me Hear The Music"
+        broadcast_date: 1986-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x18%20-%20Let%20Me%20Hear%20The%20Music.avi
+        notes: "Season 5 Episode 18"
+
+      - id: magnum_s05e18
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E18 - Let Me Hear The Music"
+        broadcast_date: 1986-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x18%20-%20Let%20Me%20Hear%20The%20Music.mp4
+        notes: "Season 5 Episode 18"
+
+      - id: magnum_s05e19
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E19 - Ms Jones"
+        broadcast_date: 1986-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x19%20-%20Ms.%20Jones.avi
+        notes: "Season 5 Episode 19"
+
+      - id: magnum_s05e19
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E19 - Ms Jones"
+        broadcast_date: 1986-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x19%20-%20Ms.%20Jones.mp4
+        notes: "Season 5 Episode 19"
+
+      - id: magnum_s05e20
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E20 - The Man From Marseilles"
+        broadcast_date: 1986-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x20%20-%20The%20Man%20From%20Marseilles.avi
+        notes: "Season 5 Episode 20"
+
+      - id: magnum_s05e20
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E20 - The Man From Marseilles"
+        broadcast_date: 1986-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x20%20-%20The%20Man%20From%20Marseilles.mp4
+        notes: "Season 5 Episode 20"
+
+      - id: magnum_s05e21
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E21 - Torah, Torah, Torah"
+        broadcast_date: 1986-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x21%20-%20Torah%2C%20Torah%2C%20Torah.avi
+        notes: "Season 5 Episode 21"
+
+      - id: magnum_s05e21
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E21 - Torah, Torah, Torah"
+        broadcast_date: 1986-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x21%20-%20Torah%2C%20Torah%2C%20Torah.mp4
+        notes: "Season 5 Episode 21"
+
+      - id: magnum_s05e22
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E22 - A Pretty Good Dancing Chicken"
+        broadcast_date: 1986-02-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x22%20-%20A%20Pretty%20Good%20Dancing%20Chicken.avi
+        notes: "Season 5 Episode 22"
+
+      - id: magnum_s05e22
+        collection: "Magnum P.I. - Season 5"
+        type: event
+        year: 1986
+        slot: "S05E22 - A Pretty Good Dancing Chicken"
+        broadcast_date: 1986-02-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%205%20Season%2FMagnum%20P.I.%20-%205x22%20-%20A%20Pretty%20Good%20Dancing%20Chicken.mp4
+        notes: "Season 5 Episode 22"
+
+      - id: magnum_s06e01
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E01 - 02 Deja Vu"
+        broadcast_date: 1986-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e01-02.deja.vu.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 1"
+
+      - id: magnum_s06e01
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E01 - 02 Deja Vu"
+        broadcast_date: 1986-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e01-02.deja.vu.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 1"
+
+      - id: magnum_s06e03
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E03 - Old Acquaintance"
+        broadcast_date: 1986-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e03.old.acquaintance.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 3"
+
+      - id: magnum_s06e03
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E03 - Old Acquaintance"
+        broadcast_date: 1986-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e03.old.acquaintance.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 3"
+
+      - id: magnum_s06e04
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E04 - The Kona Winds"
+        broadcast_date: 1986-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e04.the.kona.winds.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 4"
+
+      - id: magnum_s06e04
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E04 - The Kona Winds"
+        broadcast_date: 1986-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e04.the.kona.winds.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 4"
+
+      - id: magnum_s06e05
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E05 - The Hotel Dick"
+        broadcast_date: 1986-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e05.the.hotel.dick.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 5"
+
+      - id: magnum_s06e05
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E05 - The Hotel Dick"
+        broadcast_date: 1986-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e05.the.hotel.dick.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 5"
+
+      - id: magnum_s06e06
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E06 - Round And Around"
+        broadcast_date: 1986-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e06.round.and.around.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 6"
+
+      - id: magnum_s06e06
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E06 - Round And Around"
+        broadcast_date: 1986-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e06.round.and.around.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 6"
+
+      - id: magnum_s06e07
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E07 - Going Home"
+        broadcast_date: 1986-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e07.going.home.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 7"
+
+      - id: magnum_s06e07
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E07 - Going Home"
+        broadcast_date: 1986-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e07.going.home.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 7"
+
+      - id: magnum_s06e08
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E08 - Paniolo"
+        broadcast_date: 1986-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e08.paniolo.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 8"
+
+      - id: magnum_s06e08
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E08 - Paniolo"
+        broadcast_date: 1986-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e08.paniolo.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 8"
+
+      - id: magnum_s06e09
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E09 - The Treasure Of Kalaniopuu"
+        broadcast_date: 1986-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e09.the.treasure.of.kalaniopuu.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 9"
+
+      - id: magnum_s06e09
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E09 - The Treasure Of Kalaniopuu"
+        broadcast_date: 1986-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e09.the.treasure.of.kalaniopuu.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 9"
+
+      - id: magnum_s06e10
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E10 - Blood And Honor"
+        broadcast_date: 1986-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e10.blood.and.honor.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 10"
+
+      - id: magnum_s06e10
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E10 - Blood And Honor"
+        broadcast_date: 1986-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e10.blood.and.honor.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 10"
+
+      - id: magnum_s06e11
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E11 - Rapture"
+        broadcast_date: 1986-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e11.rapture.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 11"
+
+      - id: magnum_s06e11
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E11 - Rapture"
+        broadcast_date: 1986-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e11.rapture.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 11"
+
+      - id: magnum_s06e12
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E12 - I Never Wanted To Go To France Anyway"
+        broadcast_date: 1986-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e12.i.never.wanted.to.go.to.france.anyway.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 12"
+
+      - id: magnum_s06e12
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E12 - I Never Wanted To Go To France Anyway"
+        broadcast_date: 1986-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e12.i.never.wanted.to.go.to.france.anyway.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 12"
+
+      - id: magnum_s06e13
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E13 - Summer School"
+        broadcast_date: 1986-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e13.summer.school.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 13"
+
+      - id: magnum_s06e13
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E13 - Summer School"
+        broadcast_date: 1986-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e13.summer.school.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 13"
+
+      - id: magnum_s06e14
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E14 - Mad Dogs And Englishmen"
+        broadcast_date: 1986-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e14.mad.dogs.and.englishmen.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 14"
+
+      - id: magnum_s06e14
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E14 - Mad Dogs And Englishmen"
+        broadcast_date: 1986-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e14.mad.dogs.and.englishmen.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 14"
+
+      - id: magnum_s06e15
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E15 - All Thieves On Deck"
+        broadcast_date: 1986-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e15.all.thieves.on.deck.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 15"
+
+      - id: magnum_s06e15
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1986
+        slot: "S06E15 - All Thieves On Deck"
+        broadcast_date: 1986-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e15.all.thieves.on.deck.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 15"
+
+      - id: magnum_s06e16
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E16 - This Island Isnt Big Enough"
+        broadcast_date: 1987-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e16.this.island.isnt.big.enough.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 16"
+
+      - id: magnum_s06e16
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E16 - This Island Isnt Big Enough"
+        broadcast_date: 1987-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e16.this.island.isnt.big.enough.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 16"
+
+      - id: magnum_s06e17
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E17 - Way Of The Stalking Horse"
+        broadcast_date: 1987-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e17.way.of.the.stalking.horse.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 17"
+
+      - id: magnum_s06e17
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E17 - Way Of The Stalking Horse"
+        broadcast_date: 1987-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e17.way.of.the.stalking.horse.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 17"
+
+      - id: magnum_s06e18
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E18 - Find Me A Rainbow"
+        broadcast_date: 1987-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e18.find.me.a.rainbow.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 18"
+
+      - id: magnum_s06e18
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E18 - Find Me A Rainbow"
+        broadcast_date: 1987-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e18.find.me.a.rainbow.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 18"
+
+      - id: magnum_s06e19
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E19 - Who Is Don Luis Higgins"
+        broadcast_date: 1987-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e19.who.is.don.luis.higgins.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 19"
+
+      - id: magnum_s06e19
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E19 - Who Is Don Luis Higgins"
+        broadcast_date: 1987-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e19.who.is.don.luis.higgins.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 19"
+
+      - id: magnum_s06e20
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E20 - A Little Bit Of Luck A Little Bit Of Grief"
+        broadcast_date: 1987-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e20.a.little.bit.of.luck.a.little.bit.of.grief.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 20"
+
+      - id: magnum_s06e20
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E20 - A Little Bit Of Luck A Little Bit Of Grief"
+        broadcast_date: 1987-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e20.a.little.bit.of.luck.a.little.bit.of.grief.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 20"
+
+      - id: magnum_s06e21
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E21 - Photo Play"
+        broadcast_date: 1987-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e21.photo.play.dvdrip.xvid-epic.avi
+        notes: "Season 6 Episode 21"
+
+      - id: magnum_s06e21
+        collection: "Magnum P.I. - Season 6"
+        type: event
+        year: 1987
+        slot: "S06E21 - Photo Play"
+        broadcast_date: 1987-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%206%20Season%2Fmagnum.p.i.s06e21.photo.play.dvdrip.xvid-epic.mp4
+        notes: "Season 6 Episode 21"
+
+      - id: magnum_s07e01
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E01 - L A"
+        broadcast_date: 1987-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E01%20-%20L.A.mp4
+        notes: "Season 7 Episode 1"
+
+      - id: magnum_s07e02
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E02 - One Picture Is Worth"
+        broadcast_date: 1987-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E02%20-%20One%20Picture%20Is%20Worth.mp4
+        notes: "Season 7 Episode 2"
+
+      - id: magnum_s07e03
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E03 - Straight And Narrow"
+        broadcast_date: 1987-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E03%20-%20Straight%20and%20Narrow.mp4
+        notes: "Season 7 Episode 3"
+
+      - id: magnum_s07e04
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E04 - A A P I"
+        broadcast_date: 1987-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E04%20-%20A.A.P.I.mp4
+        notes: "Season 7 Episode 4"
+
+      - id: magnum_s07e05
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E05 - Death And Taxes"
+        broadcast_date: 1987-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E05%20-%20Death%20and%20Taxes.mp4
+        notes: "Season 7 Episode 5"
+
+      - id: magnum_s07e06
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E06 - Little Girl Who"
+        broadcast_date: 1987-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E06%20-%20Little%20Girl%20Who.mp4
+        notes: "Season 7 Episode 6"
+
+      - id: magnum_s07e07
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E07 - Paper War"
+        broadcast_date: 1987-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E07%20-%20Paper%20War.mp4
+        notes: "Season 7 Episode 7"
+
+      - id: magnum_s07e08
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E08 - Novel Connection"
+        broadcast_date: 1987-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E08%20-%20Novel%20Connection.mp4
+        notes: "Season 7 Episode 8"
+
+      - id: magnum_s07e09
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E09 - Kapu"
+        broadcast_date: 1987-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E09%20-%20Kapu.mp4
+        notes: "Season 7 Episode 9"
+
+      - id: magnum_s07e10
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E10 - Missing Melody"
+        broadcast_date: 1987-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E10%20-%20Missing%20Melody.mp4
+        notes: "Season 7 Episode 10"
+
+      - id: magnum_s07e11
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E11 - Death Of The Flowers"
+        broadcast_date: 1987-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E11%20-%20Death%20of%20the%20Flowers.mp4
+        notes: "Season 7 Episode 11"
+
+      - id: magnum_s07e12
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E12 - Autumn Warrior"
+        broadcast_date: 1987-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E12%20-%20Autumn%20Warrior.mp4
+        notes: "Season 7 Episode 12"
+
+      - id: magnum_s07e13
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E13 - Murder By Night"
+        broadcast_date: 1987-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E13%20-%20Murder%20by%20Night.mp4
+        notes: "Season 7 Episode 13"
+
+      - id: magnum_s07e14
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E14 - On The Fly"
+        broadcast_date: 1987-12-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E14%20-%20On%20the%20Fly.mp4
+        notes: "Season 7 Episode 14"
+
+      - id: magnum_s07e15
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1987
+        slot: "S07E15 - Solo Flight"
+        broadcast_date: 1987-12-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E15%20-%20Solo%20Flight.mp4
+        notes: "Season 7 Episode 15"
+
+      - id: magnum_s07e16
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1988
+        slot: "S07E16 - Forty"
+        broadcast_date: 1988-01-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E16%20-%20Forty.mp4
+        notes: "Season 7 Episode 16"
+
+      - id: magnum_s07e17
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1988
+        slot: "S07E17 - Laura"
+        broadcast_date: 1988-01-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E17%20-%20Laura.mp4
+        notes: "Season 7 Episode 17"
+
+      - id: magnum_s07e18
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1988
+        slot: "S07E18 - Out Of Sync"
+        broadcast_date: 1988-01-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E18%20-%20Out%20of%20Sync.mp4
+        notes: "Season 7 Episode 18"
+
+      - id: magnum_s07e19
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1988
+        slot: "S07E19 - The Aunt Who Came To Dinner"
+        broadcast_date: 1988-01-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E19%20-%20The%20Aunt%20Who%20Came%20to%20Dinner.mp4
+        notes: "Season 7 Episode 19"
+
+      - id: magnum_s07e20
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1988
+        slot: "S07E20 - The People Vs Orville Wright"
+        broadcast_date: 1988-02-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E20%20-%20The%20People%20vs.%20Orville%20Wright.mp4
+        notes: "Season 7 Episode 20"
+
+      - id: magnum_s07e21
+        collection: "Magnum P.I. - Season 7"
+        type: event
+        year: 1988
+        slot: "S07E21 - Limbo"
+        broadcast_date: 1988-02-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%207%20Season%2FMagnum%20P.I.%20-%20S7E21%20-%20Limbo.mp4
+        notes: "Season 7 Episode 21"
+
+      - id: magnum_s08e01
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E01 - Infinity And Jelly Doughnuts"
+        broadcast_date: 1988-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E01%20-%20Infinity%20and%20Jelly%20Doughnuts.avi
+        notes: "Season 8 Episode 1"
+
+      - id: magnum_s08e01
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E01 - Infinity And Jelly Doughnuts"
+        broadcast_date: 1988-09-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E01%20-%20Infinity%20and%20Jelly%20Doughnuts.mp4
+        notes: "Season 8 Episode 1"
+
+      - id: magnum_s08e02
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E02 - Pleasure Principle"
+        broadcast_date: 1988-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E02%20-%20Pleasure%20Principle.avi
+        notes: "Season 8 Episode 2"
+
+      - id: magnum_s08e02
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E02 - Pleasure Principle"
+        broadcast_date: 1988-09-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E02%20-%20Pleasure%20Principle.mp4
+        notes: "Season 8 Episode 2"
+
+      - id: magnum_s08e03
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E03 - Innocence A Broad"
+        broadcast_date: 1988-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E03%20-%20Innocence...A%20Broad.avi
+        notes: "Season 8 Episode 3"
+
+      - id: magnum_s08e03
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E03 - Innocence A Broad"
+        broadcast_date: 1988-09-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E03%20-%20Innocence...A%20Broad.mp4
+        notes: "Season 8 Episode 3"
+
+      - id: magnum_s08e04
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E04 - Tigers Fan"
+        broadcast_date: 1988-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E04%20-%20Tigers%20Fan.avi
+        notes: "Season 8 Episode 4"
+
+      - id: magnum_s08e04
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E04 - Tigers Fan"
+        broadcast_date: 1988-10-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E04%20-%20Tigers%20Fan.mp4
+        notes: "Season 8 Episode 4"
+
+      - id: magnum_s08e05
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E05 - Forever In Time"
+        broadcast_date: 1988-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E05%20-%20Forever%20in%20Time.avi
+        notes: "Season 8 Episode 5"
+
+      - id: magnum_s08e05
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E05 - Forever In Time"
+        broadcast_date: 1988-10-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E05%20-%20Forever%20in%20Time.mp4
+        notes: "Season 8 Episode 5"
+
+      - id: magnum_s08e06
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E06 - The Love That Lies"
+        broadcast_date: 1988-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E06%20-%20The%20Love%20That%20Lies.avi
+        notes: "Season 8 Episode 6"
+
+      - id: magnum_s08e06
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E06 - The Love That Lies"
+        broadcast_date: 1988-10-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E06%20-%20The%20Love%20That%20Lies.mp4
+        notes: "Season 8 Episode 6"
+
+      - id: magnum_s08e07
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E07 - A Girl Named Sue"
+        broadcast_date: 1988-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E07%20-%20A%20Girl%20Named%20Sue.avi
+        notes: "Season 8 Episode 7"
+
+      - id: magnum_s08e07
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E07 - A Girl Named Sue"
+        broadcast_date: 1988-10-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E07%20-%20A%20Girl%20Named%20Sue.mp4
+        notes: "Season 8 Episode 7"
+
+      - id: magnum_s08e08
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E08 - Unfinished Business"
+        broadcast_date: 1988-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E08%20-%20Unfinished%20Business.avi
+        notes: "Season 8 Episode 8"
+
+      - id: magnum_s08e08
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E08 - Unfinished Business"
+        broadcast_date: 1988-11-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E08%20-%20Unfinished%20Business.mp4
+        notes: "Season 8 Episode 8"
+
+      - id: magnum_s08e09
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E09 - The Great Hawaiian Adventure Company"
+        broadcast_date: 1988-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E09%20-%20The%20Great%20Hawaiian%20Adventure%20Company.avi
+        notes: "Season 8 Episode 9"
+
+      - id: magnum_s08e09
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E09 - The Great Hawaiian Adventure Company"
+        broadcast_date: 1988-11-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E09%20-%20The%20Great%20Hawaiian%20Adventure%20Company.mp4
+        notes: "Season 8 Episode 9"
+
+      - id: magnum_s08e10
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E10 - Legend Of The Lost Art"
+        broadcast_date: 1988-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E10%20-%20Legend%20of%20the%20Lost%20Art.avi
+        notes: "Season 8 Episode 10"
+
+      - id: magnum_s08e10
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E10 - Legend Of The Lost Art"
+        broadcast_date: 1988-11-15
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E10%20-%20Legend%20of%20the%20Lost%20Art.mp4
+        notes: "Season 8 Episode 10"
+
+      - id: magnum_s08e11
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E11 - Transitions"
+        broadcast_date: 1988-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E11%20-%20Transitions.avi
+        notes: "Season 8 Episode 11"
+
+      - id: magnum_s08e11
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E11 - Transitions"
+        broadcast_date: 1988-11-22
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E11%20-%20Transitions.mp4
+        notes: "Season 8 Episode 11"
+
+      - id: magnum_s08e12
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E12 - Resolutions Part 1"
+        broadcast_date: 1988-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E12%20-%20Resolutions%20Part%201.avi
+        notes: "Season 8 Episode 12"
+
+      - id: magnum_s08e12
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E12 - Resolutions Part 1"
+        broadcast_date: 1988-12-01
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E12%20-%20Resolutions%20Part%201.mp4
+        notes: "Season 8 Episode 12"
+
+      - id: magnum_s08e13
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E13 - Resolutions Part 2"
+        broadcast_date: 1988-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E13%20-%20Resolutions%20Part%202.avi
+        notes: "Season 8 Episode 13"
+
+      - id: magnum_s08e13
+        collection: "Magnum P.I. - Season 8"
+        type: event
+        year: 1988
+        slot: "S08E13 - Resolutions Part 2"
+        broadcast_date: 1988-12-08
+        network: CBS
+        runtime: PT48M
+        source: archive
+        url: https://archive.org/download/JHiggens/Magnum%20P.I.%20-%208%20Season%2FMagnum%20P.I.%20-%20S8E13%20-%20Resolutions%20Part%202.mp4
+        notes: "Season 8 Episode 13"

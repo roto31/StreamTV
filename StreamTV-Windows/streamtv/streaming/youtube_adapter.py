@@ -7,6 +7,7 @@ from typing import Optional, Dict, Any
 import logging
 import asyncio
 import time
+import re
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timedelta
@@ -95,7 +96,11 @@ class YouTubeAdapter:
     
     def _get_video_info_sync(self, url: str) -> Dict[str, Any]:
         """Synchronous helper to get video info (runs in thread pool)"""
-        with yt_dlp.YoutubeDL(self._ydl_opts) as ydl:
+        ydl_opts = {**self._ydl_opts}
+        # Ensure cookies file is explicitly set
+        if self.cookies_file:
+            ydl_opts['cookiefile'] = self.cookies_file
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             return {
                 'id': info.get('id'),
@@ -149,6 +154,23 @@ class YouTubeAdapter:
             return info
         except DownloadError as e:
             error_msg = str(e)
+            
+            # Check for authentication errors first
+            is_auth_error = 'Please sign in' in error_msg or 'sign in' in error_msg.lower() or \
+                          'authentication' in error_msg.lower() or ('cookies' in error_msg.lower() and 'authentication' in error_msg.lower())
+            
+            if is_auth_error and self.cookies_file:
+                logger.error(f"YouTube authentication error getting video info for {url}. Cookies file may be incomplete or expired.")
+                logger.error(f"Cookies file: {self.cookies_file}")
+                logger.error("To fix: Export a complete cookies file from your browser after logging into YouTube.")
+                logger.error("Required cookies: LOGIN_INFO, SID, HSID, SSID, APISID, SAPISID, __Secure-1PSID, __Secure-3PSID")
+                raise ValueError(f"YouTube authentication failed: Cookies file may be incomplete or expired. "
+                               f"Please export a complete cookies file from your browser after logging into YouTube. "
+                               f"See /api/auth/youtube for instructions.")
+            elif is_auth_error:
+                logger.error(f"YouTube authentication error getting video info for {url}. No cookies file configured.")
+                raise ValueError(f"YouTube authentication required: Please upload a cookies file via /api/auth/youtube")
+            
             rate_limit_indicators = [
                 'rate-limit', 'rate limit', 'rate-limited', 'rate limited',
                 'been rate-limited', 'session has been rate-limited',
@@ -171,6 +193,23 @@ class YouTubeAdapter:
             raise
         except Exception as e:
             error_msg = str(e)
+            
+            # Check for authentication errors first
+            is_auth_error = 'Please sign in' in error_msg or 'sign in' in error_msg.lower() or \
+                          'authentication' in error_msg.lower() or ('cookies' in error_msg.lower() and 'authentication' in error_msg.lower())
+            
+            if is_auth_error and self.cookies_file:
+                logger.error(f"YouTube authentication error getting video info for {url}. Cookies file may be incomplete or expired.")
+                logger.error(f"Cookies file: {self.cookies_file}")
+                logger.error("To fix: Export a complete cookies file from your browser after logging into YouTube.")
+                logger.error("Required cookies: LOGIN_INFO, SID, HSID, SSID, APISID, SAPISID, __Secure-1PSID, __Secure-3PSID")
+                raise ValueError(f"YouTube authentication failed: Cookies file may be incomplete or expired. "
+                               f"Please export a complete cookies file from your browser after logging into YouTube. "
+                               f"See /api/auth/youtube for instructions.")
+            elif is_auth_error:
+                logger.error(f"YouTube authentication error getting video info for {url}. No cookies file configured.")
+                raise ValueError(f"YouTube authentication required: Please upload a cookies file via /api/auth/youtube")
+            
             rate_limit_indicators = [
                 'rate-limit', 'rate limit', 'rate-limited', 'rate limited',
                 'been rate-limited', 'session has been rate-limited',
@@ -192,65 +231,166 @@ class YouTubeAdapter:
             raise
     
     def _get_stream_url_sync(self, url: str, format_id: Optional[str] = None) -> str:
-        """Synchronous helper to get stream URL (runs in thread pool)"""
-        ydl_opts = {
-            **self._ydl_opts,
-            'format': format_id or self._get_best_format(),
-            'noplaylist': True,
-            # CRITICAL: Ensure no downloading happens
-            'download': False,
-            'skip_download': True,
-        }
+        """
+        Synchronous helper to get stream URL (runs in thread pool)
         
-        if self.extract_audio:
-            ydl_opts['format'] = 'bestaudio/best'
+        This method implements automatic format fallback for all YouTube channels.
+        If the requested format (e.g., best[height<=1080]) is not available,
+        it automatically tries more flexible formats (best) until one works.
         
-        # Always use download=False to prevent any file downloads
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=False)  # Explicitly set download=False
-            
-            # Get the best available format URL
-            if 'url' in info:
-                # Check if it's a direct video URL (not HLS playlist)
-                url_str = info['url']
-                if 'm3u8' not in url_str.lower() and 'playlist' not in url_str.lower():
-                    return url_str
-            
-            if 'formats' in info:
-                # Find the best format - prefer direct video URLs over HLS
-                formats = info['formats']
+        This ensures all channels using YouTube content can stream successfully
+        even when specific quality formats aren't available for certain videos.
+        """
+        # Try with requested format first, then fallback to more flexible formats
+        format_selectors = []
+        if format_id:
+            format_selectors.append(format_id)
+        elif self.extract_audio:
+            format_selectors.append('bestaudio/best')
+        else:
+            # Try quality-specific format first, then fallback to more flexible options
+            requested_format = self._get_best_format()
+            format_selectors.append(requested_format)
+            # Fallback formats if specific format isn't available
+            if 'height<=' in requested_format:
+                # Try without height restriction
+                format_selectors.append('best')
+            format_selectors.append('best')  # Final fallback
+        
+        # Ensure cookies file is explicitly set (in case it wasn't copied properly)
+        cookies_file = self.cookies_file
+        
+        # Try each format selector until one works
+        last_error = None
+        info = None
+        for fmt_selector in format_selectors:
+            try:
+                ydl_opts = {
+                    **self._ydl_opts,
+                    'format': fmt_selector,
+                    'noplaylist': True,
+                    # CRITICAL: Ensure no downloading happens
+                    'download': False,
+                    'skip_download': True,
+                }
                 
-                # First, try to find a direct video format (not HLS/DASH)
-                for fmt in formats:
-                    protocol = fmt.get('protocol', '')
-                    fmt_url = fmt.get('url', '')
-                    fmt_id = fmt.get('format_id', '').lower()
-                    
-                    # Skip HLS and DASH formats for direct streaming
-                    if 'm3u8' in fmt_url.lower() or 'playlist' in fmt_url.lower():
-                        continue
-                    if 'hls' in fmt_id or 'dash' in fmt_id:
-                        continue
-                    
-                    # Prefer progressive formats (direct video files)
-                    if protocol in ['https', 'http'] and fmt.get('vcodec') != 'none':
-                        # Prefer formats with both video and audio
-                        if fmt.get('acodec') != 'none':
-                            return fmt_url
+                if cookies_file:
+                    ydl_opts['cookiefile'] = cookies_file
+                    logger.debug(f"Using cookies file for stream URL extraction: {cookies_file}")
                 
-                # If no progressive format found, try any direct URL
-                for fmt in formats:
-                    protocol = fmt.get('protocol', '')
-                    fmt_url = fmt.get('url', '')
-                    if protocol in ['https', 'http']:
-                        if 'm3u8' not in fmt_url.lower() and 'playlist' not in fmt_url.lower():
-                            return fmt_url
+                # Always use download=False to prevent any file downloads
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(url, download=False)  # Explicitly set download=False
+                    logger.debug(f"Successfully extracted info with format '{fmt_selector}' for {url}")
+                    break  # Success, exit the loop
+            except (DownloadError, ExtractorError) as e:
+                error_msg = str(e)
+                # Remove ANSI color codes for better matching (handle both \x1b and [ codes)
+                error_msg_clean = error_msg
+                # Remove common ANSI escape sequences
+                ansi_escape = re.compile(r'\x1b\[[0-9;]*m|\[0;31m|\[0m')
+                error_msg_clean = ansi_escape.sub('', error_msg_clean)
                 
-                # Last resort: return the best available (might be HLS)
-                if formats:
-                    return formats[-1]['url']
+                # Check for format not available errors - be very permissive in detection
+                is_format_error = (
+                    'Requested format is not available' in error_msg_clean or 
+                    'format is not available' in error_msg_clean.lower() or
+                    ('format' in error_msg_clean.lower() and 'not available' in error_msg_clean.lower()) or
+                    'no format' in error_msg_clean.lower() or
+                    ('unable to download' in error_msg_clean.lower() and 'format' in error_msg_clean.lower()) or
+                    'list-formats' in error_msg_clean.lower() or  # This appears in the error message
+                    'use --list-formats' in error_msg_clean.lower()  # Another indicator
+                )
+                
+                if is_format_error:
+                    logger.debug(f"Format '{fmt_selector}' not available for {url}, trying next format... (error: {error_msg_clean[:150]})")
+                    last_error = e
+                    continue  # Try next format
+                else:
+                    # Other error, re-raise
+                    logger.debug(f"Non-format error with format '{fmt_selector}' for {url}: {error_msg_clean[:150]}")
+                    raise
+        
+        # If we exhausted all format selectors, try one more time with no format restriction
+        if info is None:
+            logger.warning(f"All format selectors failed for {url}, trying with no format restriction (let yt-dlp auto-select)...")
+            try:
+                # Create fresh options without any format specification
+                ydl_opts = {
+                    'quiet': True,
+                    'no_warnings': True,
+                    'extract_flat': False,
+                    'geo_bypass': True,
+                    'geo_bypass_country': 'US',
+                    'download': False,
+                    'noplaylist': True,
+                    'skip_download': True,
+                    # Explicitly do NOT set 'format' - let yt-dlp auto-select
+                }
+                
+                if cookies_file:
+                    ydl_opts['cookiefile'] = cookies_file
+                
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(url, download=False)
+                    logger.info(f"Successfully extracted info with auto-selected format for {url}")
+            except Exception as final_error:
+                error_msg_final = str(final_error)
+                # Remove ANSI codes
+                error_msg_final_clean = error_msg_final.replace('\x1b[0;31m', '').replace('\x1b[0m', '').replace('[0;31m', '').replace('[0m', '')
+                logger.error(f"Final fallback (auto-select format) also failed for {url}: {error_msg_final_clean[:200]}")
+                
+                # If it's still a format error, the video might truly have no available formats
+                if 'format' in error_msg_final_clean.lower() and 'not available' in error_msg_final_clean.lower():
+                    logger.error(f"Video {url} appears to have no streamable formats available. This may be a restricted or unavailable video.")
+                    raise ValueError(f"YouTube video has no available formats: {url}. The video may be restricted, region-locked, or unavailable.")
+                
+                if last_error:
+                    raise last_error
+                raise ValueError(f"Failed to extract video info: {error_msg_final_clean[:200]}")
+        
+        # Get the best available format URL
+        if 'url' in info:
+            # Check if it's a direct video URL (not HLS playlist)
+            url_str = info['url']
+            if 'm3u8' not in url_str.lower() and 'playlist' not in url_str.lower():
+                return url_str
+        
+        if 'formats' in info:
+            # Find the best format - prefer direct video URLs over HLS
+            formats = info['formats']
             
-            raise ValueError("No stream URL found")
+            # First, try to find a direct video format (not HLS/DASH)
+            for fmt in formats:
+                protocol = fmt.get('protocol', '')
+                fmt_url = fmt.get('url', '')
+                fmt_id = fmt.get('format_id', '').lower()
+                
+                # Skip HLS and DASH formats for direct streaming
+                if 'm3u8' in fmt_url.lower() or 'playlist' in fmt_url.lower():
+                    continue
+                if 'hls' in fmt_id or 'dash' in fmt_id:
+                    continue
+                
+                # Prefer progressive formats (direct video files)
+                if protocol in ['https', 'http'] and fmt.get('vcodec') != 'none':
+                    # Prefer formats with both video and audio
+                    if fmt.get('acodec') != 'none':
+                        return fmt_url
+            
+            # If no progressive format found, try any direct URL
+            for fmt in formats:
+                protocol = fmt.get('protocol', '')
+                fmt_url = fmt.get('url', '')
+                if protocol in ['https', 'http']:
+                    if 'm3u8' not in fmt_url.lower() and 'playlist' not in fmt_url.lower():
+                        return fmt_url
+            
+            # Last resort: return the best available (might be HLS)
+            if formats:
+                return formats[-1]['url']
+        
+        raise ValueError("No stream URL found")
     
     async def get_stream_url(self, url: str, format_id: Optional[str] = None) -> str:
         """Get direct streaming URL for YouTube video - streams only, never downloads (with rate limiting)"""
@@ -300,6 +440,39 @@ class YouTubeAdapter:
                            f"Using {self.request_delay}s delay between requests.")
                 raise ValueError(f"YouTube rate limit: Session rate-limited for up to 1 hour. "
                                f"Consider adding -t sleep delay between video requests. {error_msg}")
+            
+            # Check for authentication errors
+            is_auth_error = 'Please sign in' in error_msg or 'sign in' in error_msg.lower() or \
+                          'authentication' in error_msg.lower() or 'cookies' in error_msg.lower()
+            
+            if is_auth_error and self.cookies_file:
+                logger.error(f"YouTube authentication error for {url}. Cookies file exists but may be incomplete or expired.")
+                logger.error(f"Cookies file: {self.cookies_file}")
+                logger.error("To fix: Export a complete cookies file from your browser after logging into YouTube.")
+                logger.error("Required cookies: LOGIN_INFO, SID, HSID, SSID, APISID, SAPISID, __Secure-1PSID, __Secure-3PSID")
+                logger.error("See: https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies")
+                raise ValueError(f"YouTube authentication failed: Cookies file may be incomplete or expired. "
+                               f"Please export a complete cookies file from your browser after logging into YouTube. "
+                               f"See /api/auth/youtube for instructions.")
+            elif is_auth_error:
+                logger.error(f"YouTube authentication error for {url}. No cookies file configured.")
+                logger.error("To fix: Upload a cookies file via /api/auth/youtube")
+                raise ValueError(f"YouTube authentication required: Please upload a cookies file via /api/auth/youtube")
+            
+            # Check for format not available errors - these should be handled by fallback logic
+            is_format_error = 'Requested format is not available' in error_msg or 'format is not available' in error_msg.lower()
+            if is_format_error:
+                logger.warning(f"YouTube format not available for {url}: {error_msg}")
+                logger.info("This should be handled by format fallback logic. If you see this, the fallback may have failed.")
+                # Try one more time with a very permissive format
+                try:
+                    logger.debug(f"Retrying with fallback format 'best' for {url}")
+                    loop = asyncio.get_event_loop()
+                    stream_url = await loop.run_in_executor(self._executor, self._get_stream_url_sync, url, 'best')
+                    return stream_url
+                except Exception as retry_error:
+                    logger.error(f"Fallback format also failed for {url}: {retry_error}")
+                    raise ValueError(f"YouTube format not available: No compatible format found for {url}. {error_msg}")
             
             # Check for placeholder/unavailable videos (but not rate limit errors)
             if 'PLACEHOLDER' in error_msg or is_unavailable:

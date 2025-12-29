@@ -72,58 +72,10 @@
         font-size: 12px;
     }
     
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-        flex-wrap: nowrap;
-        align-items: center;
+    /* Button styles now handled by base.html */
+    /* Override only if needed for specific table context */
+    .table .action-buttons {
         justify-content: flex-end;
-    }
-    
-    .btn-icon {
-        background: none;
-        border: none;
-        color: var(--text-secondary);
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 8px;
-        transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        white-space: nowrap;
-    }
-    
-    .btn-icon .material-icons {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-        flex-shrink: 0;
-    }
-    
-    .btn-icon:hover {
-        background: var(--hover);
-        color: var(--text-primary);
-    }
-    
-    .btn-icon.edit {
-        color: var(--info);
-    }
-    
-    .btn-icon.delete {
-        color: var(--error);
-    }
-    
-    .btn-icon.play {
-        color: var(--success);
-    }
-    
-    .btn-icon:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
     }
     
     .empty-state {
@@ -285,13 +237,13 @@
     
     <!-- Toolbar -->
     <div class="channels-toolbar">
-        <button class="btn btn-primary" onclick="openCreateModal()">
+        <button class="btn btn-primary" id="addChannelButton">
             <span class="material-icons" style="font-size: 18px;">add</span>
             Add Channel
         </button>
         <div style="flex: 1;"></div>
         <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); cursor: pointer;">
-            <input type="checkbox" id="showDisabled" onchange="loadChannels()">
+            <input type="checkbox" id="showDisabled">
             <span>Show Disabled</span>
         </label>
     </div>
@@ -320,20 +272,20 @@
             <div class="empty-state-icon">📺</div>
             <h3 style="margin-bottom: 8px;">No channels found</h3>
             <p style="margin-bottom: 16px;">Create your first channel to get started</p>
-            <button class="btn btn-primary" onclick="openCreateModal()">Create Channel</button>
+            <button class="btn btn-primary" id="emptyStateCreateButton">Create Channel</button>
         </div>
     </div>
     
     <!-- Create/Edit Modal -->
-    <div id="channelModal" class="modal" onclick="if(event.target === this) closeModal()">
+    <div id="channelModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Create Channel</h2>
-                <button class="modal-close" onclick="closeModal()">
+                <button class="modal-close" id="channelModalCloseButton">
                     <span class="material-icons">close</span>
                 </button>
             </div>
-            <form id="channelForm" onsubmit="handleSubmit(event)">
+            <form id="channelForm">
                 <div id="formAlert" class="alert"></div>
                 <div class="form-group">
                     <label class="form-label" for="number">Channel Number *</label>
@@ -370,22 +322,22 @@
                 </div>
                 <div style="display: flex; gap: 12px; margin-top: 24px;">
                     <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
-                    <button type="button" class="btn btn-outlined" onclick="closeModal()" style="flex: 1;">Cancel</button>
+                    <button type="button" class="btn btn-outlined" id="channelModalCancelButton" style="flex: 1;">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
     
     <!-- Upload Icon Modal -->
-    <div id="iconUploadModal" class="modal" onclick="if(event.target === this) closeIconModal()">
+    <div id="iconUploadModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h2 id="iconModalTitle">Upload Channel Icon</h2>
-                <button class="modal-close" onclick="closeIconModal()">
+                <button class="modal-close" id="iconModalCloseButton">
                     <span class="material-icons">close</span>
                 </button>
             </div>
-            <form id="iconUploadForm" onsubmit="handleIconUpload(event)">
+            <form id="iconUploadForm">
                 <div id="iconFormAlert" class="alert"></div>
                 <div class="form-group">
                     <label class="form-label" for="iconFile">Select PNG Image *</label>
@@ -396,7 +348,7 @@
                 </div>
                 <div style="display: flex; gap: 12px; margin-top: 24px;">
                     <button type="submit" class="btn btn-primary" style="flex: 1;">Upload</button>
-                    <button type="button" class="btn btn-outlined" onclick="closeIconModal()" style="flex: 1;">Cancel</button>
+                    <button type="button" class="btn btn-outlined" id="iconModalCancelButton" style="flex: 1;">Cancel</button>
                 </div>
             </form>
         </div>
@@ -404,12 +356,77 @@
 {% endblock %}
 
 {% block extra_scripts %}
-    <script>
+    <script nonce="{{ request.state.csp_nonce }}">
         let editingChannelId = null;
         let uploadingIconChannelId = null;
         
-        // Load channels on page load
-        document.addEventListener('DOMContentLoaded', loadChannels);
+        // Load channels and wire events on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChannels();
+
+            const addChannelButton = document.getElementById('addChannelButton');
+            if (addChannelButton) {
+                addChannelButton.addEventListener('click', openCreateModal);
+            }
+
+            const emptyStateButton = document.getElementById('emptyStateCreateButton');
+            if (emptyStateButton) {
+                emptyStateButton.addEventListener('click', openCreateModal);
+            }
+
+            const showDisabledCheckbox = document.getElementById('showDisabled');
+            if (showDisabledCheckbox) {
+                showDisabledCheckbox.addEventListener('change', loadChannels);
+            }
+
+            const channelModal = document.getElementById('channelModal');
+            if (channelModal) {
+                channelModal.addEventListener('click', (event) => {
+                    if (event.target === channelModal) {
+                        closeModal();
+                    }
+                });
+            }
+
+            const channelModalCloseButton = document.getElementById('channelModalCloseButton');
+            if (channelModalCloseButton) {
+                channelModalCloseButton.addEventListener('click', closeModal);
+            }
+
+            const channelModalCancelButton = document.getElementById('channelModalCancelButton');
+            if (channelModalCancelButton) {
+                channelModalCancelButton.addEventListener('click', closeModal);
+            }
+
+            const channelForm = document.getElementById('channelForm');
+            if (channelForm) {
+                channelForm.addEventListener('submit', handleSubmit);
+            }
+
+            const iconModal = document.getElementById('iconUploadModal');
+            if (iconModal) {
+                iconModal.addEventListener('click', (event) => {
+                    if (event.target === iconModal) {
+                        closeIconModal();
+                    }
+                });
+            }
+
+            const iconModalCloseButton = document.getElementById('iconModalCloseButton');
+            if (iconModalCloseButton) {
+                iconModalCloseButton.addEventListener('click', closeIconModal);
+            }
+
+            const iconModalCancelButton = document.getElementById('iconModalCancelButton');
+            if (iconModalCancelButton) {
+                iconModalCancelButton.addEventListener('click', closeIconModal);
+            }
+
+            const iconUploadForm = document.getElementById('iconUploadForm');
+            if (iconUploadForm) {
+                iconUploadForm.addEventListener('submit', handleIconUpload);
+            }
+        });
         
         async function loadChannels() {
             try {
@@ -443,11 +460,11 @@
                                         : `<div class="channel-logo" style="background: var(--hover); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 20px;">📺</div>`
                                     }
                                     <div style="display: flex; flex-direction: column; gap: 4px;">
-                                        <button class="btn-icon" onclick="openUploadIconModal(${channel.id}, '${channel.name.replace(/'/g, "\\'")}')" title="Upload Icon" style="padding: 4px;">
+                                        <button class="btn-icon" data-action="openUploadIconModal" data-args='[${channel.id}, ${JSON.stringify(channel.name)}]' title="Upload Icon">
                                             <span class="material-icons" style="font-size: 18px;">image</span>
                                         </button>
                                         ${channel.logo_path && channel.logo_path.startsWith('/static/channel_icons/') 
-                                            ? `<button class="btn-icon" onclick="deleteChannelIcon(${channel.id}, '${channel.name.replace(/'/g, "\\'")}')" title="Delete Icon" style="padding: 4px; color: var(--error);">
+                                            ? `<button class="btn-icon delete" data-action="deleteChannelIcon" data-args='[${channel.id}, ${JSON.stringify(channel.name)}]' title="Delete Icon">
                                                 <span class="material-icons" style="font-size: 18px;">delete</span>
                                             </button>`
                                             : ''
@@ -468,11 +485,11 @@
                             </td>
                             <td>
                                 ${channel.enabled ? `
-                                    <a href="/player" class="btn-icon" onclick="localStorage.setItem('autoPlayChannel', '${channel.number}'); return true;" title="Preview Channel" style="color: var(--success);">
+                                    <a href="/player" class="btn-icon" data-action="storeChannelPreview" data-args='[${JSON.stringify(channel.number)}]' title="Preview Channel" style="color: var(--success);">
                                         <span class="material-icons">play_circle</span>
                                     </a>
                                 ` : `
-                                    <button class="btn-icon" disabled title="Channel is disabled" style="opacity: 0.3; cursor: not-allowed;">
+                                    <button class="btn-icon" disabled title="Channel is disabled">
                                         <span class="material-icons">play_circle</span>
                                     </button>
                                 `}
@@ -484,19 +501,20 @@
                             </td>
                             <td style="text-align: right;">
                                 <div class="action-buttons">
-                                    <button class="btn-icon edit" onclick="editChannel(${channel.id})" title="Edit">
+                                    <button class="btn-icon edit" data-action="editChannel" data-args='[${channel.id}]' title="Edit">
                                         <span class="material-icons">edit</span>
                                     </button>
-                                    <button class="btn-icon" onclick="toggleChannel(${channel.id}, ${!channel.enabled})" title="${channel.enabled ? 'Disable' : 'Enable'}">
+                                    <button class="btn-icon" data-action="toggleChannel" data-args='[${channel.id}, ${JSON.stringify(!channel.enabled)}]' title="${channel.enabled ? 'Disable' : 'Enable'}">
                                         <span class="material-icons">${channel.enabled ? 'toggle_on' : 'toggle_off'}</span>
                                     </button>
-                                    <button class="btn-icon delete" onclick="deleteChannel(${channel.id})" title="Delete">
+                                    <button class="btn-icon delete" data-action="deleteChannel" data-args='[${channel.id}]' title="Delete">
                                         <span class="material-icons">delete</span>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                     `).join('');
+                    bindActionHandlers(tableBody);
                 }
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';
@@ -517,7 +535,7 @@
             editingChannelId = id;
             document.getElementById('modalTitle').textContent = 'Edit Channel';
             
-            fetch(`/api/channels/${id}`)
+            authenticatedFetch(`/api/channels/${id}`)
                 .then(response => response.json())
                 .then(channel => {
                     document.getElementById('number').value = channel.number;
@@ -561,7 +579,7 @@
                     : '/api/channels';
                 const method = editingChannelId ? 'PUT' : 'POST';
                 
-                const response = await fetch(url, {
+                const response = await authenticatedFetch(url, {
                     method: method,
                     headers: {
                         'Content-Type': 'application/json'
@@ -589,7 +607,7 @@
         
         async function toggleChannel(id, enabled) {
             try {
-                const response = await fetch(`/api/channels/${id}`, {
+                const response = await authenticatedFetch(`/api/channels/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -615,7 +633,7 @@
             }
             
             try {
-                const response = await fetch(`/api/channels/${id}`, {
+                const response = await authenticatedFetch(`/api/channels/${id}`, {
                     method: 'DELETE'
                 });
                 
@@ -680,7 +698,7 @@
             const formAlert = document.getElementById('iconFormAlert');
             
             try {
-                const response = await fetch(`/api/channels/${uploadingIconChannelId}/icon`, {
+                const response = await authenticatedFetch(`/api/channels/${uploadingIconChannelId}/icon`, {
                     method: 'POST',
                     body: formData
                 });
@@ -706,7 +724,7 @@
             }
             
             try {
-                const response = await fetch(`/api/channels/${channelId}/icon`, {
+                const response = await authenticatedFetch(`/api/channels/${channelId}/icon`, {
                     method: 'DELETE'
                 });
                 
@@ -719,6 +737,12 @@
                 }
             } catch (error) {
                 showAlert('Error: ' + error.message, 'error');
+            }
+        }
+
+        function storeChannelPreview(channelNumber) {
+            if (channelNumber !== undefined && channelNumber !== null) {
+                localStorage.setItem('autoPlayChannel', channelNumber);
             }
         }
     </script>

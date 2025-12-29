@@ -39,6 +39,9 @@ jsonschema==4.23.0        # Updated from 4.20.0
 pyyaml==6.0.2             # Updated from 6.0.1 (fixes 1 CVE)
 slowapi==0.1.9            # Current version
 
+# Optional Dependencies (used by application)
+markdown>=3.4.0           # Markdown processing for documentation
+
 # Security Notes:
 # - All dependencies updated to latest secure versions
 # - yt-dlp updated to address critical vulnerabilities
