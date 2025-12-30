@@ -24,7 +24,7 @@ python-multipart==0.0.21  # Latest version (requires Python 3.10+)
 jinja2==3.1.6             # Latest version (Python 3.7+ compatible) - fixes 1 CVE
 
 # Security
-python-jose[cryptography]==3.3.0  # Current version (no updates available)
+python-jose[cryptography]==3.4.0  # Updated to fix CVE-2024-33663 and CVE-2024-33664
 passlib[bcrypt]==1.7.4    # Current version (no updates available)
 webauthn>=2.1.0           # WebAuthn/Passkey support (required for passkey auth)
 
