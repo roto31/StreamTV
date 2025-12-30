@@ -1,0 +1,6 @@
+Warning!!! Duplicate package metadata found:
+"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages"
+  pip                              25.1.1           (using 25.3, "/Users/roto1231/Library/Python/3.13/lib/python/site-packages")
+NOTE: This warning isn't a failure warning.
+------------------------------------------------------------------------
+No packages matched using the following patterns: /Users/roto1231/Documents/XCode Projects/StreamTV/requirements.txt
