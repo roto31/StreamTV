@@ -24,7 +24,7 @@ python-multipart==0.0.21  # Latest version (requires Python 3.10+)
 jinja2==3.1.6             # Latest version (Python 3.7+ compatible) - fixes 1 CVE
 
 # Security
-python-jose[cryptography]==3.4.0  # Updated to fix CVE-2024-33663 and CVE-2024-33664
+python-jose[cryptography]==3.5.0  # Latest version - fixes CVE-2024-33663, CVE-2024-33664, and additional security improvements
 passlib[bcrypt]==1.7.4    # Current version (no updates available)
 webauthn>=2.1.0           # WebAuthn/Passkey support (required for passkey auth)
 
@@ -46,6 +46,14 @@ pip-audit>=2.10.0         # Security vulnerability scanner (requires Python 3.10
 # Optional Dependencies (used by application)
 markdown>=3.4.0           # Markdown processing for documentation
 
+# Transitive Dependencies (explicitly pinned for security)
+# These are pulled in by other packages but we pin them to ensure latest secure versions
+certifi>=2025.11.12       # SSL certificate bundle - fixes security issues
+charset-normalizer>=3.4.4 # Character encoding detection - fixes parsing vulnerabilities
+idna>=3.11                # Internationalized Domain Names - fixes IDN parsing issues
+requests>=2.32.5          # HTTP library - fixes multiple CVEs
+urllib3>=2.6.2            # HTTP client - fixes critical security vulnerabilities
+
 # Security Notes:
 # - All dependencies updated to latest secure versions compatible with Python 3.10+
 # - yt-dlp updated to latest 2025.12.8+ to address critical vulnerabilities
@@ -56,6 +64,12 @@ markdown>=3.4.0           # Markdown processing for documentation
 # - Jinja2 updated to 3.1.6 (latest, supports Python 3.7+)
 # - PyYAML updated to 6.0.3 (latest, supports Python 3.8+)
 # - pytz updated to 2025.2 (latest)
+# - python-jose updated to 3.5.0 (latest) - fixes CVE-2024-33663, CVE-2024-33664
 # - pip-audit added for automated security scanning
 # - Regular updates recommended (monthly security review)
 # - Use pip-audit to scan for transitive dependency vulnerabilities
+#
+# Known Issues (No Fix Available):
+# - ecdsa CVE-2024-23342: Minerva timing attack on P-256 curve. The python-ecdsa project
+#   considers side channel attacks out of scope. This is a transitive dependency of python-jose.
+#   Risk is low for most use cases but should be monitored.
