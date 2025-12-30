@@ -4,7 +4,7 @@
 # macOS-specific installation with original source dependencies
 #
 # This script:
-# 1. Checks and installs Python 3.8+ from python.org
+# 1. Checks and installs Python 3.10+ from python.org
 # 2. Installs FFmpeg from official source
 # 3. Sets up virtual environment
 # 4. Installs all Python dependencies
@@ -25,7 +25,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 INSTALL_DIR="${HOME}/.streamtv"
-PYTHON_MIN_VERSION="3.8"
+PYTHON_MIN_VERSION="3.10"
 FFMPEG_VERSION="6.1.1"
 VENV_DIR="${INSTALL_DIR}/venv"
 APP_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -79,9 +79,9 @@ check_python_version() {
 
 # Function to install Python from python.org
 install_python() {
-    print_info "Python 3.8+ not found. Installing from python.org..."
+    print_info "Python 3.10+ not found. Installing from python.org..."
     
-    local python_url="https://www.python.org/ftp/python/3.11.7/python-3.11.7-macos11.pkg"
+    local python_url="https://www.python.org/ftp/python/3.12.7/python-3.12.7-macos11.pkg"
     local pkg_file="/tmp/python-installer.pkg"
     
     print_info "Downloading Python installer..."
@@ -93,7 +93,7 @@ install_python() {
         exit 0
     else
         print_error "Failed to download Python installer"
-        print_info "Please download and install Python 3.8+ from https://www.python.org/downloads/"
+        print_info "Please download and install Python 3.10+ from https://www.python.org/downloads/"
         exit 1
     fi
 }

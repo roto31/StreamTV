@@ -3,6 +3,8 @@
 ## Overview
 This document summarizes the security vulnerability resolution process for StreamTV, following best practices from Python MCP, Apple Dev MCP, and Xcode MCP.
 
+**Note**: As of December 2025, StreamTV has been upgraded to require Python 3.10+ to access the latest secure package versions.
+
 ## Date: December 2025
 
 ## Actions Taken

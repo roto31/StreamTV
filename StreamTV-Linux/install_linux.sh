@@ -4,7 +4,7 @@
 # Linux-specific installation
 #
 # This script:
-# 1. Checks and installs Python 3.8+
+# 1. Checks and installs Python 3.10+
 # 2. Installs FFmpeg
 # 3. Sets up virtual environment
 # 4. Installs all Python dependencies
@@ -24,7 +24,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 INSTALL_DIR="${HOME}/.streamtv"
-PYTHON_MIN_VERSION="3.8"
+PYTHON_MIN_VERSION="3.10"
 VENV_DIR="${INSTALL_DIR}/venv"
 APP_DIR="$(cd "$(dirname "$0")" && pwd)"
 
@@ -93,7 +93,7 @@ check_python_version() {
 
 # Function to install Python
 install_python() {
-    print_info "Python 3.8+ not found. Installing..."
+    print_info "Python 3.10+ not found. Installing..."
     
     detect_distro
     case $DISTRO in
@@ -112,7 +112,7 @@ install_python() {
             ;;
         *)
             print_error "Unsupported distribution: $DISTRO"
-            print_info "Please install Python 3.8+ manually"
+            print_info "Please install Python 3.10+ manually"
             exit 1
             ;;
     esac

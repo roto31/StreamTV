@@ -175,7 +175,7 @@ enum PythonManagerError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .pythonNotInstalled:
-            return "Python 3.8+ is not installed. Please install Python from python.org or via Homebrew."
+            return "Python 3.10+ is not installed. Please install Python from python.org or via Homebrew."
         case .venvNotFound:
             return "Virtual environment not found. Please create it first."
         case .venvCreationFailed(let message):
