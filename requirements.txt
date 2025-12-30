@@ -48,11 +48,11 @@ markdown>=3.4.0           # Markdown processing for documentation
 
 # Transitive Dependencies (explicitly pinned for security)
 # These are pulled in by other packages but we pin them to ensure latest secure versions
-certifi>=2025.11.12       # SSL certificate bundle - fixes security issues
-charset-normalizer>=3.4.4 # Character encoding detection - fixes parsing vulnerabilities
-idna>=3.11                # Internationalized Domain Names - fixes IDN parsing issues
-requests>=2.32.5          # HTTP library - fixes multiple CVEs
-urllib3>=2.6.2            # HTTP client - fixes critical security vulnerabilities
+certifi==2025.11.12       # SSL certificate bundle - fixes security issues (latest)
+charset-normalizer==3.4.4 # Character encoding detection - fixes parsing vulnerabilities (latest)
+idna==3.11                # Internationalized Domain Names - fixes IDN parsing issues (latest)
+requests==2.32.5          # HTTP library - fixes multiple CVEs (latest)
+urllib3==2.6.2            # HTTP client - fixes critical security vulnerabilities (latest)
 
 # Security Notes:
 # - All dependencies updated to latest secure versions compatible with Python 3.10+
