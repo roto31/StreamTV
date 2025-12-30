@@ -1,5 +1,6 @@
 # ErsatzTV MCP Server Dependencies
 # Note: mcp requires Python >= 3.10
+# Updated to secure versions (December 2025)
 mcp>=1.0.0
-pyyaml>=6.0.0
+pyyaml>=6.0.3  # Updated to latest secure version (fixes 1 CVE)
 
