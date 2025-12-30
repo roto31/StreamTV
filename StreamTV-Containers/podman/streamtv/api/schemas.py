@@ -18,6 +18,33 @@ except ImportError:
 
 
 # Channel Schemas
+try:
+    from ..database.models import (
+        StreamingMode, ChannelTranscodeMode, ChannelSubtitleMode,
+        ChannelStreamSelectorMode, ChannelMusicVideoCreditsMode,
+        ChannelSongVideoMode, ChannelIdleBehavior, ChannelPlayoutSource
+    )
+except ImportError:
+    # Fallback enums if models not available
+    from enum import Enum
+    class StreamingMode(str, Enum):
+        TRANSPORT_STREAM_HYBRID = "transport_stream_hybrid"
+    class ChannelTranscodeMode(str, Enum):
+        ON_DEMAND = "on_demand"
+    class ChannelSubtitleMode(str, Enum):
+        NONE = "none"
+    class ChannelStreamSelectorMode(str, Enum):
+        DEFAULT = "default"
+    class ChannelMusicVideoCreditsMode(str, Enum):
+        NONE = "none"
+    class ChannelSongVideoMode(str, Enum):
+        DEFAULT = "default"
+    class ChannelIdleBehavior(str, Enum):
+        STOP_ON_DISCONNECT = "stop_on_disconnect"
+    class ChannelPlayoutSource(str, Enum):
+        GENERATED = "generated"
+
+
 class ChannelBase(BaseModel):
     number: str
     name: str
@@ -25,6 +52,27 @@ class ChannelBase(BaseModel):
     enabled: bool = True
     logo_path: Optional[str] = None
     playout_mode: PlayoutMode = PlayoutMode.CONTINUOUS  # Continuous or on-demand
+    transcode_profile: Optional[str] = None  # "cpu", "nvidia", "intel" (legacy)
+    is_yaml_source: bool = False
+    # ErsatzTV-compatible settings
+    ffmpeg_profile_id: Optional[int] = None
+    watermark_id: Optional[int] = None
+    streaming_mode: StreamingMode = StreamingMode.TRANSPORT_STREAM_HYBRID
+    transcode_mode: ChannelTranscodeMode = ChannelTranscodeMode.ON_DEMAND
+    subtitle_mode: ChannelSubtitleMode = ChannelSubtitleMode.NONE
+    preferred_audio_language_code: Optional[str] = None
+    preferred_audio_title: Optional[str] = None
+    preferred_subtitle_language_code: Optional[str] = None
+    stream_selector_mode: ChannelStreamSelectorMode = ChannelStreamSelectorMode.DEFAULT
+    stream_selector: Optional[str] = None
+    music_video_credits_mode: ChannelMusicVideoCreditsMode = ChannelMusicVideoCreditsMode.NONE
+    music_video_credits_template: Optional[str] = None
+    song_video_mode: ChannelSongVideoMode = ChannelSongVideoMode.DEFAULT
+    idle_behavior: ChannelIdleBehavior = ChannelIdleBehavior.STOP_ON_DISCONNECT
+    playout_source: ChannelPlayoutSource = ChannelPlayoutSource.GENERATED
+    mirror_source_channel_id: Optional[int] = None
+    playout_offset: Optional[int] = None  # Offset in seconds
+    show_in_epg: bool = True
 
 
 class ChannelCreate(ChannelBase):
@@ -38,12 +86,35 @@ class ChannelUpdate(BaseModel):
     enabled: Optional[bool] = None
     logo_path: Optional[str] = None
     playout_mode: Optional[PlayoutMode] = None
+    transcode_profile: Optional[str] = None
+    # ErsatzTV-compatible settings
+    ffmpeg_profile_id: Optional[int] = None
+    watermark_id: Optional[int] = None
+    streaming_mode: Optional[StreamingMode] = None
+    transcode_mode: Optional[ChannelTranscodeMode] = None
+    subtitle_mode: Optional[ChannelSubtitleMode] = None
+    preferred_audio_language_code: Optional[str] = None
+    preferred_audio_title: Optional[str] = None
+    preferred_subtitle_language_code: Optional[str] = None
+    stream_selector_mode: Optional[ChannelStreamSelectorMode] = None
+    stream_selector: Optional[str] = None
+    music_video_credits_mode: Optional[ChannelMusicVideoCreditsMode] = None
+    music_video_credits_template: Optional[str] = None
+    song_video_mode: Optional[ChannelSongVideoMode] = None
+    idle_behavior: Optional[ChannelIdleBehavior] = None
+    playout_source: Optional[ChannelPlayoutSource] = None
+    mirror_source_channel_id: Optional[int] = None
+    playout_offset: Optional[int] = None
+    show_in_epg: Optional[bool] = None
 
 
 class ChannelResponse(ChannelBase):
     id: int
     created_at: datetime
     updated_at: datetime
+    # Include related objects
+    ffmpeg_profile: Optional["FFmpegProfileResponse"] = None
+    watermark: Optional["WatermarkResponse"] = None
     
     class Config:
         from_attributes = True
@@ -149,6 +220,7 @@ class ScheduleBase(BaseModel):
     treat_collections_as_shows: bool = False
     shuffle_schedule_items: bool = False
     random_start_point: bool = False
+    is_yaml_source: bool = False
     # Legacy fields (optional for backward compatibility)
     playlist_id: Optional[int] = None
     collection_id: Optional[int] = None
@@ -296,6 +368,15 @@ class FFmpegSettingsBase(BaseModel):
     hwaccel: Optional[str] = None
     hwaccel_device: Optional[str] = None
     extra_flags: Optional[str] = None
+    # Per-source overrides
+    youtube_hwaccel: Optional[str] = None
+    archive_org_hwaccel: Optional[str] = None
+    pbs_hwaccel: Optional[str] = None
+    plex_hwaccel: Optional[str] = None
+    youtube_video_encoder: Optional[str] = None
+    archive_org_video_encoder: Optional[str] = None
+    pbs_video_encoder: Optional[str] = None
+    plex_video_encoder: Optional[str] = None
 
 
 class FFmpegSettingsUpdate(FFmpegSettingsBase):
@@ -310,6 +391,14 @@ class FFmpegSettingsResponse(BaseModel):
     hwaccel: Optional[str]
     hwaccel_device: Optional[str]
     extra_flags: Optional[str]
+    youtube_hwaccel: Optional[str]
+    archive_org_hwaccel: Optional[str]
+    pbs_hwaccel: Optional[str]
+    plex_hwaccel: Optional[str]
+    youtube_video_encoder: Optional[str]
+    archive_org_video_encoder: Optional[str]
+    pbs_video_encoder: Optional[str]
+    plex_video_encoder: Optional[str]
     
     class Config:
         from_attributes = True
@@ -372,6 +461,200 @@ class PlexSettingsResponse(BaseModel):
     base_url: Optional[str]
     token: Optional[str]
     use_for_epg: bool
+    
+    class Config:
+        from_attributes = True
+
+
+# Resolution Schemas
+class ResolutionBase(BaseModel):
+    name: str
+    width: int
+    height: int
+    is_custom: bool = True
+
+
+class ResolutionCreate(ResolutionBase):
+    pass
+
+
+class ResolutionUpdate(BaseModel):
+    name: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    is_custom: Optional[bool] = None
+
+
+class ResolutionResponse(ResolutionBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+# FFmpeg Profile Schemas
+try:
+    from ..database.models import (
+        HardwareAccelerationKind, VideoFormat, AudioFormat, BitDepth,
+        ScalingBehavior, TonemapAlgorithm, NormalizeLoudnessMode
+    )
+except ImportError:
+    # Fallback enums if models not available
+    from enum import Enum
+    class HardwareAccelerationKind(str, Enum):
+        NONE = "none"
+    class VideoFormat(str, Enum):
+        H264 = "h264"
+    class AudioFormat(str, Enum):
+        AAC = "aac"
+    class BitDepth(str, Enum):
+        EIGHT_BIT = "8bit"
+    class ScalingBehavior(str, Enum):
+        SCALE_AND_PAD = "scale_and_pad"
+    class TonemapAlgorithm(str, Enum):
+        LINEAR = "linear"
+    class NormalizeLoudnessMode(str, Enum):
+        OFF = "off"
+
+
+class FFmpegProfileBase(BaseModel):
+    name: str
+    thread_count: int = 0
+    hardware_acceleration: HardwareAccelerationKind = HardwareAccelerationKind.NONE
+    vaapi_driver: Optional[str] = None
+    vaapi_device: Optional[str] = None
+    qsv_extra_hardware_frames: Optional[int] = None
+    resolution_id: int
+    scaling_behavior: ScalingBehavior = ScalingBehavior.SCALE_AND_PAD
+    video_format: VideoFormat = VideoFormat.H264
+    video_profile: Optional[str] = None
+    video_preset: Optional[str] = None
+    allow_b_frames: bool = False
+    bit_depth: BitDepth = BitDepth.EIGHT_BIT
+    video_bitrate: int = 2000
+    video_buffer_size: int = 4000
+    tonemap_algorithm: TonemapAlgorithm = TonemapAlgorithm.LINEAR
+    audio_format: AudioFormat = AudioFormat.AAC
+    audio_bitrate: int = 192
+    audio_buffer_size: int = 384
+    normalize_loudness_mode: NormalizeLoudnessMode = NormalizeLoudnessMode.OFF
+    audio_channels: int = 2
+    audio_sample_rate: int = 48000
+    normalize_framerate: bool = False
+    deinterlace_video: Optional[bool] = None
+
+
+class FFmpegProfileCreate(FFmpegProfileBase):
+    pass
+
+
+class FFmpegProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    thread_count: Optional[int] = None
+    hardware_acceleration: Optional[HardwareAccelerationKind] = None
+    vaapi_driver: Optional[str] = None
+    vaapi_device: Optional[str] = None
+    qsv_extra_hardware_frames: Optional[int] = None
+    resolution_id: Optional[int] = None
+    scaling_behavior: Optional[ScalingBehavior] = None
+    video_format: Optional[VideoFormat] = None
+    video_profile: Optional[str] = None
+    video_preset: Optional[str] = None
+    allow_b_frames: Optional[bool] = None
+    bit_depth: Optional[BitDepth] = None
+    video_bitrate: Optional[int] = None
+    video_buffer_size: Optional[int] = None
+    tonemap_algorithm: Optional[TonemapAlgorithm] = None
+    audio_format: Optional[AudioFormat] = None
+    audio_bitrate: Optional[int] = None
+    audio_buffer_size: Optional[int] = None
+    normalize_loudness_mode: Optional[NormalizeLoudnessMode] = None
+    audio_channels: Optional[int] = None
+    audio_sample_rate: Optional[int] = None
+    normalize_framerate: Optional[bool] = None
+    deinterlace_video: Optional[bool] = None
+
+
+class FFmpegProfileResponse(FFmpegProfileBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    resolution: Optional[ResolutionResponse] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class HardwareAccelerationResponse(BaseModel):
+    available: List[str]
+
+
+# Watermark Schemas
+try:
+    from ..database.models import (
+        ChannelWatermarkMode, ChannelWatermarkImageSource,
+        WatermarkLocation, WatermarkSize
+    )
+except ImportError:
+    # Fallback enums if models not available
+    from enum import Enum
+    class ChannelWatermarkMode(str, Enum):
+        PERMANENT = "permanent"
+    class ChannelWatermarkImageSource(str, Enum):
+        CUSTOM = "custom"
+    class WatermarkLocation(str, Enum):
+        BOTTOM_RIGHT = "bottom_right"
+    class WatermarkSize(str, Enum):
+        MEDIUM = "medium"
+
+
+class WatermarkBase(BaseModel):
+    name: str
+    mode: ChannelWatermarkMode = ChannelWatermarkMode.PERMANENT
+    image_source: ChannelWatermarkImageSource = ChannelWatermarkImageSource.CUSTOM
+    location: WatermarkLocation = WatermarkLocation.BOTTOM_RIGHT
+    size: WatermarkSize = WatermarkSize.MEDIUM
+    width_percent: float = 10.0
+    horizontal_margin_percent: float = 2.0
+    vertical_margin_percent: float = 2.0
+    frequency_minutes: int = 0
+    duration_seconds: int = 0
+    opacity: int = 100
+    place_within_source_content: bool = True
+    opacity_expression: Optional[str] = None
+    z_index: int = 0
+
+
+class WatermarkCreate(WatermarkBase):
+    image: Optional[str] = None  # Path to image (set via upload endpoint)
+
+
+class WatermarkUpdate(BaseModel):
+    name: Optional[str] = None
+    mode: Optional[ChannelWatermarkMode] = None
+    image_source: Optional[ChannelWatermarkImageSource] = None
+    location: Optional[WatermarkLocation] = None
+    size: Optional[WatermarkSize] = None
+    width_percent: Optional[float] = None
+    horizontal_margin_percent: Optional[float] = None
+    vertical_margin_percent: Optional[float] = None
+    frequency_minutes: Optional[int] = None
+    duration_seconds: Optional[int] = None
+    opacity: Optional[int] = None
+    place_within_source_content: Optional[bool] = None
+    opacity_expression: Optional[str] = None
+    z_index: Optional[int] = None
+    image: Optional[str] = None
+
+
+class WatermarkResponse(WatermarkBase):
+    id: int
+    image: Optional[str] = None
+    original_content_type: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
     
     class Config:
         from_attributes = True

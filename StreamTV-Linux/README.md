@@ -1,216 +1,201 @@
-# StreamTV - Linux Distribution
+# StreamTV Platform Distributions
 
-StreamTV is an efficient online media streaming platform that emulates HDHomeRun tuners for integration with Plex, Emby, and Jellyfin.
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey.svg)]()
 
-## What's Included
+**StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
-- **StreamTV Core**: Complete streaming platform
-- **Installation Scripts**: Automated setup for Linux
-- **Documentation**: Complete guides and API documentation
-- **Example Configurations**: Ready-to-use channel examples
-- **Systemd Service**: Optional systemd service for running as a daemon
+## 🎯 Features
 
-## Quick Installation
+### Core Capabilities
+- **🌐 Direct Streaming**: Stream from YouTube and Archive.org without downloads
+- **📺 HDHomeRun Emulation**: Native integration with Plex, Emby, and Jellyfin
+- **📅 Advanced Scheduling**: YAML-based schedules with commercial breaks
+- **🐳 Container Support**: Docker, Kubernetes, and Podman deployments
+- **🖥️ Cross-Platform**: Native support for macOS, Windows, and Linux
+- **🔌 IPTV Support**: M3U playlists and XMLTV EPG generation
+- **⚡ FastAPI**: Modern async Python web framework
+- **🔐 Authentication**: Passkey and OAuth support for YouTube
 
-### Automated Installation (Recommended)
+### Streaming Sources
+- ✅ **YouTube**: Direct streaming with quality selection and OAuth authentication
+- ✅ **Archive.org**: Support for video collections and individual items
+- 🔄 **Extensible**: Easy to add new streaming sources via adapter pattern
 
-1. **Run the installer:**
-   ```bash
-   chmod +x install_linux.sh
-   ./install_linux.sh
-   ```
+### Integration
+- **Plex Media Server**: Direct HDHomeRun tuner or M3U/EPG
+- **Emby/Jellyfin**: HDHomeRun or IPTV support
+- **Kodi**: IPTV Simple Client
+- **VLC**: Direct M3U playlist support
+- **HDHomeRun Devices**: Full API compatibility
 
-2. **Start the server:**
-   ```bash
-   ./start_server.sh
-   ```
+## 📦 Available Distributions
 
-3. **Access the web interface:**
-   Open http://localhost:8410 in your browser
+### Desktop Platforms
 
-### Manual Installation
+- **[macOS](StreamTV-macOS/)** - Native macOS distribution with installer
+  - Automated installation script
+  - `.command` launchers for easy startup
+  - Full documentation included
+- **[macOS Menu Bar App](StreamTVApp/)** - Native macOS menu bar application
+  - Runs as menu bar icon (no dock icon)
+  - Automatic Python virtual environment management
+  - FFmpeg installation via Homebrew
+  - Dependency update checking
+  - Server lifecycle management
+  - See [StreamTVApp/README.md](StreamTVApp/README.md) for setup instructions
 
-1. **Install system dependencies:**
-   ```bash
-   # Ubuntu/Debian
-   sudo apt update
-   sudo apt install python3 python3-pip python3-venv ffmpeg git
-   
-   # Fedora/RHEL/CentOS
-   sudo dnf install python3 python3-pip ffmpeg git
-   
-   # Arch Linux
-   sudo pacman -S python python-pip ffmpeg git
-   ```
+- **[Windows](StreamTV-Windows/)** - Windows distribution
+  - PowerShell installation script
+  - Batch and PowerShell startup scripts
+  - Windows service support documentation
 
-2. **Create virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+- **[Linux](StreamTV-Linux/)** - Linux distribution
+  - Distribution detection (apt, dnf, pacman)
+  - systemd service integration
+  - Firewall configuration guides
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Container Platforms
 
-4. **Configure:**
-   ```bash
-   cp config.example.yaml config.yaml
-   # Edit config.yaml as needed
-   ```
+- **[Docker](StreamTV-Containers/docker/)** - Single-container deployment
+- **[Docker Compose](StreamTV-Containers/docker-compose/)** - Multi-service setup
+- **[Kubernetes](StreamTV-Containers/kubernetes/)** - K8s manifests with ingress
+- **[Podman](StreamTV-Containers/podman/)** - Rootless container support
 
-5. **Run StreamTV:**
-   ```bash
-   python3 -m streamtv.main
-   ```
+## 🚀 Quick Start
 
-## Running as a Systemd Service
-
-The installer can create a systemd service for you. To set it up manually:
-
-1. **Create service file:**
-   ```bash
-   sudo nano /etc/systemd/system/streamtv.service
-   ```
-
-2. **Add service configuration:**
-   ```ini
-   [Unit]
-   Description=StreamTV Media Streaming Server
-   After=network.target
-
-   [Service]
-   Type=simple
-   User=your_username
-   WorkingDirectory=/path/to/StreamTV-Linux
-   Environment="PATH=/path/to/venv/bin"
-   ExecStart=/path/to/venv/bin/python3 -m streamtv.main
-   Restart=always
-   RestartSec=10
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-3. **Enable and start:**
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable streamtv
-   sudo systemctl start streamtv
-   ```
-
-4. **Check status:**
-   ```bash
-   sudo systemctl status streamtv
-   ```
-
-## Key Features
-
-### HDHomeRun Emulation
-- Full HDHomeRun API compatibility
-- SSDP auto-discovery
-- Multiple virtual tuners
-- Direct Plex/Emby/Jellyfin integration
-
-### IPTV Support
-- M3U playlist generation
-- XMLTV EPG guide
-- Channel management
-- Schedule-based playout
-
-### Media Sources
-- **YouTube**: Direct streaming with authentication
-- **Archive.org**: Access to public domain content
-- **PBS**: Live and on-demand PBS streams
-
-### Streaming Modes
-- **Continuous**: Timeline-based continuous playout (ErsatzTV-style)
-- **On-Demand**: Start from beginning or saved position
-
-## Directory Structure
-
-```
-StreamTV-Linux/
-├── streamtv/              # Core application code
-├── scripts/               # Utility scripts
-├── docs/                  # Complete documentation
-├── schedules/             # Schedule YAML files (empty - user creates)
-├── data/                  # Data directory
-│   ├── channel_icons/     # Channel icons
-│   └── channels_example.yaml
-├── schemas/               # JSON schemas for validation
-├── config.example.yaml     # Example configuration
-├── requirements.txt        # Python dependencies
-├── install_linux.sh       # Linux installer
-├── start_server.sh         # Start server script
-├── verify-installation.sh  # Verify installation
-└── README.md               # This file
-```
-
-## Linux-Specific Notes
-
-### Distribution Support
-
-StreamTV supports:
-- **Ubuntu/Debian**: Full support via apt
-- **Fedora/RHEL/CentOS**: Full support via dnf
-- **Arch Linux**: Full support via pacman
-- **Other distributions**: Manual installation required
-
-### Permissions
-
-- The installer creates files in `~/.streamtv/`
-- For systemd service, ensure the user has proper permissions
-- Log files are created in the application directory
-
-### Firewall Configuration
-
-If using a firewall (ufw, firewalld, etc.), allow port 8410:
+### macOS
 ```bash
-# UFW
-sudo ufw allow 8410/tcp
-
-# Firewalld
-sudo firewall-cmd --add-port=8410/tcp --permanent
-sudo firewall-cmd --reload
+cd StreamTV-macOS
+./install_macos.sh
+./start_server.sh
+# Or double-click: Install-StreamTV.command
 ```
 
-### SELinux
+### Windows
+```powershell
+cd StreamTV-Windows
+.\install_windows.ps1
+.\start_server.ps1
+```
 
-If SELinux is enabled and causing issues:
+### Linux
 ```bash
-# Check SELinux status
-getenforce
-
-# If enforcing, you may need to set appropriate contexts
-# or run in permissive mode for testing
+cd StreamTV-Linux
+./install_linux.sh
+./start_server.sh
 ```
 
-## Troubleshooting
+### Docker
+```bash
+cd StreamTV-Containers/docker
+docker build -t streamtv .
+docker run -p 8410:8410 streamtv
+```
 
-See the [Troubleshooting Guide](docs/TROUBLESHOOTING.md) for common issues and solutions.
+**Access the web interface**: Open `http://localhost:8410` in your browser
 
-For Linux-specific issues, see:
-- [Installation Issues](docs/troubleshooting/INSTALLATION_ISSUES.md)
-- [Linux Troubleshooting Scripts](docs/troubleshooting/scripts/README.md)
+## 🌐 Browser Compatibility
 
-## Documentation
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with:
+- **Chrome/Edge**: Full HLS support via HLS.js
+- **Safari**: Native HLS support
+- **Firefox**: Full HLS support via HLS.js
 
-Complete documentation is available in the `docs/` directory:
-- [Quick Start Guide](docs/QUICKSTART.md)
-- [Installation Guide](docs/INSTALLATION.md)
-- [API Documentation](docs/API.md)
-- [Troubleshooting](docs/TROUBLESHOOTING.md)
-- [Full Documentation Index](docs/INDEX.md)
+The player automatically detects browser capabilities and uses the best available method. For best results, use a modern browser with JavaScript enabled.
 
-## Support
+## 📋 Requirements
 
-For issues, questions, or contributions:
-- Check the documentation first
-- Review troubleshooting guides
-- Use the built-in diagnostic scripts
+- **Python**: 3.8 or higher
+- **FFmpeg**: For video transcoding (automatically installed by install scripts)
+- **Network**: Internet connection for streaming
+- **Platform-specific**: See individual distribution READMEs
 
-## License
+## 📚 Documentation
 
-See LICENSE file for details.
+### Complete Guides
+- **[GitHub Wiki](https://github.com/roto31/StreamTV/wiki)** - Comprehensive documentation
+- **[Documentation Index](https://github.com/roto31/StreamTV/wiki/Documentation-Index)** - All guides organized
+- **[Scripts & Tools](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools)** - Utility scripts
+
+### Quick Links
+- [Installation Guide](https://github.com/roto31/StreamTV/wiki/Installation-Guide)
+- [Beginner Guide](https://github.com/roto31/StreamTV/wiki/Beginner-Guide) - For new users
+- [Plex Integration](https://github.com/roto31/StreamTV/wiki/Plex-Integration) - Setup guide
+- [API Reference](https://github.com/roto31/StreamTV/wiki/API-Reference) - Complete API docs
+- [Troubleshooting](https://github.com/roto31/StreamTV/wiki/Troubleshooting) - Common issues
+
+### Platform-Specific
+Each distribution includes complete documentation in `docs/`:
+- Installation instructions
+- Quick start guides
+- Platform-specific configuration
+- Troubleshooting guides
+- API documentation
+
+## 🔗 Integration Examples
+
+### Plex Media Server
+1. Install StreamTV on your server
+2. Add StreamTV as HDHomeRun tuner in Plex
+3. Scan for channels
+4. Watch your custom channels in Plex!
+
+See [Plex Integration Guide](https://github.com/roto31/StreamTV/wiki/Plex-Integration) for detailed instructions.
+
+### IPTV Clients
+- **Kodi**: Use IPTV Simple Client with M3U playlist
+- **VLC**: Open M3U playlist directly
+- **Emby/Jellyfin**: Add as IPTV source or HDHomeRun tuner
+
+## 🛠️ Scripts & Tools
+
+StreamTV includes utility scripts for:
+- Channel creation from Archive.org collections
+- Schedule generation
+- Log viewing and troubleshooting
+- Database management
+
+See [Scripts Documentation](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools) for complete list.
+
+## 📖 Wiki Pages
+
+Comprehensive documentation available in the [GitHub Wiki](https://github.com/roto31/StreamTV/wiki):
+- [macOS](https://github.com/roto31/StreamTV/wiki/macOS) - Complete macOS guide
+- [Windows](https://github.com/roto31/StreamTV/wiki/Windows) - Complete Windows guide
+- [Linux](https://github.com/roto31/StreamTV/wiki/Linux) - Complete Linux guide
+- [Containers](https://github.com/roto31/StreamTV/wiki/Containers) - Container platforms
+- [Archive Parser](https://github.com/roto31/StreamTV/wiki/Archive-Parser) - Create channels from Archive.org
+- [Logging](https://github.com/roto31/StreamTV/wiki/Logging) - Logging system
+
+## 📝 Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+- Report bugs via [Issues](https://github.com/roto31/StreamTV/issues)
+- Suggest features via [Feature Requests](https://github.com/roto31/StreamTV/issues/new?template=feature_request.md)
+- Submit pull requests following our [PR template](.github/pull_request_template.md)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🌟 Project Status
+
+✅ **Stable** - Production ready
+- Cross-platform distributions available
+- Comprehensive documentation
+- Active development
+
+## 🔍 Resources
+
+- [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) - Complete documentation
+- [Issues](https://github.com/roto31/StreamTV/issues) - Bug reports and feature requests
+- [Pull Requests](https://github.com/roto31/StreamTV/pulls) - Contributions
+- [Releases](https://github.com/roto31/StreamTV/releases) - Version history
+
+---
+
+**Made with ❤️ for the IPTV community**

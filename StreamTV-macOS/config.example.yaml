@@ -52,3 +52,25 @@ plex:
   base_url: null  # Plex Media Server URL (e.g., "http://192.168.1.100:32400")
   token: null  # Plex authentication token (get from Plex server settings)
   use_for_epg: false  # Use Plex API for EPG metadata enhancement and validation
+
+ffmpeg:
+  ffmpeg_path: "/usr/local/bin/ffmpeg"  # Path to FFmpeg binary
+  ffprobe_path: "/usr/local/bin/ffprobe"  # Path to FFprobe binary
+  log_level: "info"  # FFmpeg log level (quiet, panic, fatal, error, warning, info, verbose, debug)
+  threads: 0  # Number of threads (0 = auto)
+  hwaccel: null  # Hardware acceleration (videotoolbox, cuda, qsv, vaapi, null for software)
+  hwaccel_device: null  # Hardware acceleration device (e.g., "0" for CUDA device 0)
+  extra_flags: null  # Additional FFmpeg flags (e.g., "-maxrate 3000k -bufsize 6000k")
+  
+  # Per-source FFmpeg overrides (optional - these override global settings for specific sources)
+  youtube_hwaccel: null  # YouTube-specific hardware acceleration
+  youtube_video_encoder: null  # YouTube-specific video encoder (e.g., "h264_videotoolbox", "h264_nvenc")
+  archive_org_hwaccel: null  # Archive.org-specific hardware acceleration
+  archive_org_video_encoder: null  # Archive.org-specific video encoder
+  pbs_hwaccel: null  # PBS-specific hardware acceleration
+  pbs_video_encoder: null  # PBS-specific video encoder
+  plex_hwaccel: null  # Plex-specific hardware acceleration
+  plex_video_encoder: null  # Plex-specific video encoder
+
+playout:
+  build_days: 1  # Number of days ahead to build playout schedules

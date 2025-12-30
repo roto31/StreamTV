@@ -19,6 +19,10 @@ from .scripts import router as scripts_router
 from .ollama import router as ollama_router
 from .health import router as health_router
 from .dashboard import router as dashboard_router
+from .export_api import router as export_router
+from .resolutions import router as resolutions_router
+from .ffmpeg_profiles import router as ffmpeg_profiles_router
+from .watermarks import router as watermarks_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -36,6 +40,10 @@ api_router.include_router(scripts_router, tags=["Scripts"])
 api_router.include_router(ollama_router, tags=["Ollama"])
 api_router.include_router(health_router, tags=["Health"])
 api_router.include_router(dashboard_router, tags=["Dashboard"])
+api_router.include_router(export_router, tags=["Export"])
+api_router.include_router(resolutions_router, tags=["Resolutions"])
+api_router.include_router(ffmpeg_profiles_router, tags=["FFmpeg Profiles"])
+api_router.include_router(watermarks_router, tags=["Watermarks"])
 
 # IPTV router is separate (no /api prefix)
 iptv_router_instance = iptv_router

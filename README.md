@@ -39,6 +39,13 @@
   - Automated installation script
   - `.command` launchers for easy startup
   - Full documentation included
+- **[macOS Menu Bar App](StreamTVApp/)** - Native macOS menu bar application
+  - Runs as menu bar icon (no dock icon)
+  - Automatic Python virtual environment management
+  - FFmpeg installation via Homebrew
+  - Dependency update checking
+  - Server lifecycle management
+  - See [StreamTVApp/README.md](StreamTVApp/README.md) for setup instructions
 
 - **[Windows](StreamTV-Windows/)** - Windows distribution
   - PowerShell installation script
@@ -89,6 +96,15 @@ docker run -p 8410:8410 streamtv
 ```
 
 **Access the web interface**: Open `http://localhost:8410` in your browser
+
+## 🌐 Browser Compatibility
+
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with:
+- **Chrome/Edge**: Full HLS support via HLS.js
+- **Safari**: Native HLS support
+- **Firefox**: Full HLS support via HLS.js
+
+The player automatically detects browser capabilities and uses the best available method. For best results, use a modern browser with JavaScript enabled.
 
 ## 📋 Requirements
 

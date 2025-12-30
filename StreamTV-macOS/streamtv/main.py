@@ -151,14 +151,14 @@ exempt_api_paths = [
     "/openapi.json",  # OpenAPI schema
 ]
 
-# For IPTV endpoints, allow query parameter tokens (needed for some IPTV clients)
-# But disable it for all other endpoints
+# For API endpoints, allow query parameter tokens per docs/API.md specification
+# This enables ?access_token=TOKEN support for all API endpoints
 app.add_middleware(
     APIKeyMiddleware,
     token=config.security.access_token,
     required=config.security.api_key_required,
     exempt_paths=exempt_api_paths,
-    allow_query_param=False  # Disable query param tokens by default (security)
+    allow_query_param=True  # Enable query param tokens per API specification
 )
 
 # Include routers
@@ -340,6 +340,33 @@ async def settings_plex_page(request: Request):
         return templates.TemplateResponse("settings_plex.html", {"request": request})
     else:
         return HTMLResponse("<h1>Plex API Integration</h1><p>Templates not available. Use API at /api/settings/plex</p>")
+
+
+@app.get("/settings/resolutions", response_class=HTMLResponse)
+async def settings_resolutions_page(request: Request):
+    """Resolutions management page"""
+    if templates:
+        return templates.TemplateResponse("settings_resolutions.html", {"request": request})
+    else:
+        return HTMLResponse("<h1>Resolutions</h1><p>Templates not available. Use API at /api/resolutions</p>")
+
+
+@app.get("/settings/ffmpeg-profiles", response_class=HTMLResponse)
+async def settings_ffmpeg_profiles_page(request: Request):
+    """FFmpeg profiles management page"""
+    if templates:
+        return templates.TemplateResponse("settings_ffmpeg_profiles.html", {"request": request})
+    else:
+        return HTMLResponse("<h1>FFmpeg Profiles</h1><p>Templates not available. Use API at /api/ffmpeg-profiles</p>")
+
+
+@app.get("/settings/watermarks", response_class=HTMLResponse)
+async def settings_watermarks_page(request: Request):
+    """Watermarks management page"""
+    if templates:
+        return templates.TemplateResponse("settings_watermarks.html", {"request": request})
+    else:
+        return HTMLResponse("<h1>Watermarks</h1><p>Templates not available. Use API at /api/watermarks</p>")
 
 
 @app.get("/import", response_class=HTMLResponse)

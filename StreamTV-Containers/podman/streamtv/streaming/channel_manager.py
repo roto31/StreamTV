@@ -413,11 +413,18 @@ class ChannelStream:
                 return {'item_index': 0, 'elapsed_seconds': 0}
             
             # Calculate total cycle duration (sum of all item durations)
-            total_duration = sum(
-                (item.get('media_item', {}).duration or 1800)
-                for item in self._schedule_items
-                if item.get('media_item')
-            )
+            total_duration = 0
+            for item in self._schedule_items:
+                media_item = item.get('media_item')
+                if not media_item:
+                    continue
+                # Prefer cached duration to avoid touching detached ORM instances
+                cached = item.get('cached_duration')
+                if cached:
+                    duration_val = cached
+                else:
+                    duration_val = getattr(media_item, "__dict__", {}).get("duration") or 1800
+                total_duration += duration_val
             
             if total_duration <= 0:
                 return {'item_index': 0, 'elapsed_seconds': 0}
@@ -444,8 +451,8 @@ class ChannelStream:
                 media_item = schedule_item.get('media_item')
                 if not media_item:
                     continue
-                
-                duration = media_item.duration or 1800  # Default 30 minutes
+                cached = schedule_item.get('cached_duration')
+                duration = cached or getattr(media_item, "__dict__", {}).get("duration") or 1800  # Default 30 minutes
                 
                 if current_time + duration > cycle_position:
                     # We're in this item
@@ -488,6 +495,10 @@ class ChannelStream:
                     self._schedule_items = schedule_engine.generate_playlist_from_schedule(
                         channel, parsed_schedule, max_items=1000
                     )
+                    for itm in self._schedule_items:
+                        media = itm.get("media_item")
+                        if media:
+                            itm["cached_duration"] = getattr(media, "__dict__", {}).get("duration") or 1800
                 else:
                     logger.error(f"Channel {self.channel_number} not found in database")
                     self._schedule_items = []
@@ -510,7 +521,8 @@ class ChannelStream:
                                 'media_item': media_item,
                                 'custom_title': None,
                                 'filler_kind': None,
-                                'start_time': None
+                                'start_time': None,
+                                'cached_duration': getattr(media_item, "__dict__", {}).get("duration") or 1800
                             })
             
             if not self._schedule_items:

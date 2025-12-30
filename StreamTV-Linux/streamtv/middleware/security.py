@@ -24,12 +24,12 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
     SECURITY: Query parameter support removed to prevent token exposure in URLs/logs.
     """
 
-    def __init__(self, app: ASGIApp, token: str | None, required: bool = True, exempt_paths: list[str] | None = None, allow_query_param: bool = False):
+    def __init__(self, app: ASGIApp, token: str | None, required: bool = True, exempt_paths: list[str] | None = None, allow_query_param: bool = True):
         super().__init__(app)
         self.token = token
         self.required = required
         self.exempt_paths = set(exempt_paths or [])
-        self.allow_query_param = allow_query_param  # Disabled by default for security
+        self.allow_query_param = allow_query_param  # Enabled by default for API compatibility per docs/API.md
 
     async def dispatch(self, request: Request, call_next):
         # Read from config dynamically (allows runtime updates without restart)

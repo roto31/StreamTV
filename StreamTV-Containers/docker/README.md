@@ -1,285 +1,201 @@
-# StreamTV Docker Distribution
+# StreamTV Platform Distributions
 
-Complete Docker distribution for StreamTV with multi-stage builds, health checks, and production-ready configurations.
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey.svg)]()
 
-## Quick Start
+**StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
-### Using Docker Compose (Recommended)
+## 🎯 Features
 
-1. **Clone or extract this directory**
+### Core Capabilities
+- **🌐 Direct Streaming**: Stream from YouTube and Archive.org without downloads
+- **📺 HDHomeRun Emulation**: Native integration with Plex, Emby, and Jellyfin
+- **📅 Advanced Scheduling**: YAML-based schedules with commercial breaks
+- **🐳 Container Support**: Docker, Kubernetes, and Podman deployments
+- **🖥️ Cross-Platform**: Native support for macOS, Windows, and Linux
+- **🔌 IPTV Support**: M3U playlists and XMLTV EPG generation
+- **⚡ FastAPI**: Modern async Python web framework
+- **🔐 Authentication**: Passkey and OAuth support for YouTube
 
-2. **Create environment file (optional):**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+### Streaming Sources
+- ✅ **YouTube**: Direct streaming with quality selection and OAuth authentication
+- ✅ **Archive.org**: Support for video collections and individual items
+- 🔄 **Extensible**: Easy to add new streaming sources via adapter pattern
 
-3. **Start StreamTV:**
-   ```bash
-   docker-compose up -d
-   ```
+### Integration
+- **Plex Media Server**: Direct HDHomeRun tuner or M3U/EPG
+- **Emby/Jellyfin**: HDHomeRun or IPTV support
+- **Kodi**: IPTV Simple Client
+- **VLC**: Direct M3U playlist support
+- **HDHomeRun Devices**: Full API compatibility
 
-4. **Access the web interface:**
-   Open http://localhost:8410 in your browser
+## 📦 Available Distributions
 
-5. **View logs:**
-   ```bash
-   docker-compose logs -f streamtv
-   ```
+### Desktop Platforms
 
-6. **Stop StreamTV:**
-   ```bash
-   docker-compose down
-   ```
+- **[macOS](StreamTV-macOS/)** - Native macOS distribution with installer
+  - Automated installation script
+  - `.command` launchers for easy startup
+  - Full documentation included
+- **[macOS Menu Bar App](StreamTVApp/)** - Native macOS menu bar application
+  - Runs as menu bar icon (no dock icon)
+  - Automatic Python virtual environment management
+  - FFmpeg installation via Homebrew
+  - Dependency update checking
+  - Server lifecycle management
+  - See [StreamTVApp/README.md](StreamTVApp/README.md) for setup instructions
 
-### Using Docker Directly
+- **[Windows](StreamTV-Windows/)** - Windows distribution
+  - PowerShell installation script
+  - Batch and PowerShell startup scripts
+  - Windows service support documentation
 
-1. **Build the image:**
-   ```bash
-   docker build -t streamtv:latest .
-   ```
+- **[Linux](StreamTV-Linux/)** - Linux distribution
+  - Distribution detection (apt, dnf, pacman)
+  - systemd service integration
+  - Firewall configuration guides
 
-2. **Run the container:**
-   ```bash
-   docker run -d \
-     --name streamtv \
-     -p 8410:8410 \
-     -v streamtv_data:/app/data \
-     -v streamtv_schedules:/app/schedules \
-     -v streamtv_logs:/app/logs \
-     -e STREAMTV_SERVER_BASE_URL=http://localhost:8410 \
-     streamtv:latest
-   ```
+### Container Platforms
 
-3. **Access the web interface:**
-   Open http://localhost:8410
+- **[Docker](StreamTV-Containers/docker/)** - Single-container deployment
+- **[Docker Compose](StreamTV-Containers/docker-compose/)** - Multi-service setup
+- **[Kubernetes](StreamTV-Containers/kubernetes/)** - K8s manifests with ingress
+- **[Podman](StreamTV-Containers/podman/)** - Rootless container support
 
-## Configuration
+## 🚀 Quick Start
 
-### Environment Variables
-
-All configuration can be set via environment variables:
-
+### macOS
 ```bash
-# Server
-STREAMTV_SERVER_HOST=0.0.0.0
-STREAMTV_SERVER_PORT=8410
-STREAMTV_SERVER_BASE_URL=http://localhost:8410
-
-# Database
-STREAMTV_DATABASE_URL=sqlite:///./data/streamtv.db
-
-# YouTube
-STREAMTV_YOUTUBE_ENABLED=true
-STREAMTV_YOUTUBE_API_KEY=your_api_key_here
-
-# Archive.org
-STREAMTV_ARCHIVE_ORG_ENABLED=true
-STREAMTV_ARCHIVE_ORG_USERNAME=your_username
-STREAMTV_ARCHIVE_ORG_PASSWORD=your_password
-
-# Security
-STREAMTV_SECURITY_ACCESS_TOKEN=your_token_here
+cd StreamTV-macOS
+./install_macos.sh
+./start_server.sh
+# Or double-click: Install-StreamTV.command
 ```
 
-### Using .env File
-
-Create a `.env` file in the same directory as `docker-compose.yml`:
-
-```env
-YOUTUBE_API_KEY=your_key_here
-ARCHIVE_ORG_USERNAME=your_username
-ARCHIVE_ORG_PASSWORD=your_password
-PLEX_BASE_URL=http://192.168.1.100:32400
-PLEX_TOKEN=your_plex_token
+### Windows
+```powershell
+cd StreamTV-Windows
+.\install_windows.ps1
+.\start_server.ps1
 ```
 
-### Mounting Custom Config
-
-To use a custom `config.yaml`:
-
-```yaml
-volumes:
-  - ./config.yaml:/app/config.yaml:ro
-```
-
-## Volumes
-
-The Docker Compose setup creates three named volumes:
-
-- **streamtv_data**: Database and persistent application data
-- **streamtv_schedules**: Schedule YAML files
-- **streamtv_logs**: Application logs
-
-### Accessing Volumes
-
+### Linux
 ```bash
-# List volumes
-docker volume ls
-
-# Inspect volume
-docker volume inspect streamtv_data
-
-# Backup data
-docker run --rm -v streamtv_data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/streamtv_data_backup.tar.gz -C /data .
-
-# Restore data
-docker run --rm -v streamtv_data:/data -v $(pwd):/backup \
-  alpine tar xzf /backup/streamtv_data_backup.tar.gz -C /data
+cd StreamTV-Linux
+./install_linux.sh
+./start_server.sh
 ```
 
-## Production Deployment
-
-### Using Production Override
-
+### Docker
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+cd StreamTV-Containers/docker
+docker build -t streamtv .
+docker run -p 8410:8410 streamtv
 ```
 
-This applies:
-- Resource limits
-- Log rotation
-- Production logging levels
-- Optimized restart policies
+**Access the web interface**: Open `http://localhost:8410` in your browser
 
-### Building for Production
+## 🌐 Browser Compatibility
 
-```bash
-# Build with specific tag
-docker build -t streamtv:v1.0.0 .
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with:
+- **Chrome/Edge**: Full HLS support via HLS.js
+- **Safari**: Native HLS support
+- **Firefox**: Full HLS support via HLS.js
 
-# Tag for registry
-docker tag streamtv:v1.0.0 your-registry/streamtv:v1.0.0
+The player automatically detects browser capabilities and uses the best available method. For best results, use a modern browser with JavaScript enabled.
 
-# Push to registry
-docker push your-registry/streamtv:v1.0.0
-```
+## 📋 Requirements
 
-### Health Checks
+- **Python**: 3.8 or higher
+- **FFmpeg**: For video transcoding (automatically installed by install scripts)
+- **Network**: Internet connection for streaming
+- **Platform-specific**: See individual distribution READMEs
 
-The container includes health checks. Monitor with:
+## 📚 Documentation
 
-```bash
-# Check health status
-docker ps  # Shows health status
+### Complete Guides
+- **[GitHub Wiki](https://github.com/roto31/StreamTV/wiki)** - Comprehensive documentation
+- **[Documentation Index](https://github.com/roto31/StreamTV/wiki/Documentation-Index)** - All guides organized
+- **[Scripts & Tools](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools)** - Utility scripts
 
-# Inspect health check
-docker inspect streamtv | grep -A 10 Health
-```
+### Quick Links
+- [Installation Guide](https://github.com/roto31/StreamTV/wiki/Installation-Guide)
+- [Beginner Guide](https://github.com/roto31/StreamTV/wiki/Beginner-Guide) - For new users
+- [Plex Integration](https://github.com/roto31/StreamTV/wiki/Plex-Integration) - Setup guide
+- [API Reference](https://github.com/roto31/StreamTV/wiki/API-Reference) - Complete API docs
+- [Troubleshooting](https://github.com/roto31/StreamTV/wiki/Troubleshooting) - Common issues
 
-## Networking
+### Platform-Specific
+Each distribution includes complete documentation in `docs/`:
+- Installation instructions
+- Quick start guides
+- Platform-specific configuration
+- Troubleshooting guides
+- API documentation
 
-### Ports
+## 🔗 Integration Examples
 
-- **8410**: Main web interface and API
-- **5004**: HDHomeRun streaming (if enabled)
-- **1900/udp**: SSDP discovery (optional)
+### Plex Media Server
+1. Install StreamTV on your server
+2. Add StreamTV as HDHomeRun tuner in Plex
+3. Scan for channels
+4. Watch your custom channels in Plex!
 
-### Custom Network
+See [Plex Integration Guide](https://github.com/roto31/StreamTV/wiki/Plex-Integration) for detailed instructions.
 
-The Docker Compose setup creates a bridge network. To connect other containers:
+### IPTV Clients
+- **Kodi**: Use IPTV Simple Client with M3U playlist
+- **VLC**: Open M3U playlist directly
+- **Emby/Jellyfin**: Add as IPTV source or HDHomeRun tuner
 
-```yaml
-services:
-  other-service:
-    networks:
-      - streamtv-network
-```
+## 🛠️ Scripts & Tools
 
-## Troubleshooting
+StreamTV includes utility scripts for:
+- Channel creation from Archive.org collections
+- Schedule generation
+- Log viewing and troubleshooting
+- Database management
 
-### View Logs
+See [Scripts Documentation](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools) for complete list.
 
-```bash
-# All logs
-docker-compose logs streamtv
+## 📖 Wiki Pages
 
-# Follow logs
-docker-compose logs -f streamtv
+Comprehensive documentation available in the [GitHub Wiki](https://github.com/roto31/StreamTV/wiki):
+- [macOS](https://github.com/roto31/StreamTV/wiki/macOS) - Complete macOS guide
+- [Windows](https://github.com/roto31/StreamTV/wiki/Windows) - Complete Windows guide
+- [Linux](https://github.com/roto31/StreamTV/wiki/Linux) - Complete Linux guide
+- [Containers](https://github.com/roto31/StreamTV/wiki/Containers) - Container platforms
+- [Archive Parser](https://github.com/roto31/StreamTV/wiki/Archive-Parser) - Create channels from Archive.org
+- [Logging](https://github.com/roto31/StreamTV/wiki/Logging) - Logging system
 
-# Last 100 lines
-docker-compose logs --tail=100 streamtv
-```
+## 📝 Contributing
 
-### Container Shell Access
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-```bash
-docker exec -it streamtv /bin/bash
-```
+- Report bugs via [Issues](https://github.com/roto31/StreamTV/issues)
+- Suggest features via [Feature Requests](https://github.com/roto31/StreamTV/issues/new?template=feature_request.md)
+- Submit pull requests following our [PR template](.github/pull_request_template.md)
 
-### Check Container Status
+## 📄 License
 
-```bash
-docker ps -a | grep streamtv
-docker inspect streamtv
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Restart Container
+## 🌟 Project Status
 
-```bash
-docker-compose restart streamtv
-```
+✅ **Stable** - Production ready
+- Cross-platform distributions available
+- Comprehensive documentation
+- Active development
 
-### Rebuild After Changes
+## 🔍 Resources
 
-```bash
-docker-compose build --no-cache streamtv
-docker-compose up -d streamtv
-```
+- [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) - Complete documentation
+- [Issues](https://github.com/roto31/StreamTV/issues) - Bug reports and feature requests
+- [Pull Requests](https://github.com/roto31/StreamTV/pulls) - Contributions
+- [Releases](https://github.com/roto31/StreamTV/releases) - Version history
 
-## Updating
+---
 
-1. **Pull latest code/changes**
-
-2. **Rebuild:**
-   ```bash
-   docker-compose build streamtv
-   docker-compose up -d streamtv
-   ```
-
-3. **Or with no cache:**
-   ```bash
-   docker-compose build --no-cache streamtv
-   docker-compose up -d streamtv
-   ```
-
-## Security Considerations
-
-1. **Non-root user**: Container runs as user `streamtv` (UID 1000)
-2. **Read-only config**: Mount config files as read-only when possible
-3. **Secrets**: Use Docker secrets or environment files for sensitive data
-4. **Network**: Use custom networks to isolate containers
-5. **Updates**: Regularly update base images and dependencies
-
-## Resource Requirements
-
-### Minimum
-- CPU: 0.5 cores
-- Memory: 512MB
-- Disk: 1GB
-
-### Recommended
-- CPU: 1-2 cores
-- Memory: 1-2GB
-- Disk: 5GB+ (for database and logs)
-
-## Integration with Plex
-
-1. **Start StreamTV container**
-
-2. **In Plex Settings → Live TV & DVR:**
-   - Add Tuner: `http://YOUR_HOST_IP:8410/hdhomerun/discover.json`
-   - Add Guide: `http://YOUR_HOST_IP:8410/iptv/xmltv.xml`
-
-3. **Map channels and start watching**
-
-## Support
-
-- [Docker Documentation](https://docs.docker.com/)
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
-- See `docs/` directory for StreamTV documentation
-
-## License
-
-See LICENSE file for details.
+**Made with ❤️ for the IPTV community**

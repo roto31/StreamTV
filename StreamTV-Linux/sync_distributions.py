@@ -59,6 +59,7 @@ ALLOWED_ROOTS: Set[str] = {
     "sbom.json",
     "setup.py",
     "start_server.sh",
+    "remove_channels.py",
     "sync_distributions.py",
     "streamtv",
     "update-dependencies.sh",

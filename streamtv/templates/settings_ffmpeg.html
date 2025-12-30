@@ -224,6 +224,15 @@
             document.getElementById('hwaccel').value = data.hwaccel || '';
             document.getElementById('hwaccelDevice').value = data.hwaccel_device || '';
             document.getElementById('extraFlags').value = data.extra_flags || '';
+            // Optional per-source overrides
+            const perSourceFields = [
+                'youtube_hwaccel','archive_org_hwaccel','pbs_hwaccel','plex_hwaccel',
+                'youtube_video_encoder','archive_org_video_encoder','pbs_video_encoder','plex_video_encoder'
+            ];
+            for (const key of perSourceFields) {
+                const el = document.getElementById(key);
+                if (el) el.value = data[key] || '';
+            }
             if (showStatus) {
                 showStatusMessage('Settings refreshed from disk.', 'success');
             }
@@ -243,6 +252,15 @@
                 hwaccel: document.getElementById('hwaccel').value || null,
                 hwaccel_device: document.getElementById('hwaccelDevice').value || null,
                 extra_flags: document.getElementById('extraFlags').value || null,
+                // Per-source overrides (optional)
+                youtube_hwaccel: document.getElementById('youtube_hwaccel')?.value || null,
+                archive_org_hwaccel: document.getElementById('archive_org_hwaccel')?.value || null,
+                pbs_hwaccel: document.getElementById('pbs_hwaccel')?.value || null,
+                plex_hwaccel: document.getElementById('plex_hwaccel')?.value || null,
+                youtube_video_encoder: document.getElementById('youtube_video_encoder')?.value || null,
+                archive_org_video_encoder: document.getElementById('archive_org_video_encoder')?.value || null,
+                pbs_video_encoder: document.getElementById('pbs_video_encoder')?.value || null,
+                plex_video_encoder: document.getElementById('plex_video_encoder')?.value || null,
             };
             
             const response = await fetch('/api/settings/ffmpeg', {

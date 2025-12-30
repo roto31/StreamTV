@@ -207,6 +207,41 @@
         justify-content: flex-end;
         margin-top: 24px;
     }
+    
+    .readonly-banner {
+        background: rgba(255, 149, 0, 0.1);
+        border: 1px solid var(--warning);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--warning);
+    }
+    
+    .readonly-banner .material-icons {
+        font-size: 20px;
+    }
+    
+    .readonly-banner-text {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .readonly-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: rgba(255, 149, 0, 0.15);
+        border: 0.5px solid var(--warning);
+        border-radius: 4px;
+        font-size: 11px;
+        color: var(--warning);
+        font-weight: 500;
+    }
 </style>
 {% endblock %}
 
@@ -372,7 +407,10 @@ async function loadSchedules() {
                     return `
                 <div class="schedule-row" data-action="editSchedule" data-args='[${schedule.id}]'>
                             <div class="schedule-info">
-                        <div class="schedule-name">${escapeHtml(schedule.name)}</div>
+                        <div class="schedule-name">
+                            ${escapeHtml(schedule.name)}
+                            ${schedule.is_yaml_source ? '<span class="readonly-badge" title="Schedule defined in YAML - edit via YAML file"><span class="material-icons" style="font-size: 12px;">lock</span>YAML</span>' : ''}
+                        </div>
                                 <div class="schedule-details">
                             <span>Channel: ${escapeHtml(channelName)}</span>
                             <span>Items: ${itemCount}</span>
@@ -383,10 +421,10 @@ async function loadSchedules() {
                         <button class="btn-icon" data-action="editScheduleItems" data-args='[${schedule.id}]' data-stop-propagation="true" title="Edit Schedule Items">
                             <span class="material-icons">list</span>
                         </button>
-                        <button class="btn-icon" data-action="editSchedule" data-args='[${schedule.id}]' data-stop-propagation="true" title="Edit Schedule">
+                        <button class="btn-icon" data-action="editSchedule" data-args='[${schedule.id}]' data-stop-propagation="true" title="${schedule.is_yaml_source ? 'Cannot edit YAML-sourced schedule' : 'Edit Schedule'}" ${schedule.is_yaml_source ? 'disabled style="opacity: 0.4; cursor: not-allowed;"' : ''}>
                             <span class="material-icons">edit</span>
                                 </button>
-                        <button class="btn-icon" data-action="deleteSchedule" data-args='[${schedule.id}]' data-stop-propagation="true" title="Delete Schedule">
+                        <button class="btn-icon" data-action="deleteSchedule" data-args='[${schedule.id}]' data-stop-propagation="true" title="${schedule.is_yaml_source ? 'Cannot delete YAML-sourced schedule' : 'Delete Schedule'}" ${schedule.is_yaml_source ? 'disabled style="opacity: 0.4; cursor: not-allowed;"' : ''}>
                             <span class="material-icons">delete</span>
                                 </button>
                             </div>

@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pull request template
 - Contributing guidelines
 - Security policy
+- HLS-first player implementation for browser compatibility
+- Enum conversion fixes for database compatibility across all platforms
+- Cross-platform synchronization script for StreamTVApp
+
+### Fixed
+- Enum conversion errors in channels and IPTV endpoints (HLS/TS)
+- Browser playback compatibility - now uses HLS by default instead of MPEG-TS
+- jsonschema dependency compatibility (updated to 4.25.1 with jsonschema-specifications 2024.10.1)
+- Draft-04 schema support in jsonschema validation
+
+### Changed
+- Player now prioritizes HLS streams for browser compatibility
+- Updated jsonschema to 4.25.1 (from 4.23.0)
+- Updated jsonschema-specifications to 2024.10.1 (from 2023.12.1)
+- All platform distributions synchronized with latest code changes
 
 ## [1.0.0] - 2025-01-XX
 

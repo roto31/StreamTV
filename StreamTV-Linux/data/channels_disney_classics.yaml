@@ -1,0 +1,2825 @@
+channels:
+- number: '1929'
+  name: Disney Classics
+  group: Disney
+  description: Disney Silly Symphonies and classic animated shorts (Archive.org MP4
+    only).
+  enabled: true
+  streams:
+  - id: disneyanimatedshorts_0001
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1928x11 - Plane Crazy.mp4
+    title: Disney Animated Shorts - 1928x11 - Plane Crazy
+  - id: disneyanimatedshorts_0002
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1928x17 - Gallopin' Gaucho.mp4
+    title: Disney Animated Shorts - 1928x17 - Gallopin' Gaucho
+  - id: disneyanimatedshorts_0003
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1928x20 - Steamboat Willie.mp4
+    title: Disney Animated Shorts - 1928x20 - Steamboat Willie
+  - id: disneyanimatedshorts_0004
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x01 - The Barn Dance.mp4
+    title: Disney Animated Shorts - 1929x01 - The Barn Dance
+  - id: disneyanimatedshorts_0005
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x02 - The Opry House.mp4
+    title: Disney Animated Shorts - 1929x02 - The Opry House
+  - id: disneyanimatedshorts_0006
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x03 - When the Cat's Away.mp4
+    title: Disney Animated Shorts - 1929x03 - When the Cat's Away
+  - id: disneyanimatedshorts_0007
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x05 - The Karnival Kid.mp4
+    title: Disney Animated Shorts - 1929x05 - The Karnival Kid
+  - id: disneyanimatedshorts_0008
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x07 - Mickey's Follies.mp4
+    title: Disney Animated Shorts - 1929x07 - Mickey's Follies
+  - id: disneyanimatedshorts_0009
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x09 - Mickey's Choo Choo.mp4
+    title: Disney Animated Shorts - 1929x09 - Mickey's Choo Choo
+  - id: disneyanimatedshorts_0010
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x10 - The Barnyard Battle.mp4
+    title: Disney Animated Shorts - 1929x10 - The Barnyard Battle
+  - id: disneyanimatedshorts_0011
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x11 - The Jazz Fool.mp4
+    title: Disney Animated Shorts - 1929x11 - The Jazz Fool
+  - id: disneyanimatedshorts_0012
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x14 - Jungle Rhythm.mp4
+    title: Disney Animated Shorts - 1929x14 - Jungle Rhythm
+  - id: disneyanimatedshorts_0013
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1929x15 - Haunted House.mp4
+    title: Disney Animated Shorts - 1929x15 - Haunted House
+  - id: disneyanimatedshorts_0014
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x01 - Minnie's Yoo Hoo.mp4
+    title: Disney Animated Shorts - 1930x01 - Minnie's Yoo Hoo
+  - id: disneyanimatedshorts_0015
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x05 - Just Mickey.mp4
+    title: Disney Animated Shorts - 1930x05 - Just Mickey
+  - id: disneyanimatedshorts_0016
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x06 - The Barnyard Concert.mp4
+    title: Disney Animated Shorts - 1930x06 - The Barnyard Concert
+  - id: disneyanimatedshorts_0017
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x07 - Wild Waves.mp4
+    title: Disney Animated Shorts - 1930x07 - Wild Waves
+  - id: disneyanimatedshorts_0018
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x10 - The Cactus Kid.mp4
+    title: Disney Animated Shorts - 1930x10 - The Cactus Kid
+  - id: disneyanimatedshorts_0019
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x13 - The Fire Fighters.mp4
+    title: Disney Animated Shorts - 1930x13 - The Fire Fighters
+  - id: disneyanimatedshorts_0020
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x14 - The Shindig.mp4
+    title: Disney Animated Shorts - 1930x14 - The Shindig
+  - id: disneyanimatedshorts_0021
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x15 - The Chain Gang.mp4
+    title: Disney Animated Shorts - 1930x15 - The Chain Gang
+  - id: disneyanimatedshorts_0022
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x17 - The Gorilla Mystery.mp4
+    title: Disney Animated Shorts - 1930x17 - The Gorilla Mystery
+  - id: disneyanimatedshorts_0023
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x18 - The Picnic.mp4
+    title: Disney Animated Shorts - 1930x18 - The Picnic
+  - id: disneyanimatedshorts_0024
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1930x20 - Pioneer Days.mp4
+    title: Disney Animated Shorts - 1930x20 - Pioneer Days
+  - id: disneyanimatedshorts_0025
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x01 - The Birthday Party.mp4
+    title: Disney Animated Shorts - 1931x01 - The Birthday Party
+  - id: disneyanimatedshorts_0026
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x04 - The Castaway.mp4
+    title: Disney Animated Shorts - 1931x04 - The Castaway
+  - id: disneyanimatedshorts_0027
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x06 - The Moose Hunt.mp4
+    title: Disney Animated Shorts - 1931x06 - The Moose Hunt
+  - id: disneyanimatedshorts_0028
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x10 - Mickey Steps Out.mp4
+    title: Disney Animated Shorts - 1931x10 - Mickey Steps Out
+  - id: disneyanimatedshorts_0029
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x12 - Blue Rhythm.mp4
+    title: Disney Animated Shorts - 1931x12 - Blue Rhythm
+  - id: disneyanimatedshorts_0030
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x20 - Mickey Cuts Up.mp4
+    title: Disney Animated Shorts - 1931x20 - Mickey Cuts Up
+  - id: disneyanimatedshorts_0031
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1931x21 - Mickey's Orphans.mp4
+    title: Disney Animated Shorts - 1931x21 - Mickey's Orphans
+  - id: disneyanimatedshorts_0032
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1932x02 - The Duck Hunt.mp4
+    title: Disney Animated Shorts - 1932x02 - The Duck Hunt
+  - id: disneyanimatedshorts_0033
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1932x06 - Mickey's Revue.mp4
+    title: Disney Animated Shorts - 1932x06 - Mickey's Revue
+  - id: disneyanimatedshorts_0034
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1932x12 - Mickey's Nightmare.mp4
+    title: Disney Animated Shorts - 1932x12 - Mickey's Nightmare
+  - id: disneyanimatedshorts_0035
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1932x15 - The Whoopee Party.mp4
+    title: Disney Animated Shorts - 1932x15 - The Whoopee Party
+  - id: disneyanimatedshorts_0036
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1932x17 - Touchdown Mickey.mp4
+    title: Disney Animated Shorts - 1932x17 - Touchdown Mickey
+  - id: disneyanimatedshorts_0037
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1932x19 - The Klondike Kid.mp4
+    title: Disney Animated Shorts - 1932x19 - The Klondike Kid
+  - id: disneyanimatedshorts_0038
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x01 - Building a Building.mp4
+    title: Disney Animated Shorts - 1933x01 - Building a Building
+  - id: disneyanimatedshorts_0039
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x02 - The Mad Doctor.mp4
+    title: Disney Animated Shorts - 1933x02 - The Mad Doctor
+  - id: disneyanimatedshorts_0040
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x06 - Ye Olden Days.mp4
+    title: Disney Animated Shorts - 1933x06 - Ye Olden Days
+  - id: disneyanimatedshorts_0041
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x08 - The Mail Pilot.mp4
+    title: Disney Animated Shorts - 1933x08 - The Mail Pilot
+  - id: disneyanimatedshorts_0042
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x09 - Three Little Pigs.mp4
+    title: Disney Animated Shorts - 1933x09 - Three Little Pigs
+  - id: disneyanimatedshorts_0043
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x14 - Puppy Love.mp4
+    title: Disney Animated Shorts - 1933x14 - Puppy Love
+  - id: disneyanimatedshorts_0044
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1933x17 - The Pet Store.mp4
+    title: Disney Animated Shorts - 1933x17 - The Pet Store
+  - id: disneyanimatedshorts_0045
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1934x03 - Camping Out.mp4
+    title: Disney Animated Shorts - 1934x03 - Camping Out
+  - id: disneyanimatedshorts_0046
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1934x09 - The Wise Little Hen.mp4
+    title: Disney Animated Shorts - 1934x09 - The Wise Little Hen
+  - id: disneyanimatedshorts_0047
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1934x12 - Orphan's Benefit.mp4
+    title: Disney Animated Shorts - 1934x12 - Orphan's Benefit
+  - id: disneyanimatedshorts_0048
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1934x16 - The Dognapper.mp4
+    title: Disney Animated Shorts - 1934x16 - The Dognapper
+  - id: disneyanimatedshorts_0049
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1934x17 - Two-Gun Mickey.mp4
+    title: Disney Animated Shorts - 1934x17 - Two-Gun Mickey
+  - id: disneyanimatedshorts_0050
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1935x03 - The Band Concert.mp4
+    title: Disney Animated Shorts - 1935x03 - The Band Concert
+  - id: disneyanimatedshorts_0051
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1935x04 - Mickey's Service Station.mp4
+    title: Disney Animated Shorts - 1935x04 - Mickey's Service Station
+  - id: disneyanimatedshorts_0052
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1935x11 - Mickey's Garden.mp4
+    title: Disney Animated Shorts - 1935x11 - Mickey's Garden
+  - id: disneyanimatedshorts_0053
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1935x12 - Mickey's Fire Brigade.mp4
+    title: Disney Animated Shorts - 1935x12 - Mickey's Fire Brigade
+  - id: disneyanimatedshorts_0054
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1935x14 - On Ice.mp4
+    title: Disney Animated Shorts - 1935x14 - On Ice
+  - id: disneyanimatedshorts_0055
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x01 - Mickey's Polo Team.mp4
+    title: Disney Animated Shorts - 1936x01 - Mickey's Polo Team
+  - id: disneyanimatedshorts_0056
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x02 - Orphans' Picnic.mp4
+    title: Disney Animated Shorts - 1936x02 - Orphans' Picnic
+  - id: disneyanimatedshorts_0057
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x03 - Mickey's Grand Opera.mp4
+    title: Disney Animated Shorts - 1936x03 - Mickey's Grand Opera
+  - id: disneyanimatedshorts_0058
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x06 - Thru the Mirror.mp4
+    title: Disney Animated Shorts - 1936x06 - Thru the Mirror
+  - id: disneyanimatedshorts_0059
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x07 - Moving Day.mp4
+    title: Disney Animated Shorts - 1936x07 - Moving Day
+  - id: disneyanimatedshorts_0060
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x08 - Mickey's Rival.mp4
+    title: Disney Animated Shorts - 1936x08 - Mickey's Rival
+  - id: disneyanimatedshorts_0061
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x09 - Alpine Climbers.mp4
+    title: Disney Animated Shorts - 1936x09 - Alpine Climbers
+  - id: disneyanimatedshorts_0062
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x10 - Mickey's Circus.mp4
+    title: Disney Animated Shorts - 1936x10 - Mickey's Circus
+  - id: disneyanimatedshorts_0063
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x12 - Donald And Pluto.mp4
+    title: Disney Animated Shorts - 1936x12 - Donald And Pluto
+  - id: disneyanimatedshorts_0064
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1936x14 - Mickey's Elephant.mp4
+    title: Disney Animated Shorts - 1936x14 - Mickey's Elephant
+  - id: disneyanimatedshorts_0065
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x01 - The Worm Turns.mp4
+    title: Disney Animated Shorts - 1937x01 - The Worm Turns
+  - id: disneyanimatedshorts_0066
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x02 - Don Donald.mp4
+    title: Disney Animated Shorts - 1937x02 - Don Donald
+  - id: disneyanimatedshorts_0067
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x03 - Magician Mickey.mp4
+    title: Disney Animated Shorts - 1937x03 - Magician Mickey
+  - id: disneyanimatedshorts_0068
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x04 - Moose Hunters.mp4
+    title: Disney Animated Shorts - 1937x04 - Moose Hunters
+  - id: disneyanimatedshorts_0069
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x06 - Mickey's Amateurs.mp4
+    title: Disney Animated Shorts - 1937x06 - Mickey's Amateurs
+  - id: disneyanimatedshorts_0070
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x08 - Modern Inventions.mp4
+    title: Disney Animated Shorts - 1937x08 - Modern Inventions
+  - id: disneyanimatedshorts_0071
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x09 - Hawaiian Holiday.mp4
+    title: Disney Animated Shorts - 1937x09 - Hawaiian Holiday
+  - id: disneyanimatedshorts_0072
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x10 - Clock Cleaners.mp4
+    title: Disney Animated Shorts - 1937x10 - Clock Cleaners
+  - id: disneyanimatedshorts_0073
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x11 - The Old Mill.mp4
+    title: Disney Animated Shorts - 1937x11 - The Old Mill
+  - id: disneyanimatedshorts_0074
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x13 - Donald's Ostrich.mp4
+    title: Disney Animated Shorts - 1937x13 - Donald's Ostrich
+  - id: disneyanimatedshorts_0075
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1937x14 - Lonesome Ghosts.mp4
+    title: Disney Animated Shorts - 1937x14 - Lonesome Ghosts
+  - id: disneyanimatedshorts_0076
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x01 - Self Control.mp4
+    title: Disney Animated Shorts - 1938x01 - Self Control
+  - id: disneyanimatedshorts_0077
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x02 - Boat Builders.mp4
+    title: Disney Animated Shorts - 1938x02 - Boat Builders
+  - id: disneyanimatedshorts_0078
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x03 - Donald's Better Self.mp4
+    title: Disney Animated Shorts - 1938x03 - Donald's Better Self
+  - id: disneyanimatedshorts_0079
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x05 - Donald's Nephews.mp4
+    title: Disney Animated Shorts - 1938x05 - Donald's Nephews
+  - id: disneyanimatedshorts_0080
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x06 - Mickey's Trailer.mp4
+    title: Disney Animated Shorts - 1938x06 - Mickey's Trailer
+  - id: disneyanimatedshorts_0081
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x08 - Polar Trappers.mp4
+    title: Disney Animated Shorts - 1938x08 - Polar Trappers
+  - id: disneyanimatedshorts_0082
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x09 - Good Scouts.mp4
+    title: Disney Animated Shorts - 1938x09 - Good Scouts
+  - id: disneyanimatedshorts_0083
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x10 - The Fox Hunt.mp4
+    title: Disney Animated Shorts - 1938x10 - The Fox Hunt
+  - id: disneyanimatedshorts_0084
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x11 - The Whalers.mp4
+    title: Disney Animated Shorts - 1938x11 - The Whalers
+  - id: disneyanimatedshorts_0085
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x12 - Mickey's Parrot.mp4
+    title: Disney Animated Shorts - 1938x12 - Mickey's Parrot
+  - id: disneyanimatedshorts_0086
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1938x15 - Donald's Golf Game.mp4
+    title: Disney Animated Shorts - 1938x15 - Donald's Golf Game
+  - id: disneyanimatedshorts_0087
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x01 - Donald's Lucky Day.mp4
+    title: Disney Animated Shorts - 1939x01 - Donald's Lucky Day
+  - id: disneyanimatedshorts_0088
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x02 - Society Dog Show.mp4
+    title: Disney Animated Shorts - 1939x02 - Society Dog Show
+  - id: disneyanimatedshorts_0089
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x04 - Goofy and Wilbur.mp4
+    title: Disney Animated Shorts - 1939x04 - Goofy and Wilbur
+  - id: disneyanimatedshorts_0090
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x06 - The Hockey Champ.mp4
+    title: Disney Animated Shorts - 1939x06 - The Hockey Champ
+  - id: disneyanimatedshorts_0091
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x08 - Beach Picnic.mp4
+    title: Disney Animated Shorts - 1939x08 - Beach Picnic
+  - id: disneyanimatedshorts_0092
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x09 - Sea Scouts.mp4
+    title: Disney Animated Shorts - 1939x09 - Sea Scouts
+  - id: disneyanimatedshorts_0093
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1939x10 - The Pointer.mp4
+    title: Disney Animated Shorts - 1939x10 - The Pointer
+  - id: disneyanimatedshorts_0094
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x01 - The Riveter.mp4
+    title: Disney Animated Shorts - 1940x01 - The Riveter
+  - id: disneyanimatedshorts_0095
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x02 - Donald's Dog Laundry.mp4
+    title: Disney Animated Shorts - 1940x02 - Donald's Dog Laundry
+  - id: disneyanimatedshorts_0096
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x03 - Tugboat Mickey.mp4
+    title: Disney Animated Shorts - 1940x03 - Tugboat Mickey
+  - id: disneyanimatedshorts_0097
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x04 - Billposters.mp4
+    title: Disney Animated Shorts - 1940x04 - Billposters
+  - id: disneyanimatedshorts_0098
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x05 - Mr. Duck Steps Out.mp4
+    title: Disney Animated Shorts - 1940x05 - Mr. Duck Steps Out
+  - id: disneyanimatedshorts_0099
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x07 - Put-Put Troubles.mp4
+    title: Disney Animated Shorts - 1940x07 - Put-Put Troubles
+  - id: disneyanimatedshorts_0100
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x08 - Donald's Vacation.mp4
+    title: Disney Animated Shorts - 1940x08 - Donald's Vacation
+  - id: disneyanimatedshorts_0101
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x09 - Pluto's Dream House.mp4
+    title: Disney Animated Shorts - 1940x09 - Pluto's Dream House
+  - id: disneyanimatedshorts_0102
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x10 - Window Cleaners.mp4
+    title: Disney Animated Shorts - 1940x10 - Window Cleaners
+  - id: disneyanimatedshorts_0103
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x11 - Mr. Mouse Takes a Trip.mp4
+    title: Disney Animated Shorts - 1940x11 - Mr. Mouse Takes a Trip
+  - id: disneyanimatedshorts_0104
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1940x12 - Goofy's Glider.mp4
+    title: Disney Animated Shorts - 1940x12 - Goofy's Glider
+  - id: disneyanimatedshorts_0105
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x01 - Timber.mp4
+    title: Disney Animated Shorts - 1941x01 - Timber
+  - id: disneyanimatedshorts_0106
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x03 - The Little Whirlwind.mp4
+    title: Disney Animated Shorts - 1941x03 - The Little Whirlwind
+  - id: disneyanimatedshorts_0107
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x04 - Golden Eggs.mp4
+    title: Disney Animated Shorts - 1941x04 - Golden Eggs
+  - id: disneyanimatedshorts_0108
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x07 - A Good Time for a Dime.mp4
+    title: Disney Animated Shorts - 1941x07 - A Good Time for a Dime
+  - id: disneyanimatedshorts_0109
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x08 - Canine Caddy.mp4
+    title: Disney Animated Shorts - 1941x08 - Canine Caddy
+  - id: disneyanimatedshorts_0110
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x09 - The Nifty Nineties.mp4
+    title: Disney Animated Shorts - 1941x09 - The Nifty Nineties
+  - id: disneyanimatedshorts_0111
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x10 - Early To Bed.mp4
+    title: Disney Animated Shorts - 1941x10 - Early To Bed
+  - id: disneyanimatedshorts_0112
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x11 - Truant Officer Donald.mp4
+    title: Disney Animated Shorts - 1941x11 - Truant Officer Donald
+  - id: disneyanimatedshorts_0113
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x13 - Old MacDonald Duck.mp4
+    title: Disney Animated Shorts - 1941x13 - Old MacDonald Duck
+  - id: disneyanimatedshorts_0114
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x14 - Lend a Paw.mp4
+    title: Disney Animated Shorts - 1941x14 - Lend a Paw
+  - id: disneyanimatedshorts_0115
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x15 - Donald's Camera.mp4
+    title: Disney Animated Shorts - 1941x15 - Donald's Camera
+  - id: disneyanimatedshorts_0116
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1941x17 - Chef Donald.mp4
+    title: Disney Animated Shorts - 1941x17 - Chef Donald
+  - id: disneyanimatedshorts_0117
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x01 - The Village Smithy.mp4
+    title: Disney Animated Shorts - 1942x01 - The Village Smithy
+  - id: disneyanimatedshorts_0118
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x02 - Mickey's Birthday Party.mp4
+    title: Disney Animated Shorts - 1942x02 - Mickey's Birthday Party
+  - id: disneyanimatedshorts_0119
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x03 - Pluto, Junior.mp4
+    title: Disney Animated Shorts - 1942x03 - Pluto, Junior
+  - id: disneyanimatedshorts_0120
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x04 - Symphony Hour.mp4
+    title: Disney Animated Shorts - 1942x04 - Symphony Hour
+  - id: disneyanimatedshorts_0121
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x05 - Donald's Snow Fight.mp4
+    title: Disney Animated Shorts - 1942x05 - Donald's Snow Fight
+  - id: disneyanimatedshorts_0122
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x06 - Donald Gets Drafted.mp4
+    title: Disney Animated Shorts - 1942x06 - Donald Gets Drafted
+  - id: disneyanimatedshorts_0123
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x08 - Donald's Garden.mp4
+    title: Disney Animated Shorts - 1942x08 - Donald's Garden
+  - id: disneyanimatedshorts_0124
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x10 - Donald's Gold Mine.mp4
+    title: Disney Animated Shorts - 1942x10 - Donald's Gold Mine
+  - id: disneyanimatedshorts_0125
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x11 - T-Bone for Two.mp4
+    title: Disney Animated Shorts - 1942x11 - T-Bone for Two
+  - id: disneyanimatedshorts_0126
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x12 - How to Play Baseball.mp4
+    title: Disney Animated Shorts - 1942x12 - How to Play Baseball
+  - id: disneyanimatedshorts_0127
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x13 - The Vanishing Private.mp4
+    title: Disney Animated Shorts - 1942x13 - The Vanishing Private
+  - id: disneyanimatedshorts_0128
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x15 - How to Swim.mp4
+    title: Disney Animated Shorts - 1942x15 - How to Swim
+  - id: disneyanimatedshorts_0129
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x16 - Sky Trooper.mp4
+    title: Disney Animated Shorts - 1942x16 - Sky Trooper
+  - id: disneyanimatedshorts_0130
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x18 - How to Fish.mp4
+    title: Disney Animated Shorts - 1942x18 - How to Fish
+  - id: disneyanimatedshorts_0131
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1942x19 - Bellboy Donald.mp4
+    title: Disney Animated Shorts - 1942x19 - Bellboy Donald
+  - id: disneyanimatedshorts_0132
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1943x03 - Donald's Tire Trouble.mp4
+    title: Disney Animated Shorts - 1943x03 - Donald's Tire Trouble
+  - id: disneyanimatedshorts_0133
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1943x05 - The Flying Jalopy.mp4
+    title: Disney Animated Shorts - 1943x05 - The Flying Jalopy
+  - id: disneyanimatedshorts_0134
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1943x07 - Fall Out - Fall In.mp4
+    title: Disney Animated Shorts - 1943x07 - Fall Out - Fall In
+  - id: disneyanimatedshorts_0135
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1943x11 - The Old Army Game.mp4
+    title: Disney Animated Shorts - 1943x11 - The Old Army Game
+  - id: disneyanimatedshorts_0136
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1943x12 - Home Defense.mp4
+    title: Disney Animated Shorts - 1943x12 - Home Defense
+  - id: disneyanimatedshorts_0137
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x02 - How to Be a Sailor.mp4
+    title: Disney Animated Shorts - 1944x02 - How to Be a Sailor
+  - id: disneyanimatedshorts_0138
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x03 - Trombone Trouble.mp4
+    title: Disney Animated Shorts - 1944x03 - Trombone Trouble
+  - id: disneyanimatedshorts_0139
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x04 - How to Play Golf.mp4
+    title: Disney Animated Shorts - 1944x04 - How to Play Golf
+  - id: disneyanimatedshorts_0140
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x05 - Donald Duck and the Gorilla.mp4
+    title: Disney Animated Shorts - 1944x05 - Donald Duck and the Gorilla
+  - id: disneyanimatedshorts_0141
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x06 - Contrary Condor.mp4
+    title: Disney Animated Shorts - 1944x06 - Contrary Condor
+  - id: disneyanimatedshorts_0142
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x09 - The Plastics Inventor.mp4
+    title: Disney Animated Shorts - 1944x09 - The Plastics Inventor
+  - id: disneyanimatedshorts_0143
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x10 - How to Play Football.mp4
+    title: Disney Animated Shorts - 1944x10 - How to Play Football
+  - id: disneyanimatedshorts_0144
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1944x12 - Donald's Off Day.mp4
+    title: Disney Animated Shorts - 1944x12 - Donald's Off Day
+  - id: disneyanimatedshorts_0145
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x02 - The Clock Watcher.mp4
+    title: Disney Animated Shorts - 1945x02 - The Clock Watcher
+  - id: disneyanimatedshorts_0146
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x04 - The Eyes Have It.mp4
+    title: Disney Animated Shorts - 1945x04 - The Eyes Have It
+  - id: disneyanimatedshorts_0147
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x09 - Duck Pimples.mp4
+    title: Disney Animated Shorts - 1945x09 - Duck Pimples
+  - id: disneyanimatedshorts_0148
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x11 - No Sail.mp4
+    title: Disney Animated Shorts - 1945x11 - No Sail
+  - id: disneyanimatedshorts_0149
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x12 - Hockey Homicide.mp4
+    title: Disney Animated Shorts - 1945x12 - Hockey Homicide
+  - id: disneyanimatedshorts_0150
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x13 - Cured Duck.mp4
+    title: Disney Animated Shorts - 1945x13 - Cured Duck
+  - id: disneyanimatedshorts_0151
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1945x15 - Old Sequoia.mp4
+    title: Disney Animated Shorts - 1945x15 - Old Sequoia
+  - id: disneyanimatedshorts_0152
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x02 - Pluto's Kid Brother.mp4
+    title: Disney Animated Shorts - 1946x02 - Pluto's Kid Brother
+  - id: disneyanimatedshorts_0153
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x04 - Squatter's Rights.mp4
+    title: Disney Animated Shorts - 1946x04 - Squatter's Rights
+  - id: disneyanimatedshorts_0154
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x05 - Donald's Double Trouble.mp4
+    title: Disney Animated Shorts - 1946x05 - Donald's Double Trouble
+  - id: disneyanimatedshorts_0155
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x07 - A Feather in His Collar.mp4
+    title: Disney Animated Shorts - 1946x07 - A Feather in His Collar
+  - id: disneyanimatedshorts_0156
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x08 - Wet Paint.mp4
+    title: Disney Animated Shorts - 1946x08 - Wet Paint
+  - id: disneyanimatedshorts_0157
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x10 - Lighthouse Keeping.mp4
+    title: Disney Animated Shorts - 1946x10 - Lighthouse Keeping
+  - id: disneyanimatedshorts_0158
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1946x12 - Frank Duck Brings 'em Back Alive.mp4
+    title: Disney Animated Shorts - 1946x12 - Frank Duck Brings 'em Back Alive
+  - id: disneyanimatedshorts_0159
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x03 - Straight Shooters.mp4
+    title: Disney Animated Shorts - 1947x03 - Straight Shooters
+  - id: disneyanimatedshorts_0160
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x05 - Clown of the Jungle.mp4
+    title: Disney Animated Shorts - 1947x05 - Clown of the Jungle
+  - id: disneyanimatedshorts_0161
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x06 - Sleepy Time Donald.mp4
+    title: Disney Animated Shorts - 1947x06 - Sleepy Time Donald
+  - id: disneyanimatedshorts_0162
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x07 - Donald's Dilemma.mp4
+    title: Disney Animated Shorts - 1947x07 - Donald's Dilemma
+  - id: disneyanimatedshorts_0163
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x08 - Crazy with the Heat.mp4
+    title: Disney Animated Shorts - 1947x08 - Crazy with the Heat
+  - id: disneyanimatedshorts_0164
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x09 - Bootle Beetle.mp4
+    title: Disney Animated Shorts - 1947x09 - Bootle Beetle
+  - id: disneyanimatedshorts_0165
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x10 - Wide Open Spaces.mp4
+    title: Disney Animated Shorts - 1947x10 - Wide Open Spaces
+  - id: disneyanimatedshorts_0166
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x11 - Mickey's Delayed Date.mp4
+    title: Disney Animated Shorts - 1947x11 - Mickey's Delayed Date
+  - id: disneyanimatedshorts_0167
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x12 - Foul Hunting.mp4
+    title: Disney Animated Shorts - 1947x12 - Foul Hunting
+  - id: disneyanimatedshorts_0168
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1947x14 - Chip an' Dale.mp4
+    title: Disney Animated Shorts - 1947x14 - Chip an' Dale
+  - id: disneyanimatedshorts_0169
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x03 - Drip Dippy Donald.mp4
+    title: Disney Animated Shorts - 1948x03 - Drip Dippy Donald
+  - id: disneyanimatedshorts_0170
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x04 - Mickey Down Under.mp4
+    title: Disney Animated Shorts - 1948x04 - Mickey Down Under
+  - id: disneyanimatedshorts_0171
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x07 - Donald's Dream Voice.mp4
+    title: Disney Animated Shorts - 1948x07 - Donald's Dream Voice
+  - id: disneyanimatedshorts_0172
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x09 - The Trial of Donald Duck.mp4
+    title: Disney Animated Shorts - 1948x09 - The Trial of Donald Duck
+  - id: disneyanimatedshorts_0173
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x11 - Inferior Decorator.mp4
+    title: Disney Animated Shorts - 1948x11 - Inferior Decorator
+  - id: disneyanimatedshorts_0174
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x13 - Soup's On.mp4
+    title: Disney Animated Shorts - 1948x13 - Soup's On
+  - id: disneyanimatedshorts_0175
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x14 - Three for Breakfast.mp4
+    title: Disney Animated Shorts - 1948x14 - Three for Breakfast
+  - id: disneyanimatedshorts_0176
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x15 - Mickey and the Seal.mp4
+    title: Disney Animated Shorts - 1948x15 - Mickey and the Seal
+  - id: disneyanimatedshorts_0177
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1948x16 - Tea for Two Hundred.mp4
+    title: Disney Animated Shorts - 1948x16 - Tea for Two Hundred
+  - id: disneyanimatedshorts_0178
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x02 - Donald's Happy Birthday.mp4
+    title: Disney Animated Shorts - 1949x02 - Donald's Happy Birthday
+  - id: disneyanimatedshorts_0179
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x04 - Sea Salts.mp4
+    title: Disney Animated Shorts - 1949x04 - Sea Salts
+  - id: disneyanimatedshorts_0180
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x05 - Pluto's Sweater.mp4
+    title: Disney Animated Shorts - 1949x05 - Pluto's Sweater
+  - id: disneyanimatedshorts_0181
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x06 - Winter Storage.mp4
+    title: Disney Animated Shorts - 1949x06 - Winter Storage
+  - id: disneyanimatedshorts_0182
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x08 - Honey Harvester.mp4
+    title: Disney Animated Shorts - 1949x08 - Honey Harvester
+  - id: disneyanimatedshorts_0183
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x10 - All in a Nutshell.mp4
+    title: Disney Animated Shorts - 1949x10 - All in a Nutshell
+  - id: disneyanimatedshorts_0184
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x11 - Goofy Gymnastics.mp4
+    title: Disney Animated Shorts - 1949x11 - Goofy Gymnastics
+  - id: disneyanimatedshorts_0185
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x12 - The Greener Yard.mp4
+    title: Disney Animated Shorts - 1949x12 - The Greener Yard
+  - id: disneyanimatedshorts_0186
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x14 - Slide Donald Slide.mp4
+    title: Disney Animated Shorts - 1949x14 - Slide Donald Slide
+  - id: disneyanimatedshorts_0187
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1949x15 - Toy Tinkers.mp4
+    title: Disney Animated Shorts - 1949x15 - Toy Tinkers
+  - id: disneyanimatedshorts_0188
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x02 - Lion Around.mp4
+    title: Disney Animated Shorts - 1950x02 - Lion Around
+  - id: disneyanimatedshorts_0189
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x05 - Crazy Over Daisy.mp4
+    title: Disney Animated Shorts - 1950x05 - Crazy Over Daisy
+  - id: disneyanimatedshorts_0190
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x07 - Trailer Horn.mp4
+    title: Disney Animated Shorts - 1950x07 - Trailer Horn
+  - id: disneyanimatedshorts_0191
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x08 - Primitive Pluto.mp4
+    title: Disney Animated Shorts - 1950x08 - Primitive Pluto
+  - id: disneyanimatedshorts_0192
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x13 - Hook, Lion and Sinker.mp4
+    title: Disney Animated Shorts - 1950x13 - Hook, Lion and Sinker
+  - id: disneyanimatedshorts_0193
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x15 - Bee at the Beach.mp4
+    title: Disney Animated Shorts - 1950x15 - Bee at the Beach
+  - id: disneyanimatedshorts_0194
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x16 - Hold That Pose.mp4
+    title: Disney Animated Shorts - 1950x16 - Hold That Pose
+  - id: disneyanimatedshorts_0195
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1950x18 - Out on a Limb.mp4
+    title: Disney Animated Shorts - 1950x18 - Out on a Limb
+  - id: disneyanimatedshorts_0196
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x04 - Dude Duck.mp4
+    title: Disney Animated Shorts - 1951x04 - Dude Duck
+  - id: disneyanimatedshorts_0197
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x05 - Home Made Home.mp4
+    title: Disney Animated Shorts - 1951x05 - Home Made Home
+  - id: disneyanimatedshorts_0198
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x06 - Corn Chips.mp4
+    title: Disney Animated Shorts - 1951x06 - Corn Chips
+  - id: disneyanimatedshorts_0199
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x08 - Plutopia.mp4
+    title: Disney Animated Shorts - 1951x08 - Plutopia
+  - id: disneyanimatedshorts_0200
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x09 - Test Pilot Donald.mp4
+    title: Disney Animated Shorts - 1951x09 - Test Pilot Donald
+  - id: disneyanimatedshorts_0201
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x11 - Lucky Number.mp4
+    title: Disney Animated Shorts - 1951x11 - Lucky Number
+  - id: disneyanimatedshorts_0202
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x12 - R'coon Dawg.mp4
+    title: Disney Animated Shorts - 1951x12 - R'coon Dawg
+  - id: disneyanimatedshorts_0203
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x13 - Get Rich Quick.mp4
+    title: Disney Animated Shorts - 1951x13 - Get Rich Quick
+  - id: disneyanimatedshorts_0204
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x16 - Out of Scale.mp4
+    title: Disney Animated Shorts - 1951x16 - Out of Scale
+  - id: disneyanimatedshorts_0205
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1951x18 - Bee on Guard.mp4
+    title: Disney Animated Shorts - 1951x18 - Bee on Guard
+  - id: disneyanimatedshorts_0206
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x02 - Donald Applecore.mp4
+    title: Disney Animated Shorts - 1952x02 - Donald Applecore
+  - id: disneyanimatedshorts_0207
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x04 - Hello Aloha.mp4
+    title: Disney Animated Shorts - 1952x04 - Hello Aloha
+  - id: disneyanimatedshorts_0208
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x07 - Let's Stick Together.mp4
+    title: Disney Animated Shorts - 1952x07 - Let's Stick Together
+  - id: disneyanimatedshorts_0209
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x11 - Uncle Donald's Ants.mp4
+    title: Disney Animated Shorts - 1952x11 - Uncle Donald's Ants
+  - id: disneyanimatedshorts_0210
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x13 - Pluto's Party.mp4
+    title: Disney Animated Shorts - 1952x13 - Pluto's Party
+  - id: disneyanimatedshorts_0211
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x14 - Trick or Treat.mp4
+    title: Disney Animated Shorts - 1952x14 - Trick or Treat
+  - id: disneyanimatedshorts_0212
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x16 - Pluto's Christmas Tree.mp4
+    title: Disney Animated Shorts - 1952x16 - Pluto's Christmas Tree
+  - id: disneyanimatedshorts_0213
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1952x17 - How to Be a Detective.mp4
+    title: Disney Animated Shorts - 1952x17 - How to Be a Detective
+  - id: disneyanimatedshorts_0214
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x02 - The Simple Things.mp4
+    title: Disney Animated Shorts - 1953x02 - The Simple Things
+  - id: disneyanimatedshorts_0215
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x03 - For Whom the Bulls Toil.mp4
+    title: Disney Animated Shorts - 1953x03 - For Whom the Bulls Toil
+  - id: disneyanimatedshorts_0216
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x05 - Don's Fountain of Youth.mp4
+    title: Disney Animated Shorts - 1953x05 - Don's Fountain of Youth
+  - id: disneyanimatedshorts_0217
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x06 - Father's Week-end.mp4
+    title: Disney Animated Shorts - 1953x06 - Father's Week-end
+  - id: disneyanimatedshorts_0218
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x07 - How to Dance.mp4
+    title: Disney Animated Shorts - 1953x07 - How to Dance
+  - id: disneyanimatedshorts_0219
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x08 - The New Neighbor.mp4
+    title: Disney Animated Shorts - 1953x08 - The New Neighbor
+  - id: disneyanimatedshorts_0220
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x10 - Rugged Bear.mp4
+    title: Disney Animated Shorts - 1953x10 - Rugged Bear
+  - id: disneyanimatedshorts_0221
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x12 - Working for Peanuts.mp4
+    title: Disney Animated Shorts - 1953x12 - Working for Peanuts
+  - id: disneyanimatedshorts_0222
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x14 - How to Sleep.mp4
+    title: Disney Animated Shorts - 1953x14 - How to Sleep
+  - id: disneyanimatedshorts_0223
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1953x15 - Canvas Back Duck.mp4
+    title: Disney Animated Shorts - 1953x15 - Canvas Back Duck
+  - id: disneyanimatedshorts_0224
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1954x01 - Spare the Rod.mp4
+    title: Disney Animated Shorts - 1954x01 - Spare the Rod
+  - id: disneyanimatedshorts_0225
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1954x02 - Donald's Diary.mp4
+    title: Disney Animated Shorts - 1954x02 - Donald's Diary
+  - id: disneyanimatedshorts_0226
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1954x06 - Dragon Around.mp4
+    title: Disney Animated Shorts - 1954x06 - Dragon Around
+  - id: disneyanimatedshorts_0227
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1954x07 - Grin and Bear It.mp4
+    title: Disney Animated Shorts - 1954x07 - Grin and Bear It
+  - id: disneyanimatedshorts_0228
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1954x09 - The Flying Squirrel.mp4
+    title: Disney Animated Shorts - 1954x09 - The Flying Squirrel
+  - id: disneyanimatedshorts_0229
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1954x10 - Grand Canyonscope.mp4
+    title: Disney Animated Shorts - 1954x10 - Grand Canyonscope
+  - id: disneyanimatedshorts_0230
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1955x01 - No Hunting.mp4
+    title: Disney Animated Shorts - 1955x01 - No Hunting
+  - id: disneyanimatedshorts_0231
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1955x02 - Bearly Asleep.mp4
+    title: Disney Animated Shorts - 1955x02 - Bearly Asleep
+  - id: disneyanimatedshorts_0232
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1955x03 - Beezy Bear.mp4
+    title: Disney Animated Shorts - 1955x03 - Beezy Bear
+  - id: disneyanimatedshorts_0233
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1955x04 - Up a Tree.mp4
+    title: Disney Animated Shorts - 1955x04 - Up a Tree
+  - id: disneyanimatedshorts_0234
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1956x01 - Chips Ahoy.mp4
+    title: Disney Animated Shorts - 1956x01 - Chips Ahoy
+  - id: disneyanimatedshorts_0235
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1956x03 - How to Have an Accident in the Home.mp4
+    title: Disney Animated Shorts - 1956x03 - How to Have an Accident in the Home
+  - id: disneyanimatedshorts_0236
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1959x02 - How to Have an Accident at Work.mp4
+    title: Disney Animated Shorts - 1959x02 - How to Have an Accident at Work
+  - id: disneyanimatedshorts_0237
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1961x03 - The Litterbug.mp4
+    title: Disney Animated Shorts - 1961x03 - The Litterbug
+  - id: disneyanimatedshorts_0238
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1961x04 - Donald and the Wheel.mp4
+    title: Disney Animated Shorts - 1961x04 - Donald and the Wheel
+  - id: disneyanimatedshorts_0239
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1983x02 - Mickey's Christmas Carol.mp4
+    title: Disney Animated Shorts - 1983x02 - Mickey's Christmas Carol
+  - id: disneyanimatedshorts_0240
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - 1995x01 - Runaway Brain.mp4
+    title: Disney Animated Shorts - 1995x01 - Runaway Brain
+  - id: disneyanimatedshorts_0241
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - Brave Little Tailor  .mp4
+    title: Disney Animated Shorts - Brave Little Tailor
+  - id: disneyanimatedshorts_0242
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - Daddy Duck.mp4
+    title: Disney Animated Shorts - Daddy Duck
+  - id: disneyanimatedshorts_0243
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - Mickey's Gala Premier.mp4
+    title: Disney Animated Shorts - Mickey's Gala Premier
+  - id: disneyanimatedshorts_0244
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - The Birthday Party  .mp4
+    title: Disney Animated Shorts - The Birthday Party
+  - id: disneyanimatedshorts_0245
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - The Chain Gang.mp4
+    title: Disney Animated Shorts - The Chain Gang
+  - id: disneyanimatedshorts_0246
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - The Fire Fighters.mp4
+    title: Disney Animated Shorts - The Fire Fighters
+  - id: disneyanimatedshorts_0247
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      - The Haunted House (1929).mp4
+    title: Disney Animated Shorts - The Haunted House (1929)
+  - id: disneyanimatedshorts_0248
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Disney Animated Shorts
+      The Plow Boy.mp4
+    title: Disney Animated Shorts The Plow Boy
+  - id: disneyanimatedshorts_0249
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Education for Death The
+      Making of the Nazi (1943).mp4
+    title: Education for Death The Making of the Nazi (1943)
+  - id: disneyanimatedshorts_0250
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Moving Day (1936).mp4
+    title: Moving Day (1936)
+  - id: disneyanimatedshorts_0251
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/The Band Concert (1935).mp4
+    title: The Band Concert (1935)
+  - id: disneyanimatedshorts_0252
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/The Cousin (1997).mp4
+    title: The Cousin (1997)
+  - id: disneyanimatedshorts_0253
+    collection: Disney Animated Shorts (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/disneyanimatedshorts/Toy Tinkers (1949).mp4
+    title: Toy Tinkers (1949)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0001
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/01
+      - The Skeleton Dance (1929).ia.mp4
+    title: 01 - The Skeleton Dance (1929).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0002
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/01
+      - The Skeleton Dance (1929).mp4
+    title: 01 - The Skeleton Dance (1929)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0003
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/02
+      - El Terrible Toreador (1929).ia.mp4
+    title: 02 - El Terrible Toreador (1929).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0004
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/02
+      - El Terrible Toreador (1929).mp4
+    title: 02 - El Terrible Toreador (1929)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0005
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/03
+      - Springtime (1929).ia.mp4
+    title: 03 - Springtime (1929).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0006
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/03
+      - Springtime (1929).mp4
+    title: 03 - Springtime (1929)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0007
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/04
+      - Hell's Bells (1929).ia.mp4
+    title: 04 - Hell's Bells (1929).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0008
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/04
+      - Hell's Bells (1929).mp4
+    title: 04 - Hell's Bells (1929)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0009
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/05
+      - The Merry Dwarfs (1929).ia.mp4
+    title: 05 - The Merry Dwarfs (1929).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0010
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/05
+      - The Merry Dwarfs (1929).mp4
+    title: 05 - The Merry Dwarfs (1929)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0011
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/06
+      - Summer (1930).ia.mp4
+    title: 06 - Summer (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0012
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/06
+      - Summer (1930).mp4
+    title: 06 - Summer (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0013
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/07
+      - Autumn (1930).ia.mp4
+    title: 07 - Autumn (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0014
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/07
+      - Autumn (1930).mp4
+    title: 07 - Autumn (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0015
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/08
+      - Cannibal Capers (1930).ia.mp4
+    title: 08 - Cannibal Capers (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0016
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/08
+      - Cannibal Capers (1930).mp4
+    title: 08 - Cannibal Capers (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0017
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/09
+      - Night (1930).ia.mp4
+    title: 09 - Night (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0018
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/09
+      - Night (1930).mp4
+    title: 09 - Night (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0019
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/10
+      - Frolicking Fish (1930).ia.mp4
+    title: 10 - Frolicking Fish (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0020
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/10
+      - Frolicking Fish (1930).mp4
+    title: 10 - Frolicking Fish (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0021
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/11
+      - Arctic Antics (1930).ia.mp4
+    title: 11 - Arctic Antics (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0022
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/11
+      - Arctic Antics (1930).mp4
+    title: 11 - Arctic Antics (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0023
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/12
+      - Midnight In A Toyshop (1930).ia.mp4
+    title: 12 - Midnight In A Toyshop (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0024
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/12
+      - Midnight In A Toyshop (1930).mp4
+    title: 12 - Midnight In A Toyshop (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0025
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/13
+      - Monkey Melodies (1930).ia.mp4
+    title: 13 - Monkey Melodies (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0026
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/13
+      - Monkey Melodies (1930).mp4
+    title: 13 - Monkey Melodies (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0027
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/14
+      - Winter (1930).ia.mp4
+    title: 14 - Winter (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0028
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/14
+      - Winter (1930).mp4
+    title: 14 - Winter (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0029
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/15
+      - Playful Pan (1930).ia.mp4
+    title: 15 - Playful Pan (1930).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0030
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/15
+      - Playful Pan (1930).mp4
+    title: 15 - Playful Pan (1930)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0031
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/16
+      - Mother Goose Melodies (1931).ia.mp4
+    title: 16 - Mother Goose Melodies (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0032
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/16
+      - Mother Goose Melodies (1931).mp4
+    title: 16 - Mother Goose Melodies (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0033
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/17
+      - Birds Of A Feather (1931).ia.mp4
+    title: 17 - Birds Of A Feather (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0034
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/17
+      - Birds Of A Feather (1931).mp4
+    title: 17 - Birds Of A Feather (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0035
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/18
+      - The China Plate (1931).ia.mp4
+    title: 18 - The China Plate (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0036
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/18
+      - The China Plate (1931).mp4
+    title: 18 - The China Plate (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0037
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/19
+      - The Busy Beavers (1931).ia.mp4
+    title: 19 - The Busy Beavers (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0038
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/19
+      - The Busy Beavers (1931).mp4
+    title: 19 - The Busy Beavers (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0039
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/20
+      - The Cat's Out (1931).ia.mp4
+    title: 20 - The Cat's Out (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0040
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/20
+      - The Cat's Out (1931).mp4
+    title: 20 - The Cat's Out (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0041
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/21
+      - Egyptian Melodies (1931).ia.mp4
+    title: 21 - Egyptian Melodies (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0042
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/21
+      - Egyptian Melodies (1931).mp4
+    title: 21 - Egyptian Melodies (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0043
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/22
+      - The Clock Store (1931).ia.mp4
+    title: 22 - The Clock Store (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0044
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/22
+      - The Clock Store (1931).mp4
+    title: 22 - The Clock Store (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0045
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/23
+      - The Spider And The Fly (1931).ia.mp4
+    title: 23 - The Spider And The Fly (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0046
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/23
+      - The Spider And The Fly (1931).mp4
+    title: 23 - The Spider And The Fly (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0047
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/24
+      - The Fox Hunt (1931).ia.mp4
+    title: 24 - The Fox Hunt (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0048
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/24
+      - The Fox Hunt (1931).mp4
+    title: 24 - The Fox Hunt (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0049
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/25
+      - The Ugly Duckling (1931).ia.mp4
+    title: 25 - The Ugly Duckling (1931).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0050
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/25
+      - The Ugly Duckling (1931).mp4
+    title: 25 - The Ugly Duckling (1931)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0051
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/26
+      - The Bird Store (1932).ia.mp4
+    title: 26 - The Bird Store (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0052
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/26
+      - The Bird Store (1932).mp4
+    title: 26 - The Bird Store (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0053
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/27
+      - The Bears And The Bees (1932).ia.mp4
+    title: 27 - The Bears And The Bees (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0054
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/27
+      - The Bears And The Bees (1932).mp4
+    title: 27 - The Bears And The Bees (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0055
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/28
+      - Just Dogs (1932).ia.mp4
+    title: 28 - Just Dogs (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0056
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/28
+      - Just Dogs (1932).mp4
+    title: 28 - Just Dogs (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0057
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/29
+      - Flowers And Trees (1932).ia.mp4
+    title: 29 - Flowers And Trees (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0058
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/29
+      - Flowers And Trees (1932).mp4
+    title: 29 - Flowers And Trees (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0059
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/30
+      - King Neptune (1932).ia.mp4
+    title: 30 - King Neptune (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0060
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/30
+      - King Neptune (1932).mp4
+    title: 30 - King Neptune (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0061
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/31
+      - Bugs In Love (1932).ia.mp4
+    title: 31 - Bugs In Love (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0062
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/31
+      - Bugs In Love (1932).mp4
+    title: 31 - Bugs In Love (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0063
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/32
+      - Babes In The Woods (1932).ia.mp4
+    title: 32 - Babes In The Woods (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0064
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/32
+      - Babes In The Woods (1932).mp4
+    title: 32 - Babes In The Woods (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0065
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/33
+      - Santa's Workshop (1932).ia.mp4
+    title: 33 - Santa's Workshop (1932).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0066
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/33
+      - Santa's Workshop (1932).mp4
+    title: 33 - Santa's Workshop (1932)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0067
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/34
+      - Birds In The Spring (1933).ia.mp4
+    title: 34 - Birds In The Spring (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0068
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/34
+      - Birds In The Spring (1933).mp4
+    title: 34 - Birds In The Spring (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0069
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/35
+      - Father Noah's Ark (1933).ia.mp4
+    title: 35 - Father Noah's Ark (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0070
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/35
+      - Father Noah's Ark (1933).mp4
+    title: 35 - Father Noah's Ark (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0071
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/36
+      - Three Little Pigs (1933).ia.mp4
+    title: 36 - Three Little Pigs (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0072
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/36
+      - Three Little Pigs (1933).mp4
+    title: 36 - Three Little Pigs (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0073
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/37
+      - Old King Cole (1933).ia.mp4
+    title: 37 - Old King Cole (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0074
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/37
+      - Old King Cole (1933).mp4
+    title: 37 - Old King Cole (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0075
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/38
+      - Lullaby Land (1933).ia.mp4
+    title: 38 - Lullaby Land (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0076
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/38
+      - Lullaby Land (1933).mp4
+    title: 38 - Lullaby Land (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0077
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/39
+      - The Pied Piper (1933).ia.mp4
+    title: 39 - The Pied Piper (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0078
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/39
+      - The Pied Piper (1933).mp4
+    title: 39 - The Pied Piper (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0079
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/40
+      - The Night Before Christmas (1933).ia.mp4
+    title: 40 - The Night Before Christmas (1933).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0080
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/40
+      - The Night Before Christmas (1933).mp4
+    title: 40 - The Night Before Christmas (1933)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0081
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/41
+      - The China Shop (1934).ia.mp4
+    title: 41 - The China Shop (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0082
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/41
+      - The China Shop (1934).mp4
+    title: 41 - The China Shop (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0083
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/42
+      - The Grasshopper And The Ants (1934).ia.mp4
+    title: 42 - The Grasshopper And The Ants (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0084
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/42
+      - The Grasshopper And The Ants (1934).mp4
+    title: 42 - The Grasshopper And The Ants (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0085
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/43
+      - Funny Little Bunnies (1934).ia.mp4
+    title: 43 - Funny Little Bunnies (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0086
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/43
+      - Funny Little Bunnies (1934).mp4
+    title: 43 - Funny Little Bunnies (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0087
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/44
+      - The Big Bad Wolf (1934).ia.mp4
+    title: 44 - The Big Bad Wolf (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0088
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/44
+      - The Big Bad Wolf (1934).mp4
+    title: 44 - The Big Bad Wolf (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0089
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/45
+      - The Wise Little Hen (1934).ia.mp4
+    title: 45 - The Wise Little Hen (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0090
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/45
+      - The Wise Little Hen (1934).mp4
+    title: 45 - The Wise Little Hen (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0091
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/46
+      - The Flying Mouse (1934).ia.mp4
+    title: 46 - The Flying Mouse (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0092
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/46
+      - The Flying Mouse (1934).mp4
+    title: 46 - The Flying Mouse (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0093
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/47
+      - Peculiar Penguins (1934).ia.mp4
+    title: 47 - Peculiar Penguins (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0094
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/47
+      - Peculiar Penguins (1934).mp4
+    title: 47 - Peculiar Penguins (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0095
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/48
+      - The Goddess Of Spring (1934).ia.mp4
+    title: 48 - The Goddess Of Spring (1934).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0096
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/48
+      - The Goddess Of Spring (1934).mp4
+    title: 48 - The Goddess Of Spring (1934)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0097
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/49
+      - The Tortoise And The Hare (1935).ia.mp4
+    title: 49 - The Tortoise And The Hare (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0098
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/49
+      - The Tortoise And The Hare (1935).mp4
+    title: 49 - The Tortoise And The Hare (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0099
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/50
+      - The Golden Touch (1935).ia.mp4
+    title: 50 - The Golden Touch (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0100
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/50
+      - The Golden Touch (1935).mp4
+    title: 50 - The Golden Touch (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0101
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/51-
+      The Robber Kitten (1935).ia.mp4
+    title: 51- The Robber Kitten (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0102
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/51-
+      The Robber Kitten (1935).mp4
+    title: 51- The Robber Kitten (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0103
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/52
+      - Water Babies (1935).ia.mp4
+    title: 52 - Water Babies (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0104
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/52
+      - Water Babies (1935).mp4
+    title: 52 - Water Babies (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0105
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/53
+      - The Cookie Carnival (1935).ia.mp4
+    title: 53 - The Cookie Carnival (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0106
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/53
+      - The Cookie Carnival (1935).mp4
+    title: 53 - The Cookie Carnival (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0107
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/54
+      - Who Killed Cock Robin (1935).ia.mp4
+    title: 54 - Who Killed Cock Robin (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0108
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/54
+      - Who Killed Cock Robin (1935).mp4
+    title: 54 - Who Killed Cock Robin (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0109
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/55
+      - Music Land (1935).ia.mp4
+    title: 55 - Music Land (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0110
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/55
+      - Music Land (1935).mp4
+    title: 55 - Music Land (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0111
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/56
+      - Three Orphan Kittens (1935).ia.mp4
+    title: 56 - Three Orphan Kittens (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0112
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/56
+      - Three Orphan Kittens (1935).mp4
+    title: 56 - Three Orphan Kittens (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0113
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/57
+      - Cock O' The Walk (1935).ia.mp4
+    title: 57 - Cock O' The Walk (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0114
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/57
+      - Cock O' The Walk (1935).mp4
+    title: 57 - Cock O' The Walk (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0115
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/58
+      - Broken Toys (1935).ia.mp4
+    title: 58 - Broken Toys (1935).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0116
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/58
+      - Broken Toys (1935).mp4
+    title: 58 - Broken Toys (1935)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0117
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/59
+      - Elmer Elephant (1936).ia.mp4
+    title: 59 - Elmer Elephant (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0118
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/59
+      - Elmer Elephant (1936).mp4
+    title: 59 - Elmer Elephant (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0119
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/60
+      - Three Little Wolves (1936).ia.mp4
+    title: 60 - Three Little Wolves (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0120
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/60
+      - Three Little Wolves (1936).mp4
+    title: 60 - Three Little Wolves (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0121
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/61
+      - Toby Tortoise Returns (1936).ia.mp4
+    title: 61 - Toby Tortoise Returns (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0122
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/61
+      - Toby Tortoise Returns (1936).mp4
+    title: 61 - Toby Tortoise Returns (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0123
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/62
+      - Three Blind Mousketeers (1936).ia.mp4
+    title: 62 - Three Blind Mousketeers (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0124
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/62
+      - Three Blind Mousketeers (1936).mp4
+    title: 62 - Three Blind Mousketeers (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0125
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/63
+      - The Country Cousin (1936).ia.mp4
+    title: 63 - The Country Cousin (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0126
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/63
+      - The Country Cousin (1936).mp4
+    title: 63 - The Country Cousin (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0127
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/64
+      - Mother Pluto (1936).ia.mp4
+    title: 64 - Mother Pluto (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0128
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/64
+      - Mother Pluto (1936).mp4
+    title: 64 - Mother Pluto (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0129
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/65
+      - More Kittens (1936).ia.mp4
+    title: 65 - More Kittens (1936).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0130
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/65
+      - More Kittens (1936).mp4
+    title: 65 - More Kittens (1936)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0131
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/66
+      - Woodland Café (1937).ia.mp4
+    title: 66 - Woodland Café (1937).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0132
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/66
+      - Woodland Café (1937).mp4
+    title: 66 - Woodland Café (1937)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0133
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/67
+      - Little Hiawatha (1937).ia.mp4
+    title: 67 - Little Hiawatha (1937).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0134
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/67
+      - Little Hiawatha (1937).mp4
+    title: 67 - Little Hiawatha (1937)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0135
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/68
+      - The Old Mill (1937).ia.mp4
+    title: 68 - The Old Mill (1937).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0136
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/68
+      - The Old Mill (1937).mp4
+    title: 68 - The Old Mill (1937)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0137
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/69
+      - The Moth And The Flame (1938).ia.mp4
+    title: 69 - The Moth And The Flame (1938).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0138
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/69
+      - The Moth And The Flame (1938).mp4
+    title: 69 - The Moth And The Flame (1938)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0139
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/70
+      - Wynken, Blynken And Nod (1938).ia.mp4
+    title: 70 - Wynken, Blynken And Nod (1938).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0140
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/70
+      - Wynken, Blynken And Nod (1938).mp4
+    title: 70 - Wynken, Blynken And Nod (1938)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0141
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/71
+      - Farmyard Symphony (1938).ia.mp4
+    title: 71 - Farmyard Symphony (1938).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0142
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/71
+      - Farmyard Symphony (1938).mp4
+    title: 71 - Farmyard Symphony (1938)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0143
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/72
+      - Merbabies (1938).ia.mp4
+    title: 72 - Merbabies (1938).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0144
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/72
+      - Merbabies (1938).mp4
+    title: 72 - Merbabies (1938)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0145
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/73
+      - Mother Goose Goes Hollywood (1938).ia.mp4
+    title: 73 - Mother Goose Goes Hollywood (1938).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0146
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/73
+      - Mother Goose Goes Hollywood (1938).mp4
+    title: 73 - Mother Goose Goes Hollywood (1938)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0147
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/74
+      - The Practical Pig (1939).ia.mp4
+    title: 74 - The Practical Pig (1939).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0148
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/74
+      - The Practical Pig (1939).mp4
+    title: 74 - The Practical Pig (1939)
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0149
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/75
+      - The Ugly Duckling (1939).ia.mp4
+    title: 75 - The Ugly Duckling (1939).ia
+  - id: walt-disneys-silly-symphonies-the-complete-collection-1929-39_0150
+    collection: Silly Symphonies (1929-1939) (MP4)
+    type: event
+    source: archive
+    url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/75
+      - The Ugly Duckling (1939).mp4
+    title: 75 - The Ugly Duckling (1939)
