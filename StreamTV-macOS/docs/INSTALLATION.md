@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - pip (Python package manager)
 - FFmpeg (optional, for advanced streaming features)
 
@@ -98,6 +98,27 @@ Build and run:
 docker build -t streamtv .
 docker run -p 8410:8410 -v $(pwd)/config.yaml:/app/config.yaml streamtv
 ```
+
+## Browser Compatibility
+
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with modern browsers:
+
+- **Chrome/Edge**: Full HLS support via HLS.js library
+- **Safari**: Native HLS support (no additional libraries needed)
+- **Firefox**: Full HLS support via HLS.js library
+
+The web player automatically detects browser capabilities and uses the best available method. For best results:
+- Use a modern browser with JavaScript enabled
+- Ensure your browser is up to date
+- If playback fails, try using VLC Media Player with the M3U playlist
+
+### Troubleshooting Browser Playback
+
+If channels don't play in the browser:
+1. Check browser console for errors (F12 → Console)
+2. Verify HLS endpoint is accessible: `curl http://localhost:8410/iptv/channel/{number}.m3u8`
+3. Try a different browser
+4. Use VLC Media Player with the M3U playlist: `http://localhost:8410/iptv/channels.m3u`
 
 ## Configuration Options
 

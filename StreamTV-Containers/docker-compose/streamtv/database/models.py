@@ -20,6 +20,51 @@ class PlayoutMode(str, Enum):
     ON_DEMAND = "on_demand"    # On-demand streaming (starts from beginning when requested)
 
 
+# Enums needed for Channel model (must be defined before Channel)
+class StreamingMode(str, Enum):
+    TRANSPORT_STREAM = "transport_stream"
+    HTTP_LIVE_STREAMING_DIRECT = "http_live_streaming_direct"
+    HTTP_LIVE_STREAMING_SEGMENTER = "http_live_streaming_segmenter"
+    TRANSPORT_STREAM_HYBRID = "transport_stream_hybrid"
+
+
+class ChannelTranscodeMode(str, Enum):
+    ON_DEMAND = "on_demand"
+
+
+class ChannelSubtitleMode(str, Enum):
+    NONE = "none"
+    FORCED = "forced"
+    DEFAULT = "default"
+    ANY = "any"
+
+
+class ChannelStreamSelectorMode(str, Enum):
+    DEFAULT = "default"
+    CUSTOM = "custom"
+    TROUBLESHOOTING = "troubleshooting"
+
+
+class ChannelMusicVideoCreditsMode(str, Enum):
+    NONE = "none"
+    GENERATE_SUBTITLES = "generate_subtitles"
+
+
+class ChannelSongVideoMode(str, Enum):
+    DEFAULT = "default"
+    WITH_PROGRESS = "with_progress"
+
+
+class ChannelIdleBehavior(str, Enum):
+    STOP_ON_DISCONNECT = "stop_on_disconnect"
+    KEEP_RUNNING = "keep_running"
+
+
+class ChannelPlayoutSource(str, Enum):
+    GENERATED = "generated"
+    MIRROR = "mirror"
+
+
 class Channel(Base):
     """TV Channel model"""
     __tablename__ = "channels"
@@ -30,13 +75,39 @@ class Channel(Base):
     group = Column(String, nullable=True)
     enabled = Column(Boolean, default=True)
     logo_path = Column(String, nullable=True)
+    # Authoritative source flags and transcoding presets
+    is_yaml_source = Column(Boolean, default=False, nullable=False)
+    transcode_profile = Column(String, nullable=True)  # e.g., "cpu", "nvidia", "intel" (legacy, use ffmpeg_profile_id instead)
     playout_mode = Column(SQLEnum(PlayoutMode), default=PlayoutMode.CONTINUOUS, nullable=False)  # Continuous or on-demand
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    # ErsatzTV-compatible settings
+    ffmpeg_profile_id = Column(Integer, ForeignKey("ffmpeg_profiles.id"), nullable=True)
+    watermark_id = Column(Integer, ForeignKey("watermarks.id"), nullable=True)
+    streaming_mode = Column(SQLEnum(StreamingMode), default=StreamingMode.TRANSPORT_STREAM_HYBRID, nullable=False)
+    transcode_mode = Column(SQLEnum(ChannelTranscodeMode), default=ChannelTranscodeMode.ON_DEMAND, nullable=False)
+    subtitle_mode = Column(SQLEnum(ChannelSubtitleMode), default=ChannelSubtitleMode.NONE, nullable=False)
+    preferred_audio_language_code = Column(String, nullable=True)  # ISO 639-1 code
+    preferred_audio_title = Column(String, nullable=True)
+    preferred_subtitle_language_code = Column(String, nullable=True)  # ISO 639-1 code
+    stream_selector_mode = Column(SQLEnum(ChannelStreamSelectorMode), default=ChannelStreamSelectorMode.DEFAULT, nullable=False)
+    stream_selector = Column(String, nullable=True)  # Custom stream selector expression
+    music_video_credits_mode = Column(SQLEnum(ChannelMusicVideoCreditsMode), default=ChannelMusicVideoCreditsMode.NONE, nullable=False)
+    music_video_credits_template = Column(Text, nullable=True)
+    song_video_mode = Column(SQLEnum(ChannelSongVideoMode), default=ChannelSongVideoMode.DEFAULT, nullable=False)
+    idle_behavior = Column(SQLEnum(ChannelIdleBehavior), default=ChannelIdleBehavior.STOP_ON_DISCONNECT, nullable=False)
+    playout_source = Column(SQLEnum(ChannelPlayoutSource), default=ChannelPlayoutSource.GENERATED, nullable=False)
+    mirror_source_channel_id = Column(Integer, ForeignKey("channels.id"), nullable=True)
+    playout_offset = Column(Integer, nullable=True)  # Offset in seconds
+    show_in_epg = Column(Boolean, default=True, nullable=False)
+    
     # Relationships
     schedules = relationship("Schedule", back_populates="channel", cascade="all, delete-orphan")
     playlists = relationship("Playlist", back_populates="channel", cascade="all, delete-orphan")
+    ffmpeg_profile = relationship("FFmpegProfile", back_populates="channels")
+    watermark = relationship("Watermark", back_populates="channels")
+    mirror_source_channel = relationship("Channel", remote_side=[id], foreign_keys=[mirror_source_channel_id])
 
 
 class MediaItem(Base):
@@ -196,6 +267,8 @@ class Schedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)  # Schedule name
     channel_id = Column(Integer, ForeignKey("channels.id"), nullable=False)
+    # Authoritative source flag
+    is_yaml_source = Column(Boolean, default=False, nullable=False)
     
     # ErsatzTV Schedule Settings
     keep_multi_part_episodes_together = Column(Boolean, default=False, nullable=False)
@@ -316,3 +389,195 @@ class ChannelPlaybackPosition(Base):
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+# Hardware Acceleration Enums
+class HardwareAccelerationKind(str, Enum):
+    NONE = "none"
+    NVENC = "nvenc"  # NVIDIA
+    QSV = "qsv"  # Intel Quick Sync Video
+    VAAPI = "vaapi"  # Linux Video Acceleration API
+    VIDEOTOOLBOX = "videotoolbox"  # macOS
+    AMF = "amf"  # AMD
+    V4L2M2M = "v4l2m2m"  # Linux Video4Linux2
+    RKMPP = "rkmpp"  # Rockchip Media Process Platform
+
+
+class VideoFormat(str, Enum):
+    NONE = "none"
+    H264 = "h264"
+    HEVC = "hevc"
+    MPEG2VIDEO = "mpeg2video"
+    AV1 = "av1"
+    COPY = "copy"
+
+
+class AudioFormat(str, Enum):
+    NONE = "none"
+    AAC = "aac"
+    AC3 = "ac3"
+    AACLATM = "aac_latm"
+    COPY = "copy"
+
+
+class BitDepth(str, Enum):
+    EIGHT_BIT = "8bit"
+    TEN_BIT = "10bit"
+
+
+class ScalingBehavior(str, Enum):
+    SCALE_AND_PAD = "scale_and_pad"
+    STRETCH = "stretch"
+    CROP = "crop"
+
+
+class TonemapAlgorithm(str, Enum):
+    LINEAR = "linear"
+    CLIP = "clip"
+    GAMMA = "gamma"
+    REINHARD = "reinhard"
+    MOBIUS = "mobius"
+    HABLE = "hable"
+
+
+class NormalizeLoudnessMode(str, Enum):
+    OFF = "off"
+    LOUDNORM = "loudnorm"
+
+
+class ChannelPlayoutModeEnum(str, Enum):
+    CONTINUOUS = "continuous"
+    ON_DEMAND = "on_demand"
+
+
+class VaapiDriver(str, Enum):
+    I915 = "i915"  # Intel
+    I965 = "i965"  # Intel
+    RADEONSI = "radeonsi"  # AMD
+    NOUVEAU = "nouveau"  # NVIDIA open source
+    R600 = "r600"  # AMD older
+    RADEON = "radeon"  # AMD older
+
+
+class WatermarkLocation(str, Enum):
+    TOP_LEFT = "top_left"
+    TOP_RIGHT = "top_right"
+    BOTTOM_LEFT = "bottom_left"
+    BOTTOM_RIGHT = "bottom_right"
+    CENTER = "center"
+
+
+class WatermarkSize(str, Enum):
+    SMALL = "small"
+    MEDIUM = "medium"
+    LARGE = "large"
+    CUSTOM = "custom"
+
+
+class ChannelWatermarkMode(str, Enum):
+    NONE = "none"
+    PERMANENT = "permanent"
+    INTERMITTENT = "intermittent"
+    OPACITY_EXPRESSION = "opacity_expression"
+
+
+class ChannelWatermarkImageSource(str, Enum):
+    CUSTOM = "custom"
+    CHANNEL_LOGO = "channel_logo"
+    RESOURCE = "resource"
+
+
+# Resolution Model
+class Resolution(Base):
+    """Resolution preset for FFmpeg profiles"""
+    __tablename__ = "resolutions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)  # e.g., "720p", "1080p", "4K"
+    width = Column(Integer, nullable=False)
+    height = Column(Integer, nullable=False)
+    is_custom = Column(Boolean, default=False, nullable=False)  # True for user-created resolutions
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    ffmpeg_profiles = relationship("FFmpegProfile", back_populates="resolution")
+
+
+# FFmpeg Profile Model
+class FFmpegProfile(Base):
+    """FFmpeg transcoding profile with hardware acceleration support"""
+    __tablename__ = "ffmpeg_profiles"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+    thread_count = Column(Integer, default=0, nullable=False)
+    
+    # Hardware Acceleration
+    hardware_acceleration = Column(SQLEnum(HardwareAccelerationKind), default=HardwareAccelerationKind.NONE, nullable=False)
+    vaapi_driver = Column(String, nullable=True)
+    vaapi_device = Column(String, nullable=True)
+    qsv_extra_hardware_frames = Column(Integer, nullable=True)
+    
+    # Resolution
+    resolution_id = Column(Integer, ForeignKey("resolutions.id"), nullable=False)
+    scaling_behavior = Column(SQLEnum(ScalingBehavior), default=ScalingBehavior.SCALE_AND_PAD, nullable=False)
+    
+    # Video Settings
+    video_format = Column(SQLEnum(VideoFormat), default=VideoFormat.H264, nullable=False)
+    video_profile = Column(String, nullable=True)  # main, high, high10, high444p
+    video_preset = Column(String, nullable=True)  # veryfast, fast, medium, slow, etc.
+    allow_b_frames = Column(Boolean, default=False, nullable=False)
+    bit_depth = Column(SQLEnum(BitDepth), default=BitDepth.EIGHT_BIT, nullable=False)
+    video_bitrate = Column(Integer, default=2000, nullable=False)  # kbps
+    video_buffer_size = Column(Integer, default=4000, nullable=False)  # kbps
+    tonemap_algorithm = Column(SQLEnum(TonemapAlgorithm), default=TonemapAlgorithm.LINEAR, nullable=False)
+    
+    # Audio Settings
+    audio_format = Column(SQLEnum(AudioFormat), default=AudioFormat.AAC, nullable=False)
+    audio_bitrate = Column(Integer, default=192, nullable=False)  # kbps
+    audio_buffer_size = Column(Integer, default=384, nullable=False)  # kbps
+    normalize_loudness_mode = Column(SQLEnum(NormalizeLoudnessMode), default=NormalizeLoudnessMode.OFF, nullable=False)
+    audio_channels = Column(Integer, default=2, nullable=False)
+    audio_sample_rate = Column(Integer, default=48000, nullable=False)
+    
+    # Other Settings
+    normalize_framerate = Column(Boolean, default=False, nullable=False)
+    deinterlace_video = Column(Boolean, nullable=True)  # None = auto-detect
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    resolution = relationship("Resolution", back_populates="ffmpeg_profiles")
+    channels = relationship("Channel", back_populates="ffmpeg_profile")
+
+
+# Watermark Model
+class Watermark(Base):
+    """Watermark configuration for channels"""
+    __tablename__ = "watermarks"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+    mode = Column(SQLEnum(ChannelWatermarkMode), default=ChannelWatermarkMode.PERMANENT, nullable=False)
+    image_source = Column(SQLEnum(ChannelWatermarkImageSource), default=ChannelWatermarkImageSource.CUSTOM, nullable=False)
+    image = Column(String, nullable=True)  # Path to image file
+    original_content_type = Column(String, nullable=True)  # MIME type of uploaded image
+    location = Column(SQLEnum(WatermarkLocation), default=WatermarkLocation.BOTTOM_RIGHT, nullable=False)
+    size = Column(SQLEnum(WatermarkSize), default=WatermarkSize.MEDIUM, nullable=False)
+    width_percent = Column(Float, default=10.0, nullable=False)  # For custom size
+    horizontal_margin_percent = Column(Float, default=2.0, nullable=False)
+    vertical_margin_percent = Column(Float, default=2.0, nullable=False)
+    frequency_minutes = Column(Integer, default=0, nullable=False)  # For intermittent mode (0 = always)
+    duration_seconds = Column(Integer, default=0, nullable=False)  # For intermittent mode (0 = until next frequency)
+    opacity = Column(Integer, default=100, nullable=False)  # 0-100
+    place_within_source_content = Column(Boolean, default=True, nullable=False)
+    opacity_expression = Column(String, nullable=True)  # For opacity expression mode
+    z_index = Column(Integer, default=0, nullable=False)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    channels = relationship("Channel", back_populates="watermark")

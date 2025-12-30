@@ -46,6 +46,9 @@ class MPEGTSStreamer:
         self._processes: Dict[str, subprocess.Popen] = {}
         self._ffmpeg_path = self._find_ffmpeg()
         self._stream_manager = None  # Will be set when needed
+        self._channel_profile: Optional[str] = None  # Legacy profile
+        self._ffmpeg_profile: Optional['FFmpegProfile'] = None  # New profile-based system
+        self._watermark: Optional['Watermark'] = None  # Channel watermark
     
     def _find_ffmpeg(self) -> str:
         """Find FFmpeg executable"""
@@ -148,11 +151,42 @@ class MPEGTSStreamer:
                     
                     logger.info(f"Streaming {media_item.title} for channel {channel.number}")
                     
+                    # Load FFmpeg profile and watermark from channel
+                    try:
+                        # Legacy profile support
+                        self._channel_profile = getattr(channel, 'transcode_profile', None)
+                        
+                        # New profile-based system
+                        if hasattr(channel, 'ffmpeg_profile_id') and channel.ffmpeg_profile_id:
+                            from ..database.models import FFmpegProfile
+                            self._ffmpeg_profile = self.db.query(FFmpegProfile).filter(
+                                FFmpegProfile.id == channel.ffmpeg_profile_id
+                            ).first()
+                        else:
+                            self._ffmpeg_profile = None
+                        
+                        # Load watermark
+                        if hasattr(channel, 'watermark_id') and channel.watermark_id:
+                            from ..database.models import Watermark
+                            self._watermark = self.db.query(Watermark).filter(
+                                Watermark.id == channel.watermark_id
+                            ).first()
+                        else:
+                            self._watermark = None
+                    except Exception as e:
+                        logger.warning(f"Error loading channel profile/watermark: {e}")
+                        self._channel_profile = None
+                        self._ffmpeg_profile = None
+                        self._watermark = None
+                    
+                    # Detect source for accurate preset selection
+                    detected_source = stream_manager.detect_source(media_item.url)
+                    
                     # Transcode to MPEG-TS using FFmpeg
                     chunk_count = 0
                     try:
                         # Start streaming immediately - no delays
-                        async for chunk in self._transcode_to_mpegts(stream_url):
+                        async for chunk in self._transcode_to_mpegts(stream_url, source=detected_source):
                             chunk_count += 1
                             yield chunk
                             
@@ -258,6 +292,7 @@ class MPEGTSStreamer:
                 channel_obj = self.db.query(Channel).filter(Channel.number == channel_number).first()
                 if channel_obj:
                     channel_name = channel_obj.name
+                    self._channel_profile = getattr(channel_obj, 'transcode_profile', None)
             stream_url = await stream_manager.get_stream_url(media_item.url, channel_name=channel_name)
             
             if not stream_url:
@@ -265,6 +300,9 @@ class MPEGTSStreamer:
                 return
             
             logger.info(f"Streaming {media_item.title} for channel {channel_number}")
+            
+            # Detect source for accurate preset selection
+            detected_source = stream_manager.detect_source(media_item.url)
             
             # Check for cancellation before starting transcoding (prevent race condition during shutdown)
             try:
@@ -284,7 +322,7 @@ class MPEGTSStreamer:
                 raise
             
             # Transcode to MPEG-TS (with smart codec detection)
-            async for chunk in self._transcode_to_mpegts(stream_url, input_codec_info):
+            async for chunk in self._transcode_to_mpegts(stream_url, input_codec_info, source=detected_source):
                 yield chunk
                 
         except Exception as e:
@@ -361,7 +399,8 @@ class MPEGTSStreamer:
     async def _transcode_to_mpegts(
         self,
         stream_url: str,
-        codec_info: Optional[Dict[str, Any]] = None
+        codec_info: Optional[Dict[str, Any]] = None,
+        source: Optional['StreamSource'] = None
     ) -> AsyncIterator[bytes]:
         """Transcode a video stream to MPEG-TS using FFmpeg"""
         # Check for cancellation before creating FFmpeg process (prevent race condition during shutdown)
@@ -372,7 +411,7 @@ class MPEGTSStreamer:
             raise
         
         # Build FFmpeg command (with smart codec detection)
-        ffmpeg_cmd = self._build_ffmpeg_command(stream_url, codec_info)
+        ffmpeg_cmd = self._build_ffmpeg_command(stream_url, codec_info, source=source)
         
         # #region agent log
         _debug_log("mpegts_streamer.py:_transcode_to_mpegts:before_start", "Starting FFmpeg", {
@@ -602,17 +641,38 @@ class MPEGTSStreamer:
                     error_msg = str(e) if str(e) else type(e).__name__
                     logger.warning(f"Error cleaning up FFmpeg process: {error_msg}")
     
-    def _build_ffmpeg_command(self, input_url: str, codec_info: Optional[Dict[str, Any]] = None) -> List[str]:
+    def _build_ffmpeg_command(self, input_url: str, codec_info: Optional[Dict[str, Any]] = None, source: Optional['StreamSource'] = None) -> List[str]:
         """Build FFmpeg command for MPEG-TS transcoding with smart codec selection"""
         # #region agent log
         _debug_log("mpegts_streamer.py:_build_ffmpeg_command:entry", "Building FFmpeg command", {
             "input_url_has_token": 'X-Plex-Token' in input_url if input_url else False,
             "input_url_base": input_url.split('?')[0][:100] if input_url else None,
             "is_plex": '/library/metadata/' in input_url if input_url else False,
-            "url_length": len(input_url) if input_url else 0
+            "url_length": len(input_url) if input_url else 0,
+            "has_profile": self._ffmpeg_profile is not None
         }, "B")
         # #endregion
         
+        # Use profile-based builder if profile is available
+        if self._ffmpeg_profile:
+            try:
+                from ..transcoding.ffmpeg_builder import build_ffmpeg_command
+                # Check for subtitle file (would need to be passed separately)
+                subtitle_path = None  # TODO: Implement subtitle file handling
+                cmd = build_ffmpeg_command(
+                    profile=self._ffmpeg_profile,
+                    input_url=input_url,
+                    watermark=self._watermark,
+                    subtitle_path=subtitle_path,
+                    codec_info=codec_info
+                )
+                logger.debug(f"Using profile-based FFmpeg command: {self._ffmpeg_profile.name}")
+                return cmd
+            except Exception as e:
+                logger.warning(f"Failed to build profile-based command, falling back to legacy: {e}")
+                # Fall through to legacy builder
+        
+        # Legacy builder (existing code)
         cmd = [self._ffmpeg_path]
         
         # Determine if we can use copy mode (no transcoding)
@@ -620,11 +680,55 @@ class MPEGTSStreamer:
         can_copy_audio = codec_info and codec_info.get('can_copy_audio', False)
         video_codec = codec_info.get('video_codec', 'unknown') if codec_info else 'unknown'
         
+        # Prefer adapter-detected source over URL heuristics for accurate preset selection
+        from streamtv.streaming.stream_manager import StreamSource as SSEnum
+        src_youtube = (source == SSEnum.YOUTUBE) if source else (('youtube.com' in input_url.lower()) or ('youtu.be' in input_url.lower()))
+        src_archive = (source == SSEnum.ARCHIVE_ORG) if source else ('archive.org' in input_url.lower())
+        src_pbs = (source == SSEnum.PBS) if source else (('pbs.org' in input_url.lower()) or ('lls.pbs.org' in input_url.lower()))
+        src_plex = (source == SSEnum.PLEX) if source else (('/library/metadata/' in input_url) or ('plex' in input_url.lower()))
+
+        # Determine desired hwaccel/encoder via fallback: channel preset -> source override -> global config
+        chosen_hwaccel = None
+        chosen_encoder = None
+        # Try source overrides first (they will be superseded by per-channel profile below when available)
+        if src_youtube:
+            chosen_hwaccel = config.ffmpeg.youtube_hwaccel or chosen_hwaccel
+            chosen_encoder = config.ffmpeg.youtube_video_encoder or chosen_encoder
+        elif src_archive:
+            chosen_hwaccel = config.ffmpeg.archive_org_hwaccel or chosen_hwaccel
+            chosen_encoder = config.ffmpeg.archive_org_video_encoder or chosen_encoder
+        elif src_pbs:
+            chosen_hwaccel = config.ffmpeg.pbs_hwaccel or chosen_hwaccel
+            chosen_encoder = config.ffmpeg.pbs_video_encoder or chosen_encoder
+        elif src_plex:
+            chosen_hwaccel = config.ffmpeg.plex_hwaccel or chosen_hwaccel
+            chosen_encoder = config.ffmpeg.plex_video_encoder or chosen_encoder
+
+        # Resolve per-channel transcode_profile if available
+        channel_profile = self._channel_profile
+        
+        # Map profile to hwaccel/encoder if set
+        if channel_profile:
+            profile = (channel_profile or '').lower()
+            if profile == 'nvidia':
+                chosen_hwaccel = 'cuda'
+                chosen_encoder = 'h264_nvenc'
+            elif profile == 'intel':
+                chosen_hwaccel = 'qsv'
+                chosen_encoder = 'h264_qsv'
+            elif profile == 'cpu':
+                chosen_hwaccel = None
+                chosen_encoder = 'libx264'
+
+        # Fallback to global config if still unset
+        if not chosen_hwaccel:
+            chosen_hwaccel = config.ffmpeg.hwaccel
+
         # VideoToolbox only supports H.264 decoding - disable for MPEG-4/AVI
         mpeg4_codecs = ['mpeg4', 'msmpeg4v3', 'msmpeg4v2', 'msmpeg4']
         is_mpeg4 = video_codec in mpeg4_codecs
         # Disable hardware acceleration for MPEG-4 and when codec is unknown (safer default)
-        use_hwaccel = config.ffmpeg.hwaccel and not can_copy_video and not is_mpeg4 and video_codec != 'unknown'
+        use_hwaccel = chosen_hwaccel and not can_copy_video and not is_mpeg4 and video_codec != 'unknown'
         
         if can_copy_video and can_copy_audio:
             logger.info(f"Smart copy mode: Input already H.264/AAC - zero transcoding! 🚀")
@@ -653,8 +757,8 @@ class MPEGTSStreamer:
             logger.debug(f"Hardware acceleration explicitly disabled for MPEG-4 codec: {video_codec}")
         elif use_hwaccel and not can_copy_video:
             cmd.extend([
-                "-hwaccel", config.ffmpeg.hwaccel,
-                "-hwaccel_output_format", config.ffmpeg.hwaccel,  # Output format same as hwaccel
+                "-hwaccel", chosen_hwaccel,
+                "-hwaccel_output_format", chosen_hwaccel,  # Output format same as hwaccel
             ])
             if config.ffmpeg.hwaccel_device:
                 cmd.extend(["-hwaccel_device", config.ffmpeg.hwaccel_device])
@@ -791,9 +895,16 @@ class MPEGTSStreamer:
             ])
             logger.debug("Video: Using copy mode with error correction (H.264 detected)")
         elif use_hwaccel:
-            # Hardware-accelerated H.264 encoding (VideoToolbox on macOS)
+            # Hardware-accelerated H.264 encoding
+            hw_encoder = chosen_encoder or (
+                "h264_videotoolbox" if chosen_hwaccel == "videotoolbox" else (
+                    "h264_nvenc" if chosen_hwaccel == "cuda" else (
+                        "h264_qsv" if chosen_hwaccel == "qsv" else "h264_videotoolbox"
+                    )
+                )
+            )
             cmd.extend([
-                "-c:v", "h264_videotoolbox",  # macOS hardware encoder
+                "-c:v", hw_encoder,
                 "-b:v", "6M",  # Higher bitrate for better quality
                 "-maxrate", "6M",
                 "-bufsize", "12M",
@@ -802,7 +913,7 @@ class MPEGTSStreamer:
                 "-pix_fmt", "yuv420p",  # Ensure compatibility
                 "-bsf:v", "dump_extra"  # Add extra data to stream (fixes some decoder issues)
             ])
-            logger.debug("Video: Using hardware-accelerated H.264 with error correction (VideoToolbox)")
+            logger.debug(f"Video: Using hardware-accelerated H.264 ({hw_encoder}) with error correction")
         else:
             # Software H.264 encoding (fallback)
             # Use faster preset for MPEG-4/AVI files (already lower quality)

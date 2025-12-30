@@ -16,7 +16,7 @@ This guide covers installing StreamTV on macOS, Linux, and Windows.
 
 ### System Requirements
 
-- **Python**: 3.8 or higher
+- **Python**: 3.10 or higher
 - **pip**: Python package manager
 - **FFmpeg**: Optional, for advanced streaming features
 - **Disk Space**: ~100MB for application + database
@@ -46,7 +46,7 @@ Use the provided installation script:
 ```
 
 This script automatically:
-- Checks for Python 3.8+
+- Checks for Python 3.10+
 - Installs Python if needed
 - Installs FFmpeg
 - Creates virtual environment
@@ -55,7 +55,7 @@ This script automatically:
 
 ### Manual Installation
 
-1. **Install Python 3.8+** (if not already installed):
+1. **Install Python 3.10+** (if not already installed):
    ```bash
    # Using Homebrew
    brew install python3
@@ -156,7 +156,7 @@ This script automatically:
 
 ### Using Python from python.org
 
-1. **Download Python 3.8+** from [python.org](https://www.python.org/downloads/)
+1. **Download Python 3.10+** from [python.org](https://www.python.org/downloads/)
    - Check "Add Python to PATH" during installation
 
 2. **Install Git** from [git-scm.com](https://git-scm.com/download/win)
@@ -223,7 +223,7 @@ Follow the Linux installation instructions within WSL.
 Create `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
+version: '3.10'
 
 services:
   streamtv:

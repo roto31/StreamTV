@@ -106,36 +106,41 @@ channels:
         url: https://www.youtube.com/watch?v=FQK6yICl0pM
         notes: "WCCO Midday Live with Bill Carlson & Cindy Osborne brings local daytime flavor."
       
-      - id: ads_1980_wjcl
-        collection: "Retro Ads - 1980 Pod A"
-        type: commercial
-        year: 1980
-        slot: "National ad pod"
-        broadcast_date: 1980-02-15
-        network: ABC
-        runtime: PT2M30S
-        source: youtube
-        url: https://www.youtube.com/watch?v=EXAMPLE1
-        notes: "1980s commercial pod."
-      
-      - id: ads_1980_wjcl2
-        collection: "Retro Ads - 1980 Pod A"
-        type: commercial
-        year: 1980
-        slot: "National ad pod"
-        broadcast_date: 1980-02-15
-        network: ABC
-        runtime: PT2M30S
-        source: youtube
-        url: https://www.youtube.com/watch?v=EXAMPLE2
-        notes: "1980s commercial pod."
+      # DISABLED: Placeholder URLs (EXAMPLE1, EXAMPLE2) - will cause streaming failures
+      # TODO: Replace with real YouTube URLs for 1980 commercial pods
+      # Search terms: "1980 commercials" "February 1980" "ABC" "1980 Winter Olympics commercials"
+      # - id: ads_1980_wjcl
+      #   collection: "Retro Ads - 1980 Pod A"
+      #   type: commercial
+      #   year: 1980
+      #   slot: "National ad pod"
+      #   broadcast_date: 1980-02-15
+      #   network: ABC
+      #   runtime: PT2M30S
+      #   source: youtube
+      #   url: https://www.youtube.com/watch?v=EXAMPLE1
+      #   notes: "1980s commercial pod."
+      # 
+      # - id: ads_1980_wjcl2
+      #   collection: "Retro Ads - 1980 Pod A"
+      #   type: commercial
+      #   year: 1980
+      #   slot: "National ad pod"
+      #   broadcast_date: 1980-02-15
+      #   network: ABC
+      #   runtime: PT2M30S
+      #   source: youtube
+      #   url: https://www.youtube.com/watch?v=EXAMPLE2
+      #   notes: "1980s commercial pod."
 
   # Channel 1984 - Winter Olympics
+  # DISABLED: Contains placeholder URLs (EXAMPLE3-EXAMPLE14) that will cause streaming failures
+  # TODO: Replace placeholder URLs with real YouTube/Archive.org URLs before enabling
   - number: "1984"
     name: "MN 1984 Winter Olympics (News11)"
     group: "Winter Olympics"
     description: "Sarajevo-era schedule that pairs ABC coverage with Minneapolis/St. Paul newscasts from WTCN/KARE, KSTP, and KMSP. Each national feed is framed by News11 updates and Twin Cities commercial pods from TC Media Now."
-    enabled: true
+    enabled: false
     streams:
       - id: 1984_opening
         collection: "Retro Olympics - 1984 Opening Ceremony (ABC)"
@@ -282,11 +287,13 @@ channels:
         notes: "1984 commercial pod."
 
   # Channel 1988 - Winter Olympics
+  # DISABLED: Contains placeholder URLs (EXAMPLE15-EXAMPLE28) that will cause streaming failures
+  # TODO: Replace placeholder URLs with real YouTube/Archive.org URLs before enabling
   - number: "1988"
     name: "MN 1988 Winter Olympics (KSTP/WCCO)"
     group: "Winter Olympics"
     description: "Calgary primetime with Minneapolis/St. Paul flavor. Each ABC block is wrapped with KSTP/WCCO lifestyle pieces, Benny Hill-era commercial breaks, and late news specials captured by TC Media Now."
-    enabled: true
+    enabled: false
     streams:
       - id: 1988_opening
         collection: "Retro Olympics - 1988 Opening Ceremony (Calgary)"

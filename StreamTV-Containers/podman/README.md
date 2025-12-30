@@ -1,348 +1,201 @@
-# StreamTV Podman Distribution
+# StreamTV Platform Distributions
 
-Complete Podman distribution for StreamTV. Podman is a daemonless container engine that is fully compatible with Docker images and commands.
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey.svg)]()
 
-## Why Podman?
+**StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
-- **Rootless**: Run containers without root privileges
-- **Daemonless**: No background daemon required
-- **Docker-compatible**: Uses same images and commands
-- **Security**: Better isolation and security features
-- **Kubernetes**: Native Kubernetes support via `podman play kube`
+## 🎯 Features
 
-## Prerequisites
+### Core Capabilities
+- **🌐 Direct Streaming**: Stream from YouTube and Archive.org without downloads
+- **📺 HDHomeRun Emulation**: Native integration with Plex, Emby, and Jellyfin
+- **📅 Advanced Scheduling**: YAML-based schedules with commercial breaks
+- **🐳 Container Support**: Docker, Kubernetes, and Podman deployments
+- **🖥️ Cross-Platform**: Native support for macOS, Windows, and Linux
+- **🔌 IPTV Support**: M3U playlists and XMLTV EPG generation
+- **⚡ FastAPI**: Modern async Python web framework
+- **🔐 Authentication**: Passkey and OAuth support for YouTube
 
-Install Podman on your system:
+### Streaming Sources
+- ✅ **YouTube**: Direct streaming with quality selection and OAuth authentication
+- ✅ **Archive.org**: Support for video collections and individual items
+- 🔄 **Extensible**: Easy to add new streaming sources via adapter pattern
 
-### Linux
+### Integration
+- **Plex Media Server**: Direct HDHomeRun tuner or M3U/EPG
+- **Emby/Jellyfin**: HDHomeRun or IPTV support
+- **Kodi**: IPTV Simple Client
+- **VLC**: Direct M3U playlist support
+- **HDHomeRun Devices**: Full API compatibility
 
-```bash
-# Ubuntu/Debian
-sudo apt install podman
+## 📦 Available Distributions
 
-# Fedora/RHEL/CentOS
-sudo dnf install podman
+### Desktop Platforms
 
-# Arch Linux
-sudo pacman -S podman
-```
+- **[macOS](StreamTV-macOS/)** - Native macOS distribution with installer
+  - Automated installation script
+  - `.command` launchers for easy startup
+  - Full documentation included
+- **[macOS Menu Bar App](StreamTVApp/)** - Native macOS menu bar application
+  - Runs as menu bar icon (no dock icon)
+  - Automatic Python virtual environment management
+  - FFmpeg installation via Homebrew
+  - Dependency update checking
+  - Server lifecycle management
+  - See [StreamTVApp/README.md](StreamTVApp/README.md) for setup instructions
+
+- **[Windows](StreamTV-Windows/)** - Windows distribution
+  - PowerShell installation script
+  - Batch and PowerShell startup scripts
+  - Windows service support documentation
+
+- **[Linux](StreamTV-Linux/)** - Linux distribution
+  - Distribution detection (apt, dnf, pacman)
+  - systemd service integration
+  - Firewall configuration guides
+
+### Container Platforms
+
+- **[Docker](StreamTV-Containers/docker/)** - Single-container deployment
+- **[Docker Compose](StreamTV-Containers/docker-compose/)** - Multi-service setup
+- **[Kubernetes](StreamTV-Containers/kubernetes/)** - K8s manifests with ingress
+- **[Podman](StreamTV-Containers/podman/)** - Rootless container support
+
+## 🚀 Quick Start
 
 ### macOS
-
 ```bash
-brew install podman
-podman machine init
-podman machine start
+cd StreamTV-macOS
+./install_macos.sh
+./start_server.sh
+# Or double-click: Install-StreamTV.command
 ```
 
 ### Windows
-
 ```powershell
-# Using Chocolatey
-choco install podman
-
-# Or download from podman.io
+cd StreamTV-Windows
+.\install_windows.ps1
+.\start_server.ps1
 ```
 
-## Quick Start
-
-### Using Podman Compose
-
-1. **Install podman-compose:**
-   ```bash
-   pip install podman-compose
-   # Or
-   sudo dnf install podman-compose
-   ```
-
-2. **Start StreamTV:**
-   ```bash
-   podman-compose up -d
-   ```
-
-3. **Access the web interface:**
-   Open http://localhost:8410
-
-4. **View logs:**
-   ```bash
-   podman-compose logs -f streamtv
-   ```
-
-5. **Stop StreamTV:**
-   ```bash
-   podman-compose down
-   ```
-
-### Using Podman Directly
-
-1. **Build the image:**
-   ```bash
-   podman build -t streamtv:latest .
-   ```
-
-2. **Run the container:**
-   ```bash
-   podman run -d \
-     --name streamtv \
-     -p 8410:8410 \
-     -v streamtv_data:/app/data \
-     -v streamtv_schedules:/app/schedules \
-     -v streamtv_logs:/app/logs \
-     -e STREAMTV_SERVER_BASE_URL=http://localhost:8410 \
-     streamtv:latest
-   ```
-
-3. **Access the web interface:**
-   Open http://localhost:8410
-
-### Using Pod (Kubernetes-style)
-
-1. **Build the image:**
-   ```bash
-   podman build -t streamtv:latest .
-   ```
-
-2. **Create and start pod:**
-   ```bash
-   podman play kube pod.yaml
-   ```
-
-3. **Access the web interface:**
-   Open http://localhost:8410
-
-## Rootless Operation
-
-Podman's main advantage is rootless operation:
-
+### Linux
 ```bash
-# No sudo needed!
-podman build -t streamtv:latest .
-podman run -d --name streamtv -p 8410:8410 streamtv:latest
+cd StreamTV-Linux
+./install_linux.sh
+./start_server.sh
 ```
 
-### Rootless Volume Storage
-
-Rootless Podman stores volumes in:
-- Linux: `~/.local/share/containers/storage/volumes/`
-- macOS: `~/.local/share/containers/storage/volumes/`
-
-## Configuration
-
-### Environment Variables
-
-Same as Docker - set via `-e` flag or in `podman-compose.yml`:
-
+### Docker
 ```bash
-podman run -d \
-  -e STREAMTV_YOUTUBE_API_KEY=your_key \
-  -e STREAMTV_SERVER_BASE_URL=http://your-host:8410 \
-  streamtv:latest
+cd StreamTV-Containers/docker
+docker build -t streamtv .
+docker run -p 8410:8410 streamtv
 ```
 
-### Volume Mounts
+**Access the web interface**: Open `http://localhost:8410` in your browser
 
-```bash
-# Named volumes (Podman-managed)
-podman volume create streamtv_data
-podman run -d -v streamtv_data:/app/data streamtv:latest
+## 🌐 Browser Compatibility
 
-# Bind mounts (host directories)
-podman run -d -v /host/path:/app/data:Z streamtv:latest
-```
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with:
+- **Chrome/Edge**: Full HLS support via HLS.js
+- **Safari**: Native HLS support
+- **Firefox**: Full HLS support via HLS.js
 
-Note: Use `:Z` suffix for SELinux compatibility on Linux.
+The player automatically detects browser capabilities and uses the best available method. For best results, use a modern browser with JavaScript enabled.
 
-## Podman vs Docker Commands
+## 📋 Requirements
 
-| Docker | Podman |
-|--------|--------|
-| `docker build` | `podman build` |
-| `docker run` | `podman run` |
-| `docker ps` | `podman ps` |
-| `docker logs` | `podman logs` |
-| `docker-compose` | `podman-compose` |
-| `docker volume` | `podman volume` |
+- **Python**: 3.10 or higher
+- **FFmpeg**: For video transcoding (automatically installed by install scripts)
+- **Network**: Internet connection for streaming
+- **Platform-specific**: See individual distribution READMEs
 
-## Advanced Usage
+## 📚 Documentation
 
-### Systemd Integration
+### Complete Guides
+- **[GitHub Wiki](https://github.com/roto31/StreamTV/wiki)** - Comprehensive documentation
+- **[Documentation Index](https://github.com/roto31/StreamTV/wiki/Documentation-Index)** - All guides organized
+- **[Scripts & Tools](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools)** - Utility scripts
 
-Create a systemd service for auto-start:
+### Quick Links
+- [Installation Guide](https://github.com/roto31/StreamTV/wiki/Installation-Guide)
+- [Beginner Guide](https://github.com/roto31/StreamTV/wiki/Beginner-Guide) - For new users
+- [Plex Integration](https://github.com/roto31/StreamTV/wiki/Plex-Integration) - Setup guide
+- [API Reference](https://github.com/roto31/StreamTV/wiki/API-Reference) - Complete API docs
+- [Troubleshooting](https://github.com/roto31/StreamTV/wiki/Troubleshooting) - Common issues
 
-```bash
-# Generate systemd service file
-podman generate systemd --name streamtv --files
+### Platform-Specific
+Each distribution includes complete documentation in `docs/`:
+- Installation instructions
+- Quick start guides
+- Platform-specific configuration
+- Troubleshooting guides
+- API documentation
 
-# Install service
-sudo cp container-streamtv.service /etc/systemd/system/
-sudo systemctl enable container-streamtv.service
-sudo systemctl start container-streamtv.service
-```
+## 🔗 Integration Examples
 
-### Pod Management
+### Plex Media Server
+1. Install StreamTV on your server
+2. Add StreamTV as HDHomeRun tuner in Plex
+3. Scan for channels
+4. Watch your custom channels in Plex!
 
-```bash
-# Create pod
-podman pod create --name streamtv-pod -p 8410:8410
+See [Plex Integration Guide](https://github.com/roto31/StreamTV/wiki/Plex-Integration) for detailed instructions.
 
-# Add container to pod
-podman run -d --pod streamtv-pod --name streamtv streamtv:latest
+### IPTV Clients
+- **Kodi**: Use IPTV Simple Client with M3U playlist
+- **VLC**: Open M3U playlist directly
+- **Emby/Jellyfin**: Add as IPTV source or HDHomeRun tuner
 
-# List pods
-podman pod ps
+## 🛠️ Scripts & Tools
 
-# Stop pod
-podman pod stop streamtv-pod
+StreamTV includes utility scripts for:
+- Channel creation from Archive.org collections
+- Schedule generation
+- Log viewing and troubleshooting
+- Database management
 
-# Remove pod
-podman pod rm streamtv-pod
-```
+See [Scripts Documentation](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools) for complete list.
 
-### Health Checks
+## 📖 Wiki Pages
 
-Health checks work the same as Docker:
+Comprehensive documentation available in the [GitHub Wiki](https://github.com/roto31/StreamTV/wiki):
+- [macOS](https://github.com/roto31/StreamTV/wiki/macOS) - Complete macOS guide
+- [Windows](https://github.com/roto31/StreamTV/wiki/Windows) - Complete Windows guide
+- [Linux](https://github.com/roto31/StreamTV/wiki/Linux) - Complete Linux guide
+- [Containers](https://github.com/roto31/StreamTV/wiki/Containers) - Container platforms
+- [Archive Parser](https://github.com/roto31/StreamTV/wiki/Archive-Parser) - Create channels from Archive.org
+- [Logging](https://github.com/roto31/StreamTV/wiki/Logging) - Logging system
 
-```bash
-# Check health
-podman healthcheck run streamtv
+## 📝 Contributing
 
-# Inspect health status
-podman inspect streamtv | grep -A 10 Health
-```
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## Networking
+- Report bugs via [Issues](https://github.com/roto31/StreamTV/issues)
+- Suggest features via [Feature Requests](https://github.com/roto31/StreamTV/issues/new?template=feature_request.md)
+- Submit pull requests following our [PR template](.github/pull_request_template.md)
 
-### Rootless Networking
+## 📄 License
 
-Rootless Podman uses slirp4netns for networking. Port forwarding works the same:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-```bash
-podman run -d -p 8410:8410 streamtv:latest
-```
+## 🌟 Project Status
 
-### Custom Networks
+✅ **Stable** - Production ready
+- Cross-platform distributions available
+- Comprehensive documentation
+- Active development
 
-```bash
-# Create network
-podman network create streamtv-net
+## 🔍 Resources
 
-# Run container on network
-podman run -d --network streamtv-net streamtv:latest
-```
+- [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) - Complete documentation
+- [Issues](https://github.com/roto31/StreamTV/issues) - Bug reports and feature requests
+- [Pull Requests](https://github.com/roto31/StreamTV/pulls) - Contributions
+- [Releases](https://github.com/roto31/StreamTV/releases) - Version history
 
-## Troubleshooting
+---
 
-### Permission Issues
-
-If you encounter permission issues:
-
-```bash
-# Check Podman version
-podman --version
-
-# Check if running rootless
-podman info | grep rootless
-
-# Fix volume permissions (if needed)
-podman unshare chown -R 1000:1000 /path/to/volume
-```
-
-### Port Conflicts
-
-```bash
-# Check what's using a port
-sudo netstat -tulpn | grep 8410
-
-# Or use ss
-ss -tulpn | grep 8410
-```
-
-### View Logs
-
-```bash
-# Container logs
-podman logs streamtv
-
-# Follow logs
-podman logs -f streamtv
-
-# Last 100 lines
-podman logs --tail 100 streamtv
-```
-
-### Container Shell Access
-
-```bash
-podman exec -it streamtv /bin/bash
-```
-
-## Migration from Docker
-
-Podman is fully compatible with Docker:
-
-1. **Build images the same way:**
-   ```bash
-   podman build -t streamtv:latest .
-   ```
-
-2. **Use same Dockerfiles:**
-   - No changes needed to Dockerfile
-   - Same syntax and commands
-
-3. **Import Docker images:**
-   ```bash
-   # Save Docker image
-   docker save streamtv:latest | podman load
-   ```
-
-4. **Use docker-compose files:**
-   - Rename to `podman-compose.yml` or use `podman-compose` directly
-
-## Production Deployment
-
-### Systemd Service
-
-```bash
-# Generate service file
-podman generate systemd --name streamtv --files --new
-
-# Install
-sudo cp container-streamtv.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable container-streamtv.service
-sudo systemctl start container-streamtv.service
-```
-
-### Resource Limits
-
-```bash
-podman run -d \
-  --memory=2g \
-  --cpus=2 \
-  --name streamtv \
-  streamtv:latest
-```
-
-### Auto-restart
-
-```bash
-podman run -d \
-  --restart=always \
-  --name streamtv \
-  streamtv:latest
-```
-
-## Security Features
-
-1. **Rootless**: Run without root privileges
-2. **User namespaces**: Better isolation
-3. **SELinux**: Enhanced security on RHEL/Fedora
-4. **Seccomp**: System call filtering
-5. **Capabilities**: Fine-grained permissions
-
-## See Also
-
-- [Docker Distribution](../docker/README.md)
-- [Docker Compose Distribution](../docker-compose/README.md)
-- [Kubernetes Distribution](../kubernetes/README.md)
-- [Podman Documentation](https://podman.io/docs/)
+**Made with ❤️ for the IPTV community**

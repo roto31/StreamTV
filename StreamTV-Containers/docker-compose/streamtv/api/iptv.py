@@ -30,6 +30,23 @@ def _xml(value) -> str:
     return xml_escape(str(value), {'"': '&quot;', "'": '&apos;'})
 
 
+def _resolve_logo_url(channel, base_url: str) -> Optional[str]:
+    """
+    Build an absolute logo URL for M3U/XMLTV.
+    - Uses channel.logo_path if provided.
+    - Falls back to /static/channel_icons/channel_<number>.png.
+    """
+    logo_path = channel.logo_path
+    if logo_path:
+        if logo_path.startswith('http'):
+            return logo_path
+        if logo_path.startswith('/'):
+            return f"{base_url}{logo_path}"
+        return f"{base_url}/{logo_path}"
+    # Default fallback based on channel number icon
+    return f"{base_url}/static/channel_icons/channel_{channel.number}.png"
+
+
 @router.get("/iptv/channels.m3u")
 async def get_channel_playlist(
     mode: str = "mixed",
@@ -49,12 +66,14 @@ async def get_channel_playlist(
     
     channels = db.query(Channel).filter(Channel.enabled == True).all()
     
+    # Always derive base_url from the incoming request so tvg-logo/icon URLs match
+    # the address Plex/clients use (avoids 127.0.0.1 vs LAN IP issues).
     base_url = config.server.base_url
     if request:
         scheme = request.url.scheme
         host = request.url.hostname
         port = request.url.port
-        if port:
+        if port and port not in [80, 443]:
             base_url = f"{scheme}://{host}:{port}"
         else:
             base_url = f"{scheme}://{host}"
@@ -69,11 +88,12 @@ async def get_channel_playlist(
         else:
             stream_url = f"{base_url}/iptv/channel/{channel.number}.ts{token_param}"
         
+        logo_url = _resolve_logo_url(channel, base_url)
         m3u_content += f'#EXTINF:-1 tvg-id="{channel.number}" tvg-name="{channel.name}"'
         if channel.group:
             m3u_content += f' group-title="{channel.group}"'
-        if channel.logo_path:
-            m3u_content += f' tvg-logo="{channel.logo_path}"'
+        if logo_url:
+            m3u_content += f' tvg-logo="{logo_url}"'
         m3u_content += f',{channel.name}\n'
         m3u_content += f"{stream_url}\n"
     
@@ -169,13 +189,9 @@ async def get_epg(
             # Channel number as display name (Plex compatibility)
             xml_content += f'    <display-name>{_xml(channel_id)}</display-name>\n'
             
-            # Logo/icon (Plex expects absolute URLs)
-            if channel.logo_path:
-                # Ensure logo URL is absolute
-                if channel.logo_path.startswith('http'):
-                    logo_url = channel.logo_path
-                else:
-                    logo_url = f"{base_url}{channel.logo_path}" if channel.logo_path.startswith('/') else f"{base_url}/{channel.logo_path}"
+            # Logo/icon (Plex expects absolute URLs). Fall back to default icon by number.
+            logo_url = _resolve_logo_url(channel, base_url)
+            if logo_url:
                 xml_content += f'    <icon src="{_xml(logo_url)}"/>\n'
             
             xml_content += '  </channel>\n'
@@ -503,12 +519,17 @@ async def get_epg(
                     logger.debug(f"Skipping schedule item without media_item for channel {channel.number}")
                     continue
                 
-                # Use custom title if available, otherwise use media item title
-                # Ensure title is never empty (Plex requires a title)
+                # Use custom title if available, otherwise use media item title.
+                # If missing, fall back to the URL basename to avoid Plex showing "Unknown Airing".
                 title = schedule_item.get('custom_title') or media_item.title
                 if not title or not title.strip():
-                    # Fallback to channel name if no title available
-                    title = channel.name
+                    try:
+                        from pathlib import Path
+                        parsed_url = urllib.parse.unquote(media_item.url or "")
+                        fallback_base = Path(parsed_url).name.rsplit('.', 1)[0]
+                        title = fallback_base or channel.name
+                    except Exception:
+                        title = channel.name
                 title = title.strip()
                 
                 # Extract episode-specific information from metadata for better titles
@@ -638,6 +659,9 @@ async def get_epg(
                             desc = f"{episode_title}\n\n{desc}"
                         else:
                             desc = episode_title
+                    if not desc:
+                        # Provide a non-empty description to avoid "Unknown Airing" in Plex
+                        desc = title
                     if desc:
                         xml_content += f'    <desc lang="en">{_xml(desc)}</desc>\n'
                     else:
@@ -771,10 +795,37 @@ async def get_hls_stream(
         elif access_token != config.security.access_token:
             raise HTTPException(status_code=401, detail="Invalid access token")
     
-    channel = db.query(Channel).filter(
-        Channel.number == channel_number,
-        Channel.enabled == True
-    ).first()
+    # Query channel using raw SQL to avoid enum conversion issues
+    from sqlalchemy import text
+    from ..database.models import StreamingMode
+    
+    channel = None
+    try:
+        channel = db.query(Channel).filter(
+            Channel.number == channel_number,
+            Channel.enabled == True
+        ).first()
+    except (LookupError, ValueError) as e:
+        # If enum conversion fails, query raw and convert manually
+        logger.warning(f"Enum conversion error in HLS endpoint, using raw query: {e}")
+        result = db.execute(
+            text("SELECT * FROM channels WHERE number = :number AND enabled = :enabled"),
+            {"number": channel_number, "enabled": True}
+        ).fetchone()
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Channel not found")
+        
+        # Create channel object from row
+        channel = Channel()
+        for key, value in result._mapping.items():
+            if key == 'streaming_mode' and value:
+                try:
+                    setattr(channel, key, StreamingMode(value))
+                except ValueError:
+                    setattr(channel, key, StreamingMode.TRANSPORT_STREAM_HYBRID)
+            else:
+                setattr(channel, key, value)
     
     if not channel:
         raise HTTPException(status_code=404, detail="Channel not found")
@@ -1037,10 +1088,37 @@ async def get_transport_stream(
         elif access_token != config.security.access_token:
             raise HTTPException(status_code=401, detail="Invalid access token")
     
-    channel = db.query(Channel).filter(
-        Channel.number == channel_number,
-        Channel.enabled == True
-    ).first()
+    # Query channel using raw SQL to avoid enum conversion issues
+    from sqlalchemy import text
+    from ..database.models import StreamingMode
+    
+    channel = None
+    try:
+        channel = db.query(Channel).filter(
+            Channel.number == channel_number,
+            Channel.enabled == True
+        ).first()
+    except (LookupError, ValueError) as e:
+        # If enum conversion fails, query raw and convert manually
+        logger.warning(f"Enum conversion error in TS endpoint, using raw query: {e}")
+        result = db.execute(
+            text("SELECT * FROM channels WHERE number = :number AND enabled = :enabled"),
+            {"number": channel_number, "enabled": True}
+        ).fetchone()
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Channel not found")
+        
+        # Create channel object from row
+        channel = Channel()
+        for key, value in result._mapping.items():
+            if key == 'streaming_mode' and value:
+                try:
+                    setattr(channel, key, StreamingMode(value))
+                except ValueError:
+                    setattr(channel, key, StreamingMode.TRANSPORT_STREAM_HYBRID)
+            else:
+                setattr(channel, key, value)
     
     if not channel:
         raise HTTPException(status_code=404, detail="Channel not found")

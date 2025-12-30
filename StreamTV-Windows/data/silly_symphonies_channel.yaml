@@ -1,0 +1,757 @@
+channels:
+  - number: "2001"
+    name: "Disney Silly Symphonies"
+    group: "Classic Animation"
+    description: "Complete Walt Disney Silly Symphonies collection (1929-1939) from Archive.org."
+    enabled: true
+    streams:
+      - id: sillysym_01
+        collection: "Silly Symphonies"
+        type: event
+        year: 1929
+        slot: "01 - The Skeleton Dance"
+        broadcast_date: 1929-08-22
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/01%20-%20The%20Skeleton%20Dance%20%281929%29.mp4
+      - id: sillysym_02
+        collection: "Silly Symphonies"
+        type: event
+        year: 1929
+        slot: "02 - El Terrible Toreador"
+        broadcast_date: 1929-09-07
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/02%20-%20El%20Terrible%20Toreador%20%281929%29.mp4
+      - id: sillysym_03
+        collection: "Silly Symphonies"
+        type: event
+        year: 1929
+        slot: "03 - Springtime"
+        broadcast_date: 1929-10-24
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/03%20-%20Springtime%20%281929%29.mp4
+      - id: sillysym_04
+        collection: "Silly Symphonies"
+        type: event
+        year: 1929
+        slot: "04 - Hell's Bells"
+        broadcast_date: 1929-12-21
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/04%20-%20Hell%27s%20Bells%20%281929%29.mp4
+      - id: sillysym_05
+        collection: "Silly Symphonies"
+        type: event
+        year: 1929
+        slot: "05 - The Merry Dwarfs"
+        broadcast_date: 1929-12-16
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/05%20-%20The%20Merry%20Dwarfs%20%281929%29.mp4
+      - id: sillysym_06
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "06 - Summer"
+        broadcast_date: 1930-01-09
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/06%20-%20Summer%20%281930%29.mp4
+      - id: sillysym_07
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "07 - Autumn"
+        broadcast_date: 1930-02-15
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/07%20-%20Autumn%20%281930%29.mp4
+      - id: sillysym_08
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "08 - Cannibal Capers"
+        broadcast_date: 1930-03-15
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/08%20-%20Cannibal%20Capers%20%281930%29.mp4
+      - id: sillysym_09
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "09 - Night"
+        broadcast_date: 1930-04-12
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/09%20-%20Night%20%281930%29.mp4
+      - id: sillysym_10
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "10 - Frolicking Fish"
+        broadcast_date: 1930-05-23
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/10%20-%20Frolicking%20Fish%20%281930%29.mp4
+      - id: sillysym_11
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "11 - Arctic Antics"
+        broadcast_date: 1930-06-26
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/11%20-%20Arctic%20Antics%20%281930%29.mp4
+      - id: sillysym_12
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "12 - Midnight In A Toyshop"
+        broadcast_date: 1930-07-03
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/12%20-%20Midnight%20In%20A%20Toyshop%20%281930%29.mp4
+      - id: sillysym_13
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "13 - Monkey Melodies"
+        broadcast_date: 1930-09-02
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/13%20-%20Monkey%20Melodies%20%281930%29.mp4
+      - id: sillysym_14
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "14 - Winter"
+        broadcast_date: 1930-10-30
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/14%20-%20Winter%20%281930%29.mp4
+      - id: sillysym_15
+        collection: "Silly Symphonies"
+        type: event
+        year: 1930
+        slot: "15 - Playful Pan"
+        broadcast_date: 1930-12-26
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/15%20-%20Playful%20Pan%20%281930%29.mp4
+      - id: sillysym_16
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "16 - Mother Goose Melodies"
+        broadcast_date: 1931-04-17
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/16%20-%20Mother%20Goose%20Melodies%20%281931%29.mp4
+      - id: sillysym_17
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "17 - Birds Of A Feather"
+        broadcast_date: 1931-02-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/17%20-%20Birds%20Of%20A%20Feather%20%281931%29.mp4
+      - id: sillysym_18
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "18 - The China Plate"
+        broadcast_date: 1931-05-25
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/18%20-%20The%20China%20Plate%20%281931%29.mp4
+      - id: sillysym_19
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "19 - The Busy Beavers"
+        broadcast_date: 1931-08-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/19%20-%20The%20Busy%20Beavers%20%281931%29.mp4
+      - id: sillysym_20
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "20 - The Cat's Out"
+        broadcast_date: 1931-10-31
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/20%20-%20The%20Cat%27s%20Out%20%281931%29.mp4
+      - id: sillysym_21
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "21 - Egyptian Melodies"
+        broadcast_date: 1931-11-21
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/21%20-%20Egyptian%20Melodies%20%281931%29.mp4
+      - id: sillysym_22
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "22 - The Clock Store"
+        broadcast_date: 1931-12-28
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/22%20-%20The%20Clock%20Store%20%281931%29.mp4
+      - id: sillysym_23
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "23 - The Spider and the Fly"
+        broadcast_date: 1931-10-03
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/23%20-%20The%20Spider%20And%20The%20Fly%20%281931%29.mp4
+      - id: sillysym_24
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "24 - The Fox Hunt"
+        broadcast_date: 1931-12-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/24%20-%20The%20Fox%20Hunt%20%281931%29.mp4
+      - id: sillysym_25
+        collection: "Silly Symphonies"
+        type: event
+        year: 1931
+        slot: "25 - The Ugly Duckling (1931)"
+        broadcast_date: 1931-12-17
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/25%20-%20The%20Ugly%20Duckling%20%281931%29.mp4
+      - id: sillysym_26
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "26 - The Bird Store"
+        broadcast_date: 1932-01-16
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/26%20-%20The%20Bird%20Store%20%281932%29.mp4
+      - id: sillysym_27
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "27 - The Bears and the Bees"
+        broadcast_date: 1932-02-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/27%20-%20The%20Bears%20And%20The%20Bees%20%281932%29.mp4
+      - id: sillysym_28
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "28 - Just Dogs"
+        broadcast_date: 1932-03-05
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/28%20-%20Just%20Dogs%20%281932%29.mp4
+      - id: sillysym_29
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "29 - Flowers and Trees"
+        broadcast_date: 1932-07-30
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/29%20-%20Flowers%20And%20Trees%20%281932%29.mp4
+      - id: sillysym_30
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "30 - King Neptune"
+        broadcast_date: 1932-09-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/30%20-%20King%20Neptune%20%281932%29.mp4
+      - id: sillysym_31
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "31 - Bugs in Love"
+        broadcast_date: 1932-09-30
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/31%20-%20Bugs%20In%20Love%20%281932%29.mp4
+      - id: sillysym_32
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "32 - Babes in the Woods"
+        broadcast_date: 1932-11-19
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/32%20-%20Babes%20In%20The%20Woods%20%281932%29.mp4
+      - id: sillysym_33
+        collection: "Silly Symphonies"
+        type: event
+        year: 1932
+        slot: "33 - Santa's Workshop"
+        broadcast_date: 1932-12-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/33%20-%20Santa%27s%20Workshop%20%281932%29.mp4
+      - id: sillysym_34
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "34 - Birds in the Spring"
+        broadcast_date: 1933-03-11
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/34%20-%20Birds%20In%20The%20Spring%20%281933%29.mp4
+      - id: sillysym_35
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "35 - Father Noah's Ark"
+        broadcast_date: 1933-04-08
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/35%20-%20Father%20Noah%27s%20Ark%20%281933%29.mp4
+      - id: sillysym_36
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "36 - Three Little Pigs"
+        broadcast_date: 1933-05-27
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/36%20-%20Three%20Little%20Pigs%20%281933%29.mp4
+      - id: sillysym_37
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "37 - Old King Cole"
+        broadcast_date: 1933-07-29
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/37%20-%20Old%20King%20Cole%20%281933%29.mp4
+      - id: sillysym_38
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "38 - Lullaby Land"
+        broadcast_date: 1933-10-07
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/38%20-%20Lullaby%20Land%20%281933%29.mp4
+      - id: sillysym_39
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "39 - The Pied Piper"
+        broadcast_date: 1933-09-16
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/39%20-%20The%20Pied%20Piper%20%281933%29.mp4
+      - id: sillysym_40
+        collection: "Silly Symphonies"
+        type: event
+        year: 1933
+        slot: "40 - The Night Before Christmas"
+        broadcast_date: 1933-12-09
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/40%20-%20The%20Night%20Before%20Christmas%20%281933%29.mp4
+      - id: sillysym_41
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "41 - The China Shop"
+        broadcast_date: 1934-01-26
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/41%20-%20The%20China%20Shop%20%281934%29.mp4
+      - id: sillysym_42
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "42 - The Grasshopper and the Ants"
+        broadcast_date: 1934-02-10
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/42%20-%20The%20Grasshopper%20And%20The%20Ants%20%281934%29.mp4
+      - id: sillysym_43
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "43 - Funny Little Bunnies"
+        broadcast_date: 1934-03-24
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/43%20-%20Funny%20Little%20Bunnies%20%281934%29.mp4
+      - id: sillysym_44
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "44 - The Big Bad Wolf"
+        broadcast_date: 1934-04-13
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/44%20-%20The%20Big%20Bad%20Wolf%20%281934%29.mp4
+      - id: sillysym_45
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "45 - The Wise Little Hen"
+        broadcast_date: 1934-06-09
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/45%20-%20The%20Wise%20Little%20Hen%20%281934%29.mp4
+      - id: sillysym_46
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "46 - The Flying Mouse"
+        broadcast_date: 1934-07-14
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/46%20-%20The%20Flying%20Mouse%20%281934%29.mp4
+      - id: sillysym_47
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "47 - Peculiar Penguins"
+        broadcast_date: 1934-09-01
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/47%20-%20Peculiar%20Penguins%20%281934%29.mp4
+      - id: sillysym_48
+        collection: "Silly Symphonies"
+        type: event
+        year: 1934
+        slot: "48 - The Goddess of Spring"
+        broadcast_date: 1934-11-03
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/48%20-%20The%20Goddess%20Of%20Spring%20%281934%29.mp4
+      - id: sillysym_49
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "49 - The Tortoise and the Hare"
+        broadcast_date: 1935-01-05
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/49%20-%20The%20Tortoise%20And%20The%20Hare%20%281935%29.mp4
+      - id: sillysym_50
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "50 - The Golden Touch"
+        broadcast_date: 1935-03-22
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/50%20-%20The%20Golden%20Touch%20%281935%29.mp4
+      - id: sillysym_51
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "51 - The Robber Kitten"
+        broadcast_date: 1935-04-20
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/51-%20The%20Robber%20Kitten%20%281935%29.mp4
+      - id: sillysym_52
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "52 - Water Babies"
+        broadcast_date: 1935-05-11
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/52%20-%20Water%20Babies%20%281935%29.mp4
+      - id: sillysym_53
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "53 - The Cookie Carnival"
+        broadcast_date: 1935-05-25
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/53%20-%20The%20Cookie%20Carnival%20%281935%29.mp4
+      - id: sillysym_54
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "54 - Who Killed Cock Robin?"
+        broadcast_date: 1935-06-29
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/54%20-%20Who%20Killed%20Cock%20Robin%20%281935%29.mp4
+      - id: sillysym_55
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "55 - Music Land"
+        broadcast_date: 1935-10-05
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/55%20-%20Music%20Land%20%281935%29.mp4
+      - id: sillysym_56
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "56 - Three Orphan Kittens"
+        broadcast_date: 1935-10-26
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/56%20-%20Three%20Orphan%20Kittens%20%281935%29.mp4
+      - id: sillysym_57
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "57 - Cock o' the Walk"
+        broadcast_date: 1935-11-30
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/57%20-%20Cock%20O%27%20The%20Walk%20%281935%29.mp4
+      - id: sillysym_58
+        collection: "Silly Symphonies"
+        type: event
+        year: 1935
+        slot: "58 - Broken Toys"
+        broadcast_date: 1935-12-14
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/58%20-%20Broken%20Toys%20%281935%29.mp4
+      - id: sillysym_59
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "59 - Elmer Elephant"
+        broadcast_date: 1936-03-28
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/59%20-%20Elmer%20Elephant%20%281936%29.mp4
+      - id: sillysym_60
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "60 - Three Little Wolves"
+        broadcast_date: 1936-04-18
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/60%20-%20Three%20Little%20Wolves%20%281936%29.mp4
+      - id: sillysym_61
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "61 - Toby Tortoise Returns"
+        broadcast_date: 1936-08-01
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/61%20-%20Toby%20Tortoise%20Returns%20%281936%29.mp4
+      - id: sillysym_62
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "62 - Three Blind Mousketeers"
+        broadcast_date: 1936-06-06
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/62%20-%20Three%20Blind%20Mousketeers%20%281936%29.mp4
+      - id: sillysym_63
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "63 - The Country Cousin"
+        broadcast_date: 1936-10-31
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/63%20-%20The%20Country%20Cousin%20%281936%29.mp4
+      - id: sillysym_64
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "64 - Mother Pluto"
+        broadcast_date: 1936-11-14
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/64%20-%20Mother%20Pluto%20%281936%29.mp4
+      - id: sillysym_65
+        collection: "Silly Symphonies"
+        type: event
+        year: 1936
+        slot: "65 - More Kittens"
+        broadcast_date: 1936-10-31
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/65%20-%20More%20Kittens%20%281936%29.mp4
+      - id: sillysym_66
+        collection: "Silly Symphonies"
+        type: event
+        year: 1937
+        slot: "66 - Woodland Café"
+        broadcast_date: 1937-03-13
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/66%20-%20Woodland%20Caf%C3%A9%20%281937%29.mp4
+      - id: sillysym_67
+        collection: "Silly Symphonies"
+        type: event
+        year: 1937
+        slot: "67 - Little Hiawatha"
+        broadcast_date: 1937-05-15
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/67%20-%20Little%20Hiawatha%20%281937%29.mp4
+      - id: sillysym_68
+        collection: "Silly Symphonies"
+        type: event
+        year: 1937
+        slot: "68 - The Old Mill"
+        broadcast_date: 1937-11-05
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/68%20-%20The%20Old%20Mill%20%281937%29.mp4
+      - id: sillysym_69
+        collection: "Silly Symphonies"
+        type: event
+        year: 1938
+        slot: "69 - The Moth and the Flame"
+        broadcast_date: 1938-04-01
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/69%20-%20The%20Moth%20And%20The%20Flame%20%281938%29.mp4
+      - id: sillysym_70
+        collection: "Silly Symphonies"
+        type: event
+        year: 1938
+        slot: "70 - Wynken, Blynken and Nod"
+        broadcast_date: 1938-05-27
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/70%20-%20Wynken%2C%20Blynken%20And%20Nod%20%281938%29.mp4
+      - id: sillysym_71
+        collection: "Silly Symphonies"
+        type: event
+        year: 1938
+        slot: "71 - Farmyard Symphony"
+        broadcast_date: 1938-10-14
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/71%20-%20Farmyard%20Symphony%20%281938%29.mp4
+      - id: sillysym_72
+        collection: "Silly Symphonies"
+        type: event
+        year: 1938
+        slot: "72 - Merbabies"
+        broadcast_date: 1938-12-09
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/72%20-%20Merbabies%20%281938%29.mp4
+      - id: sillysym_73
+        collection: "Silly Symphonies"
+        type: event
+        year: 1938
+        slot: "73 - Mother Goose Goes Hollywood"
+        broadcast_date: 1938-12-23
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/73%20-%20Mother%20Goose%20Goes%20Hollywood%20%281938%29.mp4
+      - id: sillysym_74
+        collection: "Silly Symphonies"
+        type: event
+        year: 1939
+        slot: "74 - The Practical Pig"
+        broadcast_date: 1939-02-24
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/74%20-%20The%20Practical%20Pig%20%281939%29.mp4
+      - id: sillysym_75
+        collection: "Silly Symphonies"
+        type: event
+        year: 1939
+        slot: "75 - The Ugly Duckling (1939)"
+        broadcast_date: 1939-04-07
+        network: Disney
+        runtime: PT10M
+        source: archive
+        url: https://archive.org/download/walt-disneys-silly-symphonies-the-complete-collection-1929-39/75%20-%20The%20Ugly%20Duckling%20%281939%29.mp4

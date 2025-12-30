@@ -18,15 +18,37 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/channels", tags=["Channels"])
 
 
-@router.get("")
+@router.get("", response_model=List[ChannelResponse])
 def get_all_channels(db: Session = Depends(get_db), include_content_status: bool = False):
     """Get all channels
     
     Args:
         include_content_status: If True, includes 'has_content' field indicating if channel has schedules
     """
-    from ..database.models import Schedule
-    channels = db.query(Channel).all()
+    from ..database.models import Schedule, StreamingMode
+    from sqlalchemy import text
+    
+    # Query channels using raw SQL to avoid enum conversion issues, then convert manually
+    try:
+        channels = db.query(Channel).all()
+    except (LookupError, ValueError) as e:
+        # If enum conversion fails, query raw and convert manually
+        logger.warning(f"Enum conversion error, using raw query: {e}")
+        raw_channels = db.execute(text("SELECT * FROM channels")).fetchall()
+        channels = []
+        for row in raw_channels:
+            # Create a mock channel object from row data
+            channel = Channel()
+            for key, value in row._mapping.items():
+                if key == 'streaming_mode' and value:
+                    # Convert string to enum
+                    try:
+                        setattr(channel, key, StreamingMode(value))
+                    except ValueError:
+                        setattr(channel, key, StreamingMode.TRANSPORT_STREAM_HYBRID)
+                else:
+                    setattr(channel, key, value)
+            channels.append(channel)
     
     if include_content_status:
         # Check which channels have schedules (content)
@@ -40,7 +62,7 @@ def get_all_channels(db: Session = Depends(get_db), include_content_status: bool
         for channel in channels:
             channel_dict = {
                 'id': channel.id,
-                'number': channel.number,
+                'number': str(channel.number) if channel.number is not None else '',  # Ensure string type
                 'name': channel.name,
                 'group': channel.group,
                 'enabled': channel.enabled,
@@ -54,7 +76,44 @@ def get_all_channels(db: Session = Depends(get_db), include_content_status: bool
         return result
     else:
         # Return standard ChannelResponse format
-        return channels
+        # Handle enum conversion issues by using raw SQL query and manual conversion
+        from ..database.models import StreamingMode, ChannelTranscodeMode, ChannelSubtitleMode, ChannelStreamSelectorMode, ChannelMusicVideoCreditsMode, ChannelSongVideoMode, ChannelIdleBehavior, ChannelPlayoutSource, PlayoutMode
+        
+        result = []
+        # Use raw query to avoid SQLAlchemy enum conversion issues
+        raw_channels = db.execute(text("""
+            SELECT id, number, name, "group", enabled, logo_path, playout_mode,
+                   streaming_mode, transcode_mode, subtitle_mode, 
+                   preferred_audio_language_code, preferred_audio_title,
+                   preferred_subtitle_language_code, stream_selector_mode,
+                   stream_selector, music_video_credits_mode,
+                   music_video_credits_template, song_video_mode,
+                   idle_behavior, playout_source, mirror_source_channel_id,
+                   playout_offset, show_in_epg, created_at, updated_at
+            FROM channels
+        """)).fetchall()
+        
+        for row in raw_channels:
+            row_dict = dict(row._mapping)
+            # Convert enum strings to proper enum values
+            if row_dict.get('streaming_mode'):
+                try:
+                    row_dict['streaming_mode'] = StreamingMode(row_dict['streaming_mode'])
+                except (ValueError, KeyError):
+                    row_dict['streaming_mode'] = StreamingMode.TRANSPORT_STREAM_HYBRID
+            
+            if row_dict.get('playout_mode'):
+                try:
+                    row_dict['playout_mode'] = PlayoutMode(row_dict['playout_mode'])
+                except (ValueError, KeyError):
+                    row_dict['playout_mode'] = PlayoutMode.CONTINUOUS
+            
+            # Ensure number is string
+            if row_dict.get('number') is not None:
+                row_dict['number'] = str(row_dict['number'])
+            
+            result.append(ChannelResponse(**row_dict))
+        return result
 
 
 @router.get("/{channel_id}", response_model=ChannelResponse)
@@ -83,6 +142,28 @@ def create_channel(channel: ChannelCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Channel number already exists")
     
+    # Validate FFmpeg profile if provided
+    if channel.ffmpeg_profile_id:
+        from ..database.models import FFmpegProfile
+        profile = db.query(FFmpegProfile).filter(FFmpegProfile.id == channel.ffmpeg_profile_id).first()
+        if not profile:
+            raise HTTPException(status_code=400, detail="FFmpeg profile not found")
+    
+    # Validate watermark if provided
+    if channel.watermark_id:
+        from ..database.models import Watermark
+        watermark = db.query(Watermark).filter(Watermark.id == channel.watermark_id).first()
+        if not watermark:
+            raise HTTPException(status_code=400, detail="Watermark not found")
+    
+    # Validate mirror source channel if provided
+    if channel.mirror_source_channel_id:
+        mirror_channel = db.query(Channel).filter(Channel.id == channel.mirror_source_channel_id).first()
+        if not mirror_channel:
+            raise HTTPException(status_code=400, detail="Mirror source channel not found")
+        if channel.mirror_source_channel_id == channel.id if hasattr(channel, 'id') else False:
+            raise HTTPException(status_code=400, detail="Channel cannot mirror itself")
+    
     db_channel = Channel(**channel.dict())
     db.add(db_channel)
     db.commit()
@@ -96,8 +177,37 @@ def update_channel(channel_id: int, channel_update: ChannelUpdate, db: Session =
     channel = db.query(Channel).filter(Channel.id == channel_id).first()
     if not channel:
         raise HTTPException(status_code=404, detail="Channel not found")
+    # Reject writes for YAML-authoritative channels until export exists
+    if getattr(channel, 'is_yaml_source', False):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Channel is defined in YAML. Edit the YAML file and re-import."
+        )
     
     update_data = channel_update.dict(exclude_unset=True)
+    
+    # Validate FFmpeg profile if being updated
+    if "ffmpeg_profile_id" in update_data and update_data["ffmpeg_profile_id"] is not None:
+        from ..database.models import FFmpegProfile
+        profile = db.query(FFmpegProfile).filter(FFmpegProfile.id == update_data["ffmpeg_profile_id"]).first()
+        if not profile:
+            raise HTTPException(status_code=400, detail="FFmpeg profile not found")
+    
+    # Validate watermark if being updated
+    if "watermark_id" in update_data and update_data["watermark_id"] is not None:
+        from ..database.models import Watermark
+        watermark = db.query(Watermark).filter(Watermark.id == update_data["watermark_id"]).first()
+        if not watermark:
+            raise HTTPException(status_code=400, detail="Watermark not found")
+    
+    # Validate mirror source channel if being updated
+    if "mirror_source_channel_id" in update_data and update_data["mirror_source_channel_id"] is not None:
+        mirror_channel = db.query(Channel).filter(Channel.id == update_data["mirror_source_channel_id"]).first()
+        if not mirror_channel:
+            raise HTTPException(status_code=400, detail="Mirror source channel not found")
+        if update_data["mirror_source_channel_id"] == channel_id:
+            raise HTTPException(status_code=400, detail="Channel cannot mirror itself")
+    
     for field, value in update_data.items():
         setattr(channel, field, value)
     
@@ -112,6 +222,12 @@ def delete_channel(channel_id: int, db: Session = Depends(get_db)):
     channel = db.query(Channel).filter(Channel.id == channel_id).first()
     if not channel:
         raise HTTPException(status_code=404, detail="Channel not found")
+    # Reject deletes for YAML-authoritative channels until export exists
+    if getattr(channel, 'is_yaml_source', False):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Channel is defined in YAML. Edit the YAML file and re-import."
+        )
     
     db.delete(channel)
     db.commit()
@@ -233,6 +349,7 @@ async def upload_channel_icon(
     channel = db.query(Channel).filter(Channel.id == channel_id).first()
     if not channel:
         raise HTTPException(status_code=404, detail="Channel not found")
+    # Allow icon uploads regardless of YAML source (non-breaking)
     
     # Validate file is PNG
     if not file.filename:

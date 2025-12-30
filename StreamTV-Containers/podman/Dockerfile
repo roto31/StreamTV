@@ -1,7 +1,7 @@
 # Podman-compatible Dockerfile for StreamTV
 # Same as Docker version, fully compatible with Podman
 
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Set working directory
 WORKDIR /app

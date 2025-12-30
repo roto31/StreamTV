@@ -1,298 +1,201 @@
-# StreamTV Kubernetes Distribution
+# StreamTV Platform Distributions
 
-Complete Kubernetes manifests for deploying StreamTV in a Kubernetes cluster.
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey.svg)]()
 
-## Prerequisites
+**StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
-- Kubernetes cluster (v1.20+)
-- kubectl configured
-- PersistentVolume provisioner (for data storage)
-- Ingress controller (optional, for external access)
+## 🎯 Features
 
-## Quick Start
+### Core Capabilities
+- **🌐 Direct Streaming**: Stream from YouTube and Archive.org without downloads
+- **📺 HDHomeRun Emulation**: Native integration with Plex, Emby, and Jellyfin
+- **📅 Advanced Scheduling**: YAML-based schedules with commercial breaks
+- **🐳 Container Support**: Docker, Kubernetes, and Podman deployments
+- **🖥️ Cross-Platform**: Native support for macOS, Windows, and Linux
+- **🔌 IPTV Support**: M3U playlists and XMLTV EPG generation
+- **⚡ FastAPI**: Modern async Python web framework
+- **🔐 Authentication**: Passkey and OAuth support for YouTube
 
-### 1. Create Namespace
+### Streaming Sources
+- ✅ **YouTube**: Direct streaming with quality selection and OAuth authentication
+- ✅ **Archive.org**: Support for video collections and individual items
+- 🔄 **Extensible**: Easy to add new streaming sources via adapter pattern
 
+### Integration
+- **Plex Media Server**: Direct HDHomeRun tuner or M3U/EPG
+- **Emby/Jellyfin**: HDHomeRun or IPTV support
+- **Kodi**: IPTV Simple Client
+- **VLC**: Direct M3U playlist support
+- **HDHomeRun Devices**: Full API compatibility
+
+## 📦 Available Distributions
+
+### Desktop Platforms
+
+- **[macOS](StreamTV-macOS/)** - Native macOS distribution with installer
+  - Automated installation script
+  - `.command` launchers for easy startup
+  - Full documentation included
+- **[macOS Menu Bar App](StreamTVApp/)** - Native macOS menu bar application
+  - Runs as menu bar icon (no dock icon)
+  - Automatic Python virtual environment management
+  - FFmpeg installation via Homebrew
+  - Dependency update checking
+  - Server lifecycle management
+  - See [StreamTVApp/README.md](StreamTVApp/README.md) for setup instructions
+
+- **[Windows](StreamTV-Windows/)** - Windows distribution
+  - PowerShell installation script
+  - Batch and PowerShell startup scripts
+  - Windows service support documentation
+
+- **[Linux](StreamTV-Linux/)** - Linux distribution
+  - Distribution detection (apt, dnf, pacman)
+  - systemd service integration
+  - Firewall configuration guides
+
+### Container Platforms
+
+- **[Docker](StreamTV-Containers/docker/)** - Single-container deployment
+- **[Docker Compose](StreamTV-Containers/docker-compose/)** - Multi-service setup
+- **[Kubernetes](StreamTV-Containers/kubernetes/)** - K8s manifests with ingress
+- **[Podman](StreamTV-Containers/podman/)** - Rootless container support
+
+## 🚀 Quick Start
+
+### macOS
 ```bash
-kubectl apply -f namespace.yaml
+cd StreamTV-macOS
+./install_macos.sh
+./start_server.sh
+# Or double-click: Install-StreamTV.command
 ```
 
-### 2. Create ConfigMap and Secrets
+### Windows
+```powershell
+cd StreamTV-Windows
+.\install_windows.ps1
+.\start_server.ps1
+```
 
+### Linux
 ```bash
-# Update configmap.yaml with your settings
-kubectl apply -f configmap.yaml
-
-# Create secrets (update with your values)
-kubectl apply -f secrets.yaml
-# Or create from command line:
-kubectl create secret generic streamtv-secrets \
-  --from-literal=youtube-api-key='your-key' \
-  --from-literal=access-token='your-token' \
-  -n streamtv
+cd StreamTV-Linux
+./install_linux.sh
+./start_server.sh
 ```
 
-### 3. Create PersistentVolumeClaims
-
+### Docker
 ```bash
-kubectl apply -f pvc.yaml
+cd StreamTV-Containers/docker
+docker build -t streamtv .
+docker run -p 8410:8410 streamtv
 ```
 
-### 4. Deploy StreamTV
+**Access the web interface**: Open `http://localhost:8410` in your browser
 
-```bash
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
-```
+## 🌐 Browser Compatibility
 
-### 5. (Optional) Create Ingress
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with:
+- **Chrome/Edge**: Full HLS support via HLS.js
+- **Safari**: Native HLS support
+- **Firefox**: Full HLS support via HLS.js
 
-```bash
-# Update ingress.yaml with your domain
-kubectl apply -f ingress.yaml
-```
+The player automatically detects browser capabilities and uses the best available method. For best results, use a modern browser with JavaScript enabled.
 
-### 6. Check Status
+## 📋 Requirements
 
-```bash
-kubectl get pods -n streamtv
-kubectl get svc -n streamtv
-kubectl logs -f deployment/streamtv -n streamtv
-```
+- **Python**: 3.10 or higher
+- **FFmpeg**: For video transcoding (automatically installed by install scripts)
+- **Network**: Internet connection for streaming
+- **Platform-specific**: See individual distribution READMEs
 
-## Using Kustomize
+## 📚 Documentation
 
-```bash
-# Apply all resources
-kubectl apply -k .
+### Complete Guides
+- **[GitHub Wiki](https://github.com/roto31/StreamTV/wiki)** - Comprehensive documentation
+- **[Documentation Index](https://github.com/roto31/StreamTV/wiki/Documentation-Index)** - All guides organized
+- **[Scripts & Tools](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools)** - Utility scripts
 
-# With custom image
-kubectl apply -k . --dry-run=client -o yaml | \
-  sed 's|streamtv:latest|your-registry/streamtv:v1.0.0|' | \
-  kubectl apply -f -
-```
+### Quick Links
+- [Installation Guide](https://github.com/roto31/StreamTV/wiki/Installation-Guide)
+- [Beginner Guide](https://github.com/roto31/StreamTV/wiki/Beginner-Guide) - For new users
+- [Plex Integration](https://github.com/roto31/StreamTV/wiki/Plex-Integration) - Setup guide
+- [API Reference](https://github.com/roto31/StreamTV/wiki/API-Reference) - Complete API docs
+- [Troubleshooting](https://github.com/roto31/StreamTV/wiki/Troubleshooting) - Common issues
 
-## Configuration
+### Platform-Specific
+Each distribution includes complete documentation in `docs/`:
+- Installation instructions
+- Quick start guides
+- Platform-specific configuration
+- Troubleshooting guides
+- API documentation
 
-### ConfigMap
+## 🔗 Integration Examples
 
-Update `configmap.yaml` with your settings:
+### Plex Media Server
+1. Install StreamTV on your server
+2. Add StreamTV as HDHomeRun tuner in Plex
+3. Scan for channels
+4. Watch your custom channels in Plex!
 
-```yaml
-data:
-  base_url: "http://streamtv.example.com"
-  plex-base-url: "http://plex.example.com:32400"
-```
+See [Plex Integration Guide](https://github.com/roto31/StreamTV/wiki/Plex-Integration) for detailed instructions.
 
-### Secrets
+### IPTV Clients
+- **Kodi**: Use IPTV Simple Client with M3U playlist
+- **VLC**: Open M3U playlist directly
+- **Emby/Jellyfin**: Add as IPTV source or HDHomeRun tuner
 
-Create secrets for sensitive data:
+## 🛠️ Scripts & Tools
 
-```bash
-kubectl create secret generic streamtv-secrets \
-  --from-literal=youtube-api-key='your-key' \
-  --from-literal=archive-org-username='username' \
-  --from-literal=archive-org-password='password' \
-  --from-literal=access-token='token' \
-  --from-literal=plex-token='plex-token' \
-  -n streamtv
-```
+StreamTV includes utility scripts for:
+- Channel creation from Archive.org collections
+- Schedule generation
+- Log viewing and troubleshooting
+- Database management
 
-### PersistentVolumes
+See [Scripts Documentation](https://github.com/roto31/StreamTV/wiki/Scripts-and-Tools) for complete list.
 
-Update storage class in `pvc.yaml`:
+## 📖 Wiki Pages
 
-```yaml
-storageClassName: fast-ssd  # Your storage class
-```
+Comprehensive documentation available in the [GitHub Wiki](https://github.com/roto31/StreamTV/wiki):
+- [macOS](https://github.com/roto31/StreamTV/wiki/macOS) - Complete macOS guide
+- [Windows](https://github.com/roto31/StreamTV/wiki/Windows) - Complete Windows guide
+- [Linux](https://github.com/roto31/StreamTV/wiki/Linux) - Complete Linux guide
+- [Containers](https://github.com/roto31/StreamTV/wiki/Containers) - Container platforms
+- [Archive Parser](https://github.com/roto31/StreamTV/wiki/Archive-Parser) - Create channels from Archive.org
+- [Logging](https://github.com/roto31/StreamTV/wiki/Logging) - Logging system
 
-## Scaling
+## 📝 Contributing
 
-### Horizontal Scaling
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-**Important**: StreamTV uses SQLite by default, which doesn't support multiple replicas. For scaling:
+- Report bugs via [Issues](https://github.com/roto31/StreamTV/issues)
+- Suggest features via [Feature Requests](https://github.com/roto31/StreamTV/issues/new?template=feature_request.md)
+- Submit pull requests following our [PR template](.github/pull_request_template.md)
 
-1. **Use PostgreSQL** (recommended):
-   - Deploy PostgreSQL as a separate service
-   - Update `STREAMTV_DATABASE_URL` to use PostgreSQL
-   - Set `replicas: 3` in deployment.yaml
+## 📄 License
 
-2. **Or use ReadWriteMany storage**:
-   - Update PVCs to use ReadWriteMany access mode
-   - Use a storage class that supports it (e.g., NFS)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Vertical Scaling
+## 🌟 Project Status
 
-Update resource limits in `deployment.yaml`:
+✅ **Stable** - Production ready
+- Cross-platform distributions available
+- Comprehensive documentation
+- Active development
 
-```yaml
-resources:
-  requests:
-    memory: "1Gi"
-    cpu: "1"
-  limits:
-    memory: "4Gi"
-    cpu: "4"
-```
+## 🔍 Resources
 
-## Access Methods
+- [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) - Complete documentation
+- [Issues](https://github.com/roto31/StreamTV/issues) - Bug reports and feature requests
+- [Pull Requests](https://github.com/roto31/StreamTV/pulls) - Contributions
+- [Releases](https://github.com/roto31/StreamTV/releases) - Version history
 
-### LoadBalancer Service
+---
 
-```bash
-kubectl get svc streamtv -n streamtv
-# Access via EXTERNAL-IP:8410
-```
-
-### NodePort Service
-
-```bash
-kubectl get svc streamtv-nodeport -n streamtv
-# Access via <node-ip>:30410
-```
-
-### Ingress
-
-Update `ingress.yaml` with your domain and access via:
-- http://streamtv.example.com
-
-### Port Forwarding (Development)
-
-```bash
-kubectl port-forward deployment/streamtv 8410:8410 -n streamtv
-# Access at http://localhost:8410
-```
-
-## Monitoring
-
-### Health Checks
-
-Health checks are configured in the deployment:
-
-```bash
-# Check pod health
-kubectl describe pod <pod-name> -n streamtv
-
-# Check health endpoint
-kubectl exec -it deployment/streamtv -n streamtv -- \
-  curl http://localhost:8410/api/health
-```
-
-### Logs
-
-```bash
-# All pods
-kubectl logs -f deployment/streamtv -n streamtv
-
-# Specific pod
-kubectl logs -f <pod-name> -n streamtv
-
-# Previous container (if restarted)
-kubectl logs -f <pod-name> -n streamtv --previous
-```
-
-### Metrics
-
-```bash
-# Resource usage
-kubectl top pod -n streamtv
-
-# Detailed metrics
-kubectl describe pod <pod-name> -n streamtv
-```
-
-## Updates and Rollouts
-
-### Rolling Update
-
-```bash
-# Update image
-kubectl set image deployment/streamtv \
-  streamtv=streamtv:v1.1.0 -n streamtv
-
-# Check rollout status
-kubectl rollout status deployment/streamtv -n streamtv
-
-# Rollback if needed
-kubectl rollout undo deployment/streamtv -n streamtv
-```
-
-### Blue-Green Deployment
-
-Create a second deployment with different labels and switch services.
-
-## Backup and Restore
-
-### Backup
-
-```bash
-# Backup data PVC
-kubectl exec -n streamtv <pod-name> -- \
-  tar czf /tmp/backup.tar.gz -C /app/data .
-
-kubectl cp streamtv/<pod-name>:/tmp/backup.tar.gz ./backup.tar.gz
-```
-
-### Restore
-
-```bash
-# Copy backup to pod
-kubectl cp ./backup.tar.gz streamtv/<pod-name>:/tmp/
-
-# Extract in pod
-kubectl exec -n streamtv <pod-name> -- \
-  tar xzf /tmp/backup.tar.gz -C /app/data
-```
-
-## Troubleshooting
-
-### Pod Not Starting
-
-```bash
-# Check pod status
-kubectl describe pod <pod-name> -n streamtv
-
-# Check events
-kubectl get events -n streamtv --sort-by='.lastTimestamp'
-
-# Check logs
-kubectl logs <pod-name> -n streamtv
-```
-
-### PVC Issues
-
-```bash
-# Check PVC status
-kubectl get pvc -n streamtv
-
-# Describe PVC
-kubectl describe pvc streamtv-data-pvc -n streamtv
-```
-
-### Service Not Accessible
-
-```bash
-# Check service
-kubectl get svc -n streamtv
-kubectl describe svc streamtv -n streamtv
-
-# Check endpoints
-kubectl get endpoints -n streamtv
-```
-
-## Production Considerations
-
-1. **Use StatefulSet** for ordered deployment and stable network IDs
-2. **Configure resource quotas** and limits
-3. **Enable network policies** for security
-4. **Use secrets management** (e.g., External Secrets Operator)
-5. **Set up monitoring** (Prometheus, Grafana)
-6. **Configure backup strategy** for persistent volumes
-7. **Use Helm charts** for easier management
-
-## See Also
-
-- [Docker Distribution](../docker/README.md)
-- [Docker Compose Distribution](../docker-compose/README.md)
-- [Podman Distribution](../podman/README.md)
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
+**Made with ❤️ for the IPTV community**

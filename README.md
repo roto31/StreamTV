@@ -1,6 +1,6 @@
 # StreamTV Platform Distributions
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey.svg)]()
@@ -39,6 +39,13 @@
   - Automated installation script
   - `.command` launchers for easy startup
   - Full documentation included
+- **[macOS Menu Bar App](StreamTVApp/)** - Native macOS menu bar application
+  - Runs as menu bar icon (no dock icon)
+  - Automatic Python virtual environment management
+  - FFmpeg installation via Homebrew
+  - Dependency update checking
+  - Server lifecycle management
+  - See [StreamTVApp/README.md](StreamTVApp/README.md) for setup instructions
 
 - **[Windows](StreamTV-Windows/)** - Windows distribution
   - PowerShell installation script
@@ -90,9 +97,18 @@ docker run -p 8410:8410 streamtv
 
 **Access the web interface**: Open `http://localhost:8410` in your browser
 
+## 🌐 Browser Compatibility
+
+StreamTV uses HLS (HTTP Live Streaming) for browser playback, ensuring compatibility with:
+- **Chrome/Edge**: Full HLS support via HLS.js
+- **Safari**: Native HLS support
+- **Firefox**: Full HLS support via HLS.js
+
+The player automatically detects browser capabilities and uses the best available method. For best results, use a modern browser with JavaScript enabled.
+
 ## 📋 Requirements
 
-- **Python**: 3.8 or higher
+- **Python**: 3.10 or higher
 - **FFmpeg**: For video transcoding (automatically installed by install scripts)
 - **Network**: Internet connection for streaming
 - **Platform-specific**: See individual distribution READMEs

@@ -93,6 +93,15 @@ class FFmpegConfig(BaseSettings):
     hwaccel: Optional[str] = None
     hwaccel_device: Optional[str] = None
     extra_flags: Optional[str] = None
+    # Per-source overrides (optional)
+    youtube_hwaccel: Optional[str] = None
+    archive_org_hwaccel: Optional[str] = None
+    pbs_hwaccel: Optional[str] = None
+    plex_hwaccel: Optional[str] = None
+    youtube_video_encoder: Optional[str] = None
+    archive_org_video_encoder: Optional[str] = None
+    pbs_video_encoder: Optional[str] = None
+    plex_video_encoder: Optional[str] = None
 
 
 class PlayoutConfig(BaseSettings):

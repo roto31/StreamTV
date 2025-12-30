@@ -1,0 +1,18 @@
+# Development dependencies for StreamTV
+# Install with: pip install -r requirements-dev.txt
+
+# Security auditing tools
+pip-audit>=2.10.0         # Security vulnerability scanner (requires Python 3.10+)
+safety>=3.7.0             # Alternative security scanner (requires Python 3.9+)
+pipdeptree>=2.0.0         # Dependency tree visualization
+
+# Testing (if applicable)
+# pytest>=7.0.0
+# pytest-asyncio>=0.21.0
+# pytest-cov>=4.0.0
+
+# Code quality (optional)
+# black>=23.0.0
+# flake8>=6.0.0
+# mypy>=1.0.0
+

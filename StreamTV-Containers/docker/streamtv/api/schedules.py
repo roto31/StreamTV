@@ -56,6 +56,20 @@ def update_schedule(schedule_id: int, schedule: ScheduleUpdate, db: Session = De
     db_schedule = db.query(Schedule).filter(Schedule.id == schedule_id).first()
     if not db_schedule:
         raise HTTPException(status_code=404, detail="Schedule not found")
+    # Reject writes for YAML-authoritative schedules or when a YAML file exists for the channel
+    try:
+        channel = db.query(Channel).filter(Channel.id == db_schedule.channel_id).first()
+        from ..scheduling.parser import ScheduleParser
+        has_yaml_file = False
+        if channel and getattr(channel, 'number', None):
+            has_yaml_file = bool(ScheduleParser.find_schedule_file(channel.number))
+    except Exception:
+        has_yaml_file = False
+    if getattr(db_schedule, 'is_yaml_source', False) or has_yaml_file:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Schedule is defined in YAML. Edit the YAML file and re-import."
+        )
     
     # Validate channel exists if changed
     update_data = schedule.dict(exclude_unset=True)
@@ -78,6 +92,20 @@ def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     schedule = db.query(Schedule).filter(Schedule.id == schedule_id).first()
     if not schedule:
         raise HTTPException(status_code=404, detail="Schedule not found")
+    # Reject deletes for YAML-authoritative schedules or when a YAML file exists for the channel
+    try:
+        channel = db.query(Channel).filter(Channel.id == schedule.channel_id).first()
+        from ..scheduling.parser import ScheduleParser
+        has_yaml_file = False
+        if channel and getattr(channel, 'number', None):
+            has_yaml_file = bool(ScheduleParser.find_schedule_file(channel.number))
+    except Exception:
+        has_yaml_file = False
+    if getattr(schedule, 'is_yaml_source', False) or has_yaml_file:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Schedule is defined in YAML. Edit the YAML file and re-import."
+        )
     
     db.delete(schedule)
     db.commit()

@@ -1,0 +1,5 @@
+# ErsatzTV MCP Server Dependencies
+# Note: mcp requires Python >= 3.10
+mcp>=1.0.0
+pyyaml>=6.0.0
+

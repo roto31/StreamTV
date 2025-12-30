@@ -37,7 +37,7 @@ function Write-Warning {
 
 # Configuration
 $INSTALL_DIR = "$env:USERPROFILE\.streamtv"
-$PYTHON_MIN_VERSION = "3.8"
+$PYTHON_MIN_VERSION = "3.10"
 $VENV_DIR = "$INSTALL_DIR\venv"
 $APP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
@@ -64,7 +64,7 @@ function Test-PythonVersion {
 
 # Function to install Python
 function Install-Python {
-    Write-Info "Python 3.8+ not found. Please install from python.org..."
+    Write-Info "Python 3.10+ not found. Please install from python.org..."
     Write-Info "Opening Python download page..."
     Start-Process "https://www.python.org/downloads/"
     Write-Warning "After installing Python, run this script again."

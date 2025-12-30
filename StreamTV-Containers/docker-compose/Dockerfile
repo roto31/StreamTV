@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for StreamTV
 # Stage 1: Build stage with FFmpeg
-FROM python:3.11-slim as builder
+FROM python:3.12-slim as builder
 
 # Install build dependencies and FFmpeg
 RUN apt-get update && apt-get install -y \
@@ -18,7 +18,7 @@ RUN wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-stati
     && rm -rf ffmpeg-*-amd64-static*
 
 # Stage 2: Runtime stage
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Set working directory
 WORKDIR /app

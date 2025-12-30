@@ -243,7 +243,9 @@ class ChannelImporter:
                 number=channel_number,
                 name=channel_name,
                 group=channel_config.get('group'),
-                enabled=channel_config.get('enabled', True)
+                enabled=channel_config.get('enabled', True),
+                is_yaml_source=True,
+                transcode_profile=channel_config.get('transcode_profile')
             )
             self.db.add(channel)
             self.db.commit()
