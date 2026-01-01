@@ -419,41 +419,57 @@ async def stream_channel(
         
         if channel_manager:
             # Use the continuous stream from ChannelManager
-            logger.info(f"Client connecting to continuous stream for channel {channel_number} ({channel.name})")
+            logger.info(f"HDHomeRun: Using ChannelManager for channel {channel_number} ({channel.name})")
             
             async def generate():
                 try:
-                    logger.debug(f"Starting stream generation for channel {channel_number}")
+                    logger.info(f"HDHomeRun: Starting stream generation for channel {channel_number}")
                     chunk_count = 0
+                    first_chunk_time = None
+                    import time
+                    start_time = time.time()
+                    
                     async for chunk in channel_manager.get_channel_stream(channel_number):
+                        if chunk_count == 0:
+                            first_chunk_time = time.time()
+                            elapsed = first_chunk_time - start_time
+                            logger.info(f"HDHomeRun: First chunk received for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                        
                         chunk_count += 1
-                        if chunk_count == 1:
-                            logger.info(f"First chunk yielded for channel {channel_number} ({len(chunk)} bytes)")
                         yield chunk
-                    logger.info(f"Stream generation completed for channel {channel_number} ({chunk_count} chunks total)")
+                        
+                        # Log periodically for long-running streams
+                        if chunk_count % 1000 == 0:
+                            logger.debug(f"HDHomeRun: Streamed {chunk_count} chunks for channel {channel_number}")
+                    
+                    logger.info(f"HDHomeRun: Stream generation completed for channel {channel_number} ({chunk_count} chunks total)")
                 except asyncio.CancelledError:
                     # Client disconnected - this is normal, don't log as error
-                    logger.debug(f"Stream cancelled for channel {channel_number} (client disconnected)")
+                    logger.info(f"HDHomeRun: Stream cancelled for channel {channel_number} (client disconnected) after {chunk_count} chunks")
                     return
                 except Exception as e:
-                    logger.error(f"Error in continuous stream for channel {channel_number}: {e}", exc_info=True)
+                    logger.error(f"HDHomeRun: Error in continuous stream for channel {channel_number}: {e}", exc_info=True)
                     # Don't raise - let the client handle the connection error gracefully
                     # Raising here causes Plex to show "Error tuning channel"
                     return
             
             return StreamingResponse(
                 generate(),
-                media_type="video/mp2t",  # MPEG-TS MIME type
+                media_type="video/mp2t",  # MPEG-TS MIME type (required by Plex)
                 headers={
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
                     "Cache-Control": "no-cache, no-store, must-revalidate, private",
                     "Connection": "keep-alive",
                     "X-Accel-Buffering": "no",  # Disable buffering (nginx)
-                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming
+                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming (required for live streams)
                 }
             )
         else:
+            # ChannelManager not available - fallback to on-demand streaming
+            logger.warning(f"HDHomeRun: ChannelManager not available for channel {channel_number}, using on-demand streaming fallback")
+            logger.warning(f"HDHomeRun: This may cause tuning delays. Ensure ChannelManager is initialized at startup.")
+            
             # Fallback: create stream on-demand
             from ..streaming.mpegts_streamer import MPEGTSStreamer
             
@@ -468,32 +484,43 @@ async def stream_channel(
                     base_url = f"{scheme}://{host}"
             
             streamer = MPEGTSStreamer(db)
-            logger.info(f"Streaming channel {channel_number} ({channel.name}) via MPEG-TS (on-demand)")
+            logger.info(f"HDHomeRun: Streaming channel {channel_number} ({channel.name}) via MPEG-TS (on-demand fallback)")
             
             async def generate():
                 try:
+                    import time
+                    start_time = time.time()
+                    chunk_count = 0
+                    
                     async for chunk in streamer.create_continuous_stream(channel, base_url):
+                        if chunk_count == 0:
+                            elapsed = time.time() - start_time
+                            logger.info(f"HDHomeRun: First chunk from on-demand stream for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                        
+                        chunk_count += 1
                         yield chunk
+                    
+                    logger.info(f"HDHomeRun: On-demand stream completed for channel {channel_number} ({chunk_count} chunks)")
                 except asyncio.CancelledError:
                     # Client disconnected - this is normal, don't log as error
-                    logger.debug(f"Stream cancelled for channel {channel_number} (client disconnected)")
+                    logger.info(f"HDHomeRun: On-demand stream cancelled for channel {channel_number} (client disconnected)")
                     return
                 except Exception as e:
-                    logger.error(f"Error in MPEG-TS stream generation: {e}", exc_info=True)
+                    logger.error(f"HDHomeRun: Error in on-demand MPEG-TS stream generation for channel {channel_number}: {e}", exc_info=True)
                     # Don't raise - let the client handle the connection error gracefully
                     # Raising here causes Plex to show "Error tuning channel"
                     return
             
             return StreamingResponse(
                 generate(),
-                media_type="video/mp2t",
+                media_type="video/mp2t",  # MPEG-TS MIME type (required by Plex)
                 headers={
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
                     "Cache-Control": "no-cache, no-store, must-revalidate, private",
                     "Connection": "keep-alive",
                     "X-Accel-Buffering": "no",
-                    "Transfer-Encoding": "chunked",
+                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming
                 }
             )
         
