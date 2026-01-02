@@ -7,7 +7,6 @@ from typing import Optional
 import json
 import logging
 import asyncio
-import re
 from datetime import datetime
 
 from ..database import get_db, Channel, Playlist, PlaylistItem, MediaItem
@@ -331,49 +330,53 @@ async def lineup(request: Request, db: Session = Depends(get_db)):
     
     lineup_data = []
     
+    # #region agent log
+    import json
+    try:
+        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"A","location":"hdhomerun/api.py:333","message":"lineup.json: Starting channel iteration","data":{"channel_count":len(channels)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+    except: pass
+    # #endregion
+    
     for channel in channels:
         # HDHomeRun expects GuideNumber, GuideName, URL, and optionally HD
         # We'll use the channel number as GuideNumber
         guide_number = channel.number
         
-        # Strip channel number prefix from GuideName to avoid duplication in Plex
-        # Plex displays channels as "GuideNumber GuideName", so if name already
-        # starts with the number, it gets doubled (e.g., "2000 2000's Movies")
+        # Use the full channel name as GuideName
+        # Plex matches channels primarily by GuideNumber (channel ID), but GuideName
+        # should match the primary display-name in XMLTV for proper metadata association
+        # (icons, descriptions, etc.). Using the full name ensures proper matching.
         guide_name = channel.name
-        if guide_name and guide_number:
-            # Check if name starts with the channel number
-            name_stripped = guide_name.strip()
-            number_str = str(guide_number).strip()
-            
-            if name_stripped.startswith(number_str):
-                # Remove the number prefix
-                remaining = name_stripped[len(number_str):].strip()
-                
-                # Remove common patterns after the number (e.g., "'s ", " - ", " ", "-", "'s")
-                # Handle patterns in order of specificity (longer patterns first)
-                patterns_to_remove = [
-                    r"^'s\s+",      # "'s " (apostrophe-s-space)
-                    r"^[\s\-\.\_]+",  # Any combination of spaces, dashes, dots, underscores
-                ]
-                for pattern in patterns_to_remove:
-                    remaining = re.sub(pattern, '', remaining)
-                
-                # Only use cleaned name if there's content left, otherwise keep original
-                if remaining:
-                    guide_name = remaining
         
         # Create stream URL - HDHomeRun expects MPEG-TS, but we'll use HLS
         # Plex/Emby/Jellyfin can handle HLS
         stream_url = f"{base_url}/hdhomerun/auto/v{channel.number}"
         
+        guide_number_str = str(guide_number)
+        
+        # #region agent log
+        try:
+            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"A","location":"hdhomerun/api.py:355","message":"lineup.json: Channel entry created","data":{"channel_number":channel.number,"guide_number_type":type(guide_number).__name__,"guide_number_str":guide_number_str,"guide_number_repr":repr(guide_number_str),"guide_name":guide_name,"channel_id_in_db":channel.id},"timestamp":int(__import__('time').time()*1000)})+'\n')
+        except: pass
+        # #endregion
+        
         channel_entry = {
-            "GuideNumber": str(guide_number),
+            "GuideNumber": guide_number_str,
             "GuideName": guide_name,
             "URL": stream_url,
             "HD": 1 if "HD" in channel.name.upper() else 0
         }
         
         lineup_data.append(channel_entry)
+    
+    # #region agent log
+    try:
+        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"A","location":"hdhomerun/api.py:375","message":"lineup.json: Returning lineup data","data":{"total_channels":len(lineup_data),"sample_guide_numbers":[e["GuideNumber"] for e in lineup_data[:3]]},"timestamp":int(__import__('time').time()*1000)})+'\n')
+    except: pass
+    # #endregion
     
     return lineup_data
 
@@ -398,10 +401,74 @@ async def stream_channel(
     """Stream a channel (HDHomeRun format) - Returns MPEG-TS for Plex compatibility"""
     logger.info(f"HDHomeRun stream request for channel {channel_number} from {request.client.host if request else 'unknown'}")
     
-    channel = db.query(Channel).filter(
-        Channel.number == channel_number,
-        Channel.enabled == True
-    ).first()
+    # #region agent log
+    import json
+    try:
+        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:378","message":"stream_channel: Request received","data":{"channel_number":channel_number,"channel_number_type":type(channel_number).__name__,"client_host":request.client.host if request else None},"timestamp":int(__import__('time').time()*1000)})+'\n')
+    except: pass
+    # #endregion
+    
+    # Query channel - handle both string and numeric channel numbers
+    # Plex may send channel numbers as strings, but database stores as strings
+    # Also handle enum validation errors with fallback
+    channel = None
+    try:
+        channel = db.query(Channel).filter(
+            Channel.number == str(channel_number),
+            Channel.enabled == True
+        ).first()
+    except (LookupError, ValueError, Exception) as query_error:
+        # Handle SQLAlchemy enum validation errors
+        error_str = str(query_error)
+        if isinstance(query_error, LookupError) or "is not among the defined enum values" in error_str:
+            logger.warning(f"SQLAlchemy enum validation error when querying channel {channel_number} for HDHomeRun stream: {query_error}")
+            # Query using raw SQL
+            from sqlalchemy import text
+            raw_result = db.execute(text("""
+                SELECT * FROM channels WHERE number = :number AND enabled = 1
+            """), {"number": str(channel_number)}).fetchone()
+            
+            if raw_result:
+                # Construct Channel object from raw result
+                from ..database.models import (
+                    PlayoutMode, StreamingMode, ChannelTranscodeMode, ChannelSubtitleMode,
+                    ChannelStreamSelectorMode, ChannelMusicVideoCreditsMode, ChannelSongVideoMode,
+                    ChannelIdleBehavior, ChannelPlayoutSource
+                )
+                channel = Channel()
+                for key, value in raw_result._mapping.items():
+                    if value is None:
+                        setattr(channel, key, None)
+                    elif key in ['playout_mode', 'streaming_mode', 'transcode_mode', 'subtitle_mode',
+                                'stream_selector_mode', 'music_video_credits_mode', 'song_video_mode',
+                                'idle_behavior', 'playout_source'] and isinstance(value, str):
+                        # These will be handled by @reconstructor, just set as string for now
+                        setattr(channel, key, value)
+                    else:
+                        setattr(channel, key, value)
+                # Trigger @reconstructor to convert enums
+                channel._on_load()
+        else:
+            # Re-raise if it's a different error
+            raise
+    
+    # If still not found, try without string conversion
+    if not channel:
+        try:
+            channel = db.query(Channel).filter(
+                Channel.number == channel_number,
+                Channel.enabled == True
+            ).first()
+        except Exception:
+            pass
+    
+    # #region agent log
+    try:
+        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:386","message":"stream_channel: Channel query result","data":{"channel_found":channel is not None,"channel_number":channel_number,"channel_id":channel.id if channel else None,"channel_name":channel.name if channel else None},"timestamp":int(__import__('time').time()*1000)})+'\n')
+    except: pass
+    # #endregion
     
     if not channel:
         logger.warning(f"Channel {channel_number} not found or not enabled")
@@ -413,9 +480,23 @@ async def stream_channel(
         # Get ChannelManager from app state
         channel_manager = None
         if request:
-            app = request.app
-            if hasattr(app, 'state'):
-                channel_manager = getattr(app.state, 'channel_manager', None)
+            try:
+                app = request.app
+                if hasattr(app, 'state'):
+                    channel_manager = getattr(app.state, 'channel_manager', None)
+                    # If channel_manager is None, try to get it from the app directly
+                    if channel_manager is None and hasattr(app, 'channel_manager'):
+                        channel_manager = app.channel_manager
+            except Exception as e:
+                logger.warning(f"Error accessing app.state for ChannelManager: {e}")
+                channel_manager = None
+        
+        # #region agent log
+        try:
+            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"E","location":"hdhomerun/api.py:400","message":"stream_channel: ChannelManager check","data":{"channel_manager_available":channel_manager is not None,"has_request":request is not None,"has_app_state":request and hasattr(request.app, 'state') if request else False},"timestamp":int(__import__('time').time()*1000)})+'\n')
+        except: pass
+        # #endregion
         
         if channel_manager:
             # Use the continuous stream from ChannelManager
@@ -429,11 +510,25 @@ async def stream_channel(
                     import time
                     start_time = time.time()
                     
+                    # #region agent log
+                    try:
+                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:449","message":"stream_channel: Starting ChannelManager stream","data":{"channel_number":channel_number},"timestamp":int(time.time()*1000)})+'\n')
+                    except: pass
+                    # #endregion
+                    
                     async for chunk in channel_manager.get_channel_stream(channel_number):
                         if chunk_count == 0:
                             first_chunk_time = time.time()
                             elapsed = first_chunk_time - start_time
                             logger.info(f"HDHomeRun: First chunk received for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                            
+                            # #region agent log
+                            try:
+                                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:463","message":"stream_channel: First chunk yielded","data":{"channel_number":channel_number,"elapsed_seconds":elapsed,"chunk_size":len(chunk),"channel_id":channel.id if channel else None,"channel_name":channel.name if channel else None},"timestamp":int(time.time()*1000)})+'\n')
+                            except: pass
+                            # #endregion
                         
                         chunk_count += 1
                         yield chunk
@@ -446,9 +541,25 @@ async def stream_channel(
                 except asyncio.CancelledError:
                     # Client disconnected - this is normal, don't log as error
                     logger.info(f"HDHomeRun: Stream cancelled for channel {channel_number} (client disconnected) after {chunk_count} chunks")
+                    
+                    # #region agent log
+                    try:
+                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:487","message":"stream_channel: Stream cancelled (client disconnect)","data":{"channel_number":channel_number,"chunk_count":chunk_count},"timestamp":int(time.time()*1000)})+'\n')
+                    except: pass
+                    # #endregion
                     return
                 except Exception as e:
                     logger.error(f"HDHomeRun: Error in continuous stream for channel {channel_number}: {e}", exc_info=True)
+                    
+                    # #region agent log
+                    try:
+                        import traceback
+                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:495","message":"stream_channel: Stream generation error","data":{"channel_number":channel_number,"error_type":type(e).__name__,"error_message":str(e),"error_traceback":traceback.format_exc()[:500],"chunk_count":chunk_count},"timestamp":int(time.time()*1000)})+'\n')
+                    except: pass
+                    # #endregion
+                    
                     # Don't raise - let the client handle the connection error gracefully
                     # Raising here causes Plex to show "Error tuning channel"
                     return
@@ -469,6 +580,13 @@ async def stream_channel(
             # ChannelManager not available - fallback to on-demand streaming
             logger.warning(f"HDHomeRun: ChannelManager not available for channel {channel_number}, using on-demand streaming fallback")
             logger.warning(f"HDHomeRun: This may cause tuning delays. Ensure ChannelManager is initialized at startup.")
+            
+            # #region agent log
+            try:
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"E","location":"hdhomerun/api.py:520","message":"stream_channel: Using fallback (ChannelManager unavailable)","data":{"channel_number":channel_number},"timestamp":int(__import__('time').time()*1000)})+'\n')
+            except: pass
+            # #endregion
             
             # Fallback: create stream on-demand
             from ..streaming.mpegts_streamer import MPEGTSStreamer
@@ -546,6 +664,15 @@ async def stream_channel(
         raise
     except Exception as e:
         logger.error(f"Error streaming channel {channel_number} via HDHomeRun: {e}", exc_info=True)
+        
+        # #region agent log
+        try:
+            import traceback
+            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:603","message":"stream_channel: Top-level exception","data":{"channel_number":channel_number,"error_type":type(e).__name__,"error_message":str(e)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+        except: pass
+        # #endregion
+        
         raise HTTPException(status_code=500, detail=f"Error streaming channel: {str(e)}")
 
 
