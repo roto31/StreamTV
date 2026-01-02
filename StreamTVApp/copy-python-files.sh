@@ -80,6 +80,69 @@ fi
 
 echo "Python files copied successfully to ${DEST_DIR}"
 
+# Copy bundled dependencies (Python framework and FFmpeg)
+echo "Copying bundled dependencies..."
+
+# Copy Python framework if it exists
+BUNDLED_PYTHON_SOURCE="${PROJECT_DIR}/StreamTV/StreamTV/Resources/python"
+BUNDLED_PYTHON_DEST="${RESOURCES_DIR}/python"
+if [ -d "${BUNDLED_PYTHON_SOURCE}" ]; then
+    echo "  Copying Python framework..."
+    if [ -d "${BUNDLED_PYTHON_DEST}" ]; then
+        rm -rf "${BUNDLED_PYTHON_DEST}"
+    fi
+    mkdir -p "${BUNDLED_PYTHON_DEST}"
+    cp -R "${BUNDLED_PYTHON_SOURCE}/"* "${BUNDLED_PYTHON_DEST}/" 2>/dev/null || true
+    echo "  Python framework copied to ${BUNDLED_PYTHON_DEST}"
+else
+    echo "  Warning: Bundled Python framework not found at ${BUNDLED_PYTHON_SOURCE}"
+fi
+
+# Copy FFmpeg binaries if they exist
+BUNDLED_FFMPEG_SOURCE="${PROJECT_DIR}/StreamTV/StreamTV/Resources/ffmpeg"
+BUNDLED_FFMPEG_DEST="${RESOURCES_DIR}/ffmpeg"
+if [ -d "${BUNDLED_FFMPEG_SOURCE}" ]; then
+    echo "  Copying FFmpeg binaries..."
+    if [ -d "${BUNDLED_FFMPEG_DEST}" ]; then
+        rm -rf "${BUNDLED_FFMPEG_DEST}"
+    fi
+    mkdir -p "${BUNDLED_FFMPEG_DEST}"
+    cp -R "${BUNDLED_FFMPEG_SOURCE}/"* "${BUNDLED_FFMPEG_DEST}/" 2>/dev/null || true
+    # Ensure binaries are executable
+    chmod +x "${BUNDLED_FFMPEG_DEST}/ffmpeg" 2>/dev/null || true
+    chmod +x "${BUNDLED_FFMPEG_DEST}/ffprobe" 2>/dev/null || true
+    
+    # Code sign FFmpeg binaries if code signing identity is available
+    # This is required for notarization and distribution
+    if [ -n "${CODE_SIGN_IDENTITY:-}" ] && [ "${CODE_SIGN_IDENTITY}" != "" ]; then
+        echo "  Code signing FFmpeg binaries..."
+        if [ -f "${BUNDLED_FFMPEG_DEST}/ffmpeg" ]; then
+            codesign --force --sign "${CODE_SIGN_IDENTITY}" \
+                --timestamp \
+                --options runtime \
+                "${BUNDLED_FFMPEG_DEST}/ffmpeg" 2>/dev/null || {
+                echo "  Warning: Failed to code sign ffmpeg (may not be critical for development)"
+            }
+        fi
+        if [ -f "${BUNDLED_FFMPEG_DEST}/ffprobe" ]; then
+            codesign --force --sign "${CODE_SIGN_IDENTITY}" \
+                --timestamp \
+                --options runtime \
+                "${BUNDLED_FFMPEG_DEST}/ffprobe" 2>/dev/null || {
+                echo "  Warning: Failed to code sign ffprobe (may not be critical for development)"
+            }
+        fi
+    else
+        echo "  Note: CODE_SIGN_IDENTITY not set, skipping code signing (required for distribution)"
+    fi
+    
+    echo "  FFmpeg binaries copied to ${BUNDLED_FFMPEG_DEST}"
+else
+    echo "  Warning: Bundled FFmpeg not found at ${BUNDLED_FFMPEG_SOURCE}"
+fi
+
+echo "Bundled dependencies copy complete"
+
 # Note: streamtv_source is kept outside the synchronized group path permanently
 # No need to restore it - it's in the correct location
 

@@ -2,12 +2,16 @@
 
 from pathlib import Path
 from typing import Optional, Dict, Type
+import os
+import logging
 try:
     from pydantic_settings import BaseSettings
 except ImportError:
     from pydantic import BaseSettings
 from pydantic import Field
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 class ServerConfig(BaseSettings):
@@ -201,7 +205,6 @@ class Config:
         
         # Security: Override sensitive values from environment variables if set
         # This ensures env vars take precedence even if they're in YAML
-        import os
         if os.getenv("STREAMTV_SECURITY_ACCESS_TOKEN"):
             self.security.access_token = os.getenv("STREAMTV_SECURITY_ACCESS_TOKEN")
         if os.getenv("STREAMTV_PLEX_TOKEN"):
@@ -220,7 +223,59 @@ class Config:
             self.metadata.tvdb_read_token = os.getenv("STREAMTV_METADATA_TVDB_READ_TOKEN")
         if os.getenv("STREAMTV_METADATA_TMDB_API_KEY"):
             self.metadata.tmdb_api_key = os.getenv("STREAMTV_METADATA_TMDB_API_KEY")
+        
+        # Security: Warn if secrets are found in config file
+        self._warn_secrets_in_config(config_data)
 
+    def _warn_secrets_in_config(self, config_data: Dict) -> None:
+        """Warn if sensitive values are found in config file instead of environment variables."""
+        secrets_found = []
+        
+        # Check for secrets in config file
+        security_data = config_data.get("security", {})
+        if security_data.get("access_token") and not os.getenv("STREAMTV_SECURITY_ACCESS_TOKEN"):
+            secrets_found.append("security.access_token")
+        
+        plex_data = config_data.get("plex", {})
+        if plex_data.get("token") and not os.getenv("STREAMTV_PLEX_TOKEN"):
+            secrets_found.append("plex.token")
+        
+        youtube_data = config_data.get("youtube", {})
+        if youtube_data.get("api_key") and not os.getenv("STREAMTV_YOUTUBE_API_KEY"):
+            secrets_found.append("youtube.api_key")
+        if youtube_data.get("oauth_client_secret") and not os.getenv("STREAMTV_YOUTUBE_OAUTH_CLIENT_SECRET"):
+            secrets_found.append("youtube.oauth_client_secret")
+        if youtube_data.get("oauth_refresh_token") and not os.getenv("STREAMTV_YOUTUBE_OAUTH_REFRESH_TOKEN"):
+            secrets_found.append("youtube.oauth_refresh_token")
+        
+        archive_org_data = config_data.get("archive_org", {})
+        if archive_org_data.get("password") and not os.getenv("STREAMTV_ARCHIVE_ORG_PASSWORD"):
+            secrets_found.append("archive_org.password")
+        
+        pbs_data = config_data.get("pbs", {})
+        if pbs_data.get("password") and not os.getenv("STREAMTV_PBS_PASSWORD"):
+            secrets_found.append("pbs.password")
+        
+        metadata_data = config_data.get("metadata", {})
+        if metadata_data.get("tvdb_api_key") and not os.getenv("STREAMTV_METADATA_TVDB_API_KEY"):
+            secrets_found.append("metadata.tvdb_api_key")
+        if metadata_data.get("tvdb_read_token") and not os.getenv("STREAMTV_METADATA_TVDB_READ_TOKEN"):
+            secrets_found.append("metadata.tvdb_read_token")
+        if metadata_data.get("tmdb_api_key") and not os.getenv("STREAMTV_METADATA_TMDB_API_KEY"):
+            secrets_found.append("metadata.tmdb_api_key")
+        
+        if secrets_found:
+            logger.warning(
+                "SECURITY WARNING: Sensitive values found in config file. "
+                "For better security, use environment variables instead:"
+            )
+            for secret in secrets_found:
+                env_var = secret.upper().replace(".", "_").replace("-", "_")
+                logger.warning(f"  - {secret} -> Set STREAMTV_{env_var} environment variable")
+            logger.warning(
+                "See .env.example for a template of all environment variables."
+            )
+    
     def update_section(self, section: str, values: Dict) -> None:
         """Update a config section, persist to disk, and refresh in-memory settings."""
         if section not in self._section_classes:

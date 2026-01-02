@@ -7,6 +7,7 @@ from typing import Optional
 import json
 import logging
 import asyncio
+import re
 from datetime import datetime
 
 from ..database import get_db, Channel, Playlist, PlaylistItem, MediaItem
@@ -239,7 +240,84 @@ async def discover(request: Request, db: Session = Depends(get_db)):
 @hdhomerun_router.get("/lineup.json")
 async def lineup(request: Request, db: Session = Depends(get_db)):
     """HDHomeRun channel lineup"""
-    channels = db.query(Channel).filter(Channel.enabled == True).order_by(Channel.number).all()
+    # Query channels - handle enum validation errors with fallback to raw SQL
+    try:
+        channels = db.query(Channel).filter(Channel.enabled == True).order_by(Channel.number).all()
+    except (LookupError, ValueError, Exception) as query_error:
+        # Handle SQLAlchemy enum validation errors by querying raw values and converting
+        error_str = str(query_error)
+        error_type = type(query_error).__name__
+        # Check if this is an enum validation error (can be LookupError or the message contains the enum error text)
+        if isinstance(query_error, LookupError) or "is not among the defined enum values" in error_str or "channeltranscodemode" in error_str.lower() or "transcodemode" in error_str.lower():
+            logger.warning(f"SQLAlchemy enum validation error when querying channels for HDHomeRun lineup: {query_error}")
+            logger.info("Attempting to query channels using raw SQL to work around enum validation issue...")
+            # Query using raw SQL to avoid enum validation, then construct Channel objects
+            from sqlalchemy import text
+            raw_result = db.execute(text("""
+                SELECT * FROM channels WHERE enabled = 1 ORDER BY number
+            """)).fetchall()
+            channels = []
+            from ..database.models import (
+                PlayoutMode, StreamingMode, ChannelTranscodeMode, ChannelSubtitleMode,
+                ChannelStreamSelectorMode, ChannelMusicVideoCreditsMode, ChannelSongVideoMode,
+                ChannelIdleBehavior, ChannelPlayoutSource
+            )
+            for row in raw_result:
+                channel = Channel()
+                # Copy all attributes from row, converting enum strings to enums
+                for key, value in row._mapping.items():
+                    if value is None:
+                        setattr(channel, key, None)
+                    elif key == 'playout_mode' and isinstance(value, str):
+                        normalized = value.lower()
+                        enum_val = PlayoutMode.CONTINUOUS
+                        for mode in PlayoutMode:
+                            if mode.value.lower() == normalized:
+                                enum_val = mode
+                                break
+                        else:
+                            try:
+                                enum_val = PlayoutMode[value.upper()]
+                            except KeyError:
+                                pass
+                        setattr(channel, key, enum_val)
+                    elif key == 'streaming_mode' and isinstance(value, str):
+                        normalized = value.lower()
+                        enum_val = StreamingMode.TRANSPORT_STREAM_HYBRID
+                        for mode in StreamingMode:
+                            if mode.value.lower() == normalized:
+                                enum_val = mode
+                                break
+                        else:
+                            try:
+                                enum_val = StreamingMode[value.upper()]
+                            except KeyError:
+                                pass
+                        setattr(channel, key, enum_val)
+                    elif key == 'transcode_mode' and isinstance(value, str):
+                        normalized = value.lower()
+                        enum_val = ChannelTranscodeMode.ON_DEMAND
+                        for mode in ChannelTranscodeMode:
+                            if mode.value.lower() == normalized:
+                                enum_val = mode
+                                break
+                        else:
+                            try:
+                                enum_val = ChannelTranscodeMode[value.upper()]
+                            except KeyError:
+                                pass
+                        setattr(channel, key, enum_val)
+                    elif key in ['subtitle_mode', 'stream_selector_mode', 'music_video_credits_mode', 
+                                 'song_video_mode', 'idle_behavior', 'playout_source'] and isinstance(value, str):
+                        # These will be handled by @reconstructor, just set as string for now
+                        setattr(channel, key, value)
+                    else:
+                        setattr(channel, key, value)
+                channels.append(channel)
+            logger.info(f"Loaded {len(channels)} channels using raw SQL query for HDHomeRun lineup")
+        else:
+            # Re-raise if it's a different error
+            raise
     
     base_url = config.server.base_url
     if request:
@@ -258,13 +336,39 @@ async def lineup(request: Request, db: Session = Depends(get_db)):
         # We'll use the channel number as GuideNumber
         guide_number = channel.number
         
+        # Strip channel number prefix from GuideName to avoid duplication in Plex
+        # Plex displays channels as "GuideNumber GuideName", so if name already
+        # starts with the number, it gets doubled (e.g., "2000 2000's Movies")
+        guide_name = channel.name
+        if guide_name and guide_number:
+            # Check if name starts with the channel number
+            name_stripped = guide_name.strip()
+            number_str = str(guide_number).strip()
+            
+            if name_stripped.startswith(number_str):
+                # Remove the number prefix
+                remaining = name_stripped[len(number_str):].strip()
+                
+                # Remove common patterns after the number (e.g., "'s ", " - ", " ", "-", "'s")
+                # Handle patterns in order of specificity (longer patterns first)
+                patterns_to_remove = [
+                    r"^'s\s+",      # "'s " (apostrophe-s-space)
+                    r"^[\s\-\.\_]+",  # Any combination of spaces, dashes, dots, underscores
+                ]
+                for pattern in patterns_to_remove:
+                    remaining = re.sub(pattern, '', remaining)
+                
+                # Only use cleaned name if there's content left, otherwise keep original
+                if remaining:
+                    guide_name = remaining
+        
         # Create stream URL - HDHomeRun expects MPEG-TS, but we'll use HLS
         # Plex/Emby/Jellyfin can handle HLS
         stream_url = f"{base_url}/hdhomerun/auto/v{channel.number}"
         
         channel_entry = {
             "GuideNumber": str(guide_number),
-            "GuideName": channel.name,
+            "GuideName": guide_name,
             "URL": stream_url,
             "HD": 1 if "HD" in channel.name.upper() else 0
         }
@@ -315,41 +419,57 @@ async def stream_channel(
         
         if channel_manager:
             # Use the continuous stream from ChannelManager
-            logger.info(f"Client connecting to continuous stream for channel {channel_number} ({channel.name})")
+            logger.info(f"HDHomeRun: Using ChannelManager for channel {channel_number} ({channel.name})")
             
             async def generate():
                 try:
-                    logger.debug(f"Starting stream generation for channel {channel_number}")
+                    logger.info(f"HDHomeRun: Starting stream generation for channel {channel_number}")
                     chunk_count = 0
+                    first_chunk_time = None
+                    import time
+                    start_time = time.time()
+                    
                     async for chunk in channel_manager.get_channel_stream(channel_number):
+                        if chunk_count == 0:
+                            first_chunk_time = time.time()
+                            elapsed = first_chunk_time - start_time
+                            logger.info(f"HDHomeRun: First chunk received for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                        
                         chunk_count += 1
-                        if chunk_count == 1:
-                            logger.info(f"First chunk yielded for channel {channel_number} ({len(chunk)} bytes)")
                         yield chunk
-                    logger.info(f"Stream generation completed for channel {channel_number} ({chunk_count} chunks total)")
+                        
+                        # Log periodically for long-running streams
+                        if chunk_count % 1000 == 0:
+                            logger.debug(f"HDHomeRun: Streamed {chunk_count} chunks for channel {channel_number}")
+                    
+                    logger.info(f"HDHomeRun: Stream generation completed for channel {channel_number} ({chunk_count} chunks total)")
                 except asyncio.CancelledError:
                     # Client disconnected - this is normal, don't log as error
-                    logger.debug(f"Stream cancelled for channel {channel_number} (client disconnected)")
+                    logger.info(f"HDHomeRun: Stream cancelled for channel {channel_number} (client disconnected) after {chunk_count} chunks")
                     return
                 except Exception as e:
-                    logger.error(f"Error in continuous stream for channel {channel_number}: {e}", exc_info=True)
+                    logger.error(f"HDHomeRun: Error in continuous stream for channel {channel_number}: {e}", exc_info=True)
                     # Don't raise - let the client handle the connection error gracefully
                     # Raising here causes Plex to show "Error tuning channel"
                     return
             
             return StreamingResponse(
                 generate(),
-                media_type="video/mp2t",  # MPEG-TS MIME type
+                media_type="video/mp2t",  # MPEG-TS MIME type (required by Plex)
                 headers={
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
                     "Cache-Control": "no-cache, no-store, must-revalidate, private",
                     "Connection": "keep-alive",
                     "X-Accel-Buffering": "no",  # Disable buffering (nginx)
-                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming
+                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming (required for live streams)
                 }
             )
         else:
+            # ChannelManager not available - fallback to on-demand streaming
+            logger.warning(f"HDHomeRun: ChannelManager not available for channel {channel_number}, using on-demand streaming fallback")
+            logger.warning(f"HDHomeRun: This may cause tuning delays. Ensure ChannelManager is initialized at startup.")
+            
             # Fallback: create stream on-demand
             from ..streaming.mpegts_streamer import MPEGTSStreamer
             
@@ -364,32 +484,43 @@ async def stream_channel(
                     base_url = f"{scheme}://{host}"
             
             streamer = MPEGTSStreamer(db)
-            logger.info(f"Streaming channel {channel_number} ({channel.name}) via MPEG-TS (on-demand)")
+            logger.info(f"HDHomeRun: Streaming channel {channel_number} ({channel.name}) via MPEG-TS (on-demand fallback)")
             
             async def generate():
                 try:
+                    import time
+                    start_time = time.time()
+                    chunk_count = 0
+                    
                     async for chunk in streamer.create_continuous_stream(channel, base_url):
+                        if chunk_count == 0:
+                            elapsed = time.time() - start_time
+                            logger.info(f"HDHomeRun: First chunk from on-demand stream for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                        
+                        chunk_count += 1
                         yield chunk
+                    
+                    logger.info(f"HDHomeRun: On-demand stream completed for channel {channel_number} ({chunk_count} chunks)")
                 except asyncio.CancelledError:
                     # Client disconnected - this is normal, don't log as error
-                    logger.debug(f"Stream cancelled for channel {channel_number} (client disconnected)")
+                    logger.info(f"HDHomeRun: On-demand stream cancelled for channel {channel_number} (client disconnected)")
                     return
                 except Exception as e:
-                    logger.error(f"Error in MPEG-TS stream generation: {e}", exc_info=True)
+                    logger.error(f"HDHomeRun: Error in on-demand MPEG-TS stream generation for channel {channel_number}: {e}", exc_info=True)
                     # Don't raise - let the client handle the connection error gracefully
                     # Raising here causes Plex to show "Error tuning channel"
                     return
             
             return StreamingResponse(
                 generate(),
-                media_type="video/mp2t",
+                media_type="video/mp2t",  # MPEG-TS MIME type (required by Plex)
                 headers={
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
                     "Cache-Control": "no-cache, no-store, must-revalidate, private",
                     "Connection": "keep-alive",
                     "X-Accel-Buffering": "no",
-                    "Transfer-Encoding": "chunked",
+                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming
                 }
             )
         

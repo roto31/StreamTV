@@ -1,7 +1,7 @@
 """Pydantic schemas for API requests and responses"""
 
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import Optional, List, Union
 from datetime import datetime
 
 # Import StreamSource and PlayoutMode from database models to ensure consistency
@@ -51,9 +51,31 @@ class ChannelBase(BaseModel):
     group: Optional[str] = None
     enabled: bool = True
     logo_path: Optional[str] = None
-    playout_mode: PlayoutMode = PlayoutMode.CONTINUOUS  # Continuous or on-demand
+    playout_mode: Union[PlayoutMode, str] = PlayoutMode.CONTINUOUS  # Continuous or on-demand
     transcode_profile: Optional[str] = None  # "cpu", "nvidia", "intel" (legacy)
     is_yaml_source: bool = False
+    
+    @field_validator('playout_mode', mode='before')
+    @classmethod
+    def validate_playout_mode(cls, v):
+        """Convert string values to enum instances"""
+        if isinstance(v, str):
+            # Try to match by value first (lowercase)
+            v_lower = v.lower()
+            if v_lower == "continuous":
+                return PlayoutMode.CONTINUOUS
+            elif v_lower == "on_demand" or v_lower == "on-demand":
+                return PlayoutMode.ON_DEMAND
+            # Try to match by name (uppercase)
+            try:
+                return PlayoutMode[v.upper()]
+            except KeyError:
+                # If neither works, try direct value match
+                for mode in PlayoutMode:
+                    if mode.value == v:
+                        return mode
+                raise ValueError(f"Invalid playout_mode value: {v}. Must be one of: {[m.value for m in PlayoutMode]}")
+        return v
     # ErsatzTV-compatible settings
     ffmpeg_profile_id: Optional[int] = None
     watermark_id: Optional[int] = None
@@ -109,15 +131,14 @@ class ChannelUpdate(BaseModel):
 
 
 class ChannelResponse(ChannelBase):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     created_at: datetime
     updated_at: datetime
     # Include related objects
     ffmpeg_profile: Optional["FFmpegProfileResponse"] = None
     watermark: Optional["WatermarkResponse"] = None
-    
-    class Config:
-        from_attributes = True
 
 
 # Media Item Schemas

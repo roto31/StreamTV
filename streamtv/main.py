@@ -43,7 +43,9 @@ async def lifespan(app: FastAPI):
     global ssdp_server
     
     # Startup
+    logger.info("LIFESPAN: Starting lifespan function...")
     logger.info("Initializing StreamTV...")
+    logger.info("LIFESPAN: About to call init_db()...")
     init_db()
     logger.info("Database initialized")
     
@@ -65,17 +67,20 @@ async def lifespan(app: FastAPI):
     # Start continuous streaming for all enabled channels (ErsatzTV-style)
     # This is needed for both HDHomeRun and IPTV endpoints (Plex can use IPTV directly)
     try:
+        logger.info("Starting channel manager initialization...")
         from streamtv.streaming.channel_manager import ChannelManager
         from streamtv.database.session import SessionLocal
         # Pass the session factory (SessionLocal) to ChannelManager
         # SessionLocal is a sessionmaker that creates sessions when called
+        logger.info("Creating ChannelManager instance...")
         channel_manager = ChannelManager(SessionLocal)
+        logger.info("Starting all channels...")
         await channel_manager.start_all_channels()
         # Store in app state for access from endpoints
         app.state.channel_manager = channel_manager
         logger.info("Started continuous streaming for all enabled channels (ErsatzTV-style)")
     except Exception as e:
-        logger.warning(f"Failed to start continuous channel streaming: {e}")
+        logger.warning(f"Failed to start continuous channel streaming: {e}", exc_info=True)
         logger.info("Channels will start on-demand when clients connect")
         app.state.channel_manager = None
     

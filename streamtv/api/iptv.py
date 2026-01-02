@@ -55,49 +55,94 @@ async def get_channel_playlist(
     db: Session = Depends(get_db)
 ):
     """Get IPTV channel playlist (M3U format)"""
-    # Validate access token if required
-    # If access_token is None in config, allow requests without token (for Plex compatibility)
-    if config.security.api_key_required:
-        if config.security.access_token is None:
-            # Token required but not configured - allow access (backward compatibility)
-            logger.debug("API key required but access_token not set - allowing access for M3U")
-        elif access_token != config.security.access_token:
-            raise HTTPException(status_code=401, detail="Invalid access token")
-    
-    channels = db.query(Channel).filter(Channel.enabled == True).all()
-    
-    # Always derive base_url from the incoming request so tvg-logo/icon URLs match
-    # the address Plex/clients use (avoids 127.0.0.1 vs LAN IP issues).
-    base_url = config.server.base_url
-    if request:
-        scheme = request.url.scheme
-        host = request.url.hostname
-        port = request.url.port
-        if port and port not in [80, 443]:
-            base_url = f"{scheme}://{host}:{port}"
-        else:
-            base_url = f"{scheme}://{host}"
-    
-    m3u_content = "#EXTM3U\n"
-    
-    for channel in channels:
-        token_param = f"?access_token={access_token}" if access_token else ""
+    try:
+        # Validate access token if required
+        # If access_token is None in config, allow requests without token (for Plex compatibility)
+        if config.security.api_key_required:
+            if config.security.access_token is None:
+                # Token required but not configured - allow access (backward compatibility)
+                logger.debug("API key required but access_token not set - allowing access for M3U")
+            elif access_token != config.security.access_token:
+                raise HTTPException(status_code=401, detail="Invalid access token")
         
-        if mode == "hls" or mode == "mixed":
-            stream_url = f"{base_url}/iptv/channel/{channel.number}.m3u8{token_param}"
-        else:
-            stream_url = f"{base_url}/iptv/channel/{channel.number}.ts{token_param}"
+        channels = db.query(Channel).filter(Channel.enabled == True).all()
         
-        logo_url = _resolve_logo_url(channel, base_url)
-        m3u_content += f'#EXTINF:-1 tvg-id="{channel.number}" tvg-name="{channel.name}"'
-        if channel.group:
-            m3u_content += f' group-title="{channel.group}"'
-        if logo_url:
-            m3u_content += f' tvg-logo="{logo_url}"'
-        m3u_content += f',{channel.name}\n'
-        m3u_content += f"{stream_url}\n"
-    
-    return Response(content=m3u_content, media_type="application/vnd.apple.mpegurl")
+        # Fix: Ensure playout_mode is properly converted from string to enum if needed
+        from ..database.models import PlayoutMode
+        for channel in channels:
+            if isinstance(channel.playout_mode, str):
+                # Convert string to enum instance
+                try:
+                    # Normalize the string (lowercase, handle dashes)
+                    normalized = channel.playout_mode.lower().replace('-', '_')
+                    # Try to match by value first (enum values are lowercase: "continuous", "on_demand")
+                    matched = False
+                    for mode in PlayoutMode:
+                        if mode.value.lower() == normalized:
+                            channel.playout_mode = mode
+                            matched = True
+                            break
+                    if not matched:
+                        # Try to match by name (enum names are uppercase: CONTINUOUS, ON_DEMAND)
+                        name_upper = channel.playout_mode.upper().replace('-', '_')
+                        if name_upper in ["CONTINUOUS", "ON_DEMAND"]:
+                            channel.playout_mode = PlayoutMode[name_upper]
+                        else:
+                            # Try direct lookup
+                            channel.playout_mode = PlayoutMode[channel.playout_mode.upper()]
+                except (KeyError, AttributeError) as e:
+                    # If conversion fails, default to CONTINUOUS
+                    logger.warning(f"Invalid playout_mode '{channel.playout_mode}' for channel {channel.number}, defaulting to CONTINUOUS: {e}")
+                    channel.playout_mode = PlayoutMode.CONTINUOUS
+        
+        # Always derive base_url from the incoming request so tvg-logo/icon URLs match
+        # the address Plex/clients use (avoids 127.0.0.1 vs LAN IP issues).
+        base_url = config.server.base_url
+        if request:
+            scheme = request.url.scheme
+            host = request.url.hostname
+            port = request.url.port
+            if port and port not in [80, 443]:
+                base_url = f"{scheme}://{host}:{port}"
+            else:
+                base_url = f"{scheme}://{host}"
+        
+        m3u_content = "#EXTM3U\n"
+        
+        for channel in channels:
+            try:
+                token_param = f"?access_token={access_token}" if access_token else ""
+                
+                if mode == "hls" or mode == "mixed":
+                    stream_url = f"{base_url}/iptv/channel/{channel.number}.m3u8{token_param}"
+                else:
+                    stream_url = f"{base_url}/iptv/channel/{channel.number}.ts{token_param}"
+                
+                logo_url = _resolve_logo_url(channel, base_url)
+                m3u_content += f'#EXTINF:-1 tvg-id="{channel.number}" tvg-name="{channel.name}"'
+                if channel.group:
+                    m3u_content += f' group-title="{channel.group}"'
+                if logo_url:
+                    m3u_content += f' tvg-logo="{logo_url}"'
+                m3u_content += f',{channel.name}\n'
+                m3u_content += f"{stream_url}\n"
+            except Exception as e:
+                logger.error(f"Error processing channel {channel.number if channel else 'unknown'} for M3U: {e}", exc_info=True)
+                # Continue with next channel instead of failing entire request
+        
+        return Response(content=m3u_content, media_type="application/vnd.apple.mpegurl")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating M3U playlist: {e}", exc_info=True)
+        error_m3u = "#EXTM3U\n"
+        error_m3u += f"#EXTINF:-1,Error: {str(e)}\n"
+        error_m3u += "#\n"
+        return Response(
+            content=error_m3u,
+            media_type="application/vnd.apple.mpegurl",
+            status_code=500
+        )
 
 
 @router.get("/iptv/xmltv.xml")
@@ -121,7 +166,96 @@ async def get_epg(
             elif access_token != config.security.access_token:
                 raise HTTPException(status_code=401, detail="Invalid access token")
         
-        channels = db.query(Channel).filter(Channel.enabled == True).all()
+        # Query channels - handle enum validation errors with fallback to raw SQL
+        try:
+            channels = db.query(Channel).filter(Channel.enabled == True).all()
+        except (LookupError, ValueError) as query_error:
+            # Handle SQLAlchemy enum validation errors by querying raw values and converting
+            error_str = str(query_error)
+            if "is not among the defined enum values" in error_str or "streamingmode" in error_str.lower() or "playoutmode" in error_str.lower():
+                logger.warning(f"SQLAlchemy enum validation error when querying channels for XMLTV: {query_error}")
+                logger.info("Attempting to query channels using raw SQL to work around enum validation issue...")
+                # Query using raw SQL to avoid enum validation, then construct Channel objects
+                from sqlalchemy import text
+                raw_result = db.execute(text("""
+                    SELECT id, number, name, playout_mode, enabled, "group", logo_path,
+                           streaming_mode, is_yaml_source, transcode_profile, created_at, updated_at
+                    FROM channels WHERE enabled = 1
+                """)).fetchall()
+                channels = []
+                from ..database.models import PlayoutMode, StreamingMode
+                for row in raw_result:
+                    channel = Channel()
+                    channel.id = row[0]
+                    channel.number = row[1]
+                    channel.name = row[2]
+                    # Convert playout_mode string to enum
+                    playout_mode_str = row[3] if row[3] else "continuous"
+                    normalized = playout_mode_str.lower()
+                    playout_mode_enum = PlayoutMode.CONTINUOUS
+                    for mode in PlayoutMode:
+                        if mode.value.lower() == normalized:
+                            playout_mode_enum = mode
+                            break
+                    else:
+                        try:
+                            playout_mode_enum = PlayoutMode[playout_mode_str.upper()]
+                        except KeyError:
+                            playout_mode_enum = PlayoutMode.CONTINUOUS
+                    channel.playout_mode = playout_mode_enum
+                    # Convert streaming_mode string to enum
+                    streaming_mode_str = row[7] if row[7] else "transport_stream_hybrid"
+                    normalized = streaming_mode_str.lower()
+                    streaming_mode_enum = StreamingMode.TRANSPORT_STREAM_HYBRID
+                    for mode in StreamingMode:
+                        if mode.value.lower() == normalized:
+                            streaming_mode_enum = mode
+                            break
+                    else:
+                        try:
+                            streaming_mode_enum = StreamingMode[streaming_mode_str.upper()]
+                        except KeyError:
+                            streaming_mode_enum = StreamingMode.TRANSPORT_STREAM_HYBRID
+                    channel.streaming_mode = streaming_mode_enum
+                    channel.enabled = bool(row[4])
+                    channel.group = row[5]
+                    channel.logo_path = row[6]
+                    channel.is_yaml_source = bool(row[8])
+                    channel.transcode_profile = row[9]
+                    channels.append(channel)
+                logger.info(f"Loaded {len(channels)} channels using raw SQL query for XMLTV")
+            else:
+                # Re-raise if it's a different error
+                raise
+        
+        # Fix: Ensure playout_mode is properly converted from string to enum if needed
+        from ..database.models import PlayoutMode
+        for channel in channels:
+            if isinstance(channel.playout_mode, str):
+                # Convert string to enum instance
+                try:
+                    # Normalize the string (lowercase, handle dashes)
+                    normalized = channel.playout_mode.lower().replace('-', '_')
+                    # Try to match by value first (enum values are lowercase: "continuous", "on_demand")
+                    matched = False
+                    for mode in PlayoutMode:
+                        if mode.value.lower() == normalized:
+                            channel.playout_mode = mode
+                            matched = True
+                            break
+                    if not matched:
+                        # Try to match by name (enum names are uppercase: CONTINUOUS, ON_DEMAND)
+                        name_upper = channel.playout_mode.upper().replace('-', '_')
+                        if name_upper in ["CONTINUOUS", "ON_DEMAND"]:
+                            channel.playout_mode = PlayoutMode[name_upper]
+                    else:
+                            # Try direct lookup
+                        channel.playout_mode = PlayoutMode[channel.playout_mode.upper()]
+                except (KeyError, AttributeError) as e:
+                    # If conversion fails, default to CONTINUOUS
+                    logger.warning(f"Invalid playout_mode '{channel.playout_mode}' for channel {channel.number}, defaulting to CONTINUOUS: {e}")
+                    channel.playout_mode = PlayoutMode.CONTINUOUS
+        
         logger.info(f"Generating XMLTV EPG for {len(channels)} channels")
         
         base_url = config.server.base_url

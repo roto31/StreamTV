@@ -1,7 +1,7 @@
 """Database models"""
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text, Float, Enum as SQLEnum
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text, Float, Enum as SQLEnum, event
+from sqlalchemy.orm import relationship, reconstructor
 from datetime import datetime
 from enum import Enum
 
@@ -65,6 +65,18 @@ class ChannelPlayoutSource(str, Enum):
     MIRROR = "mirror"
 
 
+# Enum value mapping caches for fast lookup during @reconstructor
+_PLAYOUT_MODE_MAP = {mode.value.lower(): mode for mode in PlayoutMode}
+_STREAMING_MODE_MAP = {mode.value.lower(): mode for mode in StreamingMode}
+_TRANSCODE_MODE_MAP = {mode.value.lower(): mode for mode in ChannelTranscodeMode}
+_SUBTITLE_MODE_MAP = {mode.value.lower(): mode for mode in ChannelSubtitleMode}
+_STREAM_SELECTOR_MODE_MAP = {mode.value.lower(): mode for mode in ChannelStreamSelectorMode}
+_MUSIC_VIDEO_CREDITS_MODE_MAP = {mode.value.lower(): mode for mode in ChannelMusicVideoCreditsMode}
+_SONG_VIDEO_MODE_MAP = {mode.value.lower(): mode for mode in ChannelSongVideoMode}
+_IDLE_BEHAVIOR_MAP = {mode.value.lower(): mode for mode in ChannelIdleBehavior}
+_PLAYOUT_SOURCE_MAP = {mode.value.lower(): mode for mode in ChannelPlayoutSource}
+
+
 class Channel(Base):
     """TV Channel model"""
     __tablename__ = "channels"
@@ -78,26 +90,30 @@ class Channel(Base):
     # Authoritative source flags and transcoding presets
     is_yaml_source = Column(Boolean, default=False, nullable=False)
     transcode_profile = Column(String, nullable=True)  # e.g., "cpu", "nvidia", "intel" (legacy, use ffmpeg_profile_id instead)
-    playout_mode = Column(SQLEnum(PlayoutMode), default=PlayoutMode.CONTINUOUS, nullable=False)  # Continuous or on-demand
+    # Store as String to avoid SQLAlchemy enum validation issues with SQLite
+    # Conversion to enum handled by @reconstructor method
+    playout_mode = Column(String, default=PlayoutMode.CONTINUOUS.value, nullable=False)  # Continuous or on-demand
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # ErsatzTV-compatible settings
     ffmpeg_profile_id = Column(Integer, ForeignKey("ffmpeg_profiles.id"), nullable=True)
     watermark_id = Column(Integer, ForeignKey("watermarks.id"), nullable=True)
-    streaming_mode = Column(SQLEnum(StreamingMode), default=StreamingMode.TRANSPORT_STREAM_HYBRID, nullable=False)
-    transcode_mode = Column(SQLEnum(ChannelTranscodeMode), default=ChannelTranscodeMode.ON_DEMAND, nullable=False)
-    subtitle_mode = Column(SQLEnum(ChannelSubtitleMode), default=ChannelSubtitleMode.NONE, nullable=False)
+    # Store as String to avoid SQLAlchemy enum validation issues with SQLite
+    # Conversion to enum handled by @reconstructor method
+    streaming_mode = Column(String, default=StreamingMode.TRANSPORT_STREAM_HYBRID.value, nullable=False)
+    transcode_mode = Column(String, default=ChannelTranscodeMode.ON_DEMAND.value, nullable=False)
+    subtitle_mode = Column(String, default=ChannelSubtitleMode.NONE.value, nullable=False)
     preferred_audio_language_code = Column(String, nullable=True)  # ISO 639-1 code
     preferred_audio_title = Column(String, nullable=True)
     preferred_subtitle_language_code = Column(String, nullable=True)  # ISO 639-1 code
-    stream_selector_mode = Column(SQLEnum(ChannelStreamSelectorMode), default=ChannelStreamSelectorMode.DEFAULT, nullable=False)
+    stream_selector_mode = Column(String, default=ChannelStreamSelectorMode.DEFAULT.value, nullable=False)
     stream_selector = Column(String, nullable=True)  # Custom stream selector expression
-    music_video_credits_mode = Column(SQLEnum(ChannelMusicVideoCreditsMode), default=ChannelMusicVideoCreditsMode.NONE, nullable=False)
+    music_video_credits_mode = Column(String, default=ChannelMusicVideoCreditsMode.NONE.value, nullable=False)
     music_video_credits_template = Column(Text, nullable=True)
-    song_video_mode = Column(SQLEnum(ChannelSongVideoMode), default=ChannelSongVideoMode.DEFAULT, nullable=False)
-    idle_behavior = Column(SQLEnum(ChannelIdleBehavior), default=ChannelIdleBehavior.STOP_ON_DISCONNECT, nullable=False)
-    playout_source = Column(SQLEnum(ChannelPlayoutSource), default=ChannelPlayoutSource.GENERATED, nullable=False)
+    song_video_mode = Column(String, default=ChannelSongVideoMode.DEFAULT.value, nullable=False)
+    idle_behavior = Column(String, default=ChannelIdleBehavior.STOP_ON_DISCONNECT.value, nullable=False)
+    playout_source = Column(String, default=ChannelPlayoutSource.GENERATED.value, nullable=False)
     mirror_source_channel_id = Column(Integer, ForeignKey("channels.id"), nullable=True)
     playout_offset = Column(Integer, nullable=True)  # Offset in seconds
     show_in_epg = Column(Boolean, default=True, nullable=False)
@@ -108,6 +124,111 @@ class Channel(Base):
     ffmpeg_profile = relationship("FFmpegProfile", back_populates="channels")
     watermark = relationship("Watermark", back_populates="channels")
     mirror_source_channel = relationship("Channel", remote_side=[id], foreign_keys=[mirror_source_channel_id])
+    
+    @reconstructor
+    def _on_load(self):
+        """Ensure enum fields are always enum instances when loaded from database - optimized with dict lookups"""
+        # Optimized enum conversion using pre-built dict mappings for O(1) lookup instead of O(n) iteration
+        # Only convert if value is a string (not already an enum instance)
+        
+        # playout_mode conversion
+        if isinstance(getattr(self, 'playout_mode', None), str):
+            normalized = self.playout_mode.lower()
+            enum_val = _PLAYOUT_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = PlayoutMode[self.playout_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = PlayoutMode.CONTINUOUS
+            object.__setattr__(self, 'playout_mode', enum_val)
+        
+        # streaming_mode conversion
+        if isinstance(getattr(self, 'streaming_mode', None), str):
+            normalized = self.streaming_mode.lower()
+            enum_val = _STREAMING_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = StreamingMode[self.streaming_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = StreamingMode.TRANSPORT_STREAM_HYBRID
+            object.__setattr__(self, 'streaming_mode', enum_val)
+        
+        # transcode_mode conversion
+        if isinstance(getattr(self, 'transcode_mode', None), str):
+            normalized = self.transcode_mode.lower()
+            enum_val = _TRANSCODE_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelTranscodeMode[self.transcode_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelTranscodeMode.ON_DEMAND
+            object.__setattr__(self, 'transcode_mode', enum_val)
+        
+        # subtitle_mode conversion
+        if isinstance(getattr(self, 'subtitle_mode', None), str):
+            normalized = self.subtitle_mode.lower()
+            enum_val = _SUBTITLE_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelSubtitleMode[self.subtitle_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelSubtitleMode.NONE
+            object.__setattr__(self, 'subtitle_mode', enum_val)
+        
+        # stream_selector_mode conversion
+        if isinstance(getattr(self, 'stream_selector_mode', None), str):
+            normalized = self.stream_selector_mode.lower()
+            enum_val = _STREAM_SELECTOR_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelStreamSelectorMode[self.stream_selector_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelStreamSelectorMode.DEFAULT
+            object.__setattr__(self, 'stream_selector_mode', enum_val)
+        
+        # music_video_credits_mode conversion
+        if isinstance(getattr(self, 'music_video_credits_mode', None), str):
+            normalized = self.music_video_credits_mode.lower()
+            enum_val = _MUSIC_VIDEO_CREDITS_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelMusicVideoCreditsMode[self.music_video_credits_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelMusicVideoCreditsMode.NONE
+            object.__setattr__(self, 'music_video_credits_mode', enum_val)
+        
+        # song_video_mode conversion
+        if isinstance(getattr(self, 'song_video_mode', None), str):
+            normalized = self.song_video_mode.lower()
+            enum_val = _SONG_VIDEO_MODE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelSongVideoMode[self.song_video_mode.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelSongVideoMode.DEFAULT
+            object.__setattr__(self, 'song_video_mode', enum_val)
+        
+        # idle_behavior conversion
+        if isinstance(getattr(self, 'idle_behavior', None), str):
+            normalized = self.idle_behavior.lower()
+            enum_val = _IDLE_BEHAVIOR_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelIdleBehavior[self.idle_behavior.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelIdleBehavior.STOP_ON_DISCONNECT
+            object.__setattr__(self, 'idle_behavior', enum_val)
+        
+        # playout_source conversion
+        if isinstance(getattr(self, 'playout_source', None), str):
+            normalized = self.playout_source.lower()
+            enum_val = _PLAYOUT_SOURCE_MAP.get(normalized)
+            if not enum_val:
+                try:
+                    enum_val = ChannelPlayoutSource[self.playout_source.upper().replace('-', '_')]
+                except KeyError:
+                    enum_val = ChannelPlayoutSource.GENERATED
+            object.__setattr__(self, 'playout_source', enum_val)
 
 
 class MediaItem(Base):

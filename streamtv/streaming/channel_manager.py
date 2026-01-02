@@ -91,8 +91,9 @@ class ChannelStream:
                         db.close()
             
             self._is_running = True
+            logger.info(f"ChannelStream.start() - Creating background task for channel {self.channel_number}...")
             self._stream_task = asyncio.create_task(self._run_continuous_stream())
-            logger.info(f"Started continuous stream for channel {self.channel_number} ({self.channel_name})")
+            logger.info(f"Started continuous stream for channel {self.channel_number} ({self.channel_name}) - background task created")
     
     async def stop(self):
         """Stop the continuous stream"""
@@ -158,7 +159,22 @@ class ChannelStream:
         db_check = self.db_session_factory()
         try:
             channel_check = db_check.query(Channel).filter(Channel.id == self.channel_id).first()
-            playout_mode = getattr(channel_check, 'playout_mode', PlayoutMode.CONTINUOUS) if channel_check else PlayoutMode.CONTINUOUS
+            playout_mode_raw = getattr(channel_check, 'playout_mode', PlayoutMode.CONTINUOUS) if channel_check else PlayoutMode.CONTINUOUS
+            # Convert string to enum if needed (handle database string values)
+            if isinstance(playout_mode_raw, str):
+                normalized = playout_mode_raw.lower()
+                for mode in PlayoutMode:
+                    if mode.value.lower() == normalized:
+                        playout_mode = mode
+                        break
+                else:
+                    # Fallback: try to match by name (uppercase)
+                    try:
+                        playout_mode = PlayoutMode[playout_mode_raw.upper()]
+                    except KeyError:
+                        playout_mode = PlayoutMode.CONTINUOUS
+            else:
+                playout_mode = playout_mode_raw
         finally:
             db_check.close()
         
@@ -478,23 +494,30 @@ class ChannelStream:
     
     async def _run_continuous_stream(self):
         """Run the continuous stream in the background and broadcast to all clients"""
+        logger.info(f"ChannelStream._run_continuous_stream() - Starting for channel {self.channel_number}")
         # Create a database session for this stream
         db = self.db_session_factory()
         try:
             # Load schedule items and initialize timeline
+            logger.info(f"ChannelStream._run_continuous_stream() - Loading schedule parser/engine for channel {self.channel_number}")
             from streamtv.scheduling.parser import ScheduleParser
             from streamtv.scheduling.engine import ScheduleEngine
             
+            logger.info(f"ChannelStream._run_continuous_stream() - Finding schedule file for channel {self.channel_number}")
             schedule_file = ScheduleParser.find_schedule_file(self.channel_number)
             if schedule_file:
+                logger.info(f"ChannelStream._run_continuous_stream() - Parsing schedule file for channel {self.channel_number}: {schedule_file}")
                 parsed_schedule = ScheduleParser.parse_file(schedule_file, schedule_file.parent)
+                logger.info(f"ChannelStream._run_continuous_stream() - Schedule parsed, creating ScheduleEngine for channel {self.channel_number}")
                 schedule_engine = ScheduleEngine(db)
                 # Query channel from current session
                 channel = db.query(Channel).filter(Channel.id == self.channel_id).first()
                 if channel:
+                    logger.info(f"ChannelStream._run_continuous_stream() - Generating playlist from schedule for channel {self.channel_number}...")
                     self._schedule_items = schedule_engine.generate_playlist_from_schedule(
                         channel, parsed_schedule, max_items=1000
                     )
+                    logger.info(f"ChannelStream._run_continuous_stream() - Generated {len(self._schedule_items)} schedule items for channel {self.channel_number}")
                     for itm in self._schedule_items:
                         media = itm.get("media_item")
                         if media:
@@ -560,7 +583,22 @@ class ChannelStream:
             
             # Get playout mode from channel (query from DB to get latest value)
             channel = db.query(Channel).filter(Channel.id == self.channel_id).first()
-            playout_mode = getattr(channel, 'playout_mode', PlayoutMode.CONTINUOUS) if channel else PlayoutMode.CONTINUOUS
+            playout_mode_raw = getattr(channel, 'playout_mode', PlayoutMode.CONTINUOUS) if channel else PlayoutMode.CONTINUOUS
+            # Convert string to enum if needed (handle database string values)
+            if isinstance(playout_mode_raw, str):
+                normalized = playout_mode_raw.lower()
+                for mode in PlayoutMode:
+                    if mode.value.lower() == normalized:
+                        playout_mode = mode
+                        break
+                else:
+                    # Fallback: try to match by name (uppercase)
+                    try:
+                        playout_mode = PlayoutMode[playout_mode_raw.upper()]
+                    except KeyError:
+                        playout_mode = PlayoutMode.CONTINUOUS
+            else:
+                playout_mode = playout_mode_raw
             
             # Calculate starting position based on playout mode
             if playout_mode == PlayoutMode.ON_DEMAND:
@@ -715,21 +753,114 @@ class ChannelManager:
     
     async def start_all_channels(self):
         """Start continuous streaming for all enabled channels"""
+        logger.info("ChannelManager.start_all_channels() - Acquiring lock...")
         async with self._lock:
             if self._running:
+                logger.info("ChannelManager.start_all_channels() - Already running, returning")
                 return
             
             self._running = True
+            logger.info("ChannelManager.start_all_channels() - Lock acquired, querying channels...")
             
             # Get all enabled channels
             db = self.db_session_factory()
             try:
                 channels = db.query(Channel).filter(Channel.enabled == True).all()
+            except (LookupError, ValueError, Exception) as query_error:
+                # Handle SQLAlchemy enum validation errors with fallback to raw SQL
+                error_str = str(query_error)
+                error_type = type(query_error).__name__
+                # Check if this is an enum validation error
+                if isinstance(query_error, LookupError) or "is not among the defined enum values" in error_str or any(enum_name in error_str.lower() for enum_name in ["playoutmode", "streamingmode", "channeltranscodemode", "transcodemode", "subtitlemode", "streamselectormode"]):
+                    logger.warning(f"SQLAlchemy enum validation error when querying channels for startup: {query_error}")
+                    logger.info("Attempting to query channels using raw SQL to work around enum validation issue...")
+                    # Query using raw SQL to avoid enum validation, then construct Channel objects
+                    from sqlalchemy import text
+                    # Import enum maps for fast O(1) lookup (same as @reconstructor uses)
+                    from ..database.models import (
+                        PlayoutMode, StreamingMode, ChannelTranscodeMode, ChannelSubtitleMode,
+                        ChannelStreamSelectorMode, ChannelMusicVideoCreditsMode, ChannelSongVideoMode,
+                        ChannelIdleBehavior, ChannelPlayoutSource
+                    )
+                    # Access the pre-built enum maps from models.py module
+                    import streamtv.database.models as models_module
+                    _PLAYOUT_MODE_MAP = getattr(models_module, '_PLAYOUT_MODE_MAP', {})
+                    _STREAMING_MODE_MAP = getattr(models_module, '_STREAMING_MODE_MAP', {})
+                    _TRANSCODE_MODE_MAP = getattr(models_module, '_TRANSCODE_MODE_MAP', {})
+                    
+                    raw_result = db.execute(text("""
+                        SELECT * FROM channels WHERE enabled = 1
+                    """)).fetchall()
+                    channels = []
+                    for row in raw_result:
+                        channel = Channel()
+                        # Copy all attributes from row, converting enum strings to enums using optimized dict lookups
+                        for key, value in row._mapping.items():
+                            if value is None:
+                                setattr(channel, key, None)
+                            elif key == 'playout_mode' and isinstance(value, str):
+                                normalized = value.lower()
+                                enum_val = _PLAYOUT_MODE_MAP.get(normalized)
+                                if not enum_val:
+                                    try:
+                                        enum_val = PlayoutMode[value.upper().replace('-', '_')]
+                                    except KeyError:
+                                        enum_val = PlayoutMode.CONTINUOUS
+                                setattr(channel, key, enum_val)
+                            elif key == 'streaming_mode' and isinstance(value, str):
+                                normalized = value.lower()
+                                enum_val = _STREAMING_MODE_MAP.get(normalized)
+                                if not enum_val:
+                                    try:
+                                        enum_val = StreamingMode[value.upper().replace('-', '_')]
+                                    except KeyError:
+                                        enum_val = StreamingMode.TRANSPORT_STREAM_HYBRID
+                                setattr(channel, key, enum_val)
+                            elif key == 'transcode_mode' and isinstance(value, str):
+                                normalized = value.lower()
+                                enum_val = _TRANSCODE_MODE_MAP.get(normalized)
+                                if not enum_val:
+                                    try:
+                                        enum_val = ChannelTranscodeMode[value.upper().replace('-', '_')]
+                                    except KeyError:
+                                        enum_val = ChannelTranscodeMode.ON_DEMAND
+                                setattr(channel, key, enum_val)
+                            elif key in ['subtitle_mode', 'stream_selector_mode', 'music_video_credits_mode', 
+                                         'song_video_mode', 'idle_behavior', 'playout_source'] and isinstance(value, str):
+                                # These will be handled by @reconstructor, just set as string for now
+                                setattr(channel, key, value)
+                            else:
+                                setattr(channel, key, value)
+                        channels.append(channel)
+                    logger.info(f"Loaded {len(channels)} channels using raw SQL query for startup")
+                else:
+                    # Re-raise if it's a different error
+                    raise
+                
+                logger.info(f"ChannelManager.start_all_channels() - Found {len(channels)} enabled channels")
+                # Convert playout_mode strings to enums for each channel (handle database string values)
+                # This handles cases where the database has string values that need conversion to enum
                 for channel in channels:
+                    if hasattr(channel, 'playout_mode') and isinstance(channel.playout_mode, str):
+                        try:
+                            normalized = channel.playout_mode.lower()
+                            for mode in PlayoutMode:
+                                if mode.value.lower() == normalized:
+                                    channel.playout_mode = mode
+                                    break
+                            else:
+                                # Fallback: try to match by name (uppercase)
+                                channel.playout_mode = PlayoutMode[channel.playout_mode.upper()]
+                        except (KeyError, AttributeError):
+                            channel.playout_mode = PlayoutMode.CONTINUOUS
+                for idx, channel in enumerate(channels):
+                    logger.info(f"ChannelManager.start_all_channels() - Starting channel {idx+1}/{len(channels)}: {channel.number} ({channel.name})")
                     await self._start_channel(channel)
+                    logger.info(f"ChannelManager.start_all_channels() - Completed starting channel {channel.number}")
                 logger.info(f"Started continuous streaming for {len(channels)} channels")
             finally:
                 db.close()
+                logger.info("ChannelManager.start_all_channels() - Database session closed")
     
     async def stop_all_channels(self):
         """Stop all continuous streams"""
@@ -769,11 +900,16 @@ class ChannelManager:
     async def _start_channel(self, channel: Channel):
         """Start continuous streaming for a channel"""
         if channel.number in self._streams:
+            logger.info(f"_start_channel() - Channel {channel.number} already started, skipping")
             return
         
+        logger.info(f"_start_channel() - Creating ChannelStream for channel {channel.number}...")
         stream = ChannelStream(channel, self.db_session_factory)
+        logger.info(f"_start_channel() - ChannelStream created, adding to streams dict...")
         self._streams[channel.number] = stream
+        logger.info(f"_start_channel() - Calling stream.start() for channel {channel.number}...")
         await stream.start()
+        logger.info(f"_start_channel() - stream.start() completed for channel {channel.number}")
     
     async def stop_channel(self, channel_number: str):
         """Stop continuous streaming for a specific channel"""

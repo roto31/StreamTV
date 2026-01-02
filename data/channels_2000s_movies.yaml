@@ -1,0 +1,534 @@
+channels:
+- number: '2000'
+  name: 2000's Movies
+  group: Movies
+  description: Assorted movies from the 2000's - Collection from Archive.org duets-2000
+  enabled: true
+  streams:
+  - id: charlie_and_the_chocolate_factory_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Charlie%20and%20The%20Chocolate%20Factory%20%282005%29.ia.mp4
+    title: Charlie and The Chocolate Factory
+    description: Charlie and The Chocolate Factory (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: couples_retreat_2009
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Couples%20Retreat%20%282009%29.ia.mp4
+    title: Couples Retreat
+    description: Couples Retreat (2009) - From Archive.org duets-2000 collection
+    year: 2009
+  - id: nacho_libre_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Nacho%20Libre%20%282006%29.ia.mp4
+    title: Nacho Libre
+    description: Nacho Libre (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: the_family_man_2000
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Family%20Man%20%282000%29.ia.mp4
+    title: The Family Man
+    description: The Family Man (2000) - From Archive.org duets-2000 collection
+    year: 2000
+  - id: the_weather_man_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Weather%20Man%20%282005%29.ia.mp4
+    title: The Weather Man
+    description: The Weather Man (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: 13_going_on_30_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/13%20Going%20on%2030%20%282004%29.mp4
+    title: 13 Going on 30
+    description: 13 Going on 30 (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: 50_first_dates_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/50%20First%20Dates%20%282004%29.mp4
+    title: 50 First Dates
+    description: 50 First Dates (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: a_lot_like_love_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/A%20Lot%20Like%20Love%C2%A0%282005%29.mp4
+    title: A Lot Like Love
+    description: A Lot Like Love (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: a_walk_to_remember_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/A%20Walk%20to%20Remember%20%282002%29.mp4
+    title: A Walk to Remember
+    description: A Walk to Remember (2002) - From Archive.org duets-2000 collection
+    year: 2002
+  - id: alex_emma_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Alex%20%26%20Emma%20%282003%29.mp4
+    title: Alex & Emma
+    description: Alex & Emma (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: america_s_sweethearts_2001
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/America%27s%20Sweethearts%20%282001%29.mp4
+    title: America's Sweethearts
+    description: America's Sweethearts (2001) - From Archive.org duets-2000 collection
+    year: 2001
+  - id: august_rush_2007
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/August%20Rush%20%282007%29.mp4
+    title: August Rush
+    description: August Rush (2007) - From Archive.org duets-2000 collection
+    year: 2007
+  - id: beauty_shop_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Beauty%20Shop%20%282005%29.mp4
+    title: Beauty Shop
+    description: Beauty Shop (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: bella_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Bella%20%282006%29.mp4
+    title: Bella
+    description: Bella (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: bring_it_on_2000
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Bring%20It%20On%20%282000%29.mp4
+    title: Bring It On
+    description: Bring It On (2000) - From Archive.org duets-2000 collection
+    year: 2000
+  - id: cast_away_2000
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Cast%20Away%20%282000%29.mp4
+    title: Cast Away
+    description: Cast Away (2000) - From Archive.org duets-2000 collection
+    year: 2000
+  - id: charlotte_s_web_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Charlotte%27s%20Web%20%282006%29.mp4
+    title: Charlotte's Web
+    description: Charlotte's Web (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: confessions_of_a_shopaholic_2009
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Confessions%20of%20a%20Shopaholic%20%282009%29.mp4
+    title: Confessions of a Shopaholic
+    description: Confessions of a Shopaholic (2009) - From Archive.org duets-2000 collection
+    year: 2009
+  - id: definitely_maybe_2008
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Definitely%20Maybe%20%282008%29.mp4
+    title: Definitely Maybe
+    description: Definitely Maybe (2008) - From Archive.org duets-2000 collection
+    year: 2008
+  - id: doubt_2008
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Doubt%20%282008%29.mp4
+    title: Doubt
+    description: Doubt (2008) - From Archive.org duets-2000 collection
+    year: 2008
+  - id: down_with_love_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Down%20With%20Love%20%282003%29.mp4
+    title: Down With Love
+    description: Down With Love (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: duets_2000
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Duets%20%282000%29.mp4
+    title: Duets
+    description: Duets (2000) - From Archive.org duets-2000 collection
+    year: 2000
+  - id: eternal_sunshine_of_the_spotless_mind_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Eternal%20Sunshine%20of%20The%20Spotless%20Mind%20%282004%29.mp4
+    title: Eternal Sunshine of The Spotless Mind
+    description: Eternal Sunshine of The Spotless Mind (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: georgia_rule_2007
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Georgia%20Rule%20%282007%29.mp4
+    title: Georgia Rule
+    description: Georgia Rule (2007) - From Archive.org duets-2000 collection
+    year: 2007
+  - id: giftedenglish_captions_2017
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Gifted%20%282017%29%20English%20captions.mp4
+    title: GiftedEnglish captions
+    description: GiftedEnglish captions (2017) - From Archive.org duets-2000 collection
+    year: 2017
+  - id: how_to_lose_a_guy_in_10_days_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/How%20to%20Lose%20a%20Guy%20in%2010%20Days%20%282003%29.mp4
+    title: How to Lose a Guy in 10 Days
+    description: How to Lose a Guy in 10 Days (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: i_now_pronounce_you_chuck_and_larry_2007
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/I%20now%20pronounce%20you%20Chuck%20and%20Larry%20%282007%29.mp4
+    title: I now pronounce you Chuck and Larry
+    description: I now pronounce you Chuck and Larry (2007) - From Archive.org duets-2000 collection
+    year: 2007
+  - id: i_robot_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/I%2C%20Robot%20%282004%29.mp4
+    title: I, Robot
+    description: I, Robot (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: it_s_complicated_2009
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/It%27s%20Complicated%20%282009%29.mp4
+    title: It's Complicated
+    description: It's Complicated (2009) - From Archive.org duets-2000 collection
+    year: 2009
+  - id: john_tucker_must_die_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/John%20Tucker%20Must%20Die%20%282006%29.mp4
+    title: John Tucker Must Die
+    description: John Tucker Must Die (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: just_friends_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Just%20Friends%20%282005%29.mp4
+    title: Just Friends
+    description: Just Friends (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: legally_blonde_2001
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Legally%20Blonde%C2%A0%282001%29.mp4
+    title: Legally Blonde
+    description: Legally Blonde (2001) - From Archive.org duets-2000 collection
+    year: 2001
+  - id: life_or_something_like_it_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Life%20or%20Something%20Like%20It%20%282002%29.mp4
+    title: Life or Something Like It
+    description: Life or Something Like It (2002) - From Archive.org duets-2000 collection
+    year: 2002
+  - id: little_miss_sunshine_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Little%20Miss%20Sunshine%20%282006%29.mp4
+    title: Little Miss Sunshine
+    description: Little Miss Sunshine (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: luna_spirit_of_the_whale_2007
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Luna-Spirit%20of%20The%20Whale%20%282007%29.mp4
+    title: Luna-Spirit of The Whale
+    description: Luna-Spirit of The Whale (2007) - From Archive.org duets-2000 collection
+    year: 2007
+  - id: malibu_s_most_wanted_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Malibu%27s%20Most%20Wanted%20%282003%29.mp4
+    title: Malibu's Most Wanted
+    description: Malibu's Most Wanted (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: man_on_fire_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Man%20on%20Fire%20%282004%29.mp4
+    title: Man on Fire
+    description: Man on Fire (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: mean_girls_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Mean%20Girls%20%282004%29.mp4
+    title: Mean Girls
+    description: Mean Girls (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: monster_in_law_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Monster-In-Law%20%282005%29.mp4
+    title: Monster-In-Law
+    description: Monster-In-Law (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: music_and_lyrics_2007
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Music%20and%20Lyrics%20%282007%29.mp4
+    title: Music and Lyrics
+    description: Music and Lyrics (2007) - From Archive.org duets-2000 collection
+    year: 2007
+  - id: my_sister_s_keeper_2009
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/My%20Sister%27s%20Keeper%20%282009%29.mp4
+    title: My Sister's Keeper
+    description: My Sister's Keeper (2009) - From Archive.org duets-2000 collection
+    year: 2009
+  - id: no_reservations_2007
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/No%20Reservations%20%282007%29.mp4
+    title: No Reservations
+    description: No Reservations (2007) - From Archive.org duets-2000 collection
+    year: 2007
+  - id: pay_it_forward_2000
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Pay%20It%20Forward%20%282000%29.mp4
+    title: Pay It Forward
+    description: Pay It Forward (2000) - From Archive.org duets-2000 collection
+    year: 2000
+  - id: perfect_game_the_2009
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Perfect%20Game%2C%20The%20%282009%29.mp4
+    title: Perfect Game, The
+    description: Perfect Game, The (2009) - From Archive.org duets-2000 collection
+    year: 2009
+  - id: role_models_2008
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Role%20Models%20%282008%29.mp4
+    title: Role Models
+    description: Role Models (2008) - From Archive.org duets-2000 collection
+    year: 2008
+  - id: school_of_rock_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/School%20of%20Rock%20%282003%29.mp4
+    title: School of Rock
+    description: School of Rock (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: step_up_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Step%20Up%20%282006%29.mp4
+    title: Step Up
+    description: Step Up (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: stranger_than_fiction_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Stranger%20Than%20Fiction%20%282006%29.mp4
+    title: Stranger Than Fiction
+    description: Stranger Than Fiction (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: stuck_on_you_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Stuck%20on%20You%20%282003%29.mp4
+    title: Stuck on You
+    description: Stuck on You (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: sweet_home_alabama_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Sweet%20Home%20Alabama%20%282002%29.mp4
+    title: Sweet Home Alabama
+    description: Sweet Home Alabama (2002) - From Archive.org duets-2000 collection
+    year: 2002
+  - id: the_40_year_old_virgin_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%2040-year-old%20virgin%20%282005%29.mp4
+    title: The 40-year-old virgin
+    description: The 40-year-old virgin (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: the_anniversary_party
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Anniversary%20Party%20%282001%20Sp.%20subs%29.mp4
+    title: The Anniversary Party
+    description: The Anniversary Party (unknown year) - From Archive.org duets-2000 collection
+  - id: the_audrey_hepburn_story_2000
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Audrey%20Hepburn%20Story%20%282000%29.mp4
+    title: The Audrey Hepburn Story
+    description: The Audrey Hepburn Story (2000) - From Archive.org duets-2000 collection
+    year: 2000
+  - id: the_butterfly_effect_2004
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Butterfly%20Effect%20%282004%29.mp4
+    title: The Butterfly Effect
+    description: The Butterfly Effect (2004) - From Archive.org duets-2000 collection
+    year: 2004
+  - id: the_count_of_monte_cristo_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Count%20of%20Monte%20Cristo%20%282002%29.mp4
+    title: The Count of Monte Cristo
+    description: The Count of Monte Cristo (2002) - From Archive.org duets-2000 collection
+    year: 2002
+  - id: the_hot_chick_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Hot%20Chick%20%282002%29.mp4
+    title: The Hot Chick
+    description: The Hot Chick (2002) - From Archive.org duets-2000 collection
+    year: 2002
+  - id: the_island_2005
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Island%20%282005%29.mp4
+    title: The Island
+    description: The Island (2005) - From Archive.org duets-2000 collection
+    year: 2005
+  - id: the_lake_house_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Lake%20House%20%282006%29.mp4
+    title: The Lake House
+    description: The Lake House (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: the_league_of_extraordinary_gentlemen_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20League%20Of%20Extraordinary%20Gentlemen%20%282003%29.mp4
+    title: The League Of Extraordinary Gentlemen
+    description: The League Of Extraordinary Gentlemen (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: the_proposal_2009
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Proposal%20%282009%29.mp4
+    title: The Proposal
+    description: The Proposal (2009) - From Archive.org duets-2000 collection
+    year: 2009
+  - id: the_ultimate_gift_2006
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Ultimate%20Gift%20%282006%29.mp4
+    title: The Ultimate Gift
+    description: The Ultimate Gift (2006) - From Archive.org duets-2000 collection
+    year: 2006
+  - id: the_wedding_planner_2001
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/The%20Wedding%20Planner%20%282001%29.mp4
+    title: The Wedding Planner
+    description: The Wedding Planner (2001) - From Archive.org duets-2000 collection
+    year: 2001
+  - id: two_weeks_notice_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Two%20Weeks%20Notice%20%282002%29.mp4
+    title: Two Weeks Notice
+    description: Two Weeks Notice (2002) - From Archive.org duets-2000 collection
+    year: 2002
+  - id: under_the_tuscan_sun_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Under%20the%20Tuscan%20Sun%20%282003%29.mp4
+    title: Under the Tuscan Sun
+    description: Under the Tuscan Sun (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: view_from_the_top_2003
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/View%20from%20the%20Top%20%282003%29.mp4
+    title: View from the Top
+    description: View from the Top (2003) - From Archive.org duets-2000 collection
+    year: 2003
+  - id: warning_parental_advisory_2002
+    collection: 2000's Movies
+    type: movie
+    source: archive
+    url: https://archive.org/download/duets-2000/Warning%20Parental%20Advisory%20%282002%29.mp4
+    title: Warning Parental Advisory
+    description: Warning Parental Advisory (2002) - From Archive.org duets-2000 collection
+    year: 2002
