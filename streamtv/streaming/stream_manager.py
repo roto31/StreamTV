@@ -6,6 +6,7 @@ import logging
 from enum import Enum
 import json
 from datetime import datetime
+from pathlib import Path
 
 from .youtube_adapter import YouTubeAdapter
 from .archive_org_adapter import ArchiveOrgAdapter
@@ -37,6 +38,56 @@ def _debug_log(location: str, message: str, data: dict, hypothesis_id: str):
 # #endregion
 
 
+def find_cookies_file(site_name: str, cookies_dir: str = "data/cookies") -> Optional[str]:
+    """
+    Find cookies file for a site, checking both new format (site_name_cookies.txt) 
+    and old format (youtube_cookies.txt, archive_cookies.txt, etc.)
+    
+    Args:
+        site_name: Site name to look for (e.g., "www.youtube.com", "youtube.com", "archive.org")
+        cookies_dir: Directory to search for cookies files
+        
+    Returns:
+        Path to cookies file if found, None otherwise
+    """
+    from pathlib import Path
+    
+    cookies_path = Path(cookies_dir)
+    if not cookies_path.exists():
+        return None
+    
+    # Normalize site name (remove www. prefix for matching)
+    normalized_name = site_name.replace("www.", "") if site_name.startswith("www.") else site_name
+    
+    # Try new format variations:
+    # 1. Exact site_name_cookies.txt (e.g., www.youtube.com_cookies.txt)
+    new_format_exact = cookies_path / f"{site_name}_cookies.txt"
+    if new_format_exact.exists():
+        return str(new_format_exact.absolute())
+    
+    # 2. Normalized site_name_cookies.txt (e.g., youtube.com_cookies.txt)
+    new_format_normalized = cookies_path / f"{normalized_name}_cookies.txt"
+    if new_format_normalized.exists():
+        return str(new_format_normalized.absolute())
+    
+    # Fall back to old format based on site name
+    old_formats = {
+        "youtube.com": ["youtube_cookies.txt"],
+        "archive.org": ["archive_cookies.txt", "archive.org_cookies.txt"],
+        "pbs.org": ["pbs_cookies.txt", "pbs.org_cookies.txt"],
+    }
+    
+    # Try to find matching old format
+    for key, formats in old_formats.items():
+        if key in normalized_name or normalized_name in key:
+            for fmt in formats:
+                old_format = cookies_path / fmt
+                if old_format.exists():
+                    return str(old_format.absolute())
+    
+    return None
+
+
 class StreamSource(Enum):
     YOUTUBE = "youtube"
     ARCHIVE_ORG = "archive_org"
@@ -49,10 +100,19 @@ class StreamManager:
     """Manages streaming from different sources"""
     
     def __init__(self):
+        # Find YouTube cookies file (try new format first, then fall back to config/old format)
+        youtube_cookies = config.youtube.cookies_file
+        if not youtube_cookies or not Path(youtube_cookies).exists():
+            # Try to find cookies file with site name (try both www. and non-www. variants)
+            found_cookies = find_cookies_file("www.youtube.com") or find_cookies_file("youtube.com")
+            if found_cookies:
+                youtube_cookies = found_cookies
+                logger.info(f"Found YouTube cookies file: {youtube_cookies}")
+        
         self.youtube_adapter = YouTubeAdapter(
             quality=config.youtube.quality,
             extract_audio=config.youtube.extract_audio,
-            cookies_file=config.youtube.cookies_file,
+            cookies_file=youtube_cookies,
             api_key=config.youtube.api_key  # YouTube Data API v3 key for validation
         ) if config.youtube.enabled else None
         
@@ -71,12 +131,21 @@ class StreamManager:
             # This is the secure configuration
             logger.debug("Archive.org username in config, password should be in Keychain")
         
+        # Find Archive.org cookies file (try new format first, then fall back to config/old format)
+        archive_cookies = config.archive_org.cookies_file
+        if not archive_cookies or not Path(archive_cookies).exists():
+            # Try to find cookies file with site name
+            found_cookies = find_cookies_file("archive.org")
+            if found_cookies:
+                archive_cookies = found_cookies
+                logger.info(f"Found Archive.org cookies file: {archive_cookies}")
+        
         self.archive_org_adapter = ArchiveOrgAdapter(
             preferred_format=config.archive_org.preferred_format,
             username=archive_username,
             password=archive_password,
-            use_authentication=config.archive_org.use_authentication and (bool(archive_username and archive_password) or bool(config.archive_org.cookies_file)),
-            cookies_file=config.archive_org.cookies_file
+            use_authentication=config.archive_org.use_authentication and (bool(archive_username and archive_password) or bool(archive_cookies)),
+            cookies_file=archive_cookies
         ) if config.archive_org.enabled else None
         
         # PBS adapter - load credentials from Keychain first, then config
@@ -91,11 +160,20 @@ class StreamManager:
         elif config.pbs.username and not config.pbs.password:
             logger.debug("PBS username in config, password should be in Keychain")
         
+        # Find PBS cookies file (try new format first, then fall back to config/old format)
+        pbs_cookies = config.pbs.cookies_file
+        if not pbs_cookies or not Path(pbs_cookies).exists():
+            # Try to find cookies file with site name
+            found_cookies = find_cookies_file("pbs.org")
+            if found_cookies:
+                pbs_cookies = found_cookies
+                logger.info(f"Found PBS cookies file: {pbs_cookies}")
+        
         self.pbs_adapter = PBSAdapter(
             username=pbs_username,
             password=pbs_password,
-            use_authentication=config.pbs.use_authentication and (bool(pbs_username and pbs_password) or bool(config.pbs.cookies_file)),
-            cookies_file=config.pbs.cookies_file,
+            use_authentication=config.pbs.use_authentication and (bool(pbs_username and pbs_password) or bool(pbs_cookies)),
+            cookies_file=pbs_cookies,
             use_headless_browser=config.pbs.use_headless_browser
         ) if config.pbs.enabled else None
         

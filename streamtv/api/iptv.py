@@ -33,16 +33,46 @@ def _xml(value) -> str:
 def _resolve_logo_url(channel, base_url: str) -> Optional[str]:
     """
     Build an absolute logo URL for M3U/XMLTV.
-    - Uses channel.logo_path if provided.
+    - Uses channel.logo_path if provided and it matches the channel number.
     - Falls back to /static/channel_icons/channel_<number>.png.
+    
+    Note: Some channels have incorrect logo_path values using database IDs instead of channel numbers.
+    We validate and use the correct path based on channel number.
     """
     logo_path = channel.logo_path
     if logo_path:
+        # If it's an external URL, use it directly
         if logo_path.startswith('http'):
             return logo_path
-        if logo_path.startswith('/'):
-            return f"{base_url}{logo_path}"
-        return f"{base_url}/{logo_path}"
+        
+        # Check if logo_path contains a channel number that matches this channel
+        # Extract any number from the logo_path filename
+        import re
+        logo_filename = logo_path.split('/')[-1]  # Get just the filename
+        logo_match = re.search(r'channel_(\d+)\.png', logo_filename)
+        
+        if logo_match:
+            logo_number = logo_match.group(1)
+            channel_number_str = str(channel.number)
+            # If the logo path number matches the channel number, use it
+            if logo_number == channel_number_str:
+                if logo_path.startswith('/'):
+                    return f"{base_url}{logo_path}"
+                return f"{base_url}/{logo_path}"
+            else:
+                # Logo path has wrong number (likely database ID), use fallback
+                logger.debug(f"Channel {channel.number}: logo_path '{logo_path}' has number {logo_number} (doesn't match channel number), using fallback")
+        else:
+            # No number found in logo_path, might be a custom path - use it if it's a static path
+            if '/static/channel_icons/' in logo_path or '/channel_icons/' in logo_path:
+                if logo_path.startswith('/'):
+                    return f"{base_url}{logo_path}"
+                return f"{base_url}/{logo_path}"
+            # Custom path not in channel_icons - use it as-is
+            if logo_path.startswith('/'):
+                return f"{base_url}{logo_path}"
+            return f"{base_url}/{logo_path}"
+    
     # Default fallback based on channel number icon
     return f"{base_url}/static/channel_icons/channel_{channel.number}.png"
 
@@ -308,9 +338,25 @@ async def get_epg(
                 plex_client = None
         
         # Channel definitions - ensure Plex-compatible format
+        # #region agent log
+        import json
+        try:
+            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"A","location":"api/iptv.py:311","message":"XMLTV: Starting channel definitions","data":{"channel_count":len(channels),"base_url":base_url},"timestamp":int(__import__('time').time()*1000)})+'\n')
+        except: pass
+        # #endregion
+        
         for channel in channels:
             # Use channel number as ID (Plex expects numeric or alphanumeric IDs)
             channel_id = str(channel.number).strip()
+            
+            # #region agent log
+            try:
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"A","location":"api/iptv.py:316","message":"XMLTV: Channel ID generated","data":{"channel_number":channel.number,"channel_id":channel_id,"channel_id_type":type(channel_id).__name__,"channel_id_repr":repr(channel_id),"channel_name":channel.name},"timestamp":int(__import__('time').time()*1000)})+'\n')
+            except: pass
+            # #endregion
+            
             xml_content += f'  <channel id="{_xml(channel_id)}">\n'
             
             # Primary display name (required)
@@ -325,6 +371,14 @@ async def get_epg(
             
             # Logo/icon (Plex expects absolute URLs). Fall back to default icon by number.
             logo_url = _resolve_logo_url(channel, base_url)
+            
+            # #region agent log
+            try:
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"D","location":"api/iptv.py:332","message":"XMLTV: Icon URL resolved","data":{"channel_number":channel.number,"logo_url":logo_url,"logo_path":getattr(channel,'logo_path',None)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+            except: pass
+            # #endregion
+            
             if logo_url:
                 xml_content += f'    <icon src="{_xml(logo_url)}"/>\n'
             
@@ -883,6 +937,14 @@ async def get_epg(
         
         generation_time = time.time() - perf_start_time
         logger.info(f"XMLTV EPG generated in {generation_time:.2f}s ({len(xml_content)} bytes)")
+        
+        # #region agent log
+        try:
+            import json
+            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"B","location":"api/iptv.py:887","message":"XMLTV: Response prepared","data":{"content_length":len(xml_content),"media_type":"application/xml; charset=utf-8","generation_time":generation_time},"timestamp":int(__import__('time').time()*1000)})+'\n')
+        except: pass
+        # #endregion
         
         return Response(
             content=xml_content,
@@ -1573,3 +1635,4 @@ async def stream_media(
     except Exception as e:
         logger.error(f"Unexpected error streaming media {media_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+

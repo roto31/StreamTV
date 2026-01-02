@@ -11,6 +11,7 @@ from streamtv.database import Channel, MediaItem
 from streamtv.database.models import ChannelPlaybackPosition, PlayoutMode
 from sqlalchemy.orm import Session
 from streamtv.streaming.mpegts_streamer import MPEGTSStreamer
+from streamtv.streaming.stream_prewarmer import StreamPrewarmer
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,9 @@ class ChannelStream:
         self._current_item_index = 0
         self._current_item_start_time: Optional[datetime] = None
         self._timeline_lock = asyncio.Lock()
+        
+        # Stream pre-warmer for fast startup
+        self._prewarmer = StreamPrewarmer(max_buffer_size=5 * 1024 * 1024, max_chunks=20)  # 5MB, 20 chunks
     
     async def start(self):
         """Start the continuous stream in the background"""
@@ -349,19 +353,42 @@ class ChannelStream:
             # No explicit return needed - async generators automatically stop when function completes
         
         # CONTINUOUS mode: use broadcast queue (existing logic)
-        # Create a queue for this client
-        client_queue = asyncio.Queue(maxsize=10)
+        # Create a queue for this client (larger size to prevent blocking)
+        client_queue = asyncio.Queue(maxsize=50)  # Increased from 10 to 50 to prevent queue full errors
         
         async with self._lock:
             # If stream is not running, start it
             if not self._is_running:
+                # #region agent log
+                try:
+                    import json
+                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"F","location":"channel_manager.py:357","message":"CONTINUOUS: Starting stream (not running)","data":{"channel_number":self.channel_number},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                except: pass
+                # #endregion
                 await self.start()
                 # Wait for stream to initialize
                 await asyncio.sleep(0.5)
+            else:
+                # #region agent log
+                try:
+                    import json
+                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"F","location":"channel_manager.py:365","message":"CONTINUOUS: Stream already running","data":{"channel_number":self.channel_number,"existing_clients":self._client_count},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                except: pass
+                # #endregion
             
             # Register this client
             self._client_queues.append(client_queue)
             self._client_count += 1
+            
+            # #region agent log
+            try:
+                import json
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"F","location":"channel_manager.py:373","message":"CONTINUOUS: Client queue registered","data":{"channel_number":self.channel_number,"total_clients":self._client_count,"queue_size":client_queue.qsize()},"timestamp":int(__import__('time').time()*1000)})+'\n')
+            except: pass
+            # #endregion
             
             # Continuous: calculate position in playout timeline using system time (ErsatzTV-style)
             current_position = await self._get_current_position()
@@ -369,17 +396,223 @@ class ChannelStream:
             elapsed_hours = int(current_position['elapsed_seconds'] // 3600)
             elapsed_minutes = int((current_position['elapsed_seconds'] % 3600) // 60)
             logger.info(f"Client connected to channel {self.channel_number} (CONTINUOUS mode) at {now} - position {current_position['item_index']}/{len(self._schedule_items)} ({elapsed_hours}h {elapsed_minutes}m from midnight, total clients: {self._client_count})")
+            
+            # Pre-warm current item if no buffer exists and stream is running
+            # This ensures fast response even when connecting mid-stream
+            if self._is_running and len(self._schedule_items) > 0:
+                current_idx = current_position.get('item_index', 0)
+                if current_idx < len(self._schedule_items):
+                    current_item = self._schedule_items[current_idx]
+                    current_media = current_item.get('media_item')
+                    if current_media and not ('PLACEHOLDER' in current_media.url.upper()):
+                        # Check if buffer already exists
+                        buffer_info = await self._prewarmer.get_buffer_info(self.channel_number)
+                        if not buffer_info.get("has_buffer"):
+                            # Start pre-warming current item in background
+                            try:
+                                # Ensure streamer exists (it should be created in _run_continuous_stream)
+                                if not self.streamer:
+                                    # Create a temporary streamer for pre-warming
+                                    db_temp = self.db_session_factory()
+                                    try:
+                                        from streamtv.streaming.mpegts_streamer import MPEGTSStreamer
+                                        temp_streamer = MPEGTSStreamer(db_temp)
+                                    except Exception as e:
+                                        logger.warning(f"Could not create streamer for pre-warming: {e}")
+                                        temp_streamer = None
+                                else:
+                                    temp_streamer = self.streamer
+                                    db_temp = None
+                                
+                                if temp_streamer:
+                                    async def current_item_generator():
+                                        try:
+                                            async for chunk in temp_streamer._stream_single_item(current_media, self.channel_number, skip_codec_detection=True):
+                                                yield chunk
+                                        finally:
+                                            if db_temp:
+                                                try:
+                                                    db_temp.close()
+                                                except:
+                                                    pass
+                                    
+                                    asyncio.create_task(
+                                        self._prewarmer.prewarm_stream(self.channel_number, current_item_generator())
+                                    )
+                                    logger.info(f"Started pre-warming current item (index {current_idx}) for channel {self.channel_number} on client connect")
+                                    # #region agent log
+                                    try:
+                                        import json
+                                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"I","location":"channel_manager.py:420","message":"CONTINUOUS: Pre-warming current item on client connect","data":{"channel_number":self.channel_number,"item_index":current_idx,"item_title":current_media.title[:60] if current_media else None,"has_streamer":self.streamer is not None},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                                    except: pass
+                                    # #endregion
+                                else:
+                                    logger.warning(f"Could not pre-warm current item for channel {self.channel_number}: streamer not available")
+                                    # #region agent log
+                                    try:
+                                        import json
+                                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"I","location":"channel_manager.py:435","message":"CONTINUOUS: Pre-warming skipped (streamer unavailable)","data":{"channel_number":self.channel_number,"item_index":current_idx,"has_streamer":self.streamer is not None},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                                    except: pass
+                                    # #endregion
+                            except Exception as e:
+                                logger.warning(f"Failed to pre-warm current item for channel {self.channel_number}: {e}", exc_info=True)
+                                # #region agent log
+                                try:
+                                    import json
+                                    import traceback
+                                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"I","location":"channel_manager.py:443","message":"CONTINUOUS: Pre-warming error","data":{"channel_number":self.channel_number,"item_index":current_idx,"error_type":type(e).__name__,"error_message":str(e),"traceback":traceback.format_exc()[:300]},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                                except: pass
+                                # #endregion
+                        else:
+                            # #region agent log
+                            try:
+                                import json
+                                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"I","location":"channel_manager.py:450","message":"CONTINUOUS: Pre-warming skipped (buffer already exists)","data":{"channel_number":self.channel_number,"item_index":current_idx,"buffer_chunks":buffer_info.get("chunk_count",0)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                            except: pass
+                            # #endregion
+                else:
+                    # #region agent log
+                    try:
+                        import json
+                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"I","location":"channel_manager.py:457","message":"CONTINUOUS: Pre-warming skipped (invalid index)","data":{"channel_number":self.channel_number,"item_index":current_idx,"schedule_items_count":len(self._schedule_items)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                    except: pass
+                    # #endregion
         
-        # Stream from the broadcast queue
+        # Stream from the broadcast queue (with pre-warmed buffer support)
+        chunk_count = 0
+        timeout_count = 0
+        
+        # Wait a short time for initial chunks to arrive in the queue
+        # This handles the case where client connects right as a new item is starting
+        initial_wait_time = 0.1  # 100ms
+        initial_chunks_received = False
+        
+        # Try to get first chunk quickly (with short timeout)
+        # #region agent log
+        try:
+            import json
+            import time
+            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"J","location":"channel_manager.py:496","message":"CONTINUOUS: Attempting immediate chunk check","data":{"channel_number":self.channel_number,"wait_time_ms":initial_wait_time*1000,"queue_size":client_queue.qsize()},"timestamp":int(time.time()*1000)})+'\n')
+        except: pass
+        # #endregion
+        
+        try:
+            first_chunk = await asyncio.wait_for(client_queue.get(), timeout=initial_wait_time)
+            chunk_count += 1
+            initial_chunks_received = True
+            
+            # #region agent log
+            try:
+                import json
+                import time
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"J","location":"channel_manager.py:505","message":"CONTINUOUS: First chunk received immediately","data":{"channel_number":self.channel_number,"chunk_count":chunk_count,"chunk_size":len(first_chunk),"wait_time_ms":initial_wait_time*1000},"timestamp":int(time.time()*1000)})+'\n')
+            except: pass
+            # #endregion
+            
+            yield first_chunk
+        except asyncio.TimeoutError:
+            # No chunks available immediately - check for pre-warmed buffer
+            # #region agent log
+            try:
+                import json
+                import time
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"J","location":"channel_manager.py:518","message":"CONTINUOUS: No immediate chunks, checking pre-warmed buffer","data":{"channel_number":self.channel_number,"queue_size":client_queue.qsize()},"timestamp":int(time.time()*1000)})+'\n')
+            except: pass
+            # #endregion
+        
+        # Check if we have pre-warmed chunks and serve them first (if we didn't get immediate chunks)
+        if not initial_chunks_received:
+            # Give pre-warming a moment to start filling (if it just started)
+            # Check buffer, and if empty, wait a short time for pre-warming to fill
+            buffer_info = await self._prewarmer.get_buffer_info(self.channel_number)
+            if not buffer_info.get("has_buffer") or buffer_info.get("chunk_count", 0) == 0:
+                # Wait a short time for pre-warming to start filling (if it's running)
+                await asyncio.sleep(0.2)  # 200ms - enough for FFmpeg to start and produce first chunk
+                buffer_info = await self._prewarmer.get_buffer_info(self.channel_number)
+            
+            if buffer_info.get("has_buffer") and buffer_info.get("chunk_count", 0) > 0:
+                # Serve pre-warmed chunks immediately
+                logger.info(f"Serving {buffer_info['chunk_count']} pre-warmed chunks for channel {self.channel_number}")
+            # #region agent log
+            try:
+                import json
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"H","location":"channel_manager.py:405","message":"CONTINUOUS: Serving pre-warmed chunks","data":{"channel_number":self.channel_number,"chunk_count":buffer_info['chunk_count'],"buffer_size":buffer_info['buffer_size_bytes']},"timestamp":int(__import__('time').time()*1000)})+'\n')
+            except: pass
+            # #endregion
+            
+            # Get buffered chunks (this will clear the buffer)
+            async def get_live_stream():
+                while self._is_running:
+                    try:
+                        chunk = await asyncio.wait_for(client_queue.get(), timeout=2.0)
+                        yield chunk
+                    except asyncio.TimeoutError:
+                        if not self._is_running:
+                            break
+                        continue
+            
+            # Use pre-warmer's get_buffered_stream to serve buffer first, then live
+            async for chunk in self._prewarmer.get_buffered_stream(self.channel_number, get_live_stream()):
+                chunk_count += 1
+                if chunk_count <= 10:
+                    # #region agent log
+                    try:
+                        import json
+                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"H","location":"channel_manager.py:425","message":"CONTINUOUS: Chunk yielded (pre-warmed or live)","data":{"channel_number":self.channel_number,"chunk_count":chunk_count,"chunk_size":len(chunk)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                    except: pass
+                    # #endregion
+                yield chunk
+            return  # Exit after buffered stream completes
+        
+        # Fallback: stream from queue normally (no pre-warm buffer)
         try:
             while self._is_running:
                 try:
                     chunk = await asyncio.wait_for(client_queue.get(), timeout=2.0)
+                    chunk_count += 1
+                    timeout_count = 0  # Reset timeout counter on successful chunk
+                    
+                    # Log first few chunks to verify stream is working
+                    if chunk_count <= 10:
+                        # #region agent log
+                        try:
+                            import json
+                            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"F","location":"channel_manager.py:445","message":"CONTINUOUS: Chunk received from client queue (no pre-warm)","data":{"channel_number":self.channel_number,"chunk_count":chunk_count,"chunk_size":len(chunk),"queue_size":client_queue.qsize()},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                        except: pass
+                        # #endregion
+                    
                     yield chunk
                 except asyncio.TimeoutError:
+                    timeout_count += 1
+                    # #region agent log
+                    try:
+                        import json
+                        with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                            f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"F","location":"channel_manager.py:390","message":"CONTINUOUS: Timeout waiting for chunk","data":{"channel_number":self.channel_number,"timeout_count":timeout_count,"is_running":self._is_running,"queue_size":client_queue.qsize()},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                    except: pass
+                    # #endregion
+                    
                     # Check if still running
                     if not self._is_running:
+                        logger.debug(f"CONTINUOUS: Stream stopped for channel {self.channel_number}, exiting loop")
                         break
+                    
+                    # If too many timeouts, log warning but continue
+                    if timeout_count >= 5:
+                        logger.warning(f"CONTINUOUS: Multiple timeouts ({timeout_count}) for channel {self.channel_number}, but continuing...")
+                        timeout_count = 0  # Reset to avoid spam
+                    
                     # Continue waiting
                     continue
         finally:
@@ -388,7 +621,15 @@ class ChannelStream:
                 if client_queue in self._client_queues:
                     self._client_queues.remove(client_queue)
                 self._client_count -= 1
-                logger.debug(f"Client disconnected from channel {self.channel_number} (remaining clients: {self._client_count})")
+                logger.debug(f"Client disconnected from channel {self.channel_number} (remaining clients: {self._client_count}, chunks sent: {chunk_count})")
+                
+                # #region agent log
+                try:
+                    import json
+                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"F","location":"channel_manager.py:410","message":"CONTINUOUS: Client disconnected","data":{"channel_number":self.channel_number,"chunk_count":chunk_count,"remaining_clients":self._client_count},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                except: pass
+                # #endregion
     
     def _save_playback_position(
         self,
@@ -625,9 +866,31 @@ class ChannelStream:
             # Stream continuously, starting from calculated position
             # After first loop, always start from 0
             first_loop = True
+            first_item_prewarmed = False
+            
             while self._is_running:
                 # Determine starting index for this loop
                 loop_start = start_index if first_loop else 0
+                
+                # Pre-warm first item for fast client response (only on first loop, before streaming)
+                if first_loop and not first_item_prewarmed and loop_start < len(self._schedule_items):
+                    first_item = self._schedule_items[loop_start]
+                    first_media = first_item.get('media_item')
+                    if first_media and not ('PLACEHOLDER' in first_media.url.upper()):
+                        try:
+                            # Create a generator for the first item (skip codec detection for speed)
+                            async def first_item_generator():
+                                async for chunk in self.streamer._stream_single_item(first_media, self.channel_number, skip_codec_detection=True):
+                                    yield chunk
+                            
+                            # Start pre-warming in background (don't await - let it run)
+                            asyncio.create_task(
+                                self._prewarmer.prewarm_stream(self.channel_number, first_item_generator())
+                            )
+                            logger.info(f"Started pre-warming first item for channel {self.channel_number} (item {loop_start})")
+                            first_item_prewarmed = True
+                        except Exception as e:
+                            logger.warning(f"Failed to pre-warm first item for channel {self.channel_number}: {e}")
                 
                 # Loop through schedule items starting from calculated position
                 for idx in range(loop_start, len(self._schedule_items)):
@@ -666,6 +929,32 @@ class ChannelStream:
                         self._current_item_index = idx
                         self._current_item_start_time = datetime.utcnow()  # Use system time
                     
+                    # Pre-warm current item for fast client response (start before streaming)
+                    # This ensures buffer is ready when clients connect mid-item
+                    buffer_info = await self._prewarmer.get_buffer_info(self.channel_number)
+                    if not buffer_info.get("has_buffer") or buffer_info.get("chunk_count", 0) < 5:
+                        # Start pre-warming current item in background
+                        try:
+                            async def current_item_generator():
+                                async for chunk in self.streamer._stream_single_item(media_item, self.channel_number, skip_codec_detection=True):
+                                    yield chunk
+                            
+                            # Start pre-warming in background (don't await - let it run)
+                            asyncio.create_task(
+                                self._prewarmer.prewarm_stream(self.channel_number, current_item_generator())
+                            )
+                            logger.debug(f"Started pre-warming current item (index {idx}) for channel {self.channel_number}")
+                            # #region agent log
+                            try:
+                                import json
+                                import time
+                                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"L","location":"channel_manager.py:930","message":"CONTINUOUS: Pre-warming current item before streaming","data":{"channel_number":self.channel_number,"item_index":idx,"item_title":media_item.title[:60] if media_item else None},"timestamp":int(time.time()*1000)})+'\n')
+                            except: pass
+                            # #endregion
+                        except Exception as e:
+                            logger.warning(f"Failed to pre-warm current item for channel {self.channel_number}: {e}")
+                    
                     # Periodically save position (every 5 items or every 30 minutes)
                     if idx % 5 == 0 or (self._current_item_start_time and (datetime.utcnow() - self._current_item_start_time).total_seconds() > 1800):
                         try:
@@ -694,20 +983,47 @@ class ChannelStream:
                             db.rollback()
                     
                     try:
-                        # Stream this item
-                        async for chunk in self.streamer._stream_single_item(media_item, self.channel_number):
+                        # Stream this item (skip codec detection for first item if pre-warming)
+                        skip_codec = (first_loop and idx == loop_start and not first_item_prewarmed)
+                        chunk_count_for_item = 0
+                        async for chunk in self.streamer._stream_single_item(media_item, self.channel_number, skip_codec_detection=skip_codec):
                             if not self._is_running:
                                 break
                             
+                            chunk_count_for_item += 1
+                            
+                            # Log first chunk of item
+                            if chunk_count_for_item == 1:
+                                # #region agent log
+                                try:
+                                    import json
+                                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"G","location":"channel_manager.py:737","message":"CONTINUOUS: First chunk from item","data":{"channel_number":self.channel_number,"item_index":idx,"item_title":media_item.title[:60] if media_item else None,"client_count":len(self._client_queues)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                                except: pass
+                                # #endregion
+                            
                             # Broadcast to all connected clients
                             disconnected_clients = []
+                            clients_received = 0
                             for queue in self._client_queues:
                                 try:
                                     queue.put_nowait(chunk)
+                                    clients_received += 1
                                 except asyncio.QueueFull:
                                     disconnected_clients.append(queue)
-                                except Exception:
+                                except Exception as e:
+                                    logger.debug(f"Error putting chunk in client queue: {e}")
                                     disconnected_clients.append(queue)
+                            
+                            # Log if no clients received chunk
+                            if chunk_count_for_item <= 5 and clients_received == 0:
+                                # #region agent log
+                                try:
+                                    import json
+                                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"G","location":"channel_manager.py:757","message":"CONTINUOUS: Chunk broadcasted but no clients","data":{"channel_number":self.channel_number,"item_index":idx,"chunk_count":chunk_count_for_item,"client_queues_count":len(self._client_queues)},"timestamp":int(__import__('time').time()*1000)})+'\n')
+                                except: pass
+                                # #endregion
                             
                             # Remove disconnected clients
                             for queue in disconnected_clients:
