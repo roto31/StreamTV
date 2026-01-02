@@ -59,6 +59,42 @@ class YouTubeAdapter:
             # Validate cookies file has required cookies
             self._validate_cookies_file(cookies_file)
     
+    def _validate_cookies_file(self, cookies_file: str):
+        """Validate that cookies file contains required authentication cookies"""
+        try:
+            from pathlib import Path
+            cookies_path = Path(cookies_file)
+            if not cookies_path.exists():
+                logger.warning(f"YouTube cookies file not found: {cookies_file}")
+                return
+            
+            # Required cookies for YouTube authentication
+            required_cookies = ['LOGIN_INFO', 'SID', 'HSID', 'SSID', 'APISID', 'SAPISID', '__Secure-1PSID', '__Secure-3PSID']
+            found_cookies = set()
+            
+            with open(cookies_path, 'r', encoding='utf-8', errors='ignore') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    # Netscape cookie format: domain, flag, path, secure, expiration, name, value
+                    parts = line.split('\t')
+                    if len(parts) >= 6:
+                        cookie_name = parts[5] if len(parts) > 5 else ''
+                        if cookie_name in required_cookies:
+                            found_cookies.add(cookie_name)
+            
+            missing_cookies = set(required_cookies) - found_cookies
+            if missing_cookies:
+                logger.warning(f"YouTube cookies file missing required cookies: {', '.join(missing_cookies)}")
+                logger.warning(f"Cookies file: {cookies_file}")
+                logger.warning("To fix: Export a complete cookies file from your browser after logging into YouTube.")
+                logger.warning("See: https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies")
+            else:
+                logger.debug(f"YouTube cookies file validated: all required cookies present")
+        except Exception as e:
+            logger.debug(f"Error validating cookies file: {e}")
+    
     def __del__(self):
         """Cleanup thread pool executor"""
         if hasattr(self, '_executor'):
@@ -257,7 +293,10 @@ class YouTubeAdapter:
             if 'height<=' in requested_format:
                 # Try without height restriction
                 format_selectors.append('best')
-            format_selectors.append('best')  # Final fallback
+            # Add more permissive fallbacks
+            format_selectors.append('worst/best')  # Accept worst if best not available
+            format_selectors.append('worst')  # Just worst quality
+            format_selectors.append('best')  # Final fallback before permissive attempts
         
         # Ensure cookies file is explicitly set (in case it wasn't copied properly)
         cookies_file = self.cookies_file
@@ -267,13 +306,17 @@ class YouTubeAdapter:
         info = None
         for fmt_selector in format_selectors:
             try:
+                # Create fresh options, explicitly excluding any format from base options
                 ydl_opts = {
-                    **self._ydl_opts,
-                    'format': fmt_selector,
-                    'noplaylist': True,
-                    # CRITICAL: Ensure no downloading happens
+                    'quiet': True,
+                    'no_warnings': True,
+                    'extract_flat': False,
+                    'geo_bypass': True,
+                    'geo_bypass_country': 'US',
                     'download': False,
+                    'noplaylist': True,
                     'skip_download': True,
+                    'format': fmt_selector,  # Explicitly set format for this attempt
                 }
                 
                 if cookies_file:
@@ -313,43 +356,72 @@ class YouTubeAdapter:
                     logger.debug(f"Non-format error with format '{fmt_selector}' for {url}: {error_msg_clean[:150]}")
                     raise
         
-        # If we exhausted all format selectors, try one more time with no format restriction
+        # If we exhausted all format selectors, try one more time with very permissive format selectors
         if info is None:
-            logger.warning(f"All format selectors failed for {url}, trying with no format restriction (let yt-dlp auto-select)...")
-            try:
-                # Create fresh options without any format specification
-                ydl_opts = {
-                    'quiet': True,
-                    'no_warnings': True,
-                    'extract_flat': False,
-                    'geo_bypass': True,
-                    'geo_bypass_country': 'US',
-                    'download': False,
-                    'noplaylist': True,
-                    'skip_download': True,
-                    # Explicitly do NOT set 'format' - let yt-dlp auto-select
-                }
-                
-                if cookies_file:
-                    ydl_opts['cookiefile'] = cookies_file
-                
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(url, download=False)
-                    logger.info(f"Successfully extracted info with auto-selected format for {url}")
-            except Exception as final_error:
-                error_msg_final = str(final_error)
-                # Remove ANSI codes
+            logger.warning(f"All format selectors failed for {url}, trying with very permissive format selectors...")
+            
+            # Try progressively more permissive formats
+            permissive_formats = [
+                'worst/best',  # Accept worst quality if best not available
+                'worst',  # Just worst quality
+                None,  # No format restriction - let yt-dlp auto-select
+            ]
+            
+            for permissive_fmt in permissive_formats:
+                try:
+                    # Create fresh options
+                    ydl_opts = {
+                        'quiet': True,
+                        'no_warnings': True,
+                        'extract_flat': False,
+                        'geo_bypass': True,
+                        'geo_bypass_country': 'US',
+                        'download': False,
+                        'noplaylist': True,
+                        'skip_download': True,
+                    }
+                    
+                    # Only set format if specified (None means auto-select)
+                    if permissive_fmt is not None:
+                        ydl_opts['format'] = permissive_fmt
+                    
+                    if cookies_file:
+                        ydl_opts['cookiefile'] = cookies_file
+                    
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        info = ydl.extract_info(url, download=False)
+                        logger.info(f"Successfully extracted info with format '{permissive_fmt or 'auto-select'}' for {url}")
+                        break  # Success, exit loop
+                except Exception as fmt_error:
+                    error_msg_fmt = str(fmt_error)
+                    error_msg_fmt_clean = error_msg_fmt.replace('\x1b[0;31m', '').replace('\x1b[0m', '').replace('[0;31m', '').replace('[0m', '')
+                    
+                    # Check if it's still a format error
+                    is_format_error = (
+                        'Requested format is not available' in error_msg_fmt_clean or
+                        'format is not available' in error_msg_fmt_clean.lower() or
+                        'list-formats' in error_msg_fmt_clean.lower()
+                    )
+                    
+                    if is_format_error and permissive_fmt != permissive_formats[-1]:
+                        # Try next permissive format
+                        logger.debug(f"Format '{permissive_fmt or 'auto-select'}' failed, trying next...")
+                        continue
+                    elif is_format_error:
+                        # Last format also failed - video likely has no formats
+                        logger.error(f"All format attempts failed for {url}. Video may have no available formats.")
+                        logger.error(f"Last error: {error_msg_fmt_clean[:200]}")
+                        raise ValueError(f"YouTube video has no available formats: {url}. The video may be restricted, region-locked, or unavailable.")
+                    else:
+                        # Non-format error, re-raise
+                        raise
+            
+            # If we still don't have info after all permissive formats, raise error
+            if info is None:
+                error_msg_final = str(last_error) if last_error else "Unknown error"
                 error_msg_final_clean = error_msg_final.replace('\x1b[0;31m', '').replace('\x1b[0m', '').replace('[0;31m', '').replace('[0m', '')
-                logger.error(f"Final fallback (auto-select format) also failed for {url}: {error_msg_final_clean[:200]}")
-                
-                # If it's still a format error, the video might truly have no available formats
-                if 'format' in error_msg_final_clean.lower() and 'not available' in error_msg_final_clean.lower():
-                    logger.error(f"Video {url} appears to have no streamable formats available. This may be a restricted or unavailable video.")
-                    raise ValueError(f"YouTube video has no available formats: {url}. The video may be restricted, region-locked, or unavailable.")
-                
-                if last_error:
-                    raise last_error
-                raise ValueError(f"Failed to extract video info: {error_msg_final_clean[:200]}")
+                logger.error(f"All format attempts (including permissive) failed for {url}: {error_msg_final_clean[:200]}")
+                raise ValueError(f"YouTube video has no available formats: {url}. The video may be restricted, region-locked, or unavailable.")
         
         # Get the best available format URL
         if 'url' in info:

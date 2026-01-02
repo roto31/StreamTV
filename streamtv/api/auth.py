@@ -201,21 +201,35 @@ async def youtube_set_cookies(request: Request, file: UploadFile = File(...)):
     cookies_dir = Path("data/cookies")
     cookies_dir.mkdir(parents=True, exist_ok=True)
     
-    # Save uploaded file
-    cookies_path = cookies_dir / "youtube_cookies.txt"
+    # Save uploaded file with site name format (youtube.com_cookies.txt or www.youtube.com_cookies.txt)
+    # Try both formats - prefer youtube.com (without www.) as it's more common
+    cookies_path_new1 = cookies_dir / "youtube.com_cookies.txt"
+    cookies_path_new2 = cookies_dir / "www.youtube.com_cookies.txt"
+    cookies_path_old = cookies_dir / "youtube_cookies.txt"
+    cookies_path = cookies_path_new1  # Use youtube.com format by default
     
     try:
         with open(cookies_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        
+        # Also save to old format for backward compatibility
+        try:
+            with open(cookies_path_old, "wb") as buffer:
+                file.file.seek(0)  # Reset file pointer
+                shutil.copyfileobj(file.file, buffer)
+        except Exception:
+            pass  # Non-critical if old format save fails
         
         # Validate it's a valid cookies file (basic check)
         with open(cookies_path, "r") as f:
             content = f.read()
             if "youtube.com" not in content.lower() and "# Netscape" not in content:
                 cookies_path.unlink()  # Delete invalid file
+                if cookies_path_old.exists():
+                    cookies_path_old.unlink()
                 raise HTTPException(status_code=400, detail="Invalid cookies file format")
         
-        # Update config and persist to file
+        # Update config and persist to file (use new format)
         config.update_section("youtube", {
             "cookies_file": str(cookies_path.absolute()),
             "use_authentication": True
@@ -233,6 +247,8 @@ async def youtube_set_cookies(request: Request, file: UploadFile = File(...)):
         logger.error(f"Error uploading cookies file: {e}")
         if cookies_path.exists():
             cookies_path.unlink()
+        if cookies_path_old.exists():
+            cookies_path_old.unlink()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -258,21 +274,34 @@ async def archive_set_cookies(request: Request, file: UploadFile = File(...)):
     cookies_dir = Path("data/cookies")
     cookies_dir.mkdir(parents=True, exist_ok=True)
     
-    # Save uploaded file
-    cookies_path = cookies_dir / "archive_cookies.txt"
+    # Save uploaded file with site name format (archive.org_cookies.txt)
+    # Also keep old format for backward compatibility
+    cookies_path_new = cookies_dir / "archive.org_cookies.txt"
+    cookies_path_old = cookies_dir / "archive_cookies.txt"
+    cookies_path = cookies_path_new  # Use new format by default
     
     try:
         with open(cookies_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        
+        # Also save to old format for backward compatibility
+        try:
+            with open(cookies_path_old, "wb") as buffer:
+                file.file.seek(0)  # Reset file pointer
+                shutil.copyfileobj(file.file, buffer)
+        except Exception:
+            pass  # Non-critical if old format save fails
         
         # Validate it's a valid cookies file (basic check)
         with open(cookies_path, "r") as f:
             content = f.read()
             if "archive.org" not in content.lower() and "# Netscape" not in content:
                 cookies_path.unlink()  # Delete invalid file
+                if cookies_path_old.exists():
+                    cookies_path_old.unlink()
                 raise HTTPException(status_code=400, detail="Invalid cookies file format. Must contain archive.org cookies.")
         
-        # Update config and persist to file
+        # Update config and persist to file (use new format)
         config.update_section("archive_org", {
             "cookies_file": str(cookies_path.absolute()),
             "use_authentication": True
