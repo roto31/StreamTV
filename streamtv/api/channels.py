@@ -368,22 +368,33 @@ async def upload_channel_icon(
     icons_dir = project_root / "data" / "channel_icons"
     icons_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generate filename: channel_{channel_id}.png
-    icon_filename = f"channel_{channel_id}.png"
+    # Generate filename using channel NUMBER (not database ID) for consistency with XMLTV/HDHomeRun
+    # This ensures icons match channel numbers used in lineup.json and XMLTV channel IDs
+    icon_filename = f"channel_{channel.number}.png"
     icon_path = icons_dir / icon_filename
+    
+    # If there's an old icon file using database ID, remove it
+    old_icon_filename = f"channel_{channel_id}.png"
+    old_icon_path = icons_dir / old_icon_filename
+    if old_icon_path.exists() and old_icon_path != icon_path:
+        try:
+            old_icon_path.unlink()
+            logger.info(f"Removed old icon file using database ID: {old_icon_filename}")
+        except Exception as e:
+            logger.warning(f"Could not remove old icon file {old_icon_filename}: {e}")
     
     try:
         # Save the uploaded file
         with open(icon_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
-        # Update channel logo_path to point to the static file
+        # Update channel logo_path to point to the static file (using channel number)
         logo_url = f"/static/channel_icons/{icon_filename}"
         channel.logo_path = logo_url
         db.commit()
         db.refresh(channel)
         
-        logger.info(f"Uploaded icon for channel {channel_id} ({channel.name}): {icon_path}")
+        logger.info(f"Uploaded icon for channel {channel.number} (ID: {channel_id}, {channel.name}): {icon_path}")
         
         return channel
     except Exception as e:
@@ -410,8 +421,14 @@ def delete_channel_icon(
     # Determine icons directory
     project_root = Path(__file__).parent.parent.parent
     icons_dir = project_root / "data" / "channel_icons"
-    icon_filename = f"channel_{channel_id}.png"
+    
+    # Try channel number first (preferred), then fallback to database ID for backward compatibility
+    icon_filename = f"channel_{channel.number}.png"
     icon_path = icons_dir / icon_filename
+    if not icon_path.exists():
+        # Fallback to database ID for old icons
+        icon_filename = f"channel_{channel_id}.png"
+        icon_path = icons_dir / icon_filename
     
     # Delete the file if it exists
     if icon_path.exists():

@@ -56,6 +56,8 @@ class YouTubeAdapter:
         if cookies_file:
             self._ydl_opts['cookiefile'] = cookies_file
             logger.info(f"Using YouTube cookies file: {cookies_file}")
+            # Validate cookies file has required cookies
+            self._validate_cookies_file(cookies_file)
     
     def __del__(self):
         """Cleanup thread pool executor"""

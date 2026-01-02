@@ -517,27 +517,69 @@ async def stream_channel(
                     except: pass
                     # #endregion
                     
-                    async for chunk in channel_manager.get_channel_stream(channel_number):
-                        if chunk_count == 0:
-                            first_chunk_time = time.time()
-                            elapsed = first_chunk_time - start_time
-                            logger.info(f"HDHomeRun: First chunk received for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                    try:
+                        async for chunk in channel_manager.get_channel_stream(channel_number):
+                            if chunk_count == 0:
+                                first_chunk_time = time.time()
+                                elapsed = first_chunk_time - start_time
+                                logger.info(f"HDHomeRun: First chunk received for channel {channel_number} after {elapsed:.2f}s ({len(chunk)} bytes)")
+                                
+                                # #region agent log
+                                try:
+                                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:463","message":"stream_channel: First chunk yielded","data":{"channel_number":channel_number,"elapsed_seconds":elapsed,"chunk_size":len(chunk),"channel_id":channel.id if channel else None,"channel_name":channel.name if channel else None},"timestamp":int(time.time()*1000)})+'\n')
+                                except: pass
+                                # #endregion
                             
-                            # #region agent log
-                            try:
-                                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
-                                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:463","message":"stream_channel: First chunk yielded","data":{"channel_number":channel_number,"elapsed_seconds":elapsed,"chunk_size":len(chunk),"channel_id":channel.id if channel else None,"channel_name":channel.name if channel else None},"timestamp":int(time.time()*1000)})+'\n')
-                            except: pass
-                            # #endregion
+                            chunk_count += 1
+                            yield chunk
+                            
+                            # Log after first few chunks to verify stream continues
+                            if chunk_count <= 10:
+                                # #region agent log
+                                try:
+                                    with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                        f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:534","message":"stream_channel: Chunk yielded","data":{"channel_number":channel_number,"chunk_count":chunk_count,"chunk_size":len(chunk)},"timestamp":int(time.time()*1000)})+'\n')
+                                except: pass
+                                # #endregion
+                            
+                            # Log periodically for long-running streams
+                            if chunk_count % 1000 == 0:
+                                logger.debug(f"HDHomeRun: Streamed {chunk_count} chunks for channel {channel_number}")
                         
-                        chunk_count += 1
-                        yield chunk
+                        # Stream ended normally (generator exhausted)
+                        logger.info(f"HDHomeRun: Stream generation completed for channel {channel_number} ({chunk_count} chunks total)")
                         
-                        # Log periodically for long-running streams
-                        if chunk_count % 1000 == 0:
-                            logger.debug(f"HDHomeRun: Streamed {chunk_count} chunks for channel {channel_number}")
-                    
-                    logger.info(f"HDHomeRun: Stream generation completed for channel {channel_number} ({chunk_count} chunks total)")
+                        # #region agent log
+                        try:
+                            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:540","message":"stream_channel: Stream generator exhausted (normal end)","data":{"channel_number":channel_number,"chunk_count":chunk_count},"timestamp":int(time.time()*1000)})+'\n')
+                        except: pass
+                        # #endregion
+                    except StopAsyncIteration:
+                        # Generator exhausted normally
+                        logger.info(f"HDHomeRun: Stream generator exhausted for channel {channel_number} ({chunk_count} chunks)")
+                        
+                        # #region agent log
+                        try:
+                            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:548","message":"stream_channel: StopAsyncIteration (generator exhausted)","data":{"channel_number":channel_number,"chunk_count":chunk_count},"timestamp":int(time.time()*1000)})+'\n')
+                        except: pass
+                        # #endregion
+                        return
+                    except Exception as stream_error:
+                        # Error in the async for loop itself (not in generator)
+                        logger.error(f"HDHomeRun: Error iterating stream for channel {channel_number}: {stream_error}", exc_info=True)
+                        
+                        # #region agent log
+                        try:
+                            import traceback
+                            with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                                f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"C","location":"hdhomerun/api.py:556","message":"stream_channel: Error in async for loop","data":{"channel_number":channel_number,"error_type":type(stream_error).__name__,"error_message":str(stream_error),"error_traceback":traceback.format_exc()[:500],"chunk_count":chunk_count},"timestamp":int(time.time()*1000)})+'\n')
+                        except: pass
+                        # #endregion
+                        # Don't raise - let the client handle the connection error gracefully
+                        return
                 except asyncio.CancelledError:
                     # Client disconnected - this is normal, don't log as error
                     logger.info(f"HDHomeRun: Stream cancelled for channel {channel_number} (client disconnected) after {chunk_count} chunks")
@@ -564,17 +606,33 @@ async def stream_channel(
                     # Raising here causes Plex to show "Error tuning channel"
                     return
             
+            # HDHomeRun/Plex expects specific headers for MPEG-TS streams
+            # Plex may timeout if headers are missing or incorrect
+            headers = {
+                "Content-Type": "video/mp2t",  # MPEG-TS MIME type (explicit, required by Plex)
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+                "Cache-Control": "no-cache, no-store, must-revalidate, private",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",  # Disable buffering (nginx)
+                "Transfer-Encoding": "chunked",  # Chunked transfer for streaming (required for live streams)
+                # HDHomeRun-specific headers that Plex may check
+                "Server": "HDHomeRun/1.0",
+            }
+            
+            # #region agent log
+            try:
+                import json
+                import time
+                with open('/Users/roto1231/Documents/XCode Projects/StreamTV/.cursor/debug.log', 'a') as f:
+                    f.write(json.dumps({"sessionId":"debug-session","runId":"run1","hypothesisId":"K","location":"hdhomerun/api.py:610","message":"stream_channel: Creating StreamingResponse","data":{"channel_number":channel_number,"media_type":"video/mp2t","headers_count":len(headers)},"timestamp":int(time.time()*1000)})+'\n')
+            except: pass
+            # #endregion
+            
             return StreamingResponse(
                 generate(),
                 media_type="video/mp2t",  # MPEG-TS MIME type (required by Plex)
-                headers={
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
-                    "Cache-Control": "no-cache, no-store, must-revalidate, private",
-                    "Connection": "keep-alive",
-                    "X-Accel-Buffering": "no",  # Disable buffering (nginx)
-                    "Transfer-Encoding": "chunked",  # Chunked transfer for streaming (required for live streams)
-                }
+                headers=headers
             )
         else:
             # ChannelManager not available - fallback to on-demand streaming

@@ -266,7 +266,8 @@ class MPEGTSStreamer:
     async def _stream_single_item(
         self,
         media_item: MediaItem,
-        channel_number: str
+        channel_number: str,
+        skip_codec_detection: bool = False
     ) -> AsyncIterator[bytes]:
         """Stream a single media item as MPEG-TS"""
         # Skip placeholder URLs
@@ -311,15 +312,20 @@ class MPEGTSStreamer:
                 logger.info(f"Stream cancelled before transcoding {media_item.title}")
                 raise
             
-            # Detect input codec for smart transcoding
-            input_codec_info = await self._detect_input_codec(stream_url)
-            
-            # Check for cancellation again after codec detection (may take time)
-            try:
-                await asyncio.sleep(0)
-            except asyncio.CancelledError:
-                logger.info(f"Stream cancelled after codec detection for {media_item.title}")
-                raise
+            # Detect input codec for smart transcoding (skip for pre-warming to reduce delay)
+            if skip_codec_detection:
+                # Use default codec info for faster startup
+                input_codec_info = None
+                logger.debug(f"Skipping codec detection for {media_item.title} (pre-warming)")
+            else:
+                input_codec_info = await self._detect_input_codec(stream_url)
+                
+                # Check for cancellation again after codec detection (may take time)
+                try:
+                    await asyncio.sleep(0)
+                except asyncio.CancelledError:
+                    logger.info(f"Stream cancelled after codec detection for {media_item.title}")
+                    raise
             
             # Transcode to MPEG-TS (with smart codec detection)
             async for chunk in self._transcode_to_mpegts(stream_url, input_codec_info, source=detected_source):
