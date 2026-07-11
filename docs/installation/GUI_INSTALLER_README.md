@@ -135,4 +135,3 @@ The installer works from any location:
 - Works even if symlinked
 
 See `PATH_INDEPENDENCE.md` for details.
-

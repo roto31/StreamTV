@@ -122,4 +122,3 @@ The SwiftUI app automatically finds the StreamTV directory:
 - When running as app bundle: Looks for StreamTV directory relative to app
 - When running from source: Uses current directory
 - Searches up directory tree to find StreamTV root
-

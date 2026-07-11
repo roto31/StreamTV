@@ -143,7 +143,6 @@ Common FFmpeg-related issues and their solutions.
 4. **Common acceleration options:**
    - **macOS**: `-hwaccel videotoolbox`
    - **Linux**: `-hwaccel vaapi` or `-hwaccel vdpau`
-   - **Windows**: `-hwaccel d3d11va` or `-hwaccel dxva2`
 
 ## FFmpeg Process Management
 

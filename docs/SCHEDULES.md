@@ -188,4 +188,3 @@ See `schedules/mn-olympics-1980.yml` for a complete example with:
 - Custom titles
 - Duration-based fillers
 - Repeat logic
-

@@ -260,4 +260,3 @@ The logging system is fully operational and requires no additional setup. Simply
 **Test**: `./scripts/test_logging.py`
 
 **View**: `./scripts/view-logs.sh`
-

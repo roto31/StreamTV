@@ -100,4 +100,3 @@ Your StreamTV EPG is now:
 ---
 
 **Note**: The EPG will work perfectly with Plex even if the API connection needs token adjustment. The XMLTV format is fully Plex-compatible and all enhancements are active!
-

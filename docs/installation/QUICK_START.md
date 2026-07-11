@@ -138,4 +138,3 @@ chmod +x install-gui.sh
 - See `README.md` for full documentation
 - See `GUI_INSTALLER_README.md` for detailed GUI installer info
 - See `PATH_INDEPENDENCE.md` for path independence details
-

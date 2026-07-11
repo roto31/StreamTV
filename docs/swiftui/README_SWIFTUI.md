@@ -200,4 +200,3 @@ The SwiftUI app is fully path-independent:
 - Changes working directory as needed
 
 See `PATH_INDEPENDENCE.md` for details.
-

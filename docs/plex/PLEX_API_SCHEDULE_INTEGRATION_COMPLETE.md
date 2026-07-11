@@ -175,4 +175,3 @@ Your StreamTV EPG now:
 **Integration Complete!** 🎉
 
 The Plex API is now actively integrated for enhanced schedule and EPG generation. All features are active and ready to use!
-

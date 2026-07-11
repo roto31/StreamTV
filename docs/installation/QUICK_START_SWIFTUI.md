@@ -67,4 +67,3 @@ Right-click → Open (to bypass Gatekeeper)
 - **Better Performance**: Native SwiftUI is faster
 - **Modern UI**: Follows macOS Human Interface Guidelines
 - **Better Integration**: Works seamlessly with macOS
-

@@ -198,4 +198,3 @@ Your StreamTV EPG is now:
 ---
 
 **Integration Complete!** Your EPG will now leverage Plex API for enhanced schedule data and channel mapping. 🎉
-

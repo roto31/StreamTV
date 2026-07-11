@@ -16,8 +16,6 @@ StreamTV performs automatic dependency setup on first launch. This guide explain
 
 **UI**: SwiftUI `FirstLaunchView` with progress indicators
 
-### Windows
-
 1. **First Launch GUI**: `first_launch_gui.py` launches automatically
 2. **Dependency Check**: Checks for Python 3.10+ and FFmpeg 7.1.1+
 3. **Bundled Extraction**: Extracts from `bundled/` directory if needed
@@ -59,7 +57,6 @@ Show Installation Guide
 - **Python**: `~/Library/Application Support/StreamTV/python/`
 - **FFmpeg**: `~/Library/Application Support/StreamTV/ffmpeg/`
 
-### Windows
 - **Python**: `%USERPROFILE%\.streamtv\python\`
 - **FFmpeg**: `%USERPROFILE%\.streamtv\ffmpeg\`
 
@@ -118,8 +115,6 @@ Show Installation Guide
 2. **Check Path**: Verify `/opt/homebrew/Cellar/ffmpeg` exists
 3. **Check Binaries**: Verify `bin/ffmpeg` and `bin/ffprobe` exist
 4. **Manual Check**: Run `ffmpeg -version` to verify
-
-### Windows
 
 #### Issue: First launch GUI doesn't appear
 
@@ -192,8 +187,6 @@ If automatic setup fails, you can manually set up dependencies:
    ffmpeg -version
    ```
 
-### Windows
-
 1. **Install Python**: Download from [python.org](https://www.python.org/downloads/)
 2. **Install FFmpeg**: Download from [ffmpeg.org](https://ffmpeg.org/download.html)
 3. **Add to PATH**: Ensure both are in system PATH
@@ -229,7 +222,6 @@ rm -rf ~/Library/Application\ Support/StreamTV
 # Then relaunch app
 ```
 
-### Windows
 ```powershell
 Remove-Item -Recurse -Force $env:USERPROFILE\.streamtv
 # Then relaunch app
@@ -245,4 +237,3 @@ rm -rf ~/.streamtv
 
 - [BUNDLING_DEPENDENCIES.md](BUNDLING_DEPENDENCIES.md) - Bundling process
 - [Installation Guide](../README.md) - General installation
-

@@ -148,4 +148,3 @@ Future enhancements could include:
 - Scripted scheduling support
 
 All core ErsatzTV scheduling patterns are now implemented and ready for use! 🎉
-

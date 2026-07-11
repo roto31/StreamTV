@@ -33,7 +33,7 @@ The channel is properly configured and exposed. Plex just needs to refresh its c
 
 This forces Plex to completely refresh the lineup:
 
-1. **Open Plex Web Interface** (http://<your-tailscale-host>:32400/web)
+1. **Open Plex Web Interface** (http://198.51.100.1:32400/web)
 
 2. **Go to Settings** → **Live TV & DVR**
 
@@ -72,7 +72,6 @@ If the above don't work, clear Plex's DVR cache:
 2. **Navigate to Plex data directory**:
    - **macOS**: `~/Library/Application Support/Plex Media Server/`
    - **Linux**: `/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/`
-   - **Windows**: `%LOCALAPPDATA%\Plex Media Server\`
 
 3. **Delete DVR cache**:
    ```bash
@@ -90,7 +89,7 @@ Some Plex versions support forcing a lineup refresh:
 
 ```bash
 # Replace YOUR_PLEX_TOKEN with your actual token
-curl -X POST "http://<your-tailscale-host>:32400/livetv/dvrs/refresh?X-Plex-Token=YOUR_TOKEN"
+curl -X POST "http://198.51.100.1:32400/livetv/dvrs/refresh?X-Plex-Token=YOUR_TOKEN"
 ```
 
 ---
@@ -130,21 +129,21 @@ In Plex Settings → Live TV & DVR:
 
 ### Issue: "No channels found"
 
-**Cause**: Plex can't reach StreamTV  
-**Fix**: 
+**Cause**: Plex can't reach StreamTV
+**Fix**:
 - Ensure StreamTV server is running: `./start_server.sh`
 - Check firewall isn't blocking port 8410
 - Verify Plex and StreamTV are on same network
 
 ### Issue: "Only old channels showing"
 
-**Cause**: Plex cached lineup  
+**Cause**: Plex cached lineup
 **Fix**: Remove and re-add DVR source (Method 1 above)
 
 ### Issue: "Channel shows but won't play"
 
-**Cause**: Stream URL not working  
-**Fix**: 
+**Cause**: Stream URL not working
+**Fix**:
 - Test stream directly: `curl -I http://localhost:8410/iptv/stream/80`
 - Check logs: `./scripts/view-logs.sh search "channel 80"`
 - Verify FFmpeg is working (should be fixed now with hwaccel disabled)
@@ -261,10 +260,10 @@ This bypasses HDHomeRun emulation entirely.
 
 ## Expected Behavior After Fix
 
-✅ Channel 80 appears in Plex channel list  
-✅ EPG shows "Magnum P.I. Complete Series"  
-✅ Clicking channel starts streaming  
-✅ Episodes play with breaks  
+✅ Channel 80 appears in Plex channel list
+✅ EPG shows "Magnum P.I. Complete Series"
+✅ Clicking channel starts streaming
+✅ Episodes play with breaks
 ✅ Guide shows episode information
 
 ---
@@ -296,16 +295,15 @@ curl http://localhost:8410/discover.json
 
 ## Summary
 
-**Problem**: Plex not showing new Channel 80  
-**Cause**: Plex cached old lineup  
+**Problem**: Plex not showing new Channel 80
+**Cause**: Plex cached old lineup
 **Fix**: Remove and re-add DVR source in Plex  
-**Status**: Channel 80 is properly configured and exposed  
+**Status**: Channel 80 is properly configured and exposed
 
 **Action**: Re-add the DVR source in Plex to see Channel 80!
 
 ---
 
-**Date**: December 3, 2025  
-**Issue**: Plex lineup cache  
+**Date**: December 3, 2025
+**Issue**: Plex lineup cache
 **Solution**: Remove and re-add StreamTV HDHomeRun device
-

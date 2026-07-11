@@ -30,7 +30,6 @@ StreamTV.app/Contents/
     requirements.txt              # Python dependencies (existing)
 ```
 
-#### Windows
 ```
 StreamTV/
   bundled/
@@ -79,17 +78,11 @@ StreamTV/
 - Automatic extraction on first launch
 - Progress indicators in FirstLaunchView
 
-### Windows
-
-**Bundling Script**: `scripts/bundle-dependencies-windows.ps1`
-
 - Downloads Python 3.12 embeddable distribution
-- Downloads FFmpeg static build for Windows
 - Extracts to `bundled/` directory structure
 
 **Extraction Location**: `%USERPROFILE%\.streamtv\`
 
-**First Launch GUI**: `StreamTV-Windows/first_launch_gui.py`
 - tkinter-based GUI
 - Shows extraction progress
 - Handles dependency extraction
@@ -110,10 +103,6 @@ StreamTV/
 - Handles dependency extraction
 
 ### Containers
-
-**No Bundling**: Containers use system packages installed during Docker build.
-
-See [BUNDLING.md](../StreamTV-Containers/docker-compose/BUNDLING.md) for details.
 
 ## Version Requirements
 
@@ -136,11 +125,8 @@ See [BUNDLING.md](../StreamTV-Containers/docker-compose/BUNDLING.md) for details
 
 The bundling script is automatically called during the build process.
 
-### Windows
-
 1. Run bundling script:
    ```powershell
-   .\scripts\bundle-dependencies-windows.ps1
    ```
 
 2. Dependencies will be available in `bundled/` directory
@@ -192,8 +178,6 @@ Python dependencies (from `requirements.txt`) are installed into the virtual env
 - **Solution**: Ensure FFmpeg version is >= 7.1.1
 - **Check**: Verify `/opt/homebrew/Cellar/ffmpeg` exists and contains valid binaries
 
-### Windows
-
 **Issue**: First launch GUI not appearing
 - **Solution**: Ensure Python with tkinter is installed
 - **Check**: Run `python -m tkinter` to test
@@ -211,5 +195,3 @@ Python dependencies (from `requirements.txt`) are installed into the virtual env
 ## Related Documentation
 
 - [FIRST_LAUNCH_SETUP.md](FIRST_LAUNCH_SETUP.md) - First launch process
-- [BUNDLING.md](../StreamTV-Containers/docker-compose/BUNDLING.md) - Container bundling (no bundling)
-

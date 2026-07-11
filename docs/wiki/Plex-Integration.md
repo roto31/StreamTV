@@ -10,9 +10,9 @@ Complete Plex Media Server integration documentation.
 
 Your Plex API integration has been configured with:
 
-✅ **Enabled**: `true`  
-✅ **Base URL**: `http://localhost:32400` (detected automatically)  
-✅ **EPG Enhancement**: `true`  
+✅ **Enabled**: `true`
+✅ **Base URL**: `http://localhost:32400` (detected automatically)
+✅ **EPG Enhancement**: `true`
 ⏳ **Token**: Needs to be configured (see below)
 
 ## Next Step: Get Your Plex Token
@@ -39,7 +39,6 @@ This will:
 
 2. **Open Browser Developer Tools**:
    - macOS: `Cmd + Option + I`
-   - Windows/Linux: `F12`
 
 3. **Go to Network Tab**
 
@@ -95,11 +94,11 @@ curl http://localhost:8410/iptv/xmltv.xml | head -20
 
 With full Plex API integration enabled:
 
-✅ **Enhanced EPG Generation** - Uses Plex-compatible format  
-✅ **Channel Mapping** - Better channel identification  
-✅ **Metadata Enrichment** - Enhanced programme information  
-✅ **DVR Compatibility** - Full compatibility with Plex DVR  
-✅ **Performance Optimized** - Faster EPG generation  
+✅ **Enhanced EPG Generation** - Uses Plex-compatible format
+✅ **Channel Mapping** - Better channel identification
+✅ **Metadata Enrichment** - Enhanced programme information
+✅ **DVR Compatibility** - Full compatibility with Plex DVR
+✅ **Performance Optimized** - Faster EPG generation
 
 ## Current Configuration
 
@@ -120,7 +119,7 @@ plex:
 If your Plex server is on a different IP:
 1. Find your Plex server IP address
 2. Update `base_url` in `config.yaml`
-3. Example: `"http://<your-lan-host>:32400"`
+3. Example: `"http://192.0.2.1:32400"`
 
 ### Token Not Working
 
@@ -142,9 +141,8 @@ If your Plex server is on a different IP:
 
 ---
 
-**Status**: ✅ Configuration complete, token pending  
+**Status**: ✅ Configuration complete, token pending
 **Next**: Get your Plex token and add it to `config.yaml`
-
 
 ---
 
@@ -340,7 +338,7 @@ The channel is properly configured and exposed. Plex just needs to refresh its c
 
 This forces Plex to completely refresh the lineup:
 
-1. **Open Plex Web Interface** (http://<your-tailscale-host>:32400/web)
+1. **Open Plex Web Interface** (http://198.51.100.1:32400/web)
 
 2. **Go to Settings** → **Live TV & DVR**
 
@@ -379,7 +377,6 @@ If the above don't work, clear Plex's DVR cache:
 2. **Navigate to Plex data directory**:
    - **macOS**: `~/Library/Application Support/Plex Media Server/`
    - **Linux**: `/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/`
-   - **Windows**: `%LOCALAPPDATA%\Plex Media Server\`
 
 3. **Delete DVR cache**:
    ```bash
@@ -397,7 +394,7 @@ Some Plex versions support forcing a lineup refresh:
 
 ```bash
 # Replace YOUR_PLEX_TOKEN with your actual token
-curl -X POST "http://<your-tailscale-host>:32400/livetv/dvrs/refresh?X-Plex-Token=YOUR_TOKEN"
+curl -X POST "http://198.51.100.1:32400/livetv/dvrs/refresh?X-Plex-Token=YOUR_TOKEN"
 ```
 
 ---
@@ -437,21 +434,21 @@ In Plex Settings → Live TV & DVR:
 
 ### Issue: "No channels found"
 
-**Cause**: Plex can't reach StreamTV  
-**Fix**: 
+**Cause**: Plex can't reach StreamTV
+**Fix**:
 - Ensure StreamTV server is running: `./start_server.sh`
 - Check firewall isn't blocking port 8410
 - Verify Plex and StreamTV are on same network
 
 ### Issue: "Only old channels showing"
 
-**Cause**: Plex cached lineup  
+**Cause**: Plex cached lineup
 **Fix**: Remove and re-add DVR source (Method 1 above)
 
 ### Issue: "Channel shows but won't play"
 
-**Cause**: Stream URL not working  
-**Fix**: 
+**Cause**: Stream URL not working
+**Fix**:
 - Test stream directly: `curl -I http://localhost:8410/iptv/stream/80`
 - Check logs: `./scripts/view-logs.sh search "channel 80"`
 - Verify FFmpeg is working (should be fixed now with hwaccel disabled)
@@ -477,7 +474,7 @@ The Plex connection test was showing an error, but the connection is now working
 ✅ **Connection Successful!**
 - Server: Home PLEX
 - Version: 1.42.2.10156-f737b826c
-- URL: http://<your-tailscale-host>:32400
+- URL: http://198.51.100.1:32400
 - Token: Configured (20 characters)
 
 ### Current Configuration
@@ -485,7 +482,7 @@ The Plex connection test was showing an error, but the connection is now working
 ```yaml
 plex:
   enabled: true
-  base_url: http://<your-tailscale-host>:32400
+  base_url: http://198.51.100.1:32400
   token: HeyD3N9rKrtJDsRNL6-n
   use_for_epg: true
 ```
@@ -510,7 +507,7 @@ You can test the connection manually:
 
 ```bash
 # Test Plex server directly
-curl "http://<your-tailscale-host>:32400/" \
+curl "http://198.51.100.1:32400/" \
   -H "X-Plex-Token: HeyD3N9rKrtJDsRNL6-n"
 
 # Test via StreamTV API
@@ -527,7 +524,6 @@ curl -X POST http://localhost:8410/api/settings/plex/test
 
 **Status**: ✅ Connection test is working correctly!
 **Action**: Refresh the settings page and test again.
-
 
 ---
 
@@ -571,7 +567,7 @@ Add Plex configuration to `config.yaml`:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://<your-lan-host>:32400"  # Your Plex server URL
+  base_url: "http://192.0.2.1:32400"  # Your Plex server URL
   token: "your-plex-token-here"  # Your Plex authentication token
   use_for_epg: true  # Enable EPG enhancement via Plex API
 ```
@@ -670,13 +666,13 @@ from streamtv.streaming.plex_api_client import PlexAPIClient
 async with PlexAPIClient(base_url="http://plex:32400", token="token") as client:
     # Get server info
     info = await client.get_server_info()
-    
+
     # Get DVRs
     dvrs = await client.get_dvrs()
-    
+
     # Get channels for lineup
     channels = await client.get_channels_for_lineup("lineup_id")
-    
+
     # Compute channel map
     channel_map = await client.compute_best_channel_map(
         channel_numbers=["1", "2", "3"],
@@ -790,7 +786,6 @@ Your StreamTV EPG is now:
 ---
 
 **Note**: The EPG will work perfectly with Plex even if the API connection needs token adjustment. The XMLTV format is fully Plex-compatible and all enhancements are active!
-
 
 ---
 

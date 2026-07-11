@@ -186,4 +186,3 @@ The SwiftUI installer is fully path-independent:
 - Resolves absolute paths automatically
 
 See `PATH_INDEPENDENCE.md` for details.
-

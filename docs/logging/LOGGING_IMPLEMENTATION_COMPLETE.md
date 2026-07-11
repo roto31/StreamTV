@@ -199,8 +199,8 @@ YYYY-MM-DD HH:MM:SS - module.name - LEVEL - Message
 ```
 2025-12-03 18:05:36 - root - INFO - ================================================================================
 2025-12-03 18:05:36 - root - INFO - StreamTV Logging initialized - Level: INFO
-2025-12-03 18:05:36 - root - INFO - Log directory: Library/Logs/StreamTV
-2025-12-03 18:05:36 - root - INFO - Log file: Library/Logs/StreamTV/streamtv-2025-12-03.log
+2025-12-03 18:05:36 - root - INFO - Log directory: /home/streamtv/Library/Logs/StreamTV
+2025-12-03 18:05:36 - root - INFO - Log file: /home/streamtv/Library/Logs/StreamTV/streamtv-2025-12-03.log
 2025-12-03 18:05:36 - streamtv.main - INFO - StreamTV started on 0.0.0.0:8410
 2025-12-03 18:05:36 - streamtv.streaming.channel_manager - INFO - Started continuous stream for channel 1980
 ```
@@ -408,4 +408,3 @@ logger.debug("Debug message")
 ---
 
 *The logging system is now ready for use. Happy logging! 📝*
-

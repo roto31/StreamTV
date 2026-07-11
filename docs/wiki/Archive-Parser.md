@@ -131,13 +131,13 @@ python3 scripts/archive_collection_parser.py "URL2" --channel-number 81
 
 ## 🆘 Common Issues
 
-**Problem**: "requests module not found"  
+**Problem**: "requests module not found"
 **Solution**: `pip3 install requests`
 
-**Problem**: "swiftDialog not found"  
+**Problem**: "swiftDialog not found"
 **Solution**: Script auto-installs, or get from https://github.com/swiftDialog/swiftDialog
 
-**Problem**: "Collection not found"  
+**Problem**: "Collection not found"
 **Solution**: Verify URL at archive.org
 
 ---
@@ -147,7 +147,6 @@ python3 scripts/archive_collection_parser.py "URL2" --channel-number 81
 Your complete Magnum P.I. channel with **298 episodes** and **296 enforced breaks** (2-5 minutes each) is ready to stream!
 
 **Happy Streaming! 📺**
-
 
 ## ARCHIVE ORG REDIRECT FIX
 
@@ -214,10 +213,9 @@ After restart, the logs should show:
 
 ---
 
-**Status**: ✅ Fixed  
-**Date**: December 3, 2025  
+**Status**: ✅ Fixed
+**Date**: December 3, 2025
 **Affected**: All Archive.org streaming (including Magnum P.I. channel)
-
 
 ---
 
@@ -249,7 +247,7 @@ Successfully created a **complete automated system** for generating StreamTV cha
 
 #### Season Breakdown
 - Season 1: 36 episodes
-- Season 2: 42 episodes  
+- Season 2: 42 episodes
 - Season 3: 44 episodes
 - Season 4: 42 episodes
 - Season 5: 44 episodes
@@ -265,13 +263,13 @@ Successfully created a **complete automated system** for generating StreamTV cha
 **File**: `scripts/archive_collection_parser.py` (485 lines)
 
 #### Features
-✅ **Automatic Metadata Fetching** from Archive.org API  
-✅ **Smart Episode Parsing** (extracts season/episode from filenames)  
+✅ **Automatic Metadata Fetching** from Archive.org API
+✅ **Smart Episode Parsing** (extracts season/episode from filenames)
 ✅ **Title Cleaning** (removes technical jargon)  
-✅ **Complete YAML Generation** (channels + schedules)  
-✅ **Strict Break Enforcement** (2-5 minutes between episodes)  
+✅ **Complete YAML Generation** (channels + schedules)
+✅ **Strict Break Enforcement** (2-5 minutes between episodes)
 ✅ **Multiple Format Support** (.mp4, .avi, .mkv, .mov, etc.)  
-✅ **Configurable Settings** (channel number, name, break duration)  
+✅ **Configurable Settings** (channel number, name, break duration)
 ✅ **Error Handling** (graceful failures, detailed messages)
 
 #### Usage Example
@@ -298,13 +296,13 @@ python3 scripts/archive_collection_parser.py \
 **File**: `scripts/archive_collection_parser_dialog.sh` (333 lines)
 
 #### Features
-✅ **Beautiful macOS GUI** using swiftDialog  
-✅ **User-Friendly Workflow** (guided step-by-step)  
-✅ **Auto-Install Dependencies** (swiftDialog, Python modules)  
-✅ **Input Validation** (URL verification, required fields)  
-✅ **Progress Indicators** (real-time processing status)  
-✅ **Results Preview** (episode counts, season breakdown)  
-✅ **Automatic File Management** (saves to correct directories)  
+✅ **Beautiful macOS GUI** using swiftDialog
+✅ **User-Friendly Workflow** (guided step-by-step)
+✅ **Auto-Install Dependencies** (swiftDialog, Python modules)
+✅ **Input Validation** (URL verification, required fields)
+✅ **Progress Indicators** (real-time processing status)
+✅ **Results Preview** (episode counts, season breakdown)
+✅ **Automatic File Management** (saves to correct directories)
 ✅ **Finder Integration** (opens generated files)
 
 #### Workflow
@@ -388,9 +386,9 @@ python3 scripts/archive_collection_parser.py \
 ## 📁 Generated Files
 
 ### Channel Configuration
-**Location**: `data/magnum-pi-channel.yaml`  
-**Size**: 129 KB  
-**Lines**: 3,587  
+**Location**: `data/magnum-pi-channel.yaml`
+**Size**: 129 KB
+**Lines**: 3,587
 **Contains**: All 298 episodes with:
 - Unique IDs
 - Collection groupings (by season)
@@ -417,9 +415,9 @@ python3 scripts/archive_collection_parser.py \
 ```
 
 ### Schedule Configuration
-**Location**: `schedules/magnum-pi-schedule.yml`  
-**Size**: 54 KB  
-**Lines**: 1,846  
+**Location**: `schedules/magnum-pi-schedule.yml`
+**Size**: 54 KB
+**Lines**: 1,846
 **Contains**:
 - Content definitions (8 seasons + specials)
 - Break collection definition
@@ -472,13 +470,13 @@ A complete **Magnum P.I.** channel has been successfully generated for StreamTV 
 ## 📁 Generated Files
 
 ### 1. Channel Configuration
-**Location**: `data/magnum-pi-channel.yaml`  
-**Size**: 129 KB  
+**Location**: `data/magnum-pi-channel.yaml`
+**Size**: 129 KB
 **Contains**: All 298 episodes with complete metadata
 
 ### 2. Schedule Configuration
-**Location**: `schedules/magnum-pi-schedule.yml`  
-**Size**: 54 KB  
+**Location**: `schedules/magnum-pi-schedule.yml`
+**Size**: 54 KB
 **Contains**: Sequential playback schedule with enforced breaks
 
 ---
@@ -599,7 +597,7 @@ channels:
 name: Magnum P.I. Marathon
 description: >-
   24/7 marathon with 2-5 minute breaks between episodes.
-  
+
 content:
   - key: season1
     collection: Magnum P.I. - Season 1
@@ -627,7 +625,6 @@ playout:
   - sequence: magnum-marathon
   - repeat: true
 ```
-
 
 ---
 
@@ -770,7 +767,7 @@ SELECT COUNT(*) FROM collections WHERE name LIKE '%Magnum%';
 # Result: 9
 
 # Count total episodes
-SELECT COUNT(*) FROM collection_items 
+SELECT COUNT(*) FROM collection_items
 WHERE collection_id IN (
     SELECT id FROM collections WHERE name LIKE '%Magnum%'
 );
@@ -809,10 +806,9 @@ Your Magnum P.I. channel has been **completely restarted from scratch** and is r
 
 ---
 
-**Date**: December 3, 2025  
-**Status**: ✅ Complete  
+**Date**: December 3, 2025
+**Status**: ✅ Complete
 **Action**: Restart server to see changes
-
 
 ---
 
@@ -945,13 +941,13 @@ python3 scripts/archive_collection_parser.py "URL2" --channel-number 81
 
 ## 🆘 Common Issues
 
-**Problem**: "requests module not found"  
+**Problem**: "requests module not found"
 **Solution**: `pip3 install requests`
 
-**Problem**: "swiftDialog not found"  
+**Problem**: "swiftDialog not found"
 **Solution**: Script auto-installs, or get from https://github.com/swiftDialog/swiftDialog
 
-**Problem**: "Collection not found"  
+**Problem**: "Collection not found"
 **Solution**: Verify URL at archive.org
 
 ---
@@ -961,7 +957,6 @@ python3 scripts/archive_collection_parser.py "URL2" --channel-number 81
 Your complete Magnum P.I. channel with **298 episodes** and **296 enforced breaks** (2-5 minutes each) is ready to stream!
 
 **Happy Streaming! 📺**
-
 
 ---
 
@@ -1058,7 +1053,7 @@ collections=(
 
 for item in "${collections[@]}"; do
     IFS=':' read -r collection channel_num name <<< "$item"
-    
+
     python3 scripts/archive_collection_parser.py \
         "https://archive.org/details/$collection" \
         --channel-number "$channel_num" \
@@ -1066,7 +1061,7 @@ for item in "${collections[@]}"; do
         --min-break 2 \
         --max-break 5 \
         --output-dir "data/batch_$collection"
-    
+
     echo "✅ Generated channel $channel_num: $name"
 done
 ```

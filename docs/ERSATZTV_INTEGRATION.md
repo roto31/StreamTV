@@ -246,4 +246,3 @@ All existing YAML schedule files remain compatible. New features are optional an
 - The platform uses Python instead of C#/.NET, so some ErsatzTV features that require .NET-specific libraries are adapted for Python
 - Direct streaming from YouTube/Archive.org is maintained (no local file requirements)
 - All ErsatzTV scheduling patterns are supported while keeping the lightweight Python architecture
-

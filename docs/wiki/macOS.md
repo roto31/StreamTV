@@ -6,7 +6,6 @@ Complete documentation for StreamTV on macOS.
 
 ### Overview
 
-
 StreamTV is an efficient online media streaming platform that emulates HDHomeRun tuners for integration with Plex, Emby, and Jellyfin.
 
 ## What's Included
@@ -55,7 +54,6 @@ StreamTV is an efficient online media streaming platform that emulates HDHomeRun
 - **On-Demand**: Start from beginning or saved position
 
 ## Directory Structure
-
 
 ---
 
@@ -267,7 +265,6 @@ For issues or questions:
 - Review [API documentation](#API.md)
 - Check [installation guide](#INSTALLATION.md)
 
-
 ---
 
 ## Complete Documentation
@@ -341,7 +338,6 @@ Welcome to the complete StreamTV documentation. This documentation is organized 
 ├── SCHEDULES.md
 └── YAML_VALIDATION.md
 ```
-
 
 ---
 
@@ -552,7 +548,6 @@ curl -X POST http://localhost:8410/api/media \
   }'
 ```
 
-
 ---
 
 #### INSTALLATION
@@ -578,7 +573,6 @@ cd streamtv
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 ### 3. Install Dependencies
@@ -634,37 +628,6 @@ uvicorn streamtv.main:app --host 0.0.0.0 --port 8410
 - API Documentation: http://localhost:8410/docs
 - IPTV Playlist: http://localhost:8410/iptv/channels.m3u
 - EPG: http://localhost:8410/iptv/xmltv.xml
-
-## Docker Installation (Optional)
-
-Create a `Dockerfile`:
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["python", "-m", "streamtv.main"]
-```
-
-Build and run:
-```bash
-docker build -t streamtv .
-docker run -p 8410:8410 -v $(pwd)/config.yaml:/app/config.yaml streamtv
-```
-
----
-
-#### API
-
-# StreamTV API Documentation
-
-This document describes the RESTful API for StreamTV, modeled after ErsatzTV's API structure.
 
 ## Base URL
 
@@ -769,8 +732,6 @@ GET /api/media/{media_id}
 
 # StreamTV Troubleshooting Guide
 
-Complete troubleshooting guide for StreamTV on macOS, Windows, and Linux.
-
 ## Quick Diagnostics
 
 Run these diagnostic scripts directly from this page to check your installation:
@@ -832,17 +793,12 @@ Install Ollama for AI-powered troubleshooting:
 
 **Solutions**:
 
-1. **macOS**: 
+1. **macOS**:
    - Download from [python.org](https://www.python.org/downloads/)
    - Or use Homebrew: `brew install python3`
    - Run diagnostic: [Run Script: check_python](script:check_python)
 
-2. **Windows**: 
-   - Download from [python.org](https://www.python.org/downloads/)
-   - Check "Add Python to PATH" during installation
-   - Restart terminal/PowerShell after installation
-
-3. **Linux**: 
+3. **Linux**:
    - Ubuntu/Debian: `sudo apt-get install python3 python3-pip`
    - Fedora: `sudo dnf install python3 python3-pip`
    - Arch: `sudo pacman -S python python-pip`
@@ -853,17 +809,12 @@ Install Ollama for AI-powered troubleshooting:
 
 **Solutions**:
 
-1. **macOS**: 
+1. **macOS**:
    - Apple Silicon: Download from [evermeet.cx](https://evermeet.cx/ffmpeg/)
    - Or use Homebrew: `brew install ffmpeg`
    - Run diagnostic: [Run Script: check_ffmpeg](script:check_ffmpeg)
 
-2. **Windows**: 
-   - Download from [ffmpeg.org](https://ffmpeg.org/download.html)
-   - Extract and add to PATH
-   - Or use Chocolatey: `choco install ffmpeg`
-
-3. **Linux**: 
+3. **Linux**:
    - Ubuntu/Debian: `sudo apt-get install ffmpeg`
    - Fedora: `sudo dnf install ffmpeg`
    - Arch: `sudo pacman -S ffmpeg`
@@ -1039,7 +990,6 @@ python3 -c "from streamtv.database.session import init_db; init_db()"
 
 ### 7. Create Your First Channel
 
-
 ---
 
 #### QUICK START SWIFTUI
@@ -1113,7 +1063,6 @@ Right-click → Open (to bypass Gatekeeper)
 - **Better Performance**: Native SwiftUI is faster
 - **Modern UI**: Follows macOS Human Interface Guidelines
 - **Better Integration**: Works seamlessly with macOS
-
 
 ---
 
@@ -1254,7 +1203,6 @@ Guides for installing and setting up StreamTV on macOS and other platforms.
 
 **Start Installing**: [QUICK_START.md](QUICK_START.md)
 
-
 ---
 
 #### SWIFTUI INSTALLER README
@@ -1338,7 +1286,6 @@ swift build -c release
 6. Click **"Fix Issues"** if any problems are detected (optional)
 
 ### Direct App Launch
-
 
 ---
 
@@ -1497,7 +1444,7 @@ Common database-related issues and their solutions.
    ```bash
    # Restore from backup
    cp streamtv.db.backup streamtv.db
-   
+
    # OR recreate database
    rm streamtv.db
    python3 -c "from streamtv.database.session import init_db; init_db()"
@@ -1629,12 +1576,6 @@ Common issues encountered during StreamTV installation and their solutions.
 
 3. Run diagnostic: Use the web interface to run `check_python` script
 
-**Windows:**
-1. Download from [python.org](https://www.python.org/downloads/)
-2. **Important**: Check "Add Python to PATH" during installation
-3. Restart terminal/PowerShell after installation
-4. Verify: `python --version`
-
 **Linux:**
 - Ubuntu/Debian: `sudo apt-get install python3 python3-pip`
 - Fedora: `sudo dnf install python3 python3-pip`
@@ -1678,18 +1619,6 @@ Common issues encountered during StreamTV installation and their solutions.
 
 3. Run diagnostic: Use web interface to run `check_ffmpeg` script
 
-**Windows:**
-1. Download from [ffmpeg.org](https://ffmpeg.org/download.html)
-2. Extract to a folder (e.g., `C:\ffmpeg`)
-
----
-
-#### NETWORK ISSUES
-
-# Network & Connectivity Troubleshooting Guide
-
-Common network and connectivity issues in StreamTV.
-
 ## DNS Resolution Errors
 
 ### Symptoms
@@ -1705,21 +1634,20 @@ Common network and connectivity issues in StreamTV.
    - Provides auto-fix options
 
 2. **Flush DNS cache:**
-   
+
    **macOS:**
    ```bash
    sudo dscacheutil -flushcache
    sudo killall -HUP mDNSResponder
    ```
-   
+
    **Linux:**
    ```bash
    sudo systemd-resolve --flush-caches  # systemd
    # OR
    sudo service network-manager restart  # NetworkManager
    ```
-   
-   **Windows:**
+
    ```powershell
    ipconfig /flushdns
    ```
@@ -1793,7 +1721,7 @@ Common issues when integrating StreamTV with Plex Media Server.
 2. **Check discovery URL:**
    - Use your server's IP address, not `localhost`
    - Format: `http://YOUR_IP:8410/hdhomerun/discover.json`
-   - Example: `http://<your-lan-host>:8410/hdhomerun/discover.json`
+   - Example: `http://192.0.2.1:8410/hdhomerun/discover.json`
 
 3. **Verify SSDP is enabled:**
    ```yaml
@@ -1935,7 +1863,6 @@ Common issues with video streaming and playback in StreamTV.
      buffer_size: 16384  # Increase buffer
      chunk_size: 2048    # Increase chunk size
    ```
-
 
 ---
 
@@ -2153,7 +2080,6 @@ curl -X POST http://localhost:8410/api/media \
 - Ensure Archive.org account is active and not locked
 - Check network connectivity to Archive.org
 
-
 ---
 
 #### PASSKEY AUTHENTICATION
@@ -2208,16 +2134,12 @@ Passkeys are stored securely in iCloud Keychain and sync across your Apple devic
 
 2. **Compatible Browser:**
    - Safari 16+ (macOS/iOS) - Full Passkey support
-   - Chrome 108+ (macOS/Windows) - WebAuthn support
-   - Edge 108+ (macOS/Windows) - WebAuthn support
 
 3. **Device Requirements:**
    - macOS: Touch ID or device passcode
    - iOS/iPadOS: Face ID, Touch ID, or device passcode
-   - Windows: Windows Hello (optional)
 
 ### Configuration
-
 
 ---
 
@@ -2231,12 +2153,12 @@ StreamTV includes an intelligent auto-healing system that automatically monitors
 
 ## Features
 
-🤖 **AI-Powered Analysis**: Uses Ollama AI to analyze errors and suggest fixes  
-📊 **Pattern Detection**: Identifies recurring error patterns automatically  
-🔧 **Automatic Fixes**: Applies known fixes for common issues  
-📈 **Trend Analysis**: Tracks error trends over time  
-💾 **Safe Backups**: Creates backups before applying any fixes  
-🔄 **Continuous Monitoring**: Can run continuously to keep your system healthy  
+🤖 **AI-Powered Analysis**: Uses Ollama AI to analyze errors and suggest fixes
+📊 **Pattern Detection**: Identifies recurring error patterns automatically
+🔧 **Automatic Fixes**: Applies known fixes for common issues
+📈 **Trend Analysis**: Tracks error trends over time
+💾 **Safe Backups**: Creates backups before applying any fixes
+🔄 **Continuous Monitoring**: Can run continuously to keep your system healthy
 
 ## Requirements
 
@@ -2248,7 +2170,7 @@ The auto-healer uses [Ollama](https://ollama.ai/) for AI-powered log analysis.
    ```bash
    # macOS
    brew install ollama
-   
+
    # Linux
    curl -fsSL https://ollama.ai/install.sh | sh
    ```
@@ -2522,7 +2444,7 @@ The channel is properly configured and exposed. Plex just needs to refresh its c
 
 This forces Plex to completely refresh the lineup:
 
-1. **Open Plex Web Interface** (http://<your-tailscale-host>:32400/web)
+1. **Open Plex Web Interface** (http://198.51.100.1:32400/web)
 
 2. **Go to Settings** → **Live TV & DVR**
 
@@ -2569,7 +2491,7 @@ The Plex connection test was showing an error, but the connection is now working
 ✅ **Connection Successful!**
 - Server: Home PLEX
 - Version: 1.42.2.10156-f737b826c
-- URL: http://<your-tailscale-host>:32400
+- URL: http://198.51.100.1:32400
 - Token: Configured (20 characters)
 
 ### Current Configuration
@@ -2577,7 +2499,7 @@ The Plex connection test was showing an error, but the connection is now working
 ```yaml
 plex:
   enabled: true
-  base_url: http://<your-tailscale-host>:32400
+  base_url: http://198.51.100.1:32400
   token: HeyD3N9rKrtJDsRNL6-n
   use_for_epg: true
 ```
@@ -2602,7 +2524,7 @@ You can test the connection manually:
 
 ```bash
 # Test Plex server directly
-curl "http://<your-tailscale-host>:32400/" \
+curl "http://198.51.100.1:32400/" \
   -H "X-Plex-Token: HeyD3N9rKrtJDsRNL6-n"
 
 # Test via StreamTV API
@@ -2655,7 +2577,7 @@ Add Plex configuration to `config.yaml`:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://<your-lan-host>:32400"  # Your Plex server URL
+  base_url: "http://192.0.2.1:32400"  # Your Plex server URL
   token: "your-plex-token-here"  # Your Plex authentication token
   use_for_epg: true  # Enable EPG enhancement via Plex API
 ```
@@ -2676,7 +2598,6 @@ Restart the server for changes to take effect.
 ### Without Plex Integration
 
 StreamTV generates standard XMLTV format that is compatible with Plex, but without Plex-specific enhancements.
-
 
 ---
 
@@ -2741,7 +2662,6 @@ Even if the Plex API connection needs the full token, **all EPG enhancements are
 - Valid XML structure
 
 ### 📝 Update Token (If Needed)
-
 
 ---
 
@@ -2818,9 +2738,9 @@ The EPG generation now:
 
 Your Plex API integration has been configured with:
 
-✅ **Enabled**: `true`  
-✅ **Base URL**: `http://localhost:32400` (detected automatically)  
-✅ **EPG Enhancement**: `true`  
+✅ **Enabled**: `true`
+✅ **Base URL**: `http://localhost:32400` (detected automatically)
+✅ **EPG Enhancement**: `true`
 ⏳ **Token**: Needs to be configured (see below)
 
 ## Next Step: Get Your Plex Token
@@ -2847,7 +2767,6 @@ This will:
 
 2. **Open Browser Developer Tools**:
    - macOS: `Cmd + Option + I`
-   - Windows/Linux: `F12`
 
 3. **Go to Network Tab**
 
@@ -2875,9 +2794,8 @@ plex:
 
 ---
 
-
 ## Additional Resources
 
-- [Full Documentation Index](Documents/XCode Projects/StreamTV/StreamTV-macOS/docs/INDEX.md)
-- [API Reference](Documents/XCode Projects/StreamTV/StreamTV-macOS/docs/API.md)
-- [Troubleshooting Guide](Documents/XCode Projects/StreamTV/StreamTV-macOS/docs/TROUBLESHOOTING.md)
+- [Full Documentation Index](/home/streamtv/Documents/XCode Projects/StreamTV/StreamTV-macOS/docs/INDEX.md)
+- [API Reference](/home/streamtv/Documents/XCode Projects/StreamTV/StreamTV-macOS/docs/API.md)
+- [Troubleshooting Guide](/home/streamtv/Documents/XCode Projects/StreamTV/StreamTV-macOS/docs/TROUBLESHOOTING.md)

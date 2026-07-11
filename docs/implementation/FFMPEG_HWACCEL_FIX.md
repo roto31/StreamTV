@@ -5,7 +5,7 @@
 When streaming Magnum P.I. Season 1 episodes (AVI files with MPEG-4/DivX/XviD codec), FFmpeg fails with:
 
 ```
-ERROR - FFmpeg: [mpeg4 @ 0xc560ea300] Failed setup for format videotoolbox_vld: 
+ERROR - FFmpeg: [mpeg4 @ 0xc560ea300] Failed setup for format videotoolbox_vld:
 hwaccel initialisation returned error.
 ```
 
@@ -164,8 +164,8 @@ Modern Apple Silicon is **fast enough** for software decoding:
 
 ### Expected Results
 
-✅ No "hwaccel initialisation" errors  
-✅ Streams play successfully  
+✅ No "hwaccel initialisation" errors
+✅ Streams play successfully
 ✅ Both AVI and MP4 files work  
 ✅ Slight CPU increase (acceptable)
 
@@ -227,16 +227,15 @@ grep "hwaccel:" config.yaml
 
 ## Summary
 
-**Issue**: VideoToolbox doesn't support MPEG-4 (used in AVI files)  
-**Fix**: Disabled hardware acceleration in `config.yaml`  
-**Impact**: Slight CPU increase, universal codec support  
-**Status**: ✅ Fixed  
+**Issue**: VideoToolbox doesn't support MPEG-4 (used in AVI files)
+**Fix**: Disabled hardware acceleration in `config.yaml`
+**Impact**: Slight CPU increase, universal codec support
+**Status**: ✅ Fixed
 
 **Action Required**: Restart StreamTV server
 
 ---
 
-**Date**: December 3, 2025  
-**Status**: ✅ Fixed  
+**Date**: December 3, 2025
+**Status**: ✅ Fixed
 **Configuration**: Hardware acceleration disabled for universal codec support
-

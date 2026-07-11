@@ -229,4 +229,3 @@ The schedule schema is compatible with ErsatzTV's YAML format, ensuring:
 3. **Keep schemas updated** - Reflect new fields
 4. **Use YAML for editing** - Human-readable format
 5. **Use JSON for APIs** - Standard web format
-

@@ -42,13 +42,13 @@ A complete **Magnum P.I.** channel has been successfully generated for StreamTV 
 ## 📁 Generated Files
 
 ### 1. Channel Configuration
-**Location**: `data/magnum-pi-channel.yaml`  
-**Size**: 129 KB  
+**Location**: `data/magnum-pi-channel.yaml`
+**Size**: 129 KB
 **Contains**: All 298 episodes with complete metadata
 
 ### 2. Schedule Configuration
-**Location**: `schedules/magnum-pi-schedule.yml`  
-**Size**: 54 KB  
+**Location**: `schedules/magnum-pi-schedule.yml`
+**Size**: 54 KB
 **Contains**: Sequential playback schedule with enforced breaks
 
 ---
@@ -169,7 +169,7 @@ channels:
 name: Magnum P.I. Marathon
 description: >-
   24/7 marathon with 2-5 minute breaks between episodes.
-  
+
 content:
   - key: season1
     collection: Magnum P.I. - Season 1
@@ -250,9 +250,9 @@ playout:
 
 ### Option 1: Use the Generated Channel As-Is
 
-✅ Files are ready to import  
-✅ 298 episodes configured  
-✅ Breaks enforced  
+✅ Files are ready to import
+✅ 298 episodes configured
+✅ Breaks enforced
 ✅ Ready to stream
 
 ### Option 2: Customize the Channel
@@ -368,11 +368,11 @@ grep "duration: PT" schedules/magnum-pi-schedule.yml | sort | uniq -c
 
 ## 🎊 Success Metrics
 
-✅ **298 episodes** parsed and configured  
-✅ **296 breaks** enforced (2-5 minutes each)  
-✅ **8 seasons** organized chronologically  
-✅ **2 tools** created for reuse  
-✅ **Complete automation** via swiftDialog  
+✅ **298 episodes** parsed and configured
+✅ **296 breaks** enforced (2-5 minutes each)
+✅ **8 seasons** organized chronologically
+✅ **2 tools** created for reuse
+✅ **Complete automation** via swiftDialog
 ✅ **Ready to stream** immediately
 
 ---
@@ -389,16 +389,16 @@ grep "duration: PT" schedules/magnum-pi-schedule.yml | sort | uniq -c
 
 ### Common Issues
 
-**Q: Episodes won't stream?**  
+**Q: Episodes won't stream?**
 A: Check Archive.org authentication in `config.yaml`
 
-**Q: Want different break durations?**  
+**Q: Want different break durations?**
 A: Re-run parser with `--min-break` and `--max-break` flags
 
-**Q: Can I add commercials instead of breaks?**  
+**Q: Can I add commercials instead of breaks?**
 A: Yes! Replace `break_short` collection with your commercial content
 
-**Q: How do I update the channel?**  
+**Q: How do I update the channel?**
 A: Re-run the parser script to regenerate YAML files
 
 ---
@@ -416,8 +416,7 @@ Your Magnum P.I. channel is **complete and ready to stream**!
 
 ---
 
-**Generated**: December 3, 2025  
-**Status**: ✅ Complete and Operational  
-**Channel**: 80  
+**Generated**: December 3, 2025
+**Status**: ✅ Complete and Operational
+**Channel**: 80
 **Total Content**: ~250-263 hours
-

@@ -2,8 +2,6 @@
 
 # StreamTV Troubleshooting Guide
 
-Complete troubleshooting guide for StreamTV on macOS, Windows, and Linux.
-
 ## Quick Diagnostics
 
 Run these diagnostic scripts directly from this page to check your installation:
@@ -65,17 +63,12 @@ Install Ollama for AI-powered troubleshooting:
 
 **Solutions**:
 
-1. **macOS**: 
+1. **macOS**:
    - Download from [python.org](https://www.python.org/downloads/)
    - Or use Homebrew: `brew install python3`
    - Run diagnostic: [Run Script: check_python](script:check_python)
 
-2. **Windows**: 
-   - Download from [python.org](https://www.python.org/downloads/)
-   - Check "Add Python to PATH" during installation
-   - Restart terminal/PowerShell after installation
-
-3. **Linux**: 
+3. **Linux**:
    - Ubuntu/Debian: `sudo apt-get install python3 python3-pip`
    - Fedora: `sudo dnf install python3 python3-pip`
    - Arch: `sudo pacman -S python python-pip`
@@ -86,17 +79,12 @@ Install Ollama for AI-powered troubleshooting:
 
 **Solutions**:
 
-1. **macOS**: 
+1. **macOS**:
    - Apple Silicon: Download from [evermeet.cx](https://evermeet.cx/ffmpeg/)
    - Or use Homebrew: `brew install ffmpeg`
    - Run diagnostic: [Run Script: check_ffmpeg](script:check_ffmpeg)
 
-2. **Windows**: 
-   - Download from [ffmpeg.org](https://ffmpeg.org/download.html)
-   - Extract and add to PATH
-   - Or use Chocolatey: `choco install ffmpeg`
-
-3. **Linux**: 
+3. **Linux**:
    - Ubuntu/Debian: `sudo apt-get install ffmpeg`
    - Fedora: `sudo dnf install ffmpeg`
    - Arch: `sudo pacman -S ffmpeg`
@@ -122,38 +110,6 @@ Install Ollama for AI-powered troubleshooting:
    sudo lsof -i :8410
    sudo kill -9 <PID>
    ```
-5. **Windows**: Find and kill process:
-   ```powershell
-   netstat -ano | findstr :8410
-   taskkill /PID <PID> /F
-   ```
-
-### Virtual Environment Issues
-
-**Symptoms**: Import errors, missing packages, or activation failures
-
-**Solutions**:
-
-1. Remove and recreate virtual environment:
-   ```bash
-   rm -rf ~/.streamtv/venv
-   python3 -m venv ~/.streamtv/venv
-   ```
-
-2. Activate and reinstall dependencies:
-   ```bash
-   source ~/.streamtv/venv/bin/activate  # Linux/macOS
-   # OR
-   ~/.streamtv/venv/Scripts/activate  # Windows
-   
-   pip install --upgrade pip setuptools wheel
-   pip install -r requirements.txt
-   ```
-
-3. Check Python path:
-   ```bash
-   which python3  # Should point to venv Python
-   ```
 
 ## Network & Connectivity Issues
 
@@ -175,40 +131,6 @@ Install Ollama for AI-powered troubleshooting:
    # OR
    sudo service network-manager restart  # NetworkManager
    ```
-4. **Windows**: Flush DNS cache:
-   ```powershell
-   ipconfig /flushdns
-   ```
-5. Check DNS servers in network settings
-6. Try using Google DNS (8.8.8.8, 8.8.4.4)
-
-### YouTube Streaming Issues
-
-**Symptoms**: `yt-dlp not installed`, `Unable to download API page`, or YouTube videos won't play
-
-**Solutions**:
-
-1. Run diagnostic: [Run Script: test_connectivity](script:test_connectivity)
-2. Install/update yt-dlp:
-   ```bash
-   pip install yt-dlp
-   # OR update
-   pip install --upgrade yt-dlp
-   ```
-3. Check YouTube accessibility in browser
-4. Verify network connectivity to YouTube
-5. Check firewall settings
-
-### Archive.org Streaming Issues
-
-**Symptoms**: Archive.org videos won't load or timeout errors
-
-**Solutions**:
-
-1. Run diagnostic: [Run Script: test_connectivity](script:test_connectivity)
-2. Check Archive.org accessibility in browser
-3. Verify network connectivity
-4. Check if authentication is required (configure in settings)
 
 ## Database Issues
 
@@ -359,12 +281,6 @@ Install Ollama for AI-powered troubleshooting:
    journalctl -u streamtv -n 50
    ```
 
-3. **Windows**: Check Event Viewer for errors
-
-4. Verify service configuration file syntax
-5. Check for permission issues
-6. Verify working directory is correct
-
 ## Performance Issues
 
 ### High CPU Usage
@@ -503,7 +419,6 @@ tail -f streamtv.log | grep -i error
 ---
 
 *For platform-specific troubleshooting, see the installation guides in the Documentation section.*
-
 
 ---
 

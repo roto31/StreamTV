@@ -23,7 +23,7 @@ def main():
         print("  macOS: brew install ffmpeg")
         print("  macOS (Apple Silicon): Download from https://evermeet.cx/ffmpeg/")
         print("  Linux: sudo apt-get install ffmpeg (Ubuntu/Debian)")
-        print("  Windows: Download from https://ffmpeg.org/download.html")
+        print("  Linux: use your distribution package manager (apt, dnf, pacman)")
         return 1
     
     print(f"✓ FFmpeg found at: {ffmpeg_path}")

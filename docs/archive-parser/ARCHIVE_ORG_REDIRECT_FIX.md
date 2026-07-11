@@ -61,7 +61,6 @@ After restart, the logs should show:
 
 ---
 
-**Status**: ✅ Fixed  
-**Date**: December 3, 2025  
+**Status**: ✅ Fixed
+**Date**: December 3, 2025
 **Affected**: All Archive.org streaming (including Magnum P.I. channel)
-

@@ -224,4 +224,3 @@ Future enhancements could include:
 7. ✅ YAML to JSON conversion for APIs
 
 The platform maintains its lightweight Python architecture while providing ErsatzTV-level scheduling capabilities.
-

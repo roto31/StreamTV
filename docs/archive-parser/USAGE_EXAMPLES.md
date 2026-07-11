@@ -89,7 +89,7 @@ collections=(
 
 for item in "${collections[@]}"; do
     IFS=':' read -r collection channel_num name <<< "$item"
-    
+
     python3 scripts/archive_collection_parser.py \
         "https://archive.org/details/$collection" \
         --channel-number "$channel_num" \
@@ -97,7 +97,7 @@ for item in "${collections[@]}"; do
         --min-break 2 \
         --max-break 5 \
         --output-dir "data/batch_$collection"
-    
+
     echo "✅ Generated channel $channel_num: $name"
 done
 ```
@@ -262,7 +262,7 @@ with open('data/magnum-pi-channel.yaml', 'r') as f:
 
 # Keep only Season 1 episodes
 data['channels'][0]['streams'] = [
-    s for s in data['channels'][0]['streams'] 
+    s for s in data['channels'][0]['streams']
     if s['id'].startswith('magnum_s01')
 ]
 
@@ -343,4 +343,3 @@ grep "url:" data/magnum-pi-channel.yaml | \
 ---
 
 **Happy Channel Creating! 📺🎬**
-

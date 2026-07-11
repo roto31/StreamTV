@@ -4,9 +4,9 @@
 
 Your Plex API integration has been configured with:
 
-✅ **Enabled**: `true`  
-✅ **Base URL**: `http://localhost:32400` (detected automatically)  
-✅ **EPG Enhancement**: `true`  
+✅ **Enabled**: `true`
+✅ **Base URL**: `http://localhost:32400` (detected automatically)
+✅ **EPG Enhancement**: `true`
 ⏳ **Token**: Needs to be configured (see below)
 
 ## Next Step: Get Your Plex Token
@@ -33,7 +33,6 @@ This will:
 
 2. **Open Browser Developer Tools**:
    - macOS: `Cmd + Option + I`
-   - Windows/Linux: `F12`
 
 3. **Go to Network Tab**
 
@@ -89,11 +88,11 @@ curl http://localhost:8410/iptv/xmltv.xml | head -20
 
 With full Plex API integration enabled:
 
-✅ **Enhanced EPG Generation** - Uses Plex-compatible format  
-✅ **Channel Mapping** - Better channel identification  
-✅ **Metadata Enrichment** - Enhanced programme information  
-✅ **DVR Compatibility** - Full compatibility with Plex DVR  
-✅ **Performance Optimized** - Faster EPG generation  
+✅ **Enhanced EPG Generation** - Uses Plex-compatible format
+✅ **Channel Mapping** - Better channel identification
+✅ **Metadata Enrichment** - Enhanced programme information
+✅ **DVR Compatibility** - Full compatibility with Plex DVR
+✅ **Performance Optimized** - Faster EPG generation
 
 ## Current Configuration
 
@@ -114,7 +113,7 @@ plex:
 If your Plex server is on a different IP:
 1. Find your Plex server IP address
 2. Update `base_url` in `config.yaml`
-3. Example: `"http://<your-lan-host>:32400"`
+3. Example: `"http://192.0.2.1:32400"`
 
 ### Token Not Working
 
@@ -136,6 +135,5 @@ If your Plex server is on a different IP:
 
 ---
 
-**Status**: ✅ Configuration complete, token pending  
+**Status**: ✅ Configuration complete, token pending
 **Next**: Get your Plex token and add it to `config.yaml`
-

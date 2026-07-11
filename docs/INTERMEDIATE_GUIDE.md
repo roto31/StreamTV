@@ -64,15 +64,15 @@ StreamTV consists of several key components that work together:
 
 **Channel Creation Flow:**
 ```
-User uploads YAML → Import API → Channel Importer → 
-Parse YAML → Create Collections → Create Media Items → 
+User uploads YAML → Import API → Channel Importer →
+Parse YAML → Create Collections → Create Media Items →
 Create Playlist → Create Channel → Database
 ```
 
 **Streaming Flow:**
 ```
-Client Request → IPTV Endpoint → Channel Manager → 
-Schedule Engine → Stream Manager → YouTube/Archive.org → 
+Client Request → IPTV Endpoint → Channel Manager →
+Schedule Engine → Stream Manager → YouTube/Archive.org →
 FFmpeg (MPEG-TS) → Client
 ```
 
@@ -304,22 +304,22 @@ sequence:
     items:
       # Play a collection
       - collection: "main_content"
-      
+
       # Fill duration with filler
       - duration: "00:05:00"
         collection: "commercials"
-      
+
       # Play all items in collection
       - all: "main_content"
-      
+
       # Pre-roll (before main content)
       - pre_roll: true
         collection: "station_ids"
-      
+
       # Mid-roll (during content)
       - mid_roll: true
         collection: "commercials"
-      
+
       # Post-roll (after content)
       - post_roll: true
         collection: "sign_offs"
@@ -659,4 +659,3 @@ python3 scripts/create_channel.py \
 ---
 
 *Last Updated: 2025-01-28*
-

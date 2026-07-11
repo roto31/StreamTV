@@ -51,7 +51,7 @@ tail_latest() {
 view_today() {
     TODAY=$(date +"%Y-%m-%d")
     TODAY_LOG="$LOG_DIR/streamtv-$TODAY.log"
-    
+
     if [ -f "$TODAY_LOG" ]; then
         echo -e "${GREEN}Viewing today's log:${NC} $TODAY_LOG"
         echo ""
@@ -119,4 +119,3 @@ case "${1:-tail}" in
         exit 1
         ;;
 esac
-

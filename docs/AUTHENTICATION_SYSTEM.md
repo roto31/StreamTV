@@ -62,7 +62,7 @@ The authentication system provides:
 **File Format:**
 - Netscape cookies format
 - Must contain YouTube cookies
-- Stored in `<local-cookies-dir>/youtube_cookies.txt`
+- Stored in `data/cookies/youtube_cookies.txt`
 
 ### API Endpoints
 
@@ -91,7 +91,7 @@ youtube:
   enabled: true
   quality: "best"
   extract_audio: false
-  cookies_file: "<local-cookies-dir>/youtube_cookies.txt"  # Set via login
+  cookies_file: "data/cookies/youtube_cookies.txt"  # Set via login
   use_authentication: true  # Enabled after login
 ```
 
@@ -104,7 +104,7 @@ youtube:
 - Other platforms: Stored in config.yaml (encrypted recommended)
 
 **YouTube:**
-- Cookies file stored in `<local-cookies-dir>/` directory
+- Cookies file stored in `data/cookies/` directory
 - File permissions should be restricted (chmod 600)
 
 ### Best Practices
@@ -244,4 +244,3 @@ See [Passkey Authentication Documentation](./PASSKEY_AUTHENTICATION.md) for comp
 ---
 
 *Last Updated: 2025-01-28*
-

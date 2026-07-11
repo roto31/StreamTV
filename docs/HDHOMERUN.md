@@ -189,4 +189,3 @@ If you're exposing StreamTV to the internet:
 | Tuner Management | ✅ Automatic | ❌ N/A |
 
 HDHomeRun emulation provides a more seamless integration experience compared to M3U playlists.
-

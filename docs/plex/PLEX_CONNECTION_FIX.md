@@ -15,7 +15,7 @@ The Plex connection test was showing an error, but the connection is now working
 ✅ **Connection Successful!**
 - Server: Home PLEX
 - Version: 1.42.2.10156-f737b826c
-- URL: http://<your-tailscale-host>:32400
+- URL: http://198.51.100.1:32400
 - Token: Configured (20 characters)
 
 ### Current Configuration
@@ -23,7 +23,7 @@ The Plex connection test was showing an error, but the connection is now working
 ```yaml
 plex:
   enabled: true
-  base_url: http://<your-tailscale-host>:32400
+  base_url: http://198.51.100.1:32400
   token: <PLEX_TOKEN>
   use_for_epg: true
 ```
@@ -48,7 +48,7 @@ You can test the connection manually:
 
 ```bash
 # Test Plex server directly
-curl "http://<your-tailscale-host>:32400/" \
+curl "http://198.51.100.1:32400/" \
   -H "X-Plex-Token: <PLEX_TOKEN>"
 
 # Test via StreamTV API
@@ -65,4 +65,3 @@ curl -X POST http://localhost:8410/api/settings/plex/test
 
 **Status**: ✅ Connection test is working correctly!
 **Action**: Refresh the settings page and test again.
-

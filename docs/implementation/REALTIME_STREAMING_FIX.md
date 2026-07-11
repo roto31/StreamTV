@@ -1,7 +1,7 @@
 # Real-Time Streaming Fix (`-re` Flag Implementation)
 
-**Date:** January 13, 2026  
-**Status:** Implemented  
+**Date:** January 13, 2026
+**Status:** Implemented
 **Files Modified:** `streamtv/streaming/mpegts_streamer.py`
 
 ## Problem Statement

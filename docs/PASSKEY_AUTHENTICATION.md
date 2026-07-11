@@ -48,13 +48,10 @@ Passkeys are stored securely in iCloud Keychain and sync across your Apple devic
 
 2. **Compatible Browser:**
    - Safari 16+ (macOS/iOS) - Full Passkey support
-   - Chrome 108+ (macOS/Windows) - WebAuthn support
-   - Edge 108+ (macOS/Windows) - WebAuthn support
 
 3. **Device Requirements:**
    - macOS: Touch ID or device passcode
    - iOS/iPadOS: Face ID, Touch ID, or device passcode
-   - Windows: Windows Hello (optional)
 
 ### Configuration
 
@@ -200,8 +197,6 @@ StreamTV uses the `webauthn` Python library for Passkey support:
 - Face ID/Touch ID integration
 
 ### WebAuthn Support
-- **Chrome 108+** (macOS/Windows)
-- **Edge 108+** (macOS/Windows)
 - Uses platform authenticators
 - May require additional setup
 
@@ -307,4 +302,3 @@ The Passkey flow is integrated into YouTube OAuth:
 ---
 
 *Last Updated: 2025-01-28*
-

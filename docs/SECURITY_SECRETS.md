@@ -98,10 +98,6 @@ if token:
     os.environ['STREAMTV_SECURITY_ACCESS_TOKEN'] = token
 ```
 
-### Windows - Credential Manager
-
-Use Windows Credential Manager for secure storage:
-
 ```cmd
 # Store a secret
 cmdkey /add:StreamTV_STREAMTV_SECURITY_ACCESS_TOKEN /user:StreamTV /pass:your-token-here
@@ -119,7 +115,6 @@ import subprocess
 import os
 
 def get_windows_credential(target_name):
-    """Retrieve password from Windows Credential Manager"""
     try:
         result = subprocess.run(
             ['cmdkey', '/list', target_name],
@@ -138,19 +133,18 @@ def get_windows_credential(target_name):
 try:
     import win32cred
     import win32con
-    
+
     def get_credential(target_name):
         try:
             credential = win32cred.CredRead(target_name, win32cred.CRED_TYPE_GENERIC, 0)
             return credential['CredentialBlob'].decode('utf-16le')
         except Exception:
             return None
-    
+
     token = get_credential('StreamTV_STREAMTV_SECURITY_ACCESS_TOKEN')
     if token:
         os.environ['STREAMTV_SECURITY_ACCESS_TOKEN'] = token
 except ImportError:
-    print("Install pywin32 for Windows credential support: pip install pywin32")
 ```
 
 ## Environment Variables
@@ -165,16 +159,6 @@ export STREAMTV_SECURITY_ACCESS_TOKEN="your-token-here"
 # Permanent (add to ~/.bashrc or ~/.zshrc)
 echo 'export STREAMTV_SECURITY_ACCESS_TOKEN="your-token-here"' >> ~/.bashrc
 source ~/.bashrc
-```
-
-**Windows:**
-```cmd
-# Temporary (current session only)
-set STREAMTV_SECURITY_ACCESS_TOKEN=your-token-here
-
-# Permanent (System Properties > Environment Variables)
-# Or use PowerShell:
-[System.Environment]::SetEnvironmentVariable('STREAMTV_SECURITY_ACCESS_TOKEN', 'your-token-here', 'User')
 ```
 
 ### Using .env Files
@@ -194,7 +178,7 @@ set STREAMTV_SECURITY_ACCESS_TOKEN=your-token-here
    ```bash
    # Using python-dotenv
    pip install python-dotenv
-   
+
    # In your code:
    from dotenv import load_dotenv
    load_dotenv()
@@ -205,55 +189,6 @@ set STREAMTV_SECURITY_ACCESS_TOKEN=your-token-here
 .env
 .env.local
 .env.*.local
-```
-
-## Docker/Container Secrets
-
-### Docker Secrets
-
-For Docker deployments, use Docker secrets:
-
-```yaml
-# docker-compose.yml
-version: '3.8'
-services:
-  streamtv:
-    image: streamtv:latest
-    secrets:
-      - streamtv_access_token
-    environment:
-      - STREAMTV_SECURITY_ACCESS_TOKEN_FILE=/run/secrets/streamtv_access_token
-
-secrets:
-  streamtv_access_token:
-    file: ./secrets/access_token.txt
-```
-
-### Kubernetes Secrets
-
-For Kubernetes deployments:
-
-```yaml
-# Create secret
-kubectl create secret generic streamtv-secrets \
-  --from-literal=STREAMTV_SECURITY_ACCESS_TOKEN=your-token-here
-
-# Use in deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: streamtv
-spec:
-  template:
-    spec:
-      containers:
-      - name: streamtv
-        env:
-        - name: STREAMTV_SECURITY_ACCESS_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: streamtv-secrets
-              key: STREAMTV_SECURITY_ACCESS_TOKEN
 ```
 
 ## Available Environment Variables
@@ -316,14 +251,7 @@ If environment variables aren't being recognized:
 - Install keyring backend: `pip install keyring`
 - For headless systems, use file-based keyring: `pip install keyrings.alt`
 
-**Windows:**
-- Ensure you have permissions to access Credential Manager
-- Install pywin32: `pip install pywin32`
-
 ## Additional Resources
 
 - [OWASP Secrets Management](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
 - [12 Factor App - Config](https://12factor.net/config)
-- [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)
-- [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)
-

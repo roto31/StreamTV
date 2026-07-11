@@ -26,7 +26,7 @@ Canonical copy of the [StreamTV GitHub Wiki](https://github.com/roto31/StreamTV/
 | [Troubleshooting.md](Troubleshooting.md) | Common issues |
 | [Implementation.md](Implementation.md) | Technical notes |
 
-Windows and container builds were removed from the project; MIT license allows community ports.
+Legacy non-Linux packaging targets were removed from the project; MIT license allows community ports.
 
 ## Sync to public wiki
 

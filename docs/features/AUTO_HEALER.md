@@ -4,12 +4,12 @@ StreamTV includes an intelligent auto-healing system that automatically monitors
 
 ## Features
 
-🤖 **AI-Powered Analysis**: Uses Ollama AI to analyze errors and suggest fixes  
-📊 **Pattern Detection**: Identifies recurring error patterns automatically  
-🔧 **Automatic Fixes**: Applies known fixes for common issues  
-📈 **Trend Analysis**: Tracks error trends over time  
-💾 **Safe Backups**: Creates backups before applying any fixes  
-🔄 **Continuous Monitoring**: Can run continuously to keep your system healthy  
+🤖 **AI-Powered Analysis**: Uses Ollama AI to analyze errors and suggest fixes
+📊 **Pattern Detection**: Identifies recurring error patterns automatically
+🔧 **Automatic Fixes**: Applies known fixes for common issues
+📈 **Trend Analysis**: Tracks error trends over time
+💾 **Safe Backups**: Creates backups before applying any fixes
+🔄 **Continuous Monitoring**: Can run continuously to keep your system healthy
 
 ## Requirements
 
@@ -21,7 +21,7 @@ The auto-healer uses [Ollama](https://ollama.ai/) for AI-powered log analysis.
    ```bash
    # macOS
    brew install ollama
-   
+
    # Linux
    curl -fsSL https://ollama.ai/install.sh | sh
    ```
@@ -379,4 +379,3 @@ For issues or questions:
 2. Review error patterns and fixes
 3. Test with `--no-ai` to isolate AI issues
 4. Create an issue on GitHub with logs and config
-

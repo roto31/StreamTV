@@ -28,7 +28,7 @@ But `break_short` pointed to a non-existent collection.
 
 Removed all break entries from the schedule file. Episodes now play back-to-back without breaks.
 
-**Before**: 1,845 lines (with 296 breaks)  
+**Before**: 1,845 lines (with 296 breaks)
 **After**: 663 lines (episodes only)
 
 **Result**: Clean continuous playback
@@ -195,16 +195,15 @@ Should show no new warnings after restart.
 
 ## Summary
 
-**Issue**: Referenced non-existent "Inter-Episode Breaks" collection  
+**Issue**: Referenced non-existent "Inter-Episode Breaks" collection
 **Fix**: Removed break entries from schedule  
-**Result**: Clean continuous playback  
-**Status**: ✅ Fixed  
+**Result**: Clean continuous playback
+**Status**: ✅ Fixed
 
 **Action**: Restart server to apply changes
 
 ---
 
-**Date**: December 3, 2025  
-**Issue**: Missing breaks collection  
+**Date**: December 3, 2025
+**Issue**: Missing breaks collection
 **Solution**: Removed breaks for continuous playback
-

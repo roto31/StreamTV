@@ -47,4 +47,3 @@ Guides for installing and setting up StreamTV on macOS and other platforms.
 ---
 
 **Start Installing**: [QUICK_START.md](QUICK_START.md)
-

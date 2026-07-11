@@ -120,4 +120,3 @@ If `Install-StreamTV.command` doesn't work:
 1. Make sure it's executable: `chmod +x Install-StreamTV.command`
 2. Right-click → Get Info → Check "Open with" is set to Terminal
 3. Try running from Terminal: `./Install-StreamTV.command`
-

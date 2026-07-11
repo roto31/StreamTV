@@ -90,13 +90,13 @@ Browser → FastAPI → API Router → Business Logic → Database → Response
 
 **Streaming Request Flow:**
 ```
-Client → IPTV Router → Channel Manager → Schedule Engine → 
+Client → IPTV Router → Channel Manager → Schedule Engine →
 Stream Manager → YouTube/Archive.org → FFmpeg → MPEG-TS → Client
 ```
 
 **HDHomeRun Request Flow:**
 ```
-Plex → HDHomeRun Router → Channel Manager → MPEG-TS Streamer → 
+Plex → HDHomeRun Router → Channel Manager → MPEG-TS Streamer →
 FFmpeg → Continuous Stream → Plex
 ```
 
@@ -642,7 +642,7 @@ class NewSourceAdapter:
     async def get_stream_url(self, url: str) -> str:
         # Extract stream URL
         pass
-    
+
     async def get_media_info(self, url: str) -> Dict:
         # Extract metadata
         pass
@@ -814,7 +814,6 @@ print(f"Placeholder items: {len(media)}")
 ---
 
 *Last Updated: 2025-01-28*
-
 
 ---
 

@@ -64,7 +64,7 @@ Common database-related issues and their solutions.
    ```bash
    # Restore from backup
    cp streamtv.db.backup streamtv.db
-   
+
    # OR recreate database
    rm streamtv.db
    python3 -c "from streamtv.database.session import init_db; init_db()"

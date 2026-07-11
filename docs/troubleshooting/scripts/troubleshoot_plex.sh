@@ -31,7 +31,7 @@ get_plex_error() {
         --ontop \
         --height 500 \
         --width 700)
-    
+
     echo "$error"
 }
 
@@ -41,49 +41,49 @@ analyze_plex_error() {
     local diagnosis=""
     local solution=""
     local action=""
-    
+
     # Common Plex errors
     if echo "$error_message" | grep -qi "could not tune channel"; then
         diagnosis="Plex cannot tune to channel"
         solution="This usually means:\n• Stream format issue\n• FFmpeg not working\n• Network connectivity\n\nCheck:\n1. FFmpeg is installed\n2. Stream URL is accessible\n3. Firewall allows connections"
         action="check_ffmpeg_and_stream"
-        
+
     elif echo "$error_message" | grep -qi "problem fetching channel mappings"; then
         diagnosis="Channel mapping error"
         solution="This usually means:\n• XMLTV guide issue\n• Channel ID mismatch\n• Invalid XML format\n\nCheck:\n1. XMLTV URL is accessible\n2. Channel numbers match\n3. XML is well-formed"
         action="check_xmltv"
-        
+
     elif echo "$error_message" | grep -qi "rolling media grab failed"; then
         diagnosis="Recording/grabbing failed"
         solution="This usually means:\n• Stream is not continuous\n• MPEG-TS format issue\n• Stream interruption\n\nCheck:\n1. Channel is streaming continuously\n2. MPEG-TS format is correct\n3. No stream interruptions"
         action="check_stream_continuity"
-        
+
     elif echo "$error_message" | grep -qi "tuner.*not found"; then
         diagnosis="Tuner not found"
         solution="This usually means:\n• Discovery URL incorrect\n• SSDP not working\n• Network issue\n\nCheck:\n1. Discovery URL is correct\n2. SSDP is enabled\n3. Firewall allows port 1900"
         action="check_tuner_discovery"
-        
+
     elif echo "$error_message" | grep -qi "invalid.*file"; then
         diagnosis="Invalid file error"
         solution="This usually means:\n• XMLTV format issue\n• Missing required fields\n• Encoding problem\n\nCheck:\n1. XMLTV is valid XML\n2. All required fields present\n3. UTF-8 encoding"
         action="check_xmltv_format"
-        
+
     elif echo "$error_message" | grep -qi "timeout"; then
         diagnosis="Timeout error"
         solution="This usually means:\n• Server not responding\n• Network latency\n• Stream too slow\n\nCheck:\n1. Server is running\n2. Network connection\n3. Stream source speed"
         action="check_server_and_network"
-        
+
     elif echo "$error_message" | grep -qi "scan_all_pmts"; then
         diagnosis="FFmpeg codec option error"
         solution="This is a Plex transcoding issue.\n• Plex's FFmpeg doesn't support this option\n• Usually harmless, can be ignored\n• Or update Plex FFmpeg"
         action="check_plex_ffmpeg"
-        
+
     else
         diagnosis="Unknown error"
         solution="Please check:\n• StreamTV logs\n• Plex logs\n• Network connectivity\n• Server status"
         action="general_check"
     fi
-    
+
     # Show diagnosis
     local result=$(dialog \
         --title "Error Analysis" \
@@ -95,7 +95,7 @@ analyze_plex_error() {
         --ontop \
         --height 500 \
         --width 700)
-    
+
     case "$result" in
         "Run diagnostic check")
             run_diagnostic "$action"
@@ -115,7 +115,7 @@ analyze_plex_error() {
 # Run diagnostic check
 run_diagnostic() {
     local action="$1"
-    
+
     dialog \
         --title "Running Diagnostics" \
         --message "Running diagnostic checks..." \
@@ -123,11 +123,11 @@ run_diagnostic() {
         --progresstext "Checking..." \
         --button1text "OK" \
         --ontop &
-    
+
     local dialog_pid=$!
-    
+
     local results=""
-    
+
     case "$action" in
         "check_ffmpeg_and_stream")
             # Check FFmpeg
@@ -137,7 +137,7 @@ run_diagnostic() {
             else
                 results="❌ FFmpeg not found\n"
             fi
-            
+
             # Check server
             if curl -s http://localhost:8410/health > /dev/null 2>&1; then
                 results="${results}✅ StreamTV server running\n"
@@ -145,7 +145,7 @@ run_diagnostic() {
                 results="${results}❌ StreamTV server not running\n"
             fi
             ;;
-            
+
         "check_xmltv")
             # Check XMLTV endpoint
             if curl -s http://localhost:8410/iptv/xmltv.xml > /dev/null 2>&1; then
@@ -154,12 +154,12 @@ run_diagnostic() {
                 results="❌ XMLTV endpoint not accessible\n"
             fi
             ;;
-            
+
         "check_stream_continuity")
             # Check if channels are streaming
             results="Checking channel streaming status...\n"
             ;;
-            
+
         "check_tuner_discovery")
             # Check discovery endpoint
             local local_ip=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo "localhost")
@@ -169,12 +169,12 @@ run_diagnostic() {
                 results="❌ Discovery endpoint not accessible\n"
             fi
             ;;
-            
+
         "check_xmltv_format")
             # Validate XMLTV
             results="Validating XMLTV format...\n"
             ;;
-            
+
         "check_server_and_network")
             # Check server and network
             if curl -s http://localhost:8410/health > /dev/null 2>&1; then
@@ -183,19 +183,19 @@ run_diagnostic() {
                 results="❌ Server not running\n"
             fi
             ;;
-            
+
         "check_plex_ffmpeg")
             results="This is a Plex transcoding warning.\nUsually harmless and can be ignored.\n"
             ;;
-            
+
         *)
             results="Running general checks...\n"
             ;;
     esac
-    
+
     sleep 2
     kill $dialog_pid 2>/dev/null || true
-    
+
     dialog \
         --title "Diagnostic Results" \
         --message "$results" \
@@ -206,7 +206,7 @@ run_diagnostic() {
 # View StreamTV logs
 view_streamtv_logs() {
     local log_file="$PROJECT_ROOT/streamtv.log"
-    
+
     if [ ! -f "$log_file" ]; then
         dialog \
             --title "Log File Not Found" \
@@ -215,9 +215,9 @@ view_streamtv_logs() {
             --ontop
         return
     fi
-    
+
     local log_content=$(tail -100 "$log_file" | grep -i "plex\|hdhomerun\|error" || tail -50 "$log_file")
-    
+
     dialog \
         --title "StreamTV Logs (Plex-related)" \
         --message "$log_content" \
@@ -231,7 +231,7 @@ view_streamtv_logs() {
 # View Plex logs
 view_plex_logs() {
     local plex_log_dir="$HOME/Library/Logs/Plex Media Server"
-    
+
     if [ ! -d "$plex_log_dir" ]; then
         dialog \
             --title "Plex Logs Not Found" \
@@ -240,10 +240,10 @@ view_plex_logs() {
             --ontop
         return
     fi
-    
+
     # Find most recent log
     local latest_log=$(ls -t "$plex_log_dir"/*.log 2>/dev/null | head -1)
-    
+
     if [ -z "$latest_log" ]; then
         dialog \
             --title "No Log Files" \
@@ -252,9 +252,9 @@ view_plex_logs() {
             --ontop
         return
     fi
-    
+
     local log_content=$(tail -100 "$latest_log" | grep -i "streamtv\|hdhomerun\|tuner\|error" || tail -50 "$latest_log")
-    
+
     dialog \
         --title "Plex Logs: $(basename $latest_log)" \
         --message "$log_content" \
@@ -279,17 +279,16 @@ show_help() {
 # Main function
 main() {
     local error_message=$(get_plex_error)
-    
+
     if [ -z "$error_message" ]; then
         exit 0
     fi
-    
+
     # Save error to log
     echo "$(date): Plex Error - $error_message" >> "$PROJECT_ROOT/troubleshooting.log"
-    
+
     analyze_plex_error "$error_message"
 }
 
 # Run main function
 main "$@"
-

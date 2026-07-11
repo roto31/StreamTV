@@ -9,8 +9,6 @@ Welcome to the StreamTV platform documentation wiki.
 - **[macOS](macOS)** — Native app, installer, and menu bar app
 - **[Linux](Linux)** — Install scripts and systemd integration
 
-Other platforms (Windows, containers, etc.) are not shipped from this repository. StreamTV is [MIT licensed](https://github.com/roto31/StreamTV/blob/main/LICENSE); community ports are welcome.
-
 ## Quick start
 
 1. Choose **macOS** or **Linux** above
@@ -33,4 +31,4 @@ Other platforms (Windows, containers, etc.) are not shipped from this repository
 
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](https://github.com/roto31/StreamTV/blob/main/CONTRIBUTING.md) in the source repo.
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/roto31/StreamTV-source/blob/main/CONTRIBUTING.md) in the source repo.

@@ -25,14 +25,14 @@ open ~/Library/Logs/StreamTV/
 
 ## What's Logged?
 
-✅ Server startup/shutdown  
-✅ All API requests and responses  
-✅ Channel streaming events  
-✅ Authentication attempts  
-✅ FFmpeg operations  
-✅ Database operations  
-✅ Error messages with full tracebacks  
-✅ System information  
+✅ Server startup/shutdown
+✅ All API requests and responses
+✅ Channel streaming events
+✅ Authentication attempts
+✅ FFmpeg operations
+✅ Database operations
+✅ Error messages with full tracebacks
+✅ System information
 
 ## Log Format
 
@@ -105,4 +105,3 @@ grep -i "ffmpeg" ~/Library/Logs/StreamTV/*.log
 ---
 
 **💡 Tip**: Keep a terminal window open with `./scripts/view-logs.sh` running while developing to see real-time logs!
-

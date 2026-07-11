@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 check_swiftdialog() {
     if ! command -v dialog &> /dev/null; then
         echo -e "${YELLOW}SwiftDialog not found. Installing...${NC}"
-        
+
         # Try to install via Homebrew
         if command -v brew &> /dev/null; then
             brew install --cask swiftdialog
@@ -48,7 +48,7 @@ show_main_menu() {
         --ontop \
         --height 400 \
         --width 600)
-    
+
     echo "$result"
 }
 
@@ -61,17 +61,17 @@ check_server_status() {
         --progresstext "Checking..." \
         --button1text "OK" \
         --ontop &
-    
+
     local dialog_pid=$!
-    
+
     # Check if server is running
     local server_running=false
     if curl -s http://localhost:8410/health > /dev/null 2>&1; then
         server_running=true
     fi
-    
+
     kill $dialog_pid 2>/dev/null || true
-    
+
     if [ "$server_running" = true ]; then
         dialog \
             --title "Server Status" \
@@ -85,7 +85,7 @@ check_server_status() {
             --button1text "Start Server" \
             --button2text "Cancel" \
             --ontop
-        
+
         if [ $? -eq 0 ]; then
             start_server
         fi
@@ -101,19 +101,19 @@ start_server() {
         --progresstext "Starting..." \
         --button1text "OK" \
         --ontop &
-    
+
     local dialog_pid=$!
-    
+
     # Start server in background
     if [ -f "$PROJECT_ROOT/venv/bin/activate" ]; then
         source "$PROJECT_ROOT/venv/bin/activate"
         cd "$PROJECT_ROOT"
         nohup python -m streamtv.main > /tmp/streamtv_startup.log 2>&1 &
         local server_pid=$!
-        
+
         # Wait a moment for server to start
         sleep 3
-        
+
         # Check if it started
         if ps -p $server_pid > /dev/null; then
             kill $dialog_pid 2>/dev/null || true
@@ -130,7 +130,7 @@ start_server() {
                 --button1text "View Logs" \
                 --button2text "Cancel" \
                 --ontop
-            
+
             if [ $? -eq 0 ]; then
                 view_logs "/tmp/streamtv_startup.log"
             fi
@@ -155,7 +155,7 @@ troubleshoot_channels() {
         --button1text "Select" \
         --button2text "Back" \
         --ontop)
-    
+
     case "$result" in
         "Channel won't play")
             troubleshoot_channel_wont_play
@@ -184,14 +184,14 @@ troubleshoot_channel_wont_play() {
         --button1text "Check" \
         --button2text "Cancel" \
         --ontop)
-    
+
     if [ -z "$channel_number" ]; then
         return
     fi
-    
+
     # Check channel status
     local channel_info=$(curl -s "http://localhost:8410/api/channels?number=$channel_number" 2>/dev/null)
-    
+
     if [ -z "$channel_info" ] || [ "$channel_info" = "[]" ]; then
         dialog \
             --title "Channel Not Found" \
@@ -200,18 +200,18 @@ troubleshoot_channel_wont_play() {
             --ontop
         return
     fi
-    
+
     # Parse channel info (simplified - would need jq for proper parsing)
     dialog \
         --title "Channel Status" \
         --message "Channel $channel_number found\n\nChecking status..." \
         --button1text "OK" \
         --ontop
-    
+
     # Check if channel is enabled
     # Check if channel has content
     # Check streaming status
-    
+
     dialog \
         --title "Diagnosis" \
         --message "Diagnostic information:\n\n• Channel exists\n• Checking enabled status...\n• Checking content...\n• Checking stream..." \
@@ -241,15 +241,15 @@ troubleshoot_channel_no_content() {
         --button1text "Check" \
         --button2text "Cancel" \
         --ontop)
-    
+
     if [ -z "$channel_number" ]; then
         return
     fi
-    
+
     # Check for playlists
     # Check for schedules
     # Check for media items
-    
+
     dialog \
         --title "Content Check" \
         --message "Checking channel $channel_number for content..." \
@@ -257,14 +257,14 @@ troubleshoot_channel_no_content() {
         --progresstext "Checking..." \
         --button1text "OK" \
         --ontop &
-    
+
     local dialog_pid=$!
-    
+
     # Run checks
     sleep 2
-    
+
     kill $dialog_pid 2>/dev/null || true
-    
+
     dialog \
         --title "Content Status" \
         --message "Content check complete.\n\nIf no content found, the channel needs:\n• A schedule file, OR\n• A playlist with media items\n\nWould you like to import a channel YAML?" \
@@ -284,14 +284,14 @@ troubleshoot_channel_import() {
         --ontop \
         --height 400 \
         --width 600)
-    
+
     if [ -z "$error_message" ]; then
         return
     fi
-    
+
     # Analyze error
     local diagnosis=""
-    
+
     if echo "$error_message" | grep -q "YAML"; then
         diagnosis="YAML parsing error detected.\n\nCommon causes:\n• Invalid YAML syntax\n• Missing required fields\n• Incorrect indentation"
     elif echo "$error_message" | grep -q "validation"; then
@@ -301,7 +301,7 @@ troubleshoot_channel_import() {
     else
         diagnosis="Error type: Unknown\n\nPlease check the logs for more details."
     fi
-    
+
     dialog \
         --title "Error Analysis" \
         --message "$diagnosis\n\nWould you like to:" \
@@ -323,14 +323,14 @@ troubleshoot_channel_other() {
         --ontop \
         --height 400 \
         --width 600)
-    
+
     if [ -z "$error_message" ]; then
         return
     fi
-    
+
     # Save to log file
     echo "$(date): Channel Issue - $error_message" >> "$PROJECT_ROOT/troubleshooting.log"
-    
+
     dialog \
         --title "Issue Logged" \
         --message "Your issue has been logged.\n\nFile: troubleshooting.log\n\nWould you like to view the logs?" \
@@ -349,7 +349,7 @@ troubleshoot_streaming() {
         --button1text "Select" \
         --button2text "Back" \
         --ontop)
-    
+
     case "$result" in
         "FFmpeg errors")
             troubleshoot_ffmpeg_errors
@@ -374,14 +374,14 @@ troubleshoot_ffmpeg_errors() {
         --ontop \
         --height 400 \
         --width 600)
-    
+
     if [ -z "$error_message" ]; then
         return
     fi
-    
+
     local diagnosis=""
     local solution=""
-    
+
     if echo "$error_message" | grep -q "not found"; then
         diagnosis="FFmpeg not found"
         solution="Install FFmpeg:\nbrew install ffmpeg\n\nOr set custom path in config.yaml"
@@ -395,7 +395,7 @@ troubleshoot_ffmpeg_errors() {
         diagnosis="Unknown FFmpeg error"
         solution="Check FFmpeg installation and configuration"
     fi
-    
+
     dialog \
         --title "FFmpeg Error Analysis" \
         --message "Diagnosis: $diagnosis\n\nSolution:\n$solution\n\nWould you like to:" \
@@ -429,13 +429,13 @@ troubleshoot_streaming_other() {
         --ontop \
         --height 400 \
         --width 600)
-    
+
     if [ -z "$error_message" ]; then
         return
     fi
-    
+
     echo "$(date): Streaming Issue - $error_message" >> "$PROJECT_ROOT/troubleshooting.log"
-    
+
     dialog \
         --title "Issue Logged" \
         --message "Your issue has been logged.\n\nFile: troubleshooting.log" \
@@ -453,7 +453,7 @@ troubleshoot_plex() {
         --button1text "Select" \
         --button2text "Back" \
         --ontop)
-    
+
     case "$result" in
         "Plex can't find tuner")
             troubleshoot_plex_tuner
@@ -477,9 +477,9 @@ troubleshoot_plex() {
 troubleshoot_plex_tuner() {
     # Get local IP
     local local_ip=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo "localhost")
-    
+
     local discovery_url="http://$local_ip:8410/hdhomerun/discover.json"
-    
+
     dialog \
         --title "Plex Tuner Setup" \
         --message "Discovery URL:\n$discovery_url\n\nSteps:\n1. Copy the URL above\n2. In Plex: Settings → Live TV & DVR\n3. Add Tuner → HDHomeRun\n4. Paste the URL\n\nWould you like to:" \
@@ -493,7 +493,7 @@ troubleshoot_plex_tuner() {
 # View logs
 view_logs() {
     local log_file="${1:-$PROJECT_ROOT/streamtv.log}"
-    
+
     if [ ! -f "$log_file" ]; then
         dialog \
             --title "Log File Not Found" \
@@ -502,10 +502,10 @@ view_logs() {
             --ontop
         return
     fi
-    
+
     # Show last 50 lines
     local log_content=$(tail -50 "$log_file")
-    
+
     dialog \
         --title "Logs: $(basename $log_file)" \
         --message "$log_content" \
@@ -519,10 +519,10 @@ view_logs() {
 # Main loop
 main() {
     check_swiftdialog
-    
+
     while true; do
         local choice=$(show_main_menu)
-        
+
         case "$choice" in
             "Server Status")
                 check_server_status
@@ -577,4 +577,3 @@ troubleshoot_config() {
 
 # Run main function
 main "$@"
-

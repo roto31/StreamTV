@@ -145,7 +145,6 @@ chmod +x install-gui.sh
 - See `GUI_INSTALLER_README.md` for detailed GUI installer info
 - See `PATH_INDEPENDENCE.md` for path independence details
 
-
 ---
 
 ## GUI INSTALLER README
@@ -287,7 +286,6 @@ The installer works from any location:
 - Works even if symlinked
 
 See `PATH_INDEPENDENCE.md` for details.
-
 
 ---
 
@@ -518,7 +516,6 @@ Right-click → Open (to bypass Gatekeeper)
 - **Modern UI**: Follows macOS Human Interface Guidelines
 - **Better Integration**: Works seamlessly with macOS
 
-
 ---
 
 ## SWIFTUI INSTALLER README
@@ -672,7 +669,6 @@ If the app won't open:
 1. Right-click the app → Open (to bypass Gatekeeper)
 2. Check System Preferences → Security & Privacy
 3. Make sure the app is notarized (for distribution)
-
 
 ---
 

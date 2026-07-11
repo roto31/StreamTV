@@ -82,4 +82,3 @@ open ~/Library/Logs/StreamTV/
 ---
 
 **Start Here**: [LOGGING_QUICKSTART.md](LOGGING_QUICKSTART.md)
-

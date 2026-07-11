@@ -46,8 +46,6 @@ Created **13 wiki pages** organized into logical sections:
    - Quick navigation guide
 
 3. **Installation.md** - Installation guides
-   - macOS, Linux, Windows instructions
-   - Docker installation
    - Post-installation steps
    - Troubleshooting
 
@@ -284,4 +282,3 @@ All major aspects of StreamTV are documented:
 **Status**: ✅ Complete - All documentation integrated and organized
 
 **Last Updated**: 2025-01-XX
-

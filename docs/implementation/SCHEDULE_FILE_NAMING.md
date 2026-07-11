@@ -18,7 +18,7 @@ possible_names = [
 ]
 ```
 
-**Problem**: We named the file `magnum-pi-schedule.yml`  
+**Problem**: We named the file `magnum-pi-schedule.yml`
 **Solution**: Must be named `80.yml` to match the channel number
 
 ---
@@ -209,23 +209,22 @@ To allow custom filenames, the parser could be enhanced to:
 2. Allow channel configuration to specify schedule path
 3. Support multiple schedule files per channel
 
-**Current**: Must follow naming convention  
+**Current**: Must follow naming convention
 **Future**: Could be more flexible
 
 ---
 
 ## Summary
 
-**Issue**: Schedule file not found due to wrong filename  
-**Cause**: Parser expects `{channel_number}.yml` format  
-**Fix**: Renamed to `80.yml`  
-**Status**: ✅ Fixed - restart server to apply  
+**Issue**: Schedule file not found due to wrong filename
+**Cause**: Parser expects `{channel_number}.yml` format
+**Fix**: Renamed to `80.yml`
+**Status**: ✅ Fixed - restart server to apply
 
 **Action Required**: Restart StreamTV server
 
 ---
 
-**Date**: December 3, 2025  
-**Issue**: Schedule file naming  
+**Date**: December 3, 2025
+**Issue**: Schedule file naming
 **Solution**: Use channel number as filename (80.yml)
-

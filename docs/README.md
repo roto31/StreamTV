@@ -74,4 +74,3 @@ docs/
 ├── SCHEDULES.md
 └── YAML_VALIDATION.md
 ```
-

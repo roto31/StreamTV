@@ -135,7 +135,7 @@ SELECT COUNT(*) FROM collections WHERE name LIKE '%Magnum%';
 # Result: 9
 
 # Count total episodes
-SELECT COUNT(*) FROM collection_items 
+SELECT COUNT(*) FROM collection_items
 WHERE collection_id IN (
     SELECT id FROM collections WHERE name LIKE '%Magnum%'
 );
@@ -174,7 +174,6 @@ Your Magnum P.I. channel has been **completely restarted from scratch** and is r
 
 ---
 
-**Date**: December 3, 2025  
-**Status**: ✅ Complete  
+**Date**: December 3, 2025
+**Status**: ✅ Complete
 **Action**: Restart server to see changes
-

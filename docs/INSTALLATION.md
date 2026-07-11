@@ -19,7 +19,6 @@ cd streamtv
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 ### 3. Install Dependencies
@@ -75,29 +74,6 @@ uvicorn streamtv.main:app --host 0.0.0.0 --port 8410
 - API Documentation: http://localhost:8410/docs
 - IPTV Playlist: http://localhost:8410/iptv/channels.m3u
 - EPG: http://localhost:8410/iptv/xmltv.xml
-
-## Docker Installation (Optional)
-
-Create a `Dockerfile`:
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["python", "-m", "streamtv.main"]
-```
-
-Build and run:
-```bash
-docker build -t streamtv .
-docker run -p 8410:8410 -v $(pwd)/config.yaml:/app/config.yaml streamtv
-```
 
 ## Configuration Options
 

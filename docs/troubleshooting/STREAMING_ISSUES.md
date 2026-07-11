@@ -102,7 +102,7 @@ Common issues with video streaming and playback in StreamTV.
    ```bash
    # macOS
    brew upgrade ffmpeg
-   
+
    # Linux
    sudo apt-get update && sudo apt-get upgrade ffmpeg
    ```

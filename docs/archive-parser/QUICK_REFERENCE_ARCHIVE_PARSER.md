@@ -125,13 +125,13 @@ python3 scripts/archive_collection_parser.py "URL2" --channel-number 81
 
 ## 🆘 Common Issues
 
-**Problem**: "requests module not found"  
+**Problem**: "requests module not found"
 **Solution**: `pip3 install requests`
 
-**Problem**: "swiftDialog not found"  
+**Problem**: "swiftDialog not found"
 **Solution**: Script auto-installs, or get from https://github.com/swiftDialog/swiftDialog
 
-**Problem**: "Collection not found"  
+**Problem**: "Collection not found"
 **Solution**: Verify URL at archive.org
 
 ---
@@ -141,4 +141,3 @@ python3 scripts/archive_collection_parser.py "URL2" --channel-number 81
 Your complete Magnum P.I. channel with **298 episodes** and **296 enforced breaks** (2-5 minutes each) is ready to stream!
 
 **Happy Streaming! 📺**
-

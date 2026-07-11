@@ -190,4 +190,3 @@ youtube:
 ---
 
 **Note**: The YouTube Data API v3 is free to use within quota limits. No payment required for basic usage.
-

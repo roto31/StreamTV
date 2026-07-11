@@ -239,7 +239,7 @@ StreamTV Logging System Test
 ✅ All log levels tested (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 ✅ Exception logging tested
 ✅ Log file created: streamtv-2025-12-03.log (58 KB)
-✅ Log directory: Library/Logs/StreamTV
+✅ Log directory: /home/streamtv/Library/Logs/StreamTV
 
 ================================================================================
 ```
@@ -388,12 +388,12 @@ logging:
 
 ## 🚀 Status: READY TO USE
 
-✅ **Logging System**: Operational  
-✅ **Log Directory**: Created  
-✅ **Log Files**: Being written  
-✅ **Scripts**: Tested and working  
-✅ **Documentation**: Complete  
-✅ **Tests**: All passing  
+✅ **Logging System**: Operational
+✅ **Log Directory**: Created
+✅ **Log Files**: Being written
+✅ **Scripts**: Tested and working
+✅ **Documentation**: Complete
+✅ **Tests**: All passing
 
 ---
 
@@ -422,12 +422,11 @@ Your StreamTV application now has **enterprise-grade logging** with:
 
 ---
 
-**Implementation Date**: December 3, 2025  
-**Status**: ✅ **COMPLETE**  
-**Log Location**: `~/Library/Logs/StreamTV/`  
-**Current Log Size**: 58 KB  
+**Implementation Date**: December 3, 2025
+**Status**: ✅ **COMPLETE**
+**Log Location**: `~/Library/Logs/StreamTV/`
+**Current Log Size**: 58 KB
 
 ---
 
 *Happy logging! 🎊*
-

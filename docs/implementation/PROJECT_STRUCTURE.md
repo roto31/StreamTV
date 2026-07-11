@@ -111,7 +111,6 @@ curl http://localhost:8410/api/channels
 ## Deployment
 
 The application can be deployed using:
-- Docker (see INSTALLATION.md)
 - Systemd service
 - Cloud platforms (Heroku, AWS, etc.)
 

@@ -17,21 +17,20 @@ Common network and connectivity issues in StreamTV.
    - Provides auto-fix options
 
 2. **Flush DNS cache:**
-   
+
    **macOS:**
    ```bash
    sudo dscacheutil -flushcache
    sudo killall -HUP mDNSResponder
    ```
-   
+
    **Linux:**
    ```bash
    sudo systemd-resolve --flush-caches  # systemd
    # OR
    sudo service network-manager restart  # NetworkManager
    ```
-   
-   **Windows:**
+
    ```powershell
    ipconfig /flushdns
    ```
@@ -189,8 +188,7 @@ Common network and connectivity issues in StreamTV.
    # macOS/Linux
    lsof -i :8410
    netstat -an | grep 8410
-   
-   # Windows
+
    netstat -ano | findstr :8410
    ```
 
@@ -292,7 +290,7 @@ Common network and connectivity issues in StreamTV.
    ```bash
    # macOS
    netstat -i
-   
+
    # Linux
    iftop
    ```

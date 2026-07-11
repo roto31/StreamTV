@@ -120,7 +120,6 @@ The SwiftUI app automatically finds the StreamTV directory:
 - When running from source: Uses current directory
 - Searches up directory tree to find StreamTV root
 
-
 ---
 
 ## README SWIFTUI
@@ -326,7 +325,6 @@ The SwiftUI app is fully path-independent:
 
 See `PATH_INDEPENDENCE.md` for details.
 
-
 ---
 
 ## README
@@ -366,7 +364,6 @@ Documentation for StreamTV's SwiftUI-based macOS applications.
 StreamTV includes SwiftUI-based installers and utilities for macOS.
 
 See installation docs for usage.
-
 
 ---
 

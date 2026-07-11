@@ -38,8 +38,6 @@
 - [macOS](https://github.com/roto31/StreamTV/wiki/macOS)
 - [Linux](https://github.com/roto31/StreamTV/wiki/Linux)
 
-Windows and container builds are not maintained in this repo; MIT license allows community ports.
-
 ## Releases
 
 Signed macOS builds are published on the [Releases](https://github.com/roto31/StreamTV/releases) page.

@@ -26,12 +26,6 @@ Common issues encountered during StreamTV installation and their solutions.
 
 3. Run diagnostic: Use the web interface to run `check_python` script
 
-**Windows:**
-1. Download from [python.org](https://www.python.org/downloads/)
-2. **Important**: Check "Add Python to PATH" during installation
-3. Restart terminal/PowerShell after installation
-4. Verify: `python --version`
-
 **Linux:**
 - Ubuntu/Debian: `sudo apt-get install python3 python3-pip`
 - Fedora: `sudo dnf install python3 python3-pip`
@@ -75,14 +69,6 @@ Common issues encountered during StreamTV installation and their solutions.
 
 3. Run diagnostic: Use web interface to run `check_ffmpeg` script
 
-**Windows:**
-1. Download from [ffmpeg.org](https://ffmpeg.org/download.html)
-2. Extract to a folder (e.g., `C:\ffmpeg`)
-3. Add to PATH:
-   - System Properties → Environment Variables
-   - Add `C:\ffmpeg\bin` to PATH
-4. Or use Chocolatey: `choco install ffmpeg`
-
 **Linux:**
 - Ubuntu/Debian: `sudo apt-get install ffmpeg`
 - Fedora: `sudo dnf install ffmpeg`
@@ -119,7 +105,6 @@ Common issues encountered during StreamTV installation and their solutions.
    python3 -m venv ~/.streamtv/venv
    source ~/.streamtv/venv/bin/activate  # macOS/Linux
    # OR
-   ~/.streamtv/venv/Scripts/activate  # Windows
    ```
 
 3. **Reinstall dependencies:**
@@ -169,8 +154,7 @@ Common issues encountered during StreamTV installation and their solutions.
    # macOS/Linux
    lsof -i :8410
    kill -9 <PID>
-   
-   # Windows
+
    netstat -ano | findstr :8410
    taskkill /PID <PID> /F
    ```
@@ -179,7 +163,7 @@ Common issues encountered during StreamTV installation and their solutions.
    ```bash
    # macOS
    launchctl unload ~/Library/LaunchAgents/com.streamtv.plist
-   
+
    # Linux
    sudo systemctl stop streamtv
    ```

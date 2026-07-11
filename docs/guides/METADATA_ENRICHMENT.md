@@ -138,7 +138,7 @@ Rating: null
 
 ```
 Title: Don't Eat the Snow in Hawaii
-Description: When Oahu-based private investigator Thomas Magnum's 
+Description: When Oahu-based private investigator Thomas Magnum's
              childhood friend and Naval comrade...
 Thumbnail: https://static.tvmaze.com/uploads/images/original_untouched/...
 Rating: 8.8
@@ -330,7 +330,6 @@ python3 scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980
 
 ---
 
-**Date**: December 3, 2025  
-**Status**: ✅ Implemented and tested  
+**Date**: December 3, 2025
+**Status**: ✅ Implemented and tested
 **Working**: TVMaze (excellent results!)
-

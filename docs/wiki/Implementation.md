@@ -6,7 +6,7 @@ Technical implementation documentation for developers and engineers.
 
 # ErsatzTV Integration - Complete Status Report
 
-**Date:** 2024  
+**Date:** 2024
 **Status:** ✅ **FULLY INTEGRATED AND OPERATIONAL**
 
 ## Executive Summary
@@ -87,7 +87,6 @@ streamtv/
 schemas/
 ├── channel.schema.json      ✅ Channel YAML validation schema
 └── schedule.schema.json     ✅ Schedule YAML validation schema (ErsatzTV-compatible)
-
 
 ├── ERSATZTV_INTEGRATION.md           ✅ Feature documentation
 ├── ERSATZTV_COMPLETE_INTEGRATION.md  ✅ Complete integration status
@@ -199,7 +198,6 @@ All features tested and verified:
 7. ✅ YAML to JSON conversion for APIs
 
 The platform maintains its lightweight Python architecture while providing ErsatzTV-level scheduling capabilities, making it a powerful solution for IPTV channel management with direct streaming support.
-
 
 *[Full document available in repository]*
 
@@ -358,7 +356,6 @@ Future enhancements could include:
 
 All core ErsatzTV scheduling patterns are now implemented and ready for use! 🎉
 
-
 *[Full document available in repository]*
 
 ---
@@ -372,7 +369,7 @@ All core ErsatzTV scheduling patterns are now implemented and ready for use! �
 When streaming Magnum P.I. Season 1 episodes (AVI files with MPEG-4/DivX/XviD codec), FFmpeg fails with:
 
 ```
-ERROR - FFmpeg: [mpeg4 @ 0xc560ea300] Failed setup for format videotoolbox_vld: 
+ERROR - FFmpeg: [mpeg4 @ 0xc560ea300] Failed setup for format videotoolbox_vld:
 hwaccel initialisation returned error.
 ```
 
@@ -531,8 +528,8 @@ Modern Apple Silicon is **fast enough** for software decoding:
 
 ### Expected Results
 
-✅ No "hwaccel initialisation" errors  
-✅ Streams play successfully  
+✅ No "hwaccel initialisation" errors
+✅ Streams play successfully
 ✅ Both AVI and MP4 files work  
 ✅ Slight CPU increase (acceptable)
 
@@ -620,8 +617,6 @@ Created **13 wiki pages** organized into logical sections:
    - Quick navigation guide
 
 3. **Installation.md** - Installation guides
-   - macOS, Linux, Windows instructions
-   - Docker installation
    - Post-installation steps
    - Troubleshooting
 
@@ -902,7 +897,6 @@ If `Install-StreamTV.command` doesn't work:
 2. Right-click → Get Info → Check "Open with" is set to Terminal
 3. Try running from Terminal: `./Install-StreamTV.command`
 
-
 *[Full document available in repository]*
 
 ---
@@ -1022,7 +1016,6 @@ curl http://localhost:8410/api/channels
 ## Deployment
 
 The application can be deployed using:
-- Docker (see INSTALLATION.md)
 - Systemd service
 - Cloud platforms (Heroku, AWS, etc.)
 
@@ -1066,7 +1059,7 @@ But `break_short` pointed to a non-existent collection.
 
 Removed all break entries from the schedule file. Episodes now play back-to-back without breaks.
 
-**Before**: 1,845 lines (with 296 breaks)  
+**Before**: 1,845 lines (with 296 breaks)
 **After**: 663 lines (episodes only)
 
 **Result**: Clean continuous playback
@@ -1233,9 +1226,9 @@ Should show no new warnings after restart.
 
 ## Summary
 
-**Issue**: Referenced non-existent "Inter-Episode Breaks" collection  
+**Issue**: Referenced non-existent "Inter-Episode Breaks" collection
 **Fix**: Removed break entries from schedule  
-**Result**: Clean continuous playback  
+**Result**: Clean continuous playback
 
 *[Full document available in repository]*
 
@@ -1263,7 +1256,7 @@ possible_names = [
 ]
 ```
 
-**Problem**: We named the file `magnum-pi-schedule.yml`  
+**Problem**: We named the file `magnum-pi-schedule.yml`
 **Solution**: Must be named `80.yml` to match the channel number
 
 ---
@@ -1452,8 +1445,8 @@ print(f'Sequences: {len(schedule.sequences)}')
 
 # Security Audit Report - StreamTV
 
-**Date:** 2025-01-27  
-**Auditor:** AI Security Analysis  
+**Date:** 2025-01-27
+**Auditor:** AI Security Analysis
 **Reference Guide:** [Palo Alto Networks Application Security Guide](https://www.paloaltonetworks.com/cyberpedia/application-security)
 
 ## Executive Summary
@@ -1462,7 +1455,7 @@ This security audit was conducted to verify the security posture of the StreamTV
 
 ### Risk Summary
 - **CRITICAL:** 1 issue
-- **HIGH:** 2 issues  
+- **HIGH:** 2 issues
 - **MEDIUM:** 4 issues
 - **LOW:** 3 issues
 
@@ -1659,7 +1652,7 @@ No rate limiting implemented on API endpoints, allowing:
 
 # Security Fixes Implementation Summary
 
-**Date:** 2025-01-27  
+**Date:** 2025-01-27
 **Status:** ✅ All Critical and High Priority Fixes Implemented
 
 ## Implemented Security Fixes
@@ -1856,7 +1849,6 @@ Try accessing an API endpoint without a token - it should be rejected.
    - If you had credentials in `config.yaml`, they've been removed
    - Re-authenticate via the web interface to store in Keychain
    - The username will remain in config.yaml (for reference only)
-
 
 *[Full document available in repository]*
 

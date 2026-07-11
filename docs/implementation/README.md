@@ -37,4 +37,3 @@ Technical documentation about StreamTV's implementation, architecture, and statu
 ---
 
 For **user-facing documentation**, see the main [docs/](../) folder.
-

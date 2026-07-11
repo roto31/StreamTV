@@ -36,7 +36,7 @@ Add Plex configuration to `config.yaml`:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://<your-lan-host>:32400"  # Your Plex server URL
+  base_url: "http://192.0.2.1:32400"  # Your Plex server URL
   token: "your-plex-token-here"  # Your Plex authentication token
   use_for_epg: true  # Enable EPG enhancement via Plex API
 ```
@@ -135,13 +135,13 @@ from streamtv.streaming.plex_api_client import PlexAPIClient
 async with PlexAPIClient(base_url="http://plex:32400", token="token") as client:
     # Get server info
     info = await client.get_server_info()
-    
+
     # Get DVRs
     dvrs = await client.get_dvrs()
-    
+
     # Get channels for lineup
     channels = await client.get_channels_for_lineup("lineup_id")
-    
+
     # Compute channel map
     channel_map = await client.compute_best_channel_map(
         channel_numbers=["1", "2", "3"],
@@ -171,7 +171,7 @@ plex:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://<your-lan-host>:32400"
+  base_url: "http://192.0.2.1:32400"
   token: "abc123def456ghi789"
   use_for_epg: true
 ```
@@ -181,7 +181,7 @@ plex:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://<your-lan-host>:32400"
+  base_url: "http://192.0.2.1:32400"
   token: "abc123def456ghi789"
   use_for_epg: false  # Plex available but not used for EPG
 ```
@@ -240,4 +240,3 @@ asyncio.run(test())
 ---
 
 **Note**: Plex integration is optional. StreamTV generates Plex-compatible XMLTV format even without Plex API integration.
-
