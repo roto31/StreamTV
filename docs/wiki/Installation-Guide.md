@@ -834,6 +834,5 @@ API-provided metadata is more accurate:
 ## Related Pages
 
 - [macOS](macOS)
-- [Windows](Windows)
 - [Linux](Linux)
 - [Home](Home)

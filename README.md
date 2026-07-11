@@ -5,14 +5,14 @@
 
 **StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
-> **Source code** is maintained in a private repository. This public repo provides documentation, wiki, and release downloads only.
+> **Source code** is maintained in a private repository. Culled, sanitized code may be published later via `scripts/sync_public_code.sh` (see [Sanitization policy](docs/public-repo/SANITIZATION_POLICY.md)). This public repo provides documentation, wiki, and release downloads.
 
 ## Features
 
 - Direct streaming from YouTube and Archive.org
 - HDHomeRun emulation for Plex, Emby, and Jellyfin
 - YAML-based schedules with commercial breaks
-- Cross-platform: macOS, Windows, and Linux
+- Cross-platform: macOS and Linux (MIT — community ports welcome)
 - IPTV: M3U playlists and XMLTV EPG
 - Passkey and OAuth support for YouTube
 
@@ -36,9 +36,9 @@
 ### Platform guides (wiki)
 
 - [macOS](https://github.com/roto31/StreamTV/wiki/macOS)
-- [Windows](https://github.com/roto31/StreamTV/wiki/Windows)
 - [Linux](https://github.com/roto31/StreamTV/wiki/Linux)
-- [Containers](https://github.com/roto31/StreamTV/wiki/Containers)
+
+Windows and container builds are not maintained in this repo; MIT license allows community ports.
 
 ## Releases
 

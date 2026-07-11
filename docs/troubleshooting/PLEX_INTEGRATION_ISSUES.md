@@ -20,7 +20,7 @@ Common issues when integrating StreamTV with Plex Media Server.
 2. **Check discovery URL:**
    - Use your server's IP address, not `localhost`
    - Format: `http://YOUR_IP:8410/hdhomerun/discover.json`
-   - Example: `http://:8410/hdhomerun/discover.json`
+   - Example: `http://<your-lan-host>:8410/hdhomerun/discover.json`
 
 3. **Verify SSDP is enabled:**
    ```yaml

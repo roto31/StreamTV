@@ -21,7 +21,7 @@ stable 8-hex DeviceID and adds native UDP **65001** discovery.
 |---|---|---|
 | 1 | DeviceID collision/dedupe | **Confirmed root cause for Tunarr** — DeviceID=`Tunarr` (non-hex). StreamTV placeholder `FFFFFFFF` also risked silent dedupe; fixed by `streamtv/hdhomerun/device_id.py`. |
 | 2 | Discovery contention on UDP 1900 | **Not blocking** — Tunarr, Plex, and StreamTV all bind 1900 via SO_REUSEPORT; Plex *does* see Tunarr SSDP. Mitigated further by StreamTV port-65001 discovery. |
-| 3 | Reachability of :8000 | **OK** — `curl http://:8000/discover.json` succeeds from the Plex host. |
+| 3 | Reachability of :8000 | **OK** — `curl http://<your-streamtv-host>:8000/discover.json` succeeds from the Plex host. |
 | 4 | Guide / single-XMLTV conflict | **Addressed** — use merged guide `http://<streamtv>/tuners/guide.xml` when adding both tuners. |
 
 ## In-place fix (operator) — **implemented**
@@ -33,8 +33,8 @@ See **[Add Tunarr in Plex](guides/ADD_TUNARR_IN_PLEX.md)**.
 1. Ensure `tuner_manager.enabled: true` and a `tunarr` entry in `config.yaml`.
 2. Restart StreamTV.
 3. Plex → Live TV & DVR → Add device → paste:
-   `http://:8410/tuners/proxy/tunarr`
-4. Guide: `http://:8410/tuners/guide.xml`
+   `http://<your-streamtv-host>:8410/tuners/proxy/tunarr`
+4. Guide: `http://<your-streamtv-host>:8410/tuners/guide.xml`
 
 Inventory / paste URLs: `GET /tuners`.
 
@@ -74,10 +74,10 @@ tuner_manager:
   merged_guide: true
   tuners:
     - name: tunarr
-      url: http://:8000
+      url: http://<your-streamtv-host>:8000
       # force_device_id omitted → data/tuner_device_ids/tunarr
       force_base_url: null   # null → advertise proxy as BaseURL
-      xmltv_url: http://:8000/api/xmltv.xml
+      xmltv_url: http://<your-streamtv-host>:8000/api/xmltv.xml
 ```
 
 Env override: `STREAMTV_TUNER_MANAGER_ENABLED`.

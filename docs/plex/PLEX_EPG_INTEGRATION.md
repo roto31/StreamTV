@@ -36,7 +36,7 @@ Add Plex configuration to `config.yaml`:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://:32400"  # Your Plex server URL
+  base_url: "http://<your-lan-host>:32400"  # Your Plex server URL
   token: "your-plex-token-here"  # Your Plex authentication token
   use_for_epg: true  # Enable EPG enhancement via Plex API
 ```
@@ -171,7 +171,7 @@ plex:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://:32400"
+  base_url: "http://<your-lan-host>:32400"
   token: "abc123def456ghi789"
   use_for_epg: true
 ```
@@ -181,7 +181,7 @@ plex:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://:32400"
+  base_url: "http://<your-lan-host>:32400"
   token: "abc123def456ghi789"
   use_for_epg: false  # Plex available but not used for EPG
 ```

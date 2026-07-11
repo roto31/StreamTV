@@ -36,7 +36,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 
 - [Wiki home](wiki/Home.md)
 - [Documentation index](wiki/Documentation-Index.md)
-- [Platform: macOS](wiki/macOS.md) · [Windows](wiki/Windows.md) · [Linux](wiki/Linux.md) · [Containers](wiki/Containers.md)
+- [Platform: macOS](wiki/macOS.md) · [Linux](wiki/Linux.md)
 
 ## Quick Links
 

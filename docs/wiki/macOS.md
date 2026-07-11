@@ -1793,7 +1793,7 @@ Common issues when integrating StreamTV with Plex Media Server.
 2. **Check discovery URL:**
    - Use your server's IP address, not `localhost`
    - Format: `http://YOUR_IP:8410/hdhomerun/discover.json`
-   - Example: `http://:8410/hdhomerun/discover.json`
+   - Example: `http://<your-lan-host>:8410/hdhomerun/discover.json`
 
 3. **Verify SSDP is enabled:**
    ```yaml
@@ -2522,7 +2522,7 @@ The channel is properly configured and exposed. Plex just needs to refresh its c
 
 This forces Plex to completely refresh the lineup:
 
-1. **Open Plex Web Interface** (http://100.70.119.112:32400/web)
+1. **Open Plex Web Interface** (http://<your-tailscale-host>:32400/web)
 
 2. **Go to Settings** → **Live TV & DVR**
 
@@ -2569,7 +2569,7 @@ The Plex connection test was showing an error, but the connection is now working
 ✅ **Connection Successful!**
 - Server: Home PLEX
 - Version: 1.42.2.10156-f737b826c
-- URL: http://100.70.119.112:32400
+- URL: http://<your-tailscale-host>:32400
 - Token: Configured (20 characters)
 
 ### Current Configuration
@@ -2577,7 +2577,7 @@ The Plex connection test was showing an error, but the connection is now working
 ```yaml
 plex:
   enabled: true
-  base_url: http://100.70.119.112:32400
+  base_url: http://<your-tailscale-host>:32400
   token: HeyD3N9rKrtJDsRNL6-n
   use_for_epg: true
 ```
@@ -2602,7 +2602,7 @@ You can test the connection manually:
 
 ```bash
 # Test Plex server directly
-curl "http://100.70.119.112:32400/" \
+curl "http://<your-tailscale-host>:32400/" \
   -H "X-Plex-Token: HeyD3N9rKrtJDsRNL6-n"
 
 # Test via StreamTV API
@@ -2655,7 +2655,7 @@ Add Plex configuration to `config.yaml`:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://:32400"  # Your Plex server URL
+  base_url: "http://<your-lan-host>:32400"  # Your Plex server URL
   token: "your-plex-token-here"  # Your Plex authentication token
   use_for_epg: true  # Enable EPG enhancement via Plex API
 ```

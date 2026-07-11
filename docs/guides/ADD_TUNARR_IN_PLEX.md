@@ -5,15 +5,15 @@ StreamTV hosts an HDHomeRun-shaped proxy so Plex’s **Live TV & DVR → Add dev
 ## Prerequisites
 
 - StreamTV running with `tuner_manager.enabled: true` (default in `config.example.yaml`)
-- Tunarr reachable at the URL in `tuner_manager.tuners[].url` (e.g. `http://:8000`)
+- Tunarr reachable at the URL in `tuner_manager.tuners[].url` (e.g. `http://<your-streamtv-host>:8000`)
 - Restart StreamTV after enabling or changing `tuner_manager`
 
 ## URLs to paste
 
 | Purpose | URL |
 |---------|-----|
-| **Plex Add device** | `http://:8410/tuners/proxy/tunarr` |
-| **Guide (merged StreamTV + Tunarr)** | `http://:8410/tuners/guide.xml` |
+| **Plex Add device** | `http://<your-streamtv-host>:8410/tuners/proxy/tunarr` |
+| **Guide (merged StreamTV + Tunarr)** | `http://<your-streamtv-host>:8410/tuners/guide.xml` |
 
 Replace the LAN IP/port with your StreamTV `server.base_url` if different.
 
@@ -45,7 +45,7 @@ Use `plex_add_url` and `plex_guide_url` from that JSON.
 
 ## Operator page
 
-Browse `http://:8410/tuners` in a browser for copy-paste instructions.
+Browse `http://<your-streamtv-host>:8410/tuners` in a browser for copy-paste instructions.
 
 ## Related
 

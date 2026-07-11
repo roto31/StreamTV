@@ -10,7 +10,7 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 
 - [Wiki Home](wiki/Home.md)
 - [Documentation Index](wiki/Documentation-Index.md)
-- [macOS](wiki/macOS.md) · [Windows](wiki/Windows.md) · [Linux](wiki/Linux.md) · [Containers](wiki/Containers.md)
+- [macOS](wiki/macOS.md) · [Linux](wiki/Linux.md)
 - [Beginner](wiki/Beginner-Guide.md) · [Intermediate](wiki/Intermediate-Guide.md) · [Expert](wiki/Expert-Guide.md)
 - [Plex](wiki/Plex-Integration.md) · [Troubleshooting](wiki/Troubleshooting.md) · [API](wiki/API-Reference.md)
 

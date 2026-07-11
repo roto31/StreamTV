@@ -1,60 +1,36 @@
 # StreamTV Platform Documentation
 
-Welcome to the StreamTV platform documentation wiki. This wiki contains comprehensive documentation for all platform distributions.
+Welcome to the StreamTV platform documentation wiki.
 
-## 📦 Platform Distributions
+## Platform distributions
 
-### Desktop Platforms
+### Desktop
 
-- **[macOS](macOS)** - Complete macOS distribution documentation
-  - Installation guides
-  - Configuration
-  - Troubleshooting
-  - All platform-specific documentation
+- **[macOS](macOS)** — Native app, installer, and menu bar app
+- **[Linux](Linux)** — Install scripts and systemd integration
 
-- **[Windows](Windows)** - Complete Windows distribution documentation
-  - PowerShell installation
-  - Windows service setup
-  - Platform-specific guides
-  - Troubleshooting
+Other platforms (Windows, containers, etc.) are not shipped from this repository. StreamTV is [MIT licensed](https://github.com/roto31/StreamTV/blob/main/LICENSE); community ports are welcome.
 
-- **[Linux](Linux)** - Complete Linux distribution documentation
-  - Multi-distribution support
-  - Systemd service setup
-  - Platform-specific guides
-  - Troubleshooting
+## Quick start
 
-### Container Platforms
-
-- **[Containers](Containers)** - Complete container distribution documentation
-  - Docker deployment
-  - Docker Compose orchestration
-  - Kubernetes manifests
-  - Podman rootless containers
-
-## 🚀 Quick Start
-
-1. Choose your platform from the list above
+1. Choose **macOS** or **Linux** above
 2. Follow the installation guide
 3. Configure StreamTV
 4. Create your first channel
 
-## 📚 Documentation Structure
+## Documentation structure
 
-Each platform section includes:
+- **Installation** — Step-by-step setup
+- **Configuration** — Platform-specific settings
+- **API** — REST reference
+- **Troubleshooting** — Common issues
 
-- **Installation Guides** - Step-by-step setup instructions
-- **Configuration** - Platform-specific configuration
-- **API Documentation** - Complete API reference
-- **Troubleshooting** - Common issues and solutions
-- **Advanced Features** - Platform-specific features
+## Additional resources
 
-## 🔗 Additional Resources
+- [GitHub repository](https://github.com/roto31/StreamTV) — Docs and releases
+- [Issues](https://github.com/roto31/StreamTV/issues) — Bugs and features
+- [Releases](https://github.com/roto31/StreamTV/releases) — macOS downloads
 
-- [GitHub Repository](../../) - Source code and distributions
-- [Issues](../../issues) - Report bugs and request features
-- [Releases](../../releases) - Download releases
+## Contributing
 
-## 📝 Contributing
-
-Contributions are welcome! See individual platform documentation for contribution guidelines.
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/roto31/StreamTV/blob/main/CONTRIBUTING.md) in the source repo.

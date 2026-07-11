@@ -407,7 +407,7 @@ def check_dns_configuration():
                 nameservers = []
                 for line in dns_output.split('\n'):
                     if 'nameserver' in line.lower() and '[' in line:
-                        # Extract IP from line like "nameserver[0] : "
+                        # Extract IP from line like "nameserver[0] : <your-lan-host>"
                         parts = line.split(':')
                         if len(parts) > 1:
                             nameservers.append(parts[1].strip())

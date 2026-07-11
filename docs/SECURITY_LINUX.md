@@ -248,7 +248,7 @@ sudo chown streamtv:streamtv /etc/streamtv/secrets/token
 sudo ufw allow 8410/tcp comment 'StreamTV'
 
 # Allow from specific IP (more secure)
-sudo ufw allow from /24 to any port 8410 proto tcp comment 'StreamTV Local'
+sudo ufw allow from <your-lan-host>/24 to any port 8410 proto tcp comment 'StreamTV Local'
 
 # Enable firewall
 sudo ufw enable
@@ -281,7 +281,7 @@ sudo firewall-cmd --list-all
 sudo iptables -A INPUT -p tcp --dport 8410 -j ACCEPT
 
 # Allow from specific network
-sudo iptables -A INPUT -p tcp -s /24 --dport 8410 -j ACCEPT
+sudo iptables -A INPUT -p tcp -s <your-lan-host>/24 --dport 8410 -j ACCEPT
 
 # Save rules
 sudo iptables-save > /etc/iptables/rules.v4

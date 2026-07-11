@@ -75,7 +75,7 @@ A zsh shell script that creates channels via the StreamTV API. This is the recom
 ./scripts/create_channel.sh --number "10" --name "Classic Sports" --group "Sports"
 
 # Use custom API URL
-./scripts/create_channel.sh --api-url http://:8410
+./scripts/create_channel.sh --api-url http://<your-lan-host>:8410
 
 # Interactive mode
 ./scripts/create_channel.sh -i

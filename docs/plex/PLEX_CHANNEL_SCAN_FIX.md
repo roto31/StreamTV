@@ -33,7 +33,7 @@ The channel is properly configured and exposed. Plex just needs to refresh its c
 
 This forces Plex to completely refresh the lineup:
 
-1. **Open Plex Web Interface** (http://100.70.119.112:32400/web)
+1. **Open Plex Web Interface** (http://<your-tailscale-host>:32400/web)
 
 2. **Go to Settings** → **Live TV & DVR**
 
@@ -90,7 +90,7 @@ Some Plex versions support forcing a lineup refresh:
 
 ```bash
 # Replace YOUR_PLEX_TOKEN with your actual token
-curl -X POST "http://100.70.119.112:32400/livetv/dvrs/refresh?X-Plex-Token=YOUR_TOKEN"
+curl -X POST "http://<your-tailscale-host>:32400/livetv/dvrs/refresh?X-Plex-Token=YOUR_TOKEN"
 ```
 
 ---

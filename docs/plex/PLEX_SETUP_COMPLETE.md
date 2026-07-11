@@ -114,7 +114,7 @@ plex:
 If your Plex server is on a different IP:
 1. Find your Plex server IP address
 2. Update `base_url` in `config.yaml`
-3. Example: `"http://:32400"`
+3. Example: `"http://<your-lan-host>:32400"`
 
 ### Token Not Working
 
