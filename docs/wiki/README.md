@@ -23,6 +23,7 @@ Canonical copy of the [StreamTV GitHub Wiki](https://github.com/roto31/StreamTV/
 | [Logging.md](Logging.md) | Logging system |
 | [SwiftUI.md](SwiftUI.md) | SwiftUI apps |
 | [Scripts-and-Tools.md](Scripts-and-Tools.md) | CLI tools |
+| [Channel-Builder-Custom-Sources.md](Channel-Builder-Custom-Sources.md) | Add custom Builder sources |
 | [Troubleshooting.md](Troubleshooting.md) | Common issues |
 | [Implementation.md](Implementation.md) | Technical notes |
 

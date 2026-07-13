@@ -45,7 +45,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 - [API Documentation](./API.md)
 - [HDHomeRun Integration](./HDHOMERUN.md)
 - [Schedule System](./SCHEDULES.md)
-- [YAML Validation](./YAML_VALIDATION.md)
+- [Channel Builder](channel-builder.md) — guided channel assembly (vs [Import Channels](../streamtv/templates/import.html) for YAML migration)
 - [Troubleshooting Scripts](./TROUBLESHOOTING_SCRIPTS.md)
 - [Executive summary — streaming / root-tree / tuner remediation (2026-07-08)](./reports/Executive_Summary_Streaming_RootTree_Tuner_Remediation_2026-07-08.md)
 - [Executive summary — per-channel restart (2026-07-08)](./reports/Executive_Summary_Per_Channel_Restart_2026-07-08.md)

@@ -34,9 +34,17 @@ Complete guide to all StreamTV documentation, organized by topic.
 
 ## 📺 Features & Integration
 
-### Channel Management
-- [Schedules Guide](SCHEDULES.md) - Create and manage schedules
+### HDHomeRun & Tunarr
 - [HDHomeRun Integration](HDHOMERUN.md) - Emulation setup
+- [Core operator quickstart](../guides/CORE_OPERATOR_QUICKSTART.md) - Dashboard → build → tune
+- [Import vs Channel Builder](../guides/IMPORT_VS_BUILDER.md) - Migration vs greenfield
+- [Channel Builder](../channel-builder.md) - URL-first wizard
+- [PBS + Playwright](../guides/PBS_PLAYWRIGHT.md) - Show expansion
+- [Archive.org operator](../guides/ARCHIVE_ORG_OPERATOR.md) - Cookies and download paths
+- [FFmpeg profiles](../guides/FFMPEG_PROFILES.md) - Profiles vs overrides
+- [YouTube geo-blocks](../guides/YOUTUBE_GEO_BLOCKS.md) - Bulk import skips
+- [StreamTV + Tunarr hybrid](../guides/STREAMTV_TUNARR_HYBRID.md) - When to use Builder vs Tunarr
+- [Add Tunarr in Plex](../guides/ADD_TUNARR_IN_PLEX.md) - Proxy paste URLs
 - [Comparison](COMPARISON.md) - Feature comparisons
 
 ### External Integrations
