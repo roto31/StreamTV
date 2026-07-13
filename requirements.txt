@@ -1,0 +1,82 @@
+# StreamTV Secure Dependencies
+# Updated to latest secure versions compatible with Python 3.10+ (July 2026)
+# Addresses all known security vulnerabilities with access to latest package versions
+
+# Core Framework
+fastapi==0.139.0          # Supports patched Starlette 1.x releases
+uvicorn[standard]==0.40.0 # Latest version (requires Python 3.10+) - fixes 3+ CVEs
+pydantic==2.12.5          # Latest version (requires Python 3.9+) - fixes 1+ CVE
+pydantic-settings==2.14.2 # Fixes GHSA-4xgf-cpjx-pc3j
+
+# Database
+sqlalchemy==2.0.45        # Latest version (Python 3.7+ compatible) - fixes 2 CVEs
+alembic==1.17.2           # Latest version (requires Python 3.10+)
+
+# HTTP Client
+httpx==0.28.1             # Latest version (Python 3.8+ compatible) - fixes 4 CVEs
+
+# Media Processing
+yt-dlp>=2026.7.4          # YouTube extractor floor (PO Token / SABR era) — keep in sync with YTDLP_MIN_VERSION
+ffmpeg-python==0.2.0      # No updates available
+
+# Web Framework
+python-multipart==0.0.32  # Fixes CVE-2026-53539 and earlier multipart advisories
+jinja2==3.1.6             # Latest version (Python 3.7+ compatible) - fixes 1 CVE
+
+# Security
+python-jose[cryptography]==3.5.0  # Latest version - fixes CVE-2024-33663, CVE-2024-33664, and additional security improvements
+passlib[bcrypt]==1.7.4    # Current version (no updates available)
+webauthn>=2.1.0           # WebAuthn/Passkey support (required for passkey auth)
+
+# XML/HTML Processing
+lxml==6.1.1               # Fixes CVE-2026-41066
+
+# Utilities
+aiofiles==25.1.0          # Latest version (requires Python 3.9+)
+pytz==2025.2              # Latest version (Python 3.8+ compatible)
+schedule==1.2.2           # Latest version (Python 3.7+ compatible)
+jsonschema==4.25.1        # Latest version (Python 3.8+ compatible) - compatible with jsonschema-specifications
+jsonschema-specifications==2024.10.1  # Version with all schema drafts including draft-04
+pyyaml==6.0.3             # Latest version (Python 3.8+ compatible) - fixes 1 CVE
+slowapi==0.1.9            # Current version (no updates available)
+
+# Security Auditing (Development)
+pip-audit>=2.10.0         # Security vulnerability scanner (requires Python 3.10+)
+
+# Optional Dependencies (used by application)
+markdown>=3.4.0           # Markdown processing for documentation
+playwright>=1.49.0        # Channel Builder automated sign-in + PBS show harvest (run: playwright install chromium)
+internetarchive>=5.0.0  # Archive.org ia CLI (optional cache fallback)
+apscheduler>=3.10       # Scheduled cache downloads (optional)
+
+# Testing
+pytest-asyncio>=0.24.0  # Matches pytest.ini asyncio_mode = auto
+
+# Transitive Dependencies (explicitly pinned for security)
+# These are pulled in by other packages but we pin them to ensure latest secure versions
+starlette==1.3.1           # Fixes 2026 multipart and Range-header advisories
+certifi==2025.11.12       # SSL certificate bundle - fixes security issues (latest)
+charset-normalizer==3.4.4 # Character encoding detection - fixes parsing vulnerabilities (latest)
+idna==3.18                # Fixes PYSEC-2026-215
+requests==2.34.2          # Fixes CVE-2026-25645
+urllib3==2.7.0            # Fixes CVE-2026-44431 and CVE-2026-44432
+
+# Security Notes:
+# - All dependencies updated to latest secure versions compatible with Python 3.10+
+# - yt-dlp floor updated to 2026.7.4 for current YouTube extractor behavior
+# - FastAPI, Uvicorn, and Pydantic updated to latest versions with security patches
+# - LXML updated to 6.1.1 to address XML parsing vulnerabilities
+# - SQLAlchemy updated to 2.0.45 (latest, supports Python 3.7+)
+# - httpx updated to 0.28.1 (latest, supports Python 3.8+)
+# - Jinja2 updated to 3.1.6 (latest, supports Python 3.7+)
+# - PyYAML updated to 6.0.3 (latest, supports Python 3.8+)
+# - pytz updated to 2025.2 (latest)
+# - python-jose updated to 3.5.0 (latest) - fixes CVE-2024-33663, CVE-2024-33664
+# - pip-audit added for automated security scanning
+# - Regular updates recommended (monthly security review)
+# - Use pip-audit to scan for transitive dependency vulnerabilities
+#
+# Known Issues (No Fix Available):
+# - ecdsa CVE-2024-23342: Minerva timing attack on P-256 curve. The python-ecdsa project
+#   considers side channel attacks out of scope. This is a transitive dependency of python-jose.
+#   Risk is low for most use cases but should be monitored.

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Source Authentication - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Source Authentication</div>
+            <p class="page-subtitle">Configure credentials and cookies for streaming sources.</p>
+        </div>
+        <div class="page-actions">
+            <a href="/settings" class="btn btn-outlined">← Settings Overview</a>
+        </div>
+    </div>
+
+    <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;">
+        <a class="card" href="/api/auth/youtube" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">YouTube</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Cookies, OAuth, and passkey setup</div>
+        </a>
+        <a class="card" href="/api/auth/archive-org" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Archive.org</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Account login and cookie upload</div>
+        </a>
+        <a class="card" href="/api/auth/pbs" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">PBS Live</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">PBS and PBS Kids cookie capture</div>
+        </a>
+        <a class="card" href="/settings/plex" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Plex API Token</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Server URL and API token (Settings → Plex API)</div>
+        </a>
+        <a class="card" href="/tuners" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Tunarr / Tuners</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Proxy status and Plex add-device URLs</div>
+        </a>
+        <a class="card" href="/builder" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Channel Builder Auth</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Inline sign-in during channel assembly</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

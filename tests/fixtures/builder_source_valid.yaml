@@ -1,0 +1,13 @@
+id: example_stream
+label: Example Stream Site
+status: community
+hosts:
+  - stream.example.com
+auth:
+  method: cookies
+  cookies_domain: stream.example.com
+url_patterns:
+  video: "/watch/"
+  collection: "/show/"
+playout_ready: false
+module: null

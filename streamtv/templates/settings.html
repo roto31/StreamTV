@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Settings - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Settings</div>
+            <p class="page-subtitle">Streaming, integrations, transcoding, and source authentication.</p>
+        </div>
+    </div>
+
+    <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;">
+        <a class="card" href="/settings/ffmpeg" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">FFmpeg</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Binary paths, hardware acceleration, runtime flags</div>
+        </a>
+        <a class="card" href="/settings/hdhr" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">HDHomeRun</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Virtual tuner, discovery, device ID</div>
+        </a>
+        <a class="card" href="/settings/playout" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Playout</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Continuous playout and timing options</div>
+        </a>
+        <a class="card" href="/settings/plex" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Plex API</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Server URL, token, guide reload</div>
+        </a>
+        <a class="card" href="/settings/resolutions" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Resolutions</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Output resolution presets</div>
+        </a>
+        <a class="card" href="/settings/ffmpeg-profiles" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">FFmpeg Profiles</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Transcode profiles per channel</div>
+        </a>
+        <a class="card" href="/settings/watermarks" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Watermarks</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Overlay images and placement</div>
+        </a>
+        <a class="card" href="/tuners" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Tunarr Integration</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">HDHR proxy, merged EPG, Plex paste URLs</div>
+        </a>
+        <a class="card" href="/settings/auth" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Source Authentication</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">YouTube, Archive.org, PBS, Plex sign-in</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

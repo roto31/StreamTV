@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Cache Status - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Cache Status</div>
+            <p class="page-subtitle">Operator view of download cache and scheduler activity.</p>
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-outlined" type="button" id="refreshCacheStatsButton">
+                <span class="material-icons">refresh</span>
+                Refresh
+            </button>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 20px;">
+        <pre id="cacheStatsOutput" style="white-space: pre-wrap; margin: 0; font-size: 13px;">Loading…</pre>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function loadCacheStats() {
+        const output = document.getElementById('cacheStatsOutput');
+        try {
+            const res = await authenticatedFetch('/api/cache/stats');
+            if (!res.ok) throw new Error(await res.text());
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+            output.textContent = 'Failed to load cache stats: ' + error.message;
+        }
+    }
+
+    document.getElementById('refreshCacheStatsButton').addEventListener('click', loadCacheStats);
+    loadCacheStats();
+</script>
+{% endblock %}

@@ -1,0 +1,3 @@
+label: Missing ID
+hosts:
+  - bad.example.com

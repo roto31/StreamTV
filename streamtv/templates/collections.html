@@ -1,0 +1,1132 @@
+{% extends "base.html" %}
+{% block title %}Collections - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Collections</div>
+            <p class="page-subtitle">Manage Manual, Smart, and Multi Collections. Plex browsing uses <a href="/docs/guides/STREAMTV_TUNARR_HYBRID.md">Tunarr when configured</a> or native Plex API fallback.</p>
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-primary" type="button" data-action="refreshCollections">
+                <span class="material-icons">refresh</span>
+                Refresh
+            </button>
+        </div>
+    </div>
+    
+    <!-- Plex Library Import -->
+    <div class="card collection-frame">
+        <div class="frame-header">
+            <div>
+                <div class="frame-title">Plex Library Import</div>
+                <p class="frame-subtitle">Browse Plex via Tunarr proxy or native API; bulk-import rating keys into media.</p>
+        </div>
+        </div>
+        <div class="frame-content">
+            <div class="collection-select-group">
+                <label class="form-label" for="plexSourceSelect">Plex source</label>
+                <select class="form-select" id="plexSourceSelect">
+                    <option value="auto">Auto (Tunarr first)</option>
+                    <option value="tunarr">Tunarr proxy</option>
+                    <option value="native">Native Plex API</option>
+                </select>
+            </div>
+            <div class="collection-select-group" style="margin-top: 12px;">
+                <label class="form-label" for="plexLibrarySelect">Library</label>
+                <select class="form-select" id="plexLibrarySelect">
+                    <option value="">— Load libraries —</option>
+                </select>
+                <button class="btn btn-outlined" type="button" data-action="loadPlexLibraries" style="margin-top: 8px;">
+                    <span class="material-icons">refresh</span>
+                    Load Libraries
+                </button>
+            </div>
+            <div id="plexItemsList" style="margin-top: 12px; max-height: 240px; overflow-y: auto;"></div>
+            <button class="btn btn-primary" type="button" data-action="importSelectedPlexItems" style="margin-top: 8px;">
+                Import selected to Media
+            </button>
+        </div>
+    </div>
+    
+    <!-- Manual Collections Frame -->
+    <div class="card collection-frame">
+        <div class="frame-header">
+            <div>
+                <div class="frame-title">Manual Collections</div>
+                <p class="frame-subtitle">Collections created by manually selecting items from Plex libraries.</p>
+        </div>
+        </div>
+        <div class="frame-content">
+            <div class="collection-select-group">
+                <label class="form-label" for="manualCollectionSelect">Select Manual Collection</label>
+                <select class="form-select" id="manualCollectionSelect" data-action="loadManualCollectionDetails" data-action-event="change">
+                    <option value="">-- Select a manual collection --</option>
+                </select>
+        </div>
+            <div id="manualCollectionDetails" class="collection-details" style="display: none;">
+                <div class="collection-info">
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value" id="manualCollectionName">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Description:</span>
+                        <span class="info-value" id="manualCollectionDescription">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Items:</span>
+                        <span class="info-value" id="manualCollectionItems">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Created:</span>
+                        <span class="info-value" id="manualCollectionCreated">--</span>
+                    </div>
+                </div>
+                <div class="collection-actions">
+                    <button class="btn btn-outlined" data-action="deleteManualCollection">
+                        <span class="material-icons">delete</span>
+                        Delete Collection
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Smart Collections Frame (runtime resolver not yet available) -->
+    <div class="card collection-frame">
+        <div class="frame-header">
+            <div>
+                <div class="frame-title">Smart Collections</div>
+                <p class="frame-subtitle">StreamTV native smart collections are deprecated. Use Tunarr smart collections when configured.</p>
+            </div>
+            <button class="btn btn-outlined" type="button" data-action="loadTunarrSmartCollections">
+                <span class="material-icons">refresh</span>
+                Load from Tunarr
+            </button>
+        </div>
+        <div class="frame-content">
+            <div id="tunarrSmartCollectionsList" style="color: var(--text-secondary); font-size: 15px;">
+                Click Load from Tunarr when <code>tuner_manager</code> points at a reachable Tunarr instance.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Multi Collections Frame -->
+    <div class="card collection-frame">
+        <div class="frame-header">
+            <div>
+                <div class="frame-title">Multi Collections</div>
+                <p class="frame-subtitle">Collections containing combinations of TV Shows and Movies.</p>
+            </div>
+        </div>
+        <div class="frame-content">
+            <div class="multi-collection-controls">
+                <button class="btn btn-primary" type="button" data-action="showCreateMultiCollectionModal">
+                    <span class="material-icons">add</span>
+                    Create Multi Collection
+                </button>
+            </div>
+            
+            <div class="collection-select-group" style="margin-top: 20px;">
+                <label class="form-label" for="multiCollectionSelect">Select Multi Collection</label>
+                <select class="form-select" id="multiCollectionSelect" data-action="loadMultiCollectionDetails" data-action-event="change">
+                    <option value="">-- Select a multi collection --</option>
+                </select>
+            </div>
+            <div id="multiCollectionDetails" class="collection-details" style="display: none;">
+                <div class="collection-info">
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value" id="multiCollectionName">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Description:</span>
+                        <span class="info-value" id="multiCollectionDescription">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Items:</span>
+                        <span class="info-value" id="multiCollectionItems">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Created:</span>
+                        <span class="info-value" id="multiCollectionCreated">--</span>
+                    </div>
+                </div>
+                <div class="collection-actions">
+                    <button class="btn btn-outlined" data-action="addItemsToMultiCollection">
+                        <span class="material-icons">add</span>
+                        Add Items
+                    </button>
+                    <button class="btn btn-outlined" data-action="deleteMultiCollection">
+                        <span class="material-icons">delete</span>
+                        Delete Collection
+                    </button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+<!-- Create Multi Collection Modal -->
+<div id="createMultiCollectionModal" class="modal" data-action="closeCreateMultiCollectionModal" data-self-only="true">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2>Create Multi Collection</h2>
+            <button class="modal-close" data-action="closeCreateMultiCollectionModal">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label" for="multiCollectionNameInput">Collection Name *</label>
+                <input type="text" id="multiCollectionNameInput" class="form-input" placeholder="e.g., Mixed Content Collection">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="multiCollectionDescriptionInput">Description</label>
+                <textarea id="multiCollectionDescriptionInput" class="form-input" rows="3" placeholder="Collection description..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Add Items</label>
+                <div class="item-selector-group">
+                    <select class="form-select" id="multiCollectionItemSelect" style="flex: 1;">
+                        <option value="">-- Select item type --</option>
+                        <option value="collection">Existing Collection</option>
+                        <option value="playlist">Playlist</option>
+                    </select>
+                    <button class="btn btn-outlined" data-action="loadMultiCollectionItemOptions">
+                        <span class="material-icons">refresh</span>
+                        Load
+                    </button>
+                </div>
+                
+                <div id="multiCollectionItemOptions" style="margin-top: 12px; display: none;">
+                    <select class="form-select" id="multiCollectionItemValue" style="width: 100%;">
+                        <option value="">-- Select an item --</option>
+                    </select>
+                    <button class="btn btn-primary" style="margin-top: 8px;" data-action="addItemToMultiCollectionList">
+                        <span class="material-icons">add</span>
+                        Add to Collection
+                    </button>
+                </div>
+                <p class="help-text" style="font-size: 13px; color: var(--text-secondary); margin-top: 8px;">
+                    Plex library browsing and bulk import are coming soon. Add Plex media via
+                    <a href="/builder">Channel Builder</a> or <a href="/media">manual media import</a>.
+                </p>
+            </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label class="form-label">Selected Items</label>
+                <div id="multiCollectionItemsList" class="items-list">
+                    <p style="color: var(--text-secondary); font-size: 15px;">No items added yet.</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-primary" data-action="createMultiCollection">
+                <span class="material-icons">check</span>
+                Create Multi Collection
+            </button>
+            <button class="btn btn-outlined" data-action="closeCreateMultiCollectionModal">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .page {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.36px;
+    }
+    
+    .page-subtitle {
+        color: var(--text-secondary);
+        margin-top: 4px;
+        font-size: 17px;
+    }
+    
+    .page-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .collection-frame {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 0.5px solid var(--divider);
+        padding: 20px;
+    }
+    
+    .frame-header {
+        margin-bottom: 20px;
+    }
+    
+    .frame-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    
+    .frame-subtitle {
+        color: var(--text-secondary);
+        font-size: 15px;
+    }
+    
+    .frame-content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .collection-select-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .form-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    
+    .form-select {
+        padding: 10px 14px;
+        border: 0.5px solid var(--divider);
+        border-radius: 8px;
+        background: var(--surface-light);
+        color: var(--text-primary);
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    
+    .form-select:focus {
+        border-color: var(--primary);
+    }
+    
+    .collection-details {
+        margin-top: 16px;
+        padding: 16px;
+        background: var(--surface-light);
+        border-radius: 8px;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .collection-info {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .info-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .info-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        min-width: 100px;
+    }
+    
+    .info-value {
+        font-size: 15px;
+        color: var(--text-primary);
+        flex: 1;
+    }
+    
+    .collection-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .multi-collection-controls {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .item-selector-group {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+    }
+    
+    .items-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 12px;
+        background: var(--surface-light);
+        border-radius: 8px;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .item-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        background: var(--surface);
+        border-radius: 6px;
+        margin-bottom: 8px;
+        border: 0.5px solid var(--divider);
+    }
+    
+    .item-list-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .item-list-item-name {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+    
+    .item-list-item-type {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+    }
+    
+    .btn-icon-small {
+        background: transparent;
+        border: none;
+        color: var(--error);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+    
+    .btn-icon-small:hover {
+        background: var(--hover);
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 0.5px solid var(--divider);
+        border-radius: 8px;
+        background: var(--surface-light);
+        color: var(--text-primary);
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: inherit;
+    }
+    
+    .form-input:focus {
+        border-color: var(--primary);
+    }
+    
+    .form-input::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    @media (max-width: 960px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+    let allCollections = [];
+    let multiCollectionItems = [];
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        loadCollections();
+    });
+    
+    // Also reload collections when page becomes visible (in case user navigated back)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            console.log('Page became visible, reloading collections...');
+            loadCollections();
+        }
+    });
+    
+    // Expose loadCollections globally so it can be called from other pages
+    window.loadCollections = loadCollections;
+    
+    async function loadCollections() {
+        try {
+            console.log('Loading collections...');
+            const response = await authenticatedFetch('/api/collections');
+            if (!response.ok) throw new Error('Failed to load collections');
+            allCollections = await response.json();
+            
+            console.log('Loaded collections:', allCollections);
+            console.log('Total collections:', allCollections.length);
+            
+            // Log collection types for debugging
+            allCollections.forEach(c => {
+                console.log(`Collection: ${c.name}, type: ${c.collection_type}, type check: ${c.collection_type === 'smart'}`);
+            });
+            
+            // Filter and populate dropdowns
+            const manualCollections = allCollections.filter(c => {
+                const isManual = c.collection_type === 'manual' || !c.collection_type;
+                if (!isManual && c.collection_type !== 'smart' && c.collection_type !== 'multi') {
+                    console.log(`Collection "${c.name}" has unexpected type: "${c.collection_type}"`);
+                }
+                return isManual;
+            });
+            const smartCollections = allCollections.filter(c => {
+                const isSmart = c.collection_type === 'smart';
+                if (isSmart) {
+                    console.log(`Found smart collection: ${c.name} (id: ${c.id}, type: ${c.collection_type})`);
+                }
+                return isSmart;
+            });
+            const multiCollections = allCollections.filter(c => c.collection_type === 'multi');
+            
+            console.log(`Filtered collections - Manual: ${manualCollections.length}, Smart: ${smartCollections.length}, Multi: ${multiCollections.length}`);
+            
+            // Populate Manual Collections dropdown
+            const manualSelect = document.getElementById('manualCollectionSelect');
+            manualSelect.innerHTML = '<option value="">-- Select a manual collection --</option>' +
+                manualCollections.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            // Smart collections UI removed until resolver ships; skip dropdown wiring.
+            const smartSelect = document.getElementById('smartCollectionSelect');
+            if (smartSelect) {
+                smartSelect.innerHTML = '<option value="">-- Select a smart collection --</option>' +
+                    smartCollections.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            }
+            
+            // Populate Multi Collections dropdown
+            const multiSelect = document.getElementById('multiCollectionSelect');
+            multiSelect.innerHTML = '<option value="">-- Select a multi collection --</option>' +
+                multiCollections.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                
+        } catch (error) {
+            console.error('Error loading collections:', error);
+            showAlert('Failed to load collections', 'error');
+        }
+    }
+    
+    function loadManualCollectionDetails() {
+        const select = document.getElementById('manualCollectionSelect');
+        const collectionId = select.value;
+        const details = document.getElementById('manualCollectionDetails');
+        
+        if (!collectionId) {
+            details.style.display = 'none';
+                return;
+            }
+
+        const collection = allCollections.find(c => c.id === parseInt(collectionId));
+        if (!collection) return;
+        
+        document.getElementById('manualCollectionName').textContent = collection.name || '--';
+        document.getElementById('manualCollectionDescription').textContent = collection.description || 'No description';
+        document.getElementById('manualCollectionItems').textContent = (collection.items?.length || 0) + ' items';
+        document.getElementById('manualCollectionCreated').textContent = collection.created_at ? 
+            new Date(collection.created_at).toLocaleString() : '--';
+        
+        details.style.display = 'block';
+    }
+    
+    function loadSmartCollectionDetails() {
+        const select = document.getElementById('smartCollectionSelect');
+        const collectionId = select.value;
+        const details = document.getElementById('smartCollectionDetails');
+        
+        if (!collectionId) {
+            details.style.display = 'none';
+            return;
+        }
+        
+        const collection = allCollections.find(c => c.id === parseInt(collectionId));
+        if (!collection) return;
+        
+        document.getElementById('smartCollectionName').textContent = collection.name || '--';
+        document.getElementById('smartCollectionDescription').textContent = collection.description || 'No description';
+        document.getElementById('smartCollectionQuery').textContent = collection.search_query || 'No query';
+        document.getElementById('smartCollectionItems').textContent = (collection.items?.length || 0) + ' items';
+        document.getElementById('smartCollectionCreated').textContent = collection.created_at ? 
+            new Date(collection.created_at).toLocaleString() : '--';
+        
+        details.style.display = 'block';
+    }
+
+    function loadMultiCollectionDetails() {
+        const select = document.getElementById('multiCollectionSelect');
+        const collectionId = select.value;
+        const details = document.getElementById('multiCollectionDetails');
+        
+        if (!collectionId) {
+            details.style.display = 'none';
+            return;
+    }
+
+        const collection = allCollections.find(c => c.id === parseInt(collectionId));
+        if (!collection) return;
+        
+        document.getElementById('multiCollectionName').textContent = collection.name || '--';
+        document.getElementById('multiCollectionDescription').textContent = collection.description || 'No description';
+        document.getElementById('multiCollectionItems').textContent = (collection.items?.length || 0) + ' items';
+        document.getElementById('multiCollectionCreated').textContent = collection.created_at ? 
+            new Date(collection.created_at).toLocaleString() : '--';
+        
+        details.style.display = 'block';
+    }
+
+    async function deleteManualCollection() {
+        const select = document.getElementById('manualCollectionSelect');
+        const collectionId = select.value;
+        if (!collectionId) return;
+        
+        if (!confirm(`Delete manual collection "${select.options[select.selectedIndex].text}"?`)) {
+            return;
+        }
+        
+        try {
+            const response = await authenticatedFetch(`/api/collections/${collectionId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Manual collection deleted successfully', 'success');
+                loadCollections();
+                document.getElementById('manualCollectionDetails').style.display = 'none';
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to delete collection', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting collection:', error);
+            showAlert('Failed to delete collection', 'error');
+        }
+    }
+    
+    async function deleteSmartCollection() {
+        const select = document.getElementById('smartCollectionSelect');
+        const collectionId = select.value;
+        if (!collectionId) return;
+        
+        if (!confirm(`Delete smart collection "${select.options[select.selectedIndex].text}"?`)) {
+            return;
+        }
+        
+        try {
+            const response = await authenticatedFetch(`/api/collections/${collectionId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Smart collection deleted successfully', 'success');
+                loadCollections();
+                document.getElementById('smartCollectionDetails').style.display = 'none';
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to delete collection', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting collection:', error);
+            showAlert('Failed to delete collection', 'error');
+        }
+    }
+    
+    async function deleteMultiCollection() {
+        const select = document.getElementById('multiCollectionSelect');
+        const collectionId = select.value;
+        if (!collectionId) return;
+        
+        if (!confirm(`Delete multi collection "${select.options[select.selectedIndex].text}"?`)) {
+            return;
+        }
+        
+        try {
+            const response = await authenticatedFetch(`/api/collections/${collectionId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Multi collection deleted successfully', 'success');
+                loadCollections();
+                document.getElementById('multiCollectionDetails').style.display = 'none';
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to delete collection', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting collection:', error);
+            showAlert('Failed to delete collection', 'error');
+        }
+    }
+    
+    function showCreateMultiCollectionModal() {
+        multiCollectionItems = [];
+        window.currentMultiCollectionId = null;
+        document.getElementById('multiCollectionNameInput').value = '';
+        document.getElementById('multiCollectionDescriptionInput').value = '';
+        document.getElementById('multiCollectionItemSelect').value = '';
+        document.getElementById('multiCollectionItemOptions').style.display = 'none';
+        updateMultiCollectionItemsList();
+        
+        // Reset modal title and button
+        const modalHeader = document.querySelector('#createMultiCollectionModal .modal-header h2');
+        if (modalHeader) {
+            modalHeader.textContent = 'Create Multi Collection';
+        }
+        const createButton = document.querySelector('#createMultiCollectionModal .modal-actions .btn-primary');
+        if (createButton) {
+            createButton.innerHTML = '<span class="material-icons">check</span> Create Multi Collection';
+            createButton.setAttribute('onclick', 'createMultiCollection()');
+        }
+        
+        document.getElementById('createMultiCollectionModal').style.display = 'flex';
+    }
+    
+    function closeCreateMultiCollectionModal() {
+        document.getElementById('createMultiCollectionModal').style.display = 'none';
+    }
+    
+    async function loadMultiCollectionItemOptions() {
+        const itemType = document.getElementById('multiCollectionItemSelect').value;
+        const optionsDiv = document.getElementById('multiCollectionItemOptions');
+        const valueSelect = document.getElementById('multiCollectionItemValue');
+        
+        if (!itemType) {
+            optionsDiv.style.display = 'none';
+            return;
+        }
+        
+        optionsDiv.style.display = 'block';
+        valueSelect.innerHTML = '<option value="">Loading...</option>';
+        
+        try {
+            if (itemType === 'collection') {
+                const response = await authenticatedFetch('/api/collections');
+                if (!response.ok) throw new Error('Failed to load collections');
+                const collections = await response.json();
+                valueSelect.innerHTML = '<option value="">-- Select a collection --</option>' +
+                    collections.map(c => `<option value="collection:${c.id}" data-name="${c.name}">${c.name}</option>`).join('');
+            } else if (itemType === 'playlist') {
+                const response = await authenticatedFetch('/api/playlists');
+                if (!response.ok) throw new Error('Failed to load playlists');
+                const playlists = await response.json();
+                valueSelect.innerHTML = '<option value="">-- Select a playlist --</option>' +
+                    playlists.map(p => `<option value="playlist:${p.id}" data-name="${p.name}">${p.name}</option>`).join('');
+            }
+        } catch (error) {
+            console.error('Error loading options:', error);
+            valueSelect.innerHTML = '<option value="">Error loading options</option>';
+            showAlert('Failed to load options', 'error');
+        }
+    }
+    
+    function addItemToMultiCollectionList() {
+        const valueSelect = document.getElementById('multiCollectionItemValue');
+        const selectedOption = valueSelect.options[valueSelect.selectedIndex];
+        const value = valueSelect.value;
+        
+        if (!value) {
+            showAlert('Please select an item', 'error');
+            return;
+        }
+        
+        const itemName = selectedOption.dataset.name || selectedOption.textContent;
+        const itemType = document.getElementById('multiCollectionItemSelect').value;
+        
+        // Check if already added
+        if (multiCollectionItems.some(item => item.value === value)) {
+            showAlert('Item already added', 'warning');
+            return;
+        }
+        
+        multiCollectionItems.push({
+            type: itemType,
+            value: value,
+            name: itemName
+        });
+        
+        updateMultiCollectionItemsList();
+        
+        // Reset selection
+        valueSelect.value = '';
+    }
+    
+    function updateMultiCollectionItemsList() {
+        const listDiv = document.getElementById('multiCollectionItemsList');
+        
+        if (multiCollectionItems.length === 0) {
+            listDiv.innerHTML = '<p style="color: var(--text-secondary); font-size: 15px;">No items added yet.</p>';
+            return;
+        }
+        
+        listDiv.innerHTML = multiCollectionItems.map((item, index) => `
+            <div class="item-list-item">
+                <div>
+                    <div class="item-list-item-name">${item.name}</div>
+                    <div class="item-list-item-type">${item.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                </div>
+                <button class="btn-icon-small" data-action="removeItemFromMultiCollectionList" data-args='[${index}]' title="Remove">
+                    <span class="material-icons" style="font-size: 18px;">close</span>
+                </button>
+                </div>
+        `).join('');
+        bindActionHandlers(listDiv);
+    }
+    
+    function removeItemFromMultiCollectionList(index) {
+        multiCollectionItems.splice(index, 1);
+        updateMultiCollectionItemsList();
+    }
+    
+    async function createMultiCollection() {
+        const name = document.getElementById('multiCollectionNameInput').value.trim();
+        const description = document.getElementById('multiCollectionDescriptionInput').value.trim();
+        
+        if (!name) {
+            showAlert('Collection name is required', 'error');
+            return;
+        }
+        
+        if (multiCollectionItems.length === 0) {
+            showAlert('Please add at least one item to the collection', 'error');
+            return;
+        }
+        
+        try {
+            // Create the multi collection
+            const collectionResponse = await authenticatedFetch('/api/collections', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    description: description,
+                    collection_type: 'multi'
+                })
+            });
+            
+            if (!collectionResponse.ok) {
+                const error = await collectionResponse.json();
+                throw new Error(error.detail || 'Failed to create collection');
+            }
+            
+            const collection = await collectionResponse.json();
+            
+            // Add items to the collection based on their type
+            let addedCount = 0;
+            let errorCount = 0;
+            
+            for (const item of multiCollectionItems) {
+                try {
+                    if (item.type === 'collection') {
+                        // For collections, we need to add all media items from that collection
+                        const sourceCollectionId = item.value.split(':')[1];
+                        const sourceCollectionResponse = await authenticatedFetch(`/api/collections/${sourceCollectionId}`);
+                        if (sourceCollectionResponse.ok) {
+                            const sourceCollection = await sourceCollectionResponse.json();
+                            // Add each media item from the source collection
+                            for (const collectionItem of (sourceCollection.items || [])) {
+                                try {
+                                    const addResponse = await authenticatedFetch(
+                                        `/api/collections/${collection.id}/items/${collectionItem.media_item_id}`,
+                                        { method: 'POST' }
+                                    );
+                                    if (addResponse.ok) addedCount++;
+                                } catch (e) {
+                                    console.warn(`Failed to add item ${collectionItem.media_item_id}:`, e);
+                                    errorCount++;
+                                }
+                            }
+                        }
+                    } else if (item.type === 'playlist') {
+                        // For playlists, we need to add all media items from that playlist
+                        const playlistId = item.value.split(':')[1];
+                        const playlistResponse = await authenticatedFetch(`/api/playlists/${playlistId}`);
+                        if (playlistResponse.ok) {
+                            const playlist = await playlistResponse.json();
+                            // Add each media item from the playlist
+                            for (const playlistItem of (playlist.items || [])) {
+                                try {
+                                    const addResponse = await authenticatedFetch(
+                                        `/api/collections/${collection.id}/items/${playlistItem.media_item_id}`,
+                                        { method: 'POST' }
+                                    );
+                                    if (addResponse.ok) addedCount++;
+                                } catch (e) {
+                                    console.warn(`Failed to add item ${playlistItem.media_item_id}:`, e);
+                                    errorCount++;
+                                }
+                            }
+                        }
+                    }
+                } catch (itemError) {
+                    console.warn(`Could not add item ${item.name} to collection:`, itemError);
+                    errorCount++;
+                }
+            }
+            
+            if (errorCount > 0) {
+                showAlert(`Multi collection "${name}" created with ${addedCount} items, but ${errorCount} items failed to add.`, 'warning');
+            } else {
+                showAlert(`Multi collection "${name}" created successfully with ${addedCount} items!`, 'success');
+            }
+            
+            closeCreateMultiCollectionModal();
+            loadCollections();
+            
+        } catch (error) {
+            console.error('Error creating multi collection:', error);
+            showAlert('Failed to create collection: ' + error.message, 'error');
+        }
+    }
+    
+    function addItemsToMultiCollection() {
+        const select = document.getElementById('multiCollectionSelect');
+        const collectionId = select.value;
+        if (!collectionId) {
+            showAlert('Please select a multi collection first', 'error');
+            return;
+        }
+        
+        // Store the collection ID for adding items
+        window.currentMultiCollectionId = collectionId;
+        
+        // Show the create modal but in "add items" mode
+        multiCollectionItems = [];
+        document.getElementById('multiCollectionNameInput').value = '';
+        document.getElementById('multiCollectionDescriptionInput').value = '';
+        document.getElementById('multiCollectionItemSelect').value = '';
+        document.getElementById('multiCollectionItemOptions').style.display = 'none';
+        updateMultiCollectionItemsList();
+        
+        // Change modal title and button
+        const modalHeader = document.querySelector('#createMultiCollectionModal .modal-header h2');
+        if (modalHeader) {
+            modalHeader.textContent = 'Add Items to Multi Collection';
+        }
+        const createButton = document.querySelector('#createMultiCollectionModal .modal-actions .btn-primary');
+        if (createButton) {
+            createButton.innerHTML = '<span class="material-icons">add</span> Add Items';
+            createButton.setAttribute('onclick', 'addItemsToExistingMultiCollection()');
+        }
+        
+        document.getElementById('createMultiCollectionModal').style.display = 'flex';
+    }
+    
+    async function addItemsToExistingMultiCollection() {
+        const collectionId = window.currentMultiCollectionId;
+        if (!collectionId) {
+            showAlert('No collection selected', 'error');
+            return;
+        }
+        
+        if (multiCollectionItems.length === 0) {
+            showAlert('Please add at least one item', 'error');
+            return;
+        }
+        
+        try {
+            let addedCount = 0;
+            let errorCount = 0;
+            
+            // Similar logic to createMultiCollection, but add to existing collection
+            for (const item of multiCollectionItems) {
+                try {
+                    if (item.type === 'collection') {
+                        const sourceCollectionId = item.value.split(':')[1];
+                        const sourceCollectionResponse = await authenticatedFetch(`/api/collections/${sourceCollectionId}`);
+                        if (sourceCollectionResponse.ok) {
+                            const sourceCollection = await sourceCollectionResponse.json();
+                            for (const collectionItem of (sourceCollection.items || [])) {
+                                try {
+                                    const addResponse = await authenticatedFetch(
+                                        `/api/collections/${collectionId}/items/${collectionItem.media_item_id}`,
+                                        { method: 'POST' }
+                                    );
+                                    if (addResponse.ok) addedCount++;
+                                } catch (e) {
+                                    errorCount++;
+                                }
+                            }
+                        }
+                    } else if (item.type === 'playlist') {
+                        const playlistId = item.value.split(':')[1];
+                        const playlistResponse = await authenticatedFetch(`/api/playlists/${playlistId}`);
+                        if (playlistResponse.ok) {
+                            const playlist = await playlistResponse.json();
+                            for (const playlistItem of (playlist.items || [])) {
+                                try {
+                                    const addResponse = await authenticatedFetch(
+                                        `/api/collections/${collectionId}/items/${playlistItem.media_item_id}`,
+                                        { method: 'POST' }
+                                    );
+                                    if (addResponse.ok) addedCount++;
+                                } catch (e) {
+                                    errorCount++;
+        }
+    }
+                        }
+                    }
+                } catch (itemError) {
+                    errorCount++;
+                }
+            }
+            
+            if (errorCount > 0) {
+                showAlert(`Added ${addedCount} items, but ${errorCount} items failed to add.`, 'warning');
+            } else {
+                showAlert(`Successfully added ${addedCount} items to collection!`, 'success');
+            }
+            
+            closeCreateMultiCollectionModal();
+            loadCollections();
+            loadMultiCollectionDetails(); // Refresh details
+            
+        } catch (error) {
+            console.error('Error adding items to collection:', error);
+            showAlert('Failed to add items: ' + error.message, 'error');
+        }
+    }
+    
+    let plexPickerItems = [];
+
+    async function loadPlexLibraries() {
+        const mode = document.getElementById('plexSourceSelect').value;
+        const libSelect = document.getElementById('plexLibrarySelect');
+        libSelect.innerHTML = '<option value="">Loading...</option>';
+        try {
+            let libraries = [];
+            if (mode === 'native') {
+                const resp = await authenticatedFetch('/api/plex/libraries');
+                if (!resp.ok) throw new Error('Native Plex libraries failed');
+                libraries = await resp.json();
+            } else {
+                const status = await authenticatedFetch('/api/integrations/tunarr/status');
+                const statusData = await status.json();
+                if (mode === 'tunarr' || (mode === 'auto' && statusData.reachable)) {
+                    const sources = await authenticatedFetch('/api/integrations/tunarr/media-sources');
+                    if (!sources.ok) throw new Error('Tunarr media sources failed');
+                    const sourceList = await sources.json();
+                    for (const src of sourceList) {
+                        const id = src.id || src.uuid;
+                        const libs = await authenticatedFetch(`/api/integrations/tunarr/media-sources/${id}/libraries`);
+                        if (libs.ok) {
+                            const rows = await libs.json();
+                            rows.forEach(row => libraries.push({ ...row, _sourceId: id }));
+                        }
+                    }
+                } else if (mode === 'auto') {
+                    const resp = await authenticatedFetch('/api/plex/libraries');
+                    if (!resp.ok) throw new Error('Plex fallback failed');
+                    libraries = await resp.json();
+                }
+            }
+            libSelect.innerHTML = '<option value="">— Select library —</option>';
+            libraries.forEach(lib => {
+                const opt = document.createElement('option');
+                opt.value = lib.id || lib.uuid || lib.libraryId;
+                opt.textContent = lib.title || lib.name || opt.value;
+                opt.dataset.sourceId = lib._sourceId || '';
+                libSelect.appendChild(opt);
+            });
+        } catch (err) {
+            console.error(err);
+            showAlert(err.message || 'Failed to load libraries', 'error');
+            libSelect.innerHTML = '<option value="">— Error —</option>';
+        }
+    }
+
+    async function loadTunarrSmartCollections() {
+        const el = document.getElementById('tunarrSmartCollectionsList');
+        el.textContent = 'Loading...';
+        try {
+            const resp = await authenticatedFetch('/api/integrations/tunarr/smart-collections');
+            if (!resp.ok) throw new Error('Tunarr smart collections unavailable');
+            const rows = await resp.json();
+            if (!rows.length) {
+                el.textContent = 'No Tunarr smart collections found.';
+                return;
+            }
+            el.innerHTML = rows.map(r => {
+                const name = (r.name || r.id || '').replace(/</g, '&lt;');
+                return `<div style="padding:8px 0;border-bottom:1px solid var(--divider)"><strong>${name}</strong></div>`;
+            }).join('');
+        } catch (err) {
+            el.textContent = err.message || 'Failed to load Tunarr smart collections.';
+        }
+    }
+
+    async function importSelectedPlexItems() {
+        const checked = [...document.querySelectorAll('.plex-pick-checkbox:checked')].map(el => el.value);
+        if (!checked.length) {
+            showAlert('Select at least one item', 'warning');
+            return;
+        }
+        const resp = await authenticatedFetch('/api/plex/media/bulk', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ rating_keys: checked })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || 'Import failed');
+        showAlert(`Imported ${data.created?.length || 0} items`, 'success');
+    }
+
+    function refreshCollections() {
+        loadCollections();
+    }
+    
+    // Helper function for alerts if not defined in base.html
+    function showAlert(message, type = 'info') {
+        if (typeof window.showAlert === 'function') {
+            window.showAlert(message, type);
+            return;
+        }
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: ${type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : '#4444ff'};
+            color: white;
+            border-radius: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 3000);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,118 @@
+# StreamTV Configuration
+
+server:
+  host: "0.0.0.0"
+  port: 8410
+  base_url: "http://localhost:8410"
+
+database:
+  url: "sqlite:///./streamtv.db"
+
+streaming:
+  buffer_size: 8192
+  chunk_size: 1024
+  timeout: 30
+  max_retries: 3
+
+youtube:
+  enabled: true
+  quality: "best"  # best, worst, or specific quality
+  extract_audio: false
+  cookies_file: null  # Netscape cookies.txt for yt-dlp (auto-generated when cookies_json_file is set)
+  cookies_json_file: null  # Browser JSON export (EditThisCookie, etc.)
+  use_authentication: false  # Set to true to enable YouTube authentication
+  api_key: null  # YouTube Data API v3 key (recommended - get from https://console.cloud.google.com/apis/credentials)
+  oauth_client_id: null  # Google OAuth client ID (for OAuth method)
+  oauth_client_secret: null  # Google OAuth client secret (for OAuth method)
+  oauth_refresh_token: null  # OAuth refresh token (auto-generated after first auth)
+
+archive_org:
+  enabled: true
+  preferred_format: "h264"  # h264, mpeg4, etc.
+  mp4_only: true  # Skip non-MP4 archive.org items in playout (H.264 copy mode)
+  username: null  # Archive.org username (optional, for restricted content)
+  password: null  # Archive.org password (optional, for restricted content)
+  use_authentication: false  # Set to true to enable authentication
+
+security:
+  api_key_required: false
+  access_token: null  # Set to require authentication
+
+logging:
+  level: "INFO"
+  file: "streamtv.log"
+
+hdhomerun:
+  enabled: true
+  device_id: "FFFFFFFF"
+  friendly_name: "StreamTV HDHomeRun"
+  tuner_count: 2
+  enable_ssdp: true  # Enable SSDP discovery (requires port 1900). Set to false if port is in use.
+
+# Proxy Tunarr (or other HDHR emulators) so Plex GUI "Add device" accepts a hex DeviceID.
+# Paste: http://<streamtv-lan>:8410/tuners/proxy/tunarr
+# Guide:  http://<streamtv-lan>:8410/tuners/guide.xml
+tuner_manager:
+  enabled: true
+  merged_guide: true
+  tuners:
+    - name: tunarr
+      url: http://<tunarr-host>:8000
+      # force_device_id: null  # auto-generated once → data/tuner_device_ids/tunarr
+      # force_base_url: null   # null → advertise this proxy as BaseURL (required)
+      xmltv_url: http://<tunarr-host>:8000/api/xmltv.xml
+
+plex:
+  enabled: false  # Enable Plex API integration for EPG enhancement
+  base_url: null  # Plex Media Server URL (e.g., "http://<your-plex-host>:32400")
+  token: null  # Plex authentication token (get from Plex server settings)
+  use_for_epg: false  # Use Plex API for EPG metadata enhancement and validation
+
+ffmpeg:
+  ffmpeg_path: "/usr/local/bin/ffmpeg"  # Path to FFmpeg binary
+  ffprobe_path: "/usr/local/bin/ffprobe"  # Path to FFprobe binary
+  log_level: "info"  # FFmpeg log level (quiet, panic, fatal, error, warning, info, verbose, debug)
+  threads: 0  # Number of threads (0 = auto)
+  hwaccel: null  # Hardware acceleration (videotoolbox, cuda, qsv, vaapi, null for software)
+  hwaccel_device: null  # Hardware acceleration device (e.g., "0" for CUDA device 0)
+  extra_flags: null  # Additional FFmpeg flags (e.g., "-maxrate 3000k -bufsize 6000k")
+
+  # Per-source FFmpeg overrides (optional - these override global settings for specific sources)
+  youtube_hwaccel: null  # YouTube-specific hardware acceleration
+  youtube_video_encoder: null  # YouTube-specific video encoder (e.g., "h264_videotoolbox", "h264_nvenc")
+  archive_org_hwaccel: null  # Archive.org-specific hardware acceleration
+  archive_org_video_encoder: null  # Archive.org-specific video encoder
+  pbs_hwaccel: null  # PBS-specific hardware acceleration
+  pbs_video_encoder: null  # PBS-specific video encoder
+  plex_hwaccel: null  # Plex-specific hardware acceleration
+  plex_video_encoder: null  # Plex-specific video encoder
+
+playout:
+  build_days: 1  # Number of days ahead to build playout schedules
+
+# Download-first caching (eliminates API rate-limit lockouts)
+cache:
+  enabled: false
+  # direct — stream from CDN; no background downloads (recommended for Plex / limited disk)
+  # buffer — direct stream + read-ahead prefetch into capped cache (e.g. 2 GB RAM disk)
+  # full   — download-first; wait for cache before playout (legacy; high disk use)
+  playback_mode: direct
+  cache_directory: data/cache
+  max_size_gb: 2.0
+  default_ttl_hours: 72
+  queue_poll_interval_seconds: 15
+  download_timeout_seconds: 3600
+  prefetch_count: 0
+  stream_buffer_mb: 32        # buffer/full: minimum partial file size (MB) for HTTP buffer serve
+  stream_buffer_seconds: 30   # buffer/full: target seconds of ring buffer (background, non-blocking on tune)
+  stream_buffer_max_mb: 48    # buffer: max MB pulled per item (ring buffer, not full download)
+  tune_buffer_max_wait_seconds: 5  # buffer: max seconds to block Plex tune before starting CDN stream
+  tune_only_buffer: true      # buffer: only write RAM when a tuner is connected
+  archive_org_stream_while_caching: true  # full mode only: CDN while download runs
+  download_strategy:
+    enabled: false
+    format_preference: "mp4"
+    max_concurrent_downloads: 2
+    youtube_rate_limit_seconds: 30.0
+    youtube_rate_limit_cooldown_seconds: 3600.0
+    scheduled_downloads: []
