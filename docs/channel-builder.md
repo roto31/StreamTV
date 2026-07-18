@@ -81,7 +81,6 @@ PBS is supported in Channel Builder with `source: pbs` in generated channel YAML
 | Feature | Builder behavior |
 |---------|------------------|
 | Full-episode filter | On by default — skips trailer/preview titles; drops items under 300s when duration is known |
-| Exclude Passport DRM | On by default — probes sample episode HLS manifests; keeps only FFmpeg-playable public streams (`pbs-cs`); skips Passport-only shows (e.g. Masterpiece) at resolve |
 | `epg_sync_class` | Auto **C** for continuous PBS / PBS show-expanded channels (override on Channel Info step) |
 | Show catalog cap | **5000** videos (`pbs.show_max_videos` / `STREAMTV_PBS_SHOW_MAX_VIDEOS`) |
 | PBS cookies | Playwright sign-in, cookie upload, or **Import from Downloads** (`~/Downloads/cookies.txt`) — auto-import on resolve when local cookies are missing |
@@ -95,9 +94,7 @@ PBS is supported in Channel Builder with `source: pbs` in generated channel YAML
 
 Show pages harvest episode links from HTML; full season catalogs use Playwright season iteration when PBS cookies are configured.
 
-Member-only Passport DRM episodes (Masterpiece, many member VOD pages) are **excluded by default** because StreamTV cannot decrypt PBS DRM in FFmpeg. Use public PBS shows (e.g. Nature) or turn off **Exclude Passport DRM** on the URLs step (playback will still fail for DRM-only streams).
-
-Other member-only or geo-restricted PBS content may require PBS sign-in on the Builder **Sign In** step, cookie upload, or importing `cookies.txt` from Downloads.
+Member-only or geo-restricted PBS content requires PBS sign-in on the Builder **Sign In** step, cookie upload, or importing `cookies.txt` from Downloads.
 
 Configure a custom import path with `pbs.cookies_import_path` in `config.yaml` (default `~/Downloads/cookies.txt`).
 

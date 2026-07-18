@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-07-18
+
+### Fixed
+- **Archive.org VOD playout loop** — Archive HTTP inputs no longer reconnect at EOF, so continuous channels (e.g. Magnum) advance to the next episode instead of looping one VOD for hours.
+
+### Build/CI
+- Signed and notarized macOS DMG releases build on GitHub-hosted macOS runners.
+
 ## [1.3.3] - 2026-07-17
 
 See [Metadata enrichment](docs/guides/METADATA_ENRICHMENT.md) · [EPG sync classes](docs/guides/EPG_SYNC_CLASSES.md) · [Architecture](ARCHITECTURE.md) · [Channel Builder](docs/channel-builder.md)
