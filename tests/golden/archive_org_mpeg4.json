@@ -18,6 +18,7 @@
  "10",
  "-multiple_requests",
  "1",
+ "-re",
  "-fflags",
  "+genpts+discardcorrupt+igndts",
  "-err_detect",

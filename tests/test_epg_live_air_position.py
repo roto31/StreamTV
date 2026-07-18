@@ -155,3 +155,136 @@ def test_stabilize_epg_timeline_reuses_starts_until_item_changes() -> None:
     stable_c, state_c = stabilize_epg_timeline_for_plex("1991", 2, third, now2)
     assert state_c == "miss"
     clear_epg_timeline_cache()
+
+
+def test_enforce_on_air_epg_coverage_blocks_next_slot_as_now() -> None:
+    """iptv enforce must stretch on-air row so only row 0 covers `now`."""
+    from streamtv.api.iptv import _enforce_on_air_epg_coverage, _epg_item_covers_now
+
+    items = [_item("For Those", 353), _item("Thunderstruck", 292)]
+    anchor = datetime(2026, 7, 13, 22, 0, 0)
+    live_start = anchor
+    now = anchor + timedelta(seconds=400)  # past scheduled end of row 0
+
+    rows = [
+        {**items[0], "start_time": live_start},
+        {**items[1], "start_time": live_start + timedelta(seconds=353)},
+    ]
+    enforced = _enforce_on_air_epg_coverage(
+        rows, now, live_item_index=0, live_item_start_time=live_start
+    )
+
+    assert _epg_item_covers_now(enforced[0], now)
+    assert not any(_epg_item_covers_now(row, now) for row in enforced[1:])
+    assert enforced[0]["media_item"].title == "For Those"
+
+
+def test_enforce_on_air_epg_anchors_to_live_start_and_grace() -> None:
+    """Stale stabilize starts must not end the on-air row before playout finishes."""
+    from streamtv.api.iptv import _enforce_on_air_epg_coverage, _epg_item_covers_now
+
+    items = [_item("For Those", 353), _item("Thunderstruck", 292)]
+    stale_start = datetime(2026, 7, 13, 23, 2, 0)
+    live_start = datetime(2026, 7, 13, 23, 8, 0)
+    now = live_start + timedelta(seconds=150)
+
+    rows = [
+        {**items[0], "start_time": stale_start},
+        {**items[1], "start_time": stale_start + timedelta(seconds=353)},
+    ]
+    enforced = _enforce_on_air_epg_coverage(
+        rows, now, live_item_index=7, live_item_start_time=live_start
+    )
+
+    assert enforced[0]["start_time"] == live_start
+    assert _epg_item_covers_now(enforced[0], now)
+    assert not _epg_item_covers_now(enforced[1], now)
+
+
+def test_epg_live_air_anchor_prefers_memory_over_stale_saved() -> None:
+    """When playout advanced to idx 8, EPG must not pin to stale saved idx 7."""
+
+    class _Mgr:
+        def get_live_playout_state(self, _channel: str) -> dict:
+            return {"item_index": 8, "item_start_time": datetime(2026, 7, 13, 23, 2, 0)}
+
+    class _Pos:
+        last_item_index = 7
+        last_position_update = datetime(2026, 7, 13, 22, 48, 0)
+
+    from streamtv.api.iptv import _epg_live_air_anchor
+
+    idx, _ = _epg_live_air_anchor(_Mgr(), _Pos(), "1986", guide_index=15)
+    assert idx == 8
+
+
+def test_epg_live_air_anchor_db_fallback_omits_stale_position_update() -> None:
+    """After restart (no memory), item start must come from playout_timeline — not DB touch time."""
+
+    class _Pos:
+        last_item_index = 7
+        last_position_update = datetime(2026, 7, 13, 22, 0, 0)
+
+    from streamtv.api.iptv import _epg_live_air_anchor
+
+    idx, start = _epg_live_air_anchor(None, _Pos(), "1986", guide_index=18)
+    assert idx == 7
+    assert start is None
+
+
+def test_authoritative_enforce_when_air_equals_guide() -> None:
+    """Class-A playout-authoritative path stretches row 0 even when not lagging."""
+    from streamtv.api.iptv import _enforce_on_air_epg_coverage, _epg_item_covers_now
+
+    items = [_item("A", 100), _item("B", 100)]
+    anchor = datetime(2026, 7, 11, 8, 0, 0)
+    live_start = anchor + timedelta(seconds=10)
+    now = live_start + timedelta(seconds=50)
+
+    enforced = _enforce_on_air_epg_coverage(
+        items,
+        now,
+        live_item_index=0,
+        live_item_start_time=live_start,
+    )
+    assert _epg_item_covers_now(enforced[0], now)
+
+
+def test_epg_xml_duration_pad_future_rows_only() -> None:
+    from streamtv.scheduling.playout_timeline import epg_xml_duration, item_duration
+
+    row = _item("A", 200)
+    assert epg_xml_duration(row, pad_seconds=5) == item_duration(row) + 5
+    assert epg_xml_duration(row, pad_seconds=0) == item_duration(row)
+
+
+def test_resolve_epg_sync_class_defaults() -> None:
+    from streamtv.epg_sync_class import resolve_epg_sync_class
+
+    assert resolve_epg_sync_class("1986") == "A"
+    assert resolve_epg_sync_class("80") == "B"
+    assert resolve_epg_sync_class("1929") == "C"
+
+
+def test_enforce_on_air_epg_caps_stretch_for_archive_channels() -> None:
+    """Class B/C lagging rows must not grow into multi-hour Plex guide blocks."""
+    from streamtv.api.iptv import _enforce_on_air_epg_coverage, _epg_item_covers_now
+
+    items = [_item("Magnum", 2800), _item("Next", 2800)]
+    anchor = datetime(2026, 7, 14, 12, 0, 0)
+    now = anchor + timedelta(hours=6)
+
+    rows = [
+        {**items[0], "start_time": anchor, "cached_duration": 6 * 3600},
+        {**items[1], "start_time": anchor + timedelta(hours=6)},
+    ]
+    enforced = _enforce_on_air_epg_coverage(
+        rows,
+        now,
+        live_item_index=0,
+        live_item_start_time=anchor,
+        cap_stretch_to_media=True,
+    )
+
+    max_dur = items[0]["media_item"].duration + 120
+    assert enforced[0]["cached_duration"] <= max_dur

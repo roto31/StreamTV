@@ -271,12 +271,69 @@ class TMDBClient:
                 data = response.json()
                 
                 results = data.get('results', [])
-                if results:
-                    return results[0]  # Return first match
-                return None
+                if not results:
+                    return None
+                return self._pick_best_movie_result(title, year, results)
         except Exception as e:
             logger.error(f"TMDB movie search failed for '{title}': {e}")
             return None
+
+    @staticmethod
+    def _normalize_title_tokens(title: str) -> set:
+        import re
+        t = (title or "").lower()
+        t = re.sub(r"[^a-z0-9\s]", " ", t)
+        # Roman / ordinal synonyms for sequels
+        t = re.sub(r"\bii\b", "2", t)
+        t = re.sub(r"\biii\b", "3", t)
+        t = re.sub(r"\btwo\b", "2", t)
+        t = re.sub(r"\bthree\b", "3", t)
+        stop = {"the", "a", "an", "of", "and"}
+        return {w for w in t.split() if w and w not in stop}
+
+    def _pick_best_movie_result(
+        self,
+        query: str,
+        year: Optional[int],
+        results: List[Dict[str, Any]],
+    ) -> Optional[Dict[str, Any]]:
+        """Prefer title/year-compatible hits; reject loose first-result matches."""
+        q_tokens = self._normalize_title_tokens(query)
+        if not q_tokens:
+            return results[0]
+
+        best = None
+        best_score = -1.0
+        for movie in results[:10]:
+            cand = movie.get("title") or movie.get("original_title") or ""
+            c_tokens = self._normalize_title_tokens(cand)
+            if not c_tokens:
+                continue
+            overlap = len(q_tokens & c_tokens) / len(q_tokens)
+            extra = len(c_tokens - q_tokens)
+            # Reject candidates that add significant unique tokens (e.g. LEGO, Name)
+            if overlap < 0.8 or extra > 1:
+                continue
+            score = overlap * 10 - extra
+            release = (movie.get("release_date") or "")[:4]
+            if year and release.isdigit():
+                dy = abs(int(release) - year)
+                if dy == 0:
+                    score += 5
+                elif dy == 1:
+                    score += 2
+                elif dy > 3:
+                    score -= 5
+            if score > best_score:
+                best_score = score
+                best = movie
+        if best is None:
+            logger.warning(
+                "TMDB: no title-compatible match for %r (year=%s); rejecting loose hits",
+                query,
+                year,
+            )
+        return best
     
     async def get_movie_details(self, movie_id: int) -> Optional[Dict[str, Any]]:
         """Get detailed information about a movie"""
@@ -374,26 +431,47 @@ class MetadataManager:
         Returns:
             Unified metadata dictionary or None
         """
+        from streamtv.utils.media_meta import prefer_longest_description
+
+        tvdb_meta = None
+        tvmaze_meta = None
+
         # Try TVDB first (primary source)
         if self.tvdb:
             try:
-                metadata = await self._get_tvdb_episode(series_name, season, episode, year)
-                if metadata:
-                    logger.info(f"✅ TVDB metadata for {series_name} S{season:02d}E{episode:02d}")
-                    return metadata
+                tvdb_meta = await self._get_tvdb_episode(
+                    series_name, season, episode, year
+                )
+                if tvdb_meta:
+                    logger.info(
+                        f"✅ TVDB metadata for {series_name} "
+                        f"S{season:02d}E{episode:02d}"
+                    )
             except Exception as e:
                 logger.warning(f"TVDB failed, trying fallback: {e}")
-        
-        # Fallback to TVMaze
+
+        # Also consult TVMaze for completeness / longest description
         if self.tvmaze:
             try:
-                metadata = await self._get_tvmaze_episode(series_name, season, episode, year)
-                if metadata:
-                    logger.info(f"✅ TVMaze metadata for {series_name} S{season:02d}E{episode:02d}")
-                    return metadata
+                tvmaze_meta = await self._get_tvmaze_episode(
+                    series_name, season, episode, year
+                )
+                if tvmaze_meta:
+                    logger.info(
+                        f"✅ TVMaze metadata for {series_name} "
+                        f"S{season:02d}E{episode:02d}"
+                    )
             except Exception as e:
                 logger.warning(f"TVMaze also failed: {e}")
-        
+
+        if tvdb_meta and tvmaze_meta:
+            return prefer_longest_description(tvdb_meta, tvmaze_meta)
+        if tvdb_meta:
+            out = prefer_longest_description(tvdb_meta, None)
+            return out
+        if tvmaze_meta:
+            return prefer_longest_description(tvmaze_meta, None)
+
         logger.warning(f"❌ No metadata found for {series_name} S{season:02d}E{episode:02d}")
         return None
     
@@ -427,7 +505,21 @@ class MetadataManager:
             return None
         
         # Normalize to unified format
-        return self._normalize_tvdb_episode(episode_data, series)
+        metadata = self._normalize_tvdb_episode(episode_data, series)
+        # TVDB search hits often omit genres — fill from TVMaze show record (cached)
+        if not metadata.get("genres") and self.tvmaze:
+            gkey = f"tvmaze_show_{series_name}_{year}"
+            try:
+                if gkey not in self._series_cache:
+                    self._series_cache[gkey] = await self.tvmaze.search_show(
+                        series_name, year=year
+                    )
+                show = self._series_cache.get(gkey) or {}
+                if show.get("genres"):
+                    metadata["genres"] = list(show.get("genres") or [])
+            except Exception as exc:
+                logger.debug("TVMaze genre fill after TVDB failed: %s", exc)
+        return metadata
     
     async def _get_tvmaze_episode(
         self,
@@ -561,6 +653,8 @@ class MetadataManager:
     
     def _normalize_tmdb_movie(self, movie: Dict[str, Any]) -> Dict[str, Any]:
         """Normalize TMDB movie data to unified format"""
+        from streamtv.utils.media_meta import normalize_cast
+
         # Build poster URL
         poster_url = None
         if movie.get('poster_path'):
@@ -569,15 +663,20 @@ class MetadataManager:
         backdrop_url = None
         if movie.get('backdrop_path'):
             backdrop_url = f"https://image.tmdb.org/t/p/original{movie['backdrop_path']}"
+
+        cast = normalize_cast(movie.get("credits") or {})
         
         return {
             'source': 'tmdb',
             'title': movie.get('title', ''),
             'original_title': movie.get('original_title', ''),
             'description': movie.get('overview', ''),
+            'description_completeness': len(movie.get('overview') or ''),
             'release_date': movie.get('release_date', ''),
+            'air_date': movie.get('release_date', ''),
             'runtime': movie.get('runtime'),
             'poster': poster_url,
+            'thumbnail': poster_url,  # alias for MediaItem / XMLTV icon path
             'backdrop': backdrop_url,
             'rating': movie.get('vote_average'),
             'rating_count': movie.get('vote_count'),
@@ -588,6 +687,9 @@ class MetadataManager:
             'budget': movie.get('budget'),
             'revenue': movie.get('revenue'),
             'production_companies': [c['name'] for c in movie.get('production_companies', [])],
+            'cast': cast,
+            'sources_consulted': ['tmdb'],
+            'unverified': False,
         }
 
 

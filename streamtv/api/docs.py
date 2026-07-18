@@ -234,6 +234,11 @@ DOCS_FILES = {
     "youtube_geo_blocks": "docs/guides/YOUTUBE_GEO_BLOCKS.md",
     "ffmpeg_profiles": "docs/guides/FFMPEG_PROFILES.md",
     "core_operator_quickstart": "docs/guides/CORE_OPERATOR_QUICKSTART.md",
+    "epg_sync_classes": "docs/guides/EPG_SYNC_CLASSES.md",
+    "streamtv_tunarr_hybrid": "docs/guides/STREAMTV_TUNARR_HYBRID.md",
+    "add_tunarr_in_plex": "docs/guides/ADD_TUNARR_IN_PLEX.md",
+    "vimeo_bedrock_gate": "docs/guides/VIMEO_BEDROCK_GATE.md",
+    "architecture": "ARCHITECTURE.md",
 }
 
 # Legacy mapping for backward compatibility

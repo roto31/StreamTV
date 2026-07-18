@@ -56,6 +56,7 @@ class ChannelInfo(BaseModel):
     description: Optional[str] = None
     playout_mode: Literal["continuous", "on_demand"] = "continuous"
     primary_collection: Optional[str] = None
+    epg_sync_class: Optional[Literal["A", "B", "C"]] = None
 
 
 class BuilderDraft(BaseModel):
@@ -67,6 +68,9 @@ class BuilderDraft(BaseModel):
     ordering: OrderingMode = OrderingMode.AS_ADDED
     channel: ChannelInfo = Field(default_factory=ChannelInfo)
     filler_attachments: list[FillerAttachment] = Field(default_factory=list)
+    pbs_filter_full_episodes: bool = True
+    pbs_min_episode_seconds: int = 300
+    pbs_exclude_passport_drm: bool = True
     built: bool = False
     built_channel_number: Optional[str] = None
 
@@ -112,6 +116,9 @@ class DraftPatchRequest(BaseModel):
     ordering: Optional[OrderingMode] = None
     channel: Optional[ChannelInfo] = None
     filler_attachments: Optional[list[FillerAttachment]] = None
+    pbs_filter_full_episodes: Optional[bool] = None
+    pbs_min_episode_seconds: Optional[int] = Field(default=None, ge=0, le=7200)
+    pbs_exclude_passport_drm: Optional[bool] = None
 
 
 class LinksBatchRequest(BaseModel):

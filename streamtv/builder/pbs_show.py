@@ -20,12 +20,26 @@ SEASON_OPTION_RE = re.compile(
     r'<option value="([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"',
     re.IGNORECASE,
 )
-MAX_VIDEOS = 500
+from streamtv.builder.pbs_episode_filter import (
+    filter_full_pbs_episodes,
+    pbs_show_max_videos,
+)
+
+# Back-compat for scripts that patch this module attribute.
+MAX_VIDEOS = pbs_show_max_videos()
 
 
 def _slugify(text: str, max_len: int = 48) -> str:
     slug = re.sub(r"[^\w]+", "_", text.lower()).strip("_")
     return slug[:max_len] or "item"
+
+
+def pbs_video_stream_id(url: str) -> str:
+    """Stable per-episode id from PBS /video/{slug}/ path (avoids URL-prefix collisions)."""
+    match = PBS_VIDEO_PATH_RE.search(url)
+    if match:
+        return _slugify(match.group(1), max_len=80)
+    return _slugify(url, max_len=80)
 
 
 def parse_show_slug(url: str) -> str:
@@ -49,7 +63,7 @@ def harvest_from_html(html: str, expanded_from: str) -> dict[str, dict[str, Any]
             "url": url,
             "title": slug.replace("-", " ").title(),
             "source": "pbs",
-            "stream_id": _slugify(url),
+            "stream_id": pbs_video_stream_id(url),
             "duration": None,
             "upload_date": None,
             "expanded_from": expanded_from,
@@ -58,7 +72,7 @@ def harvest_from_html(html: str, expanded_from: str) -> dict[str, dict[str, Any]
         url = _canonical_video_url(slug)
         entry = items.get(url, {"url": url, "source": "pbs", "expanded_from": expanded_from})
         entry["title"] = title.replace("\\'", "'")
-        entry["stream_id"] = _slugify(url)
+        entry["stream_id"] = pbs_video_stream_id(url)
         entry["duration"] = int(duration)
         items[url] = entry
     return items
@@ -112,29 +126,61 @@ async def harvest_seasons_playwright(
             if pw_cookies:
                 await context.add_cookies(pw_cookies)
         page = await context.new_page()
-        await page.goto(show_url, wait_until="domcontentloaded", timeout=60000)
-        for season_id in season_ids:
-            try:
-                await page.select_option('select[name="season-picker"]', season_id, timeout=10000)
-            except Exception:
+        await page.goto(show_url, wait_until="networkidle", timeout=90000)
+        picker_count = await page.locator('select[name="season-picker"]').count()
+        if picker_count == 0:
+            await browser.close()
+            return []
+
+        live_ids: list[str] = await page.eval_on_selector(
+            'select[name="season-picker"]',
+            """el => [...new Set(Array.from(el.options).map(o => o.value).filter(v => v && v.length > 8))]""",
+        )
+        target_ids = live_ids or list(season_ids)
+        for season_id in target_ids:
+            selected = False
+            for idx in range(picker_count):
+                picker = page.locator('select[name="season-picker"]').nth(idx)
+                try:
+                    ok = await picker.evaluate(
+                        "(el, value) => {"
+                        "if (![...el.options].some(o => o.value === value)) return false;"
+                        "el.value = value;"
+                        "el.dispatchEvent(new Event('input', { bubbles: true }));"
+                        "el.dispatchEvent(new Event('change', { bubbles: true }));"
+                        "return true;"
+                        "}",
+                        season_id,
+                    )
+                    if ok:
+                        selected = True
+                        break
+                except Exception:
+                    continue
+            if not selected:
                 continue
-            await page.wait_for_timeout(2000)
+            await page.wait_for_timeout(3000)
+            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            await page.wait_for_timeout(500)
             links = await page.eval_on_selector_all(
                 'a[href*="/video/"]',
-                "els => els.map(e => e.getAttribute('href'))",
+                "els => els.map(e => ({href: e.getAttribute('href'), title: (e.textContent || '').trim()}))",
             )
-            for href in links or []:
+            for entry in links or []:
+                href = entry.get("href") if isinstance(entry, dict) else entry
+                title = entry.get("title") if isinstance(entry, dict) else ""
                 if not href or "/video/" not in href:
                     continue
                 slug_match = PBS_VIDEO_PATH_RE.search(href)
                 if not slug_match:
                     continue
                 url = _canonical_video_url(slug_match.group(1))
+                display = title or slug_match.group(1).replace("-", " ").title()
                 results[url] = {
                     "url": url,
-                    "title": slug_match.group(1).replace("-", " ").title(),
+                    "title": display,
                     "source": "pbs",
-                    "stream_id": _slugify(url),
+                    "stream_id": pbs_video_stream_id(url),
                     "duration": None,
                     "upload_date": None,
                     "expanded_from": show_url,
@@ -147,6 +193,10 @@ def expand_pbs_show(
     url: str,
     *,
     season_harvester: Optional[Callable[..., list[dict[str, Any]]]] = None,
+    filter_full_episodes: bool = False,
+    min_episode_seconds: int = 300,
+    exclude_passport_drm: bool = False,
+    max_videos: Optional[int] = None,
 ) -> list[dict[str, Any]]:
     slug = parse_show_slug(url)
     canonical = f"https://www.pbs.org/show/{slug}/"
@@ -171,10 +221,23 @@ def expand_pbs_show(
         for entry in season_items:
             items[entry["url"]] = {**items.get(entry["url"], {}), **entry}
     ordered = list(items.values())
+    if filter_full_episodes:
+        ordered = filter_full_pbs_episodes(ordered, min_seconds=min_episode_seconds)
+    if exclude_passport_drm:
+        from streamtv.builder.pbs_stream_probe import filter_playable_pbs_episodes
+
+        ordered = filter_playable_pbs_episodes(ordered)
     if not ordered:
+        if exclude_passport_drm:
+            raise ValueError(
+                "No PBS videos with FFmpeg-playable streams found. "
+                "Passport-only DRM episodes were excluded — choose a public PBS show "
+                "or disable 'Exclude Passport DRM' in Channel Builder."
+            )
         raise ValueError(
             "No PBS videos found on this show page. Configure PBS sign-in for Passport content."
         )
-    if len(ordered) > MAX_VIDEOS:
-        raise ValueError(f"PBS show has more than {MAX_VIDEOS} videos; narrow the selection.")
+    cap = pbs_show_max_videos(max_videos)
+    if len(ordered) > cap:
+        raise ValueError(f"PBS show has more than {cap} videos; narrow the selection.")
     return ordered

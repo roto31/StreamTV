@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import re
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Request
@@ -18,6 +21,32 @@ from ..tuners.proxy import TunerProxy
 logger = logging.getLogger(__name__)
 
 tuner_router = APIRouter(tags=["tuner-manager"])
+
+# #region agent log
+_DEBUG_LOG = Path(__file__).resolve().parents[2] / ".cursor" / "debug-247576.log"
+
+
+def _agent_log(hypothesis_id: str, location: str, message: str, data: dict) -> None:
+    try:
+        payload = {
+            "sessionId": "247576",
+            "hypothesisId": hypothesis_id,
+            "location": location,
+            "message": message,
+            "data": data,
+            "timestamp": int(time.time() * 1000),
+        }
+        with _DEBUG_LOG.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(payload) + "\n")
+    except OSError:
+        pass
+
+
+def _xmltv_channel_count(xml_bytes: bytes) -> int:
+    text = xml_bytes.decode("utf-8", errors="replace")
+    return len(set(re.findall(r'<channel[^>]+id="([^"]+)"', text)))
+
+# #endregion
 
 
 def _proxies() -> dict[str, TunerProxy]:
@@ -146,6 +175,20 @@ async def merged_guide(request: Request) -> Response:
     except Exception as exc:
         logger.exception("Guide merge failed")
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+    # #region agent log
+    _agent_log(
+        "B",
+        "api/tuner_manager.py:merged_guide",
+        "merged guide channel counts",
+        {
+            "streamtv_url": streamtv_url,
+            "tunarr_url": tunarr_url,
+            "source_labels": source_labels,
+            "merged_channels": _xmltv_channel_count(xml_bytes),
+            "merged_bytes": len(xml_bytes),
+        },
+    )
+    # #endregion
     generation_time = time.time() - perf_start
     now = datetime.now(timezone.utc)
     epg_note = ""

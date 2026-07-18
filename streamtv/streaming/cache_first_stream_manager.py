@@ -69,7 +69,9 @@ class CacheFirstStreamManager:
         """
         if not config.cache.enabled:
             return await self._stream.get_stream_url(
-                media_item.url, tune_priority=tune_priority
+                media_item.url,
+                source=media_item.source,
+                tune_priority=tune_priority,
             )
 
         # ── 1. Cache hit (optional fast path in any mode) ─────────────
@@ -91,7 +93,9 @@ class CacheFirstStreamManager:
                 f"Source {media_item.source} not cacheable, streaming directly."
             )
             return await self._stream.get_stream_url(
-                media_item.url, tune_priority=tune_priority
+                media_item.url,
+                source=media_item.source,
+                tune_priority=tune_priority,
             )
 
         # ── 3. Cacheable source but not yet cached ────────────────────
@@ -156,7 +160,9 @@ class CacheFirstStreamManager:
                 f"(playback_mode={config.cache.playback_mode})"
             )
             return await self._stream.get_stream_url(
-                media_item.url, tune_priority=tune_priority
+                media_item.url,
+                source=media_item.source,
+                tune_priority=tune_priority,
             )
 
         if archive_org_force_cache:
@@ -184,7 +190,9 @@ class CacheFirstStreamManager:
                     f"(direct archive.org, background download continues)"
                 )
                 return await self._stream.get_stream_url(
-                    media_item.url, tune_priority=tune_priority
+                    media_item.url,
+                    source=media_item.source,
+                    tune_priority=tune_priority,
                 )
 
             raise CacheNotReadyError(
@@ -201,7 +209,9 @@ class CacheFirstStreamManager:
             f"[CACHE MISS] Falling back to direct stream: {media_item.title[:60]}"
         )
         return await self._stream.get_stream_url(
-            media_item.url, tune_priority=tune_priority
+            media_item.url,
+            source=media_item.source,
+            tune_priority=tune_priority,
         )
 
     # ------------------------------------------------------------------

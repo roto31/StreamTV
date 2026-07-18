@@ -5,6 +5,7 @@ import logging
 import platform
 import subprocess
 import shutil
+import time
 from typing import AsyncIterator, Optional, List, Dict, Any, Union
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -25,6 +26,36 @@ from streamtv.scheduling.engine import ScheduleEngine
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
+
+# #region agent log
+_DEBUG_LOG_PATH = "/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log"
+
+
+def _agent_dbg_log(
+    hypothesis_id: str,
+    location: str,
+    message: str,
+    data: Dict[str, Any],
+    *,
+    run_id: str = "post-fix",
+) -> None:
+    try:
+        payload = {
+            "sessionId": "247576",
+            "runId": run_id,
+            "hypothesisId": hypothesis_id,
+            "location": location,
+            "message": message,
+            "data": data,
+            "timestamp": int(time.time() * 1000),
+        }
+        with open(_DEBUG_LOG_PATH, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(payload, default=str) + "\n")
+    except Exception:
+        pass
+
+
+# #endregion
 
 
 class StreamURLExpiredError(RuntimeError):
@@ -127,7 +158,11 @@ class MPEGTSStreamer:
         try:
             # Pass channel name to help PBS adapter select correct stream
             channel_name = channel.name if hasattr(channel, 'name') else None
-            first_stream_url = await stream_manager.get_stream_url(first_media.url, channel_name=channel_name)
+            first_stream_url = await stream_manager.get_stream_url(
+                first_media.url,
+                source=first_media.source,
+                channel_name=channel_name,
+            )
             if first_stream_url:
                 logger.info(f"Pre-fetched stream URL for first video: {first_media.title}")
         except Exception as e:
@@ -153,7 +188,11 @@ class MPEGTSStreamer:
                     else:
                         # Pass channel name to help PBS adapter select correct stream
                         channel_name = channel.name if hasattr(channel, 'name') else None
-                        stream_url = await stream_manager.get_stream_url(media_item.url, channel_name=channel_name)
+                        stream_url = await stream_manager.get_stream_url(
+                            media_item.url,
+                            source=media_item.source,
+                            channel_name=channel_name,
+                        )
                     
                     if not stream_url:
                         logger.warning(f"Could not get stream URL for {media_item.title}, skipping")
@@ -369,6 +408,7 @@ class MPEGTSStreamer:
                     if allow_direct_archive:
                         stream_url = await stream_manager.get_stream_url(
                             media_item.url,
+                            source=media_item.source,
                             channel_name=channel_name,
                             tune_priority=tune_priority,
                         )
@@ -381,6 +421,7 @@ class MPEGTSStreamer:
                 else:
                     stream_url = await stream_manager.get_stream_url(
                         media_item.url,
+                        source=media_item.source,
                         channel_name=channel_name,
                         tune_priority=tune_priority,
                     )
@@ -414,6 +455,7 @@ class MPEGTSStreamer:
                 )
                 playback_url = await stream_manager.get_stream_url(
                     media_item.url,
+                    source=media_item.source,
                     channel_name=channel_name,
                     tune_priority=True,
                 )
@@ -537,7 +579,9 @@ class MPEGTSStreamer:
                 and allow_direct_archive
             ):
                 cdn_url = await stream_manager.get_stream_url(
-                    media_item.url, channel_name=channel_name
+                    media_item.url,
+                    source=media_item.source,
+                    channel_name=channel_name,
                 )
                 if cdn_url:
                     logger.info(
@@ -851,6 +895,7 @@ class MPEGTSStreamer:
                 )
                 current_url = await stream_manager.get_stream_url(
                     media_item.url,
+                    source=media_item.source,
                     channel_name=channel_name,
                     tune_priority=tune_priority,
                     force_refresh=True,
@@ -890,6 +935,36 @@ class MPEGTSStreamer:
         
         
         logger.debug(f"FFmpeg command: {' '.join(ffmpeg_cmd)}")
+        # #region agent log
+        _ff_t0 = time.monotonic()
+        _ff_has_re = INPUT_FLAG_REALTIME in ffmpeg_cmd
+        _agent_dbg_log(
+            "H12",
+            "mpegts_streamer.py:ffmpeg_start",
+            "FFmpeg process starting",
+            {
+                "has_re": _ff_has_re,
+                "has_ss": "-ss" in ffmpeg_cmd,
+                "ss_val": (
+                    ffmpeg_cmd[ffmpeg_cmd.index("-ss") + 1]
+                    if "-ss" in ffmpeg_cmd
+                    else None
+                ),
+                "c_v": (
+                    ffmpeg_cmd[ffmpeg_cmd.index("-c:v") + 1]
+                    if "-c:v" in ffmpeg_cmd
+                    else None
+                ),
+                "c_a": (
+                    ffmpeg_cmd[ffmpeg_cmd.index("-c:a") + 1]
+                    if "-c:a" in ffmpeg_cmd
+                    else None
+                ),
+                "is_archive": "archive.org" in (primary_url or "").lower(),
+                "url_prefix": (primary_url or "")[:80],
+            },
+        )
+        # #endregion
         
         # Start FFmpeg process
         process = None
@@ -1024,6 +1099,20 @@ class MPEGTSStreamer:
                         if process.returncode is not None:
                             # Process ended, check for errors
                             await stderr_task
+                            # #region agent log
+                            _agent_dbg_log(
+                                "H12",
+                                "mpegts_streamer.py:ffmpeg_exit",
+                                "FFmpeg process ended",
+                                {
+                                    "returncode": process.returncode,
+                                    "has_re": _ff_has_re,
+                                    "elapsed_s": round(time.monotonic() - _ff_t0, 3),
+                                    "url_prefix": (primary_url or "")[:80],
+                                    "stderr_tail": "\n".join(stderr_lines[-5:])[:500],
+                                },
+                            )
+                            # #endregion
                             if process.returncode != 0:
                                 error_msg = '\n'.join(stderr_lines[-10:])
                                 logger.warning(f"FFmpeg exited with code {process.returncode}: {error_msg}")
@@ -1069,6 +1158,19 @@ class MPEGTSStreamer:
                         # Subsequent read timeout - might be end of file or network issue
                         # Check if process is still running
                         if process.returncode is not None:
+                            # #region agent log
+                            _agent_dbg_log(
+                                "H12",
+                                "mpegts_streamer.py:ffmpeg_exit",
+                                "FFmpeg process ended (timeout path)",
+                                {
+                                    "returncode": process.returncode,
+                                    "has_re": _ff_has_re,
+                                    "elapsed_s": round(time.monotonic() - _ff_t0, 3),
+                                    "url_prefix": (primary_url or "")[:80],
+                                },
+                            )
+                            # #endregion
                             # Process ended, likely end of file
                             break
                         # Check for fatal errors detected in stderr
@@ -1512,6 +1614,8 @@ class MPEGTSStreamer:
         if is_mpeg4:
             if seek_args:
                 cmd.extend(seek_args)
+            if src_archive:
+                cmd.append(INPUT_FLAG_REALTIME)
             cmd.extend([
                 "-fflags", "+genpts+discardcorrupt+igndts",
                 "-err_detect", "ignore_err",
@@ -1595,9 +1699,13 @@ class MPEGTSStreamer:
                     "YouTube DASH split: dual-input FFmpeg (video + separate audio)"
                 )
         else:
-            # frozen legacy block — non-YouTube sources, byte-identical when seek off (golden test)
+            # Non-YouTube sources. Archive.org VOD must use -re (same class of bug as
+            # YouTube without pacing: ~49x flood → premature CDN EOF → hold_partial
+            # restart loop → Plex s1001). PBS live HLS and Plex stay unpaced.
             if seek_args:
                 cmd.extend(seek_args)
+            if src_archive:
+                cmd.append(INPUT_FLAG_REALTIME)
             cmd.extend([
                 "-fflags", "+genpts+discardcorrupt",
                 "-err_detect", "ignore_err",

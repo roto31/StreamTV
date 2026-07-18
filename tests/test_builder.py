@@ -86,23 +86,6 @@ def test_expand_pbs_show_without_network(monkeypatch: pytest.MonkeyPatch) -> Non
     assert all(item["source"] == "pbs" for item in expanded)
 
 
-def test_expand_url_pbs_show(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        "streamtv.builder.resolver.expand_pbs_show",
-        lambda url: [
-            {
-                "url": "https://www.pbs.org/video/nature-ep1/",
-                "title": "Nature Ep 1",
-                "source": "pbs",
-                "stream_id": "nature_ep1",
-            }
-        ],
-    )
-    items = expand_url("https://www.pbs.org/show/nature/")
-    assert len(items) == 1
-    assert items[0]["source"] == "pbs"
-
-
 def test_channel_schema_allows_pbs_source() -> None:
     from streamtv.validation import YAMLValidator
     from pathlib import Path
@@ -128,6 +111,176 @@ def test_channel_schema_allows_pbs_source() -> None:
     }
     validator.validate_channel_data(sample)
 
+
+def test_expand_url_pbs_show(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "streamtv.builder.resolver.expand_pbs_show",
+        lambda url, **kwargs: [
+            {
+                "url": "https://www.pbs.org/video/nature-ep1/",
+                "title": "Nature Ep 1",
+                "source": "pbs",
+                "stream_id": "nature_ep1",
+            }
+        ],
+    )
+    items = expand_url("https://www.pbs.org/show/nature/")
+    assert len(items) == 1
+    assert items[0]["source"] == "pbs"
+
+
+def test_expand_url_youtube_single() -> None:
     items = expand_url("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     assert len(items) == 1
     assert items[0]["source"] == "youtube"
+
+
+def test_pbs_episode_filter_skips_trailers() -> None:
+    from streamtv.builder.pbs_episode_filter import filter_full_pbs_episodes, is_full_pbs_episode
+
+    trailer = {"title": "Season 1 Trailer", "duration": 120, "source": "pbs"}
+    episode = {"title": "Forest of the Lynx", "duration": 3200, "source": "pbs"}
+    passport = {
+        "title": "Watch with PBS Passport",
+        "url": "https://www.pbs.org/video/watch-passport-9nzs5h/",
+        "source": "pbs",
+    }
+    resume = {"title": "Resume Watching", "url": "https://www.pbs.org/video/masterpiece-downton-abbey-season-1-ep-1/", "source": "pbs"}
+    assert not is_full_pbs_episode(trailer)
+    assert is_full_pbs_episode(episode)
+    assert not is_full_pbs_episode(passport)
+    assert not is_full_pbs_episode(resume)
+    filtered = filter_full_pbs_episodes([trailer, episode, passport, resume])
+    assert len(filtered) == 1
+    assert filtered[0]["title"] == "Forest of the Lynx"
+
+
+def test_pbs_video_stream_id_unique_for_downton() -> None:
+    from streamtv.builder.pbs_show import pbs_video_stream_id
+
+    urls = [
+        "https://www.pbs.org/video/masterpiece-downton-abbey-season-1-ep-1/",
+        "https://www.pbs.org/video/masterpiece-downton-abbey-season-1-ep-2/",
+        "https://www.pbs.org/video/masterpiece-downton-abbey-season-2-ep-1/",
+    ]
+    ids = [pbs_video_stream_id(u) for u in urls]
+    assert len(set(ids)) == len(ids)
+
+
+def test_compile_pbs_draft_defaults_epg_sync_class_c() -> None:
+    draft = BuilderDraft(
+        channel=ChannelInfo(number="2319", name="Nature", primary_collection="Nature"),
+        links=[
+            LinkItem(
+                url="https://www.pbs.org/video/nature-ep1/",
+                status=LinkStatus.OK,
+                source="pbs",
+                stream_id="nature_ep1",
+                title="Nature Ep 1",
+                expanded_from="https://www.pbs.org/show/nature/",
+            )
+        ],
+    )
+    unified = compile_draft_to_unified(draft)
+    assert unified["channel"]["epg_sync_class"] == "C"
+
+
+def test_pbs_stream_classify_clear_vs_drm() -> None:
+    from streamtv.builder.pbs_stream_probe import classify_pbs_m3u8_urls
+
+    clear = [
+        "https://ga.pbs-video.pbs.org/p/pbs-cs/sid/x/videos/nature/y/manifest.m3u8",
+        "https://livestream.pbskids.org/out/v1/x/est.m3u8",
+    ]
+    drm = [
+        "https://ga.pbs-video.pbs.org/p/-/sid/x/videos/downton-abbey/y/"
+        "z/cbc/mast4102_2026-AABR-AVC-720p_983.m3u8",
+    ]
+    assert classify_pbs_m3u8_urls(clear) == "clear"
+    assert classify_pbs_m3u8_urls(drm) == "drm_only"
+
+
+def test_expand_pbs_show_excludes_passport_drm_group(monkeypatch: pytest.MonkeyPatch) -> None:
+    from pathlib import Path
+
+    from streamtv.builder import pbs_show
+
+    html = (Path(__file__).parent / "fixtures" / "pbs_nature_show_snippet.html").read_text(
+        encoding="utf-8"
+    )
+
+    class FakeResponse:
+        text = html
+
+        def raise_for_status(self) -> None:
+            return None
+
+    class FakeSession:
+        def get(self, url: str, timeout: int = 60) -> FakeResponse:
+            return FakeResponse()
+
+    def fake_probe(items: list[dict], **kwargs: object) -> list[dict]:
+        return items
+
+    def empty_probe(items: list[dict], **kwargs: object) -> list[dict]:
+        return []
+
+    monkeypatch.setattr(pbs_show, "load_pbs_session", lambda: FakeSession())
+    monkeypatch.setattr(pbs_show, "extract_season_ids", lambda _html: [])
+    monkeypatch.setattr(
+        "streamtv.builder.pbs_stream_probe.filter_playable_pbs_episodes",
+        fake_probe,
+    )
+    expanded = pbs_show.expand_pbs_show(
+        "https://www.pbs.org/show/nature/",
+        exclude_passport_drm=True,
+    )
+    assert expanded
+
+    monkeypatch.setattr(
+        "streamtv.builder.pbs_stream_probe.filter_playable_pbs_episodes",
+        empty_probe,
+    )
+    with pytest.raises(ValueError, match="Passport-only DRM"):
+        pbs_show.expand_pbs_show(
+            "https://www.pbs.org/show/nature/",
+            exclude_passport_drm=True,
+        )
+
+
+def test_pbs_defaults_exclude_passport_drm() -> None:
+    from streamtv.builder.pbs_defaults import apply_pbs_source_defaults
+
+    draft = apply_pbs_source_defaults(BuilderDraft(channel=ChannelInfo(number="1", name="T")))
+    assert draft.pbs_exclude_passport_drm is True
+
+
+def test_expand_pbs_show_applies_filter(monkeypatch: pytest.MonkeyPatch) -> None:
+    from pathlib import Path
+
+    from streamtv.builder import pbs_show
+
+    html = (Path(__file__).parent / "fixtures" / "pbs_nature_show_snippet.html").read_text(
+        encoding="utf-8"
+    )
+
+    class FakeResponse:
+        text = html
+
+        def raise_for_status(self) -> None:
+            return None
+
+    class FakeSession:
+        def get(self, url: str, timeout: int = 60) -> FakeResponse:
+            return FakeResponse()
+
+    monkeypatch.setattr(pbs_show, "load_pbs_session", lambda: FakeSession())
+    monkeypatch.setattr(pbs_show, "extract_season_ids", lambda _html: [])
+
+    expanded = pbs_show.expand_pbs_show(
+        "https://www.pbs.org/show/nature/",
+        filter_full_episodes=True,
+        min_episode_seconds=300,
+    )
+    assert expanded
+    assert all(item.get("duration") is None or item["duration"] >= 300 for item in expanded)

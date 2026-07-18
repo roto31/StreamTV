@@ -21,6 +21,20 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+# Masterpiece / Passport VOD often exposes multiple HLS manifests; FFmpeg cannot
+# decrypt CMAF+DRM variants (skd://drmtoday, AABR-AVC, /cbc/). Prefer pbs-cs CDN.
+_PBS_DRM_URL_MARKERS: tuple[str, ...] = (
+    "p/-/sid/",
+    "aabr-avc",
+    "/cbc/",
+    "drmtoday",
+)
+_PBS_BAD_URL_MARKERS: tuple[str, ...] = (
+    "static.drm.pbs.org",
+    "livestream-update-needed",
+    "livestream.pbskids.org",
+)
+
 
 class PBSAdapter:
     """Adapter for streaming PBS live channels"""
@@ -172,8 +186,8 @@ class PBSAdapter:
             # Navigate to PBS page
             await page.goto(url, wait_until='networkidle', timeout=30000)
             
-            # Wait a bit for JavaScript to execute and load streams
-            await asyncio.sleep(2)
+            # Wait for JavaScript and HLS manifest network requests (VOD can be slow).
+            await asyncio.sleep(5)
             
             # Try to extract from JavaScript variables
             try:
@@ -187,11 +201,9 @@ class PBSAdapter:
                 
                 if previews_data:
                     logger.debug(f"Found window.previews with keys: {list(previews_data.keys()) if isinstance(previews_data, dict) else 'array'}")
-                    # Recursively search for m3u8 URLs
-                    stream_url = self._find_m3u8_in_json(previews_data)
-                    if stream_url:
-                        logger.info(f"Found stream URL in window.previews: {stream_url[:100]}...")
-                        return stream_url
+                    for preview_url in self._find_all_m3u8_in_json(previews_data):
+                        if preview_url not in stream_urls:
+                            stream_urls.append(preview_url)
             except Exception as e:
                 logger.debug(f"Error extracting from window.previews: {e}")
             
@@ -205,10 +217,8 @@ class PBSAdapter:
                     stream_urls.append(stream_url)
                     logger.debug(f"Found m3u8 URL in page content: {stream_url[:100]}...")
             
-            # Return first found stream URL
             if stream_urls:
-                logger.info(f"Found {len(stream_urls)} stream URL(s), using first: {stream_urls[0][:100]}...")
-                return stream_urls[0]
+                return self._select_preferred_stream_url(stream_urls)
             
             # If no stream URLs found, try to get from video player
             try:
@@ -298,26 +308,33 @@ class PBSAdapter:
         return client
     
     def is_valid_url(self, url: str) -> bool:
-        """Check if URL is a PBS live stream page or direct HLS stream"""
+        """Check if URL is a PBS VOD page, live page, or direct HLS stream."""
         pbs_domains = [
             'pbs.org',
             'pbskids.org',
-            'livestream.pbskids.org',  # PBS Kids live stream CDN
-            '.lls.pbs.org',  # PBS live stream CDN
-            'pbs.org/video',
-            'pbs.org/live'
+            'livestream.pbskids.org',
+            'lls.pbs.org',
         ]
         url_lower = url.lower()
-        
-        # Check if it's a PBS domain
+
         is_pbs_domain = any(domain in url_lower for domain in pbs_domains)
-        
-        # If it's a direct HLS URL (.m3u8) from a PBS domain, it's valid
-        if is_pbs_domain and '.m3u8' in url_lower:
+        if not is_pbs_domain:
+            return False
+
+        if '.m3u8' in url_lower:
             return True
-        
-        # Otherwise, check if it's a PBS live stream page
-        return is_pbs_domain and ('watch-live' in url_lower or 'live' in url_lower)
+
+        # VOD episode / clip pages (Channel Builder Nature catalog, etc.)
+        if '/video/' in url_lower:
+            return True
+
+        # Live stream landing pages — path-based only (never match "lived" in slugs)
+        if 'watch-live' in url_lower:
+            return True
+        if re.search(r'/(live|watch)(/|$)', url_lower):
+            return True
+
+        return False
     
     async def get_stream_url(self, url: str, channel_name: Optional[str] = None) -> str:
         """
@@ -332,7 +349,16 @@ class PBSAdapter:
         if '.m3u8' in url.lower():
             logger.info(f"URL is already a direct HLS stream: {url[:100]}...")
             return url
-        
+
+        # VOD episode pages are JS-rendered; HTML scrape often returns PBS Kids live
+        # or placeholder manifests before the real ga.pbs-video.pbs.org URLs appear.
+        if self.use_headless_browser and "www.pbs.org/video/" in url.lower():
+            try:
+                logger.info("PBS VOD page: extracting stream URL with headless browser first...")
+                return await self._extract_stream_url_with_browser(url, channel_name)
+            except Exception as e:
+                logger.warning(f"Headless browser (VOD-first) failed, falling back to HTML: {e}")
+
         client = await self._ensure_authenticated()
         
         try:
@@ -509,21 +535,120 @@ class PBSAdapter:
             logger.error(f"Error extracting PBS stream URL: {e}")
             raise
     
-    def _find_m3u8_in_json(self, data: Any) -> Optional[str]:
-        """Recursively search for .m3u8 URLs in JSON data"""
+    @classmethod
+    def _is_drm_pbs_stream_url(cls, url: str) -> bool:
+        lower = url.lower()
+        return any(marker in lower for marker in _PBS_DRM_URL_MARKERS)
+
+    @classmethod
+    def _is_bad_pbs_stream_url(cls, url: str) -> bool:
+        lower = url.lower()
+        return any(marker in lower for marker in _PBS_BAD_URL_MARKERS)
+
+    @classmethod
+    def _pbs_stream_url_score(cls, url: str) -> tuple[int, int]:
+        lower = url.lower()
+        score = 0
+        if "/pbs-cs/" in lower:
+            score -= 30
+        if "ga.pbs-video.pbs.org" in lower:
+            score -= 10
+        for marker in _PBS_DRM_URL_MARKERS:
+            if marker in lower:
+                score += 10
+        for marker in _PBS_BAD_URL_MARKERS:
+            if marker in lower:
+                score += 100
+        return (score, len(url))
+
+    def _select_preferred_stream_url(self, urls: list[str]) -> str:
+        """Pick FFmpeg-playable PBS HLS when multiple manifests are discovered."""
+        unique = list(dict.fromkeys(u for u in urls if u and ".m3u8" in u.lower()))
+        if not unique:
+            raise ValueError("No PBS m3u8 stream URLs to select from")
+
+        good = [u for u in unique if not self._is_bad_pbs_stream_url(u)]
+        non_drm = [u for u in good if not self._is_drm_pbs_stream_url(u)]
+        pbs_cs = [u for u in non_drm if "/pbs-cs/" in u.lower()]
+        if pbs_cs:
+            pool = pbs_cs
+        elif non_drm:
+            pool = non_drm
+        elif good:
+            pool = good
+        else:
+            pool = unique
+
+        if len(pool) == 1:
+            chosen = pool[0]
+            logger.info(f"Found 1 stream URL: {chosen[:100]}...")
+            return chosen
+
+        chosen = min(pool, key=self._pbs_stream_url_score)
+        first = unique[0]
+        if chosen != first:
+            logger.info(
+                "Selected preferred PBS stream URL (%d candidates, skipped DRM/CMAF): %s...",
+                len(unique),
+                chosen[:100],
+            )
+        else:
+            logger.info(f"Found {len(unique)} stream URL(s), using first: {chosen[:100]}...")
+
+        # #region agent log
+        try:
+            import json as _json
+            import time as _time
+            from pathlib import Path as _Path
+
+            _payload = {
+                "sessionId": "247576",
+                "runId": "post-fix",
+                "hypothesisId": "PBS-DRM",
+                "location": "pbs_adapter.py:_select_preferred_stream_url",
+                "message": "pbs stream url selection",
+                "data": {
+                    "count": len(unique),
+                    "pool_size": len(pool),
+                    "chosen_drm": self._is_drm_pbs_stream_url(chosen),
+                    "chosen_bad": self._is_bad_pbs_stream_url(chosen),
+                    "first_drm": self._is_drm_pbs_stream_url(first),
+                    "chosen_has_pbs_cs": "/pbs-cs/" in chosen.lower(),
+                    "skipped_drm_count": sum(1 for u in unique if self._is_drm_pbs_stream_url(u)),
+                    "skipped_bad_count": sum(1 for u in unique if self._is_bad_pbs_stream_url(u)),
+                },
+                "timestamp": int(_time.time() * 1000),
+            }
+            with _Path("/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log").open(
+                "a", encoding="utf-8"
+            ) as _f:
+                _f.write(_json.dumps(_payload) + "\n")
+        except Exception:
+            pass
+        # #endregion
+
+        return chosen
+
+    def _find_all_m3u8_in_json(self, data: Any) -> list[str]:
+        """Recursively collect all .m3u8 URLs in JSON data."""
+        found: list[str] = []
         if isinstance(data, dict):
-            for key, value in data.items():
-                if isinstance(value, str) and '.m3u8' in value and value.startswith('http'):
-                    return value
-                result = self._find_m3u8_in_json(value)
-                if result:
-                    return result
+            for value in data.values():
+                if isinstance(value, str) and ".m3u8" in value and value.startswith("http"):
+                    found.append(value)
+                else:
+                    found.extend(self._find_all_m3u8_in_json(value))
         elif isinstance(data, list):
             for item in data:
-                result = self._find_m3u8_in_json(item)
-                if result:
-                    return result
-        return None
+                found.extend(self._find_all_m3u8_in_json(item))
+        return found
+
+    def _find_m3u8_in_json(self, data: Any) -> Optional[str]:
+        """Recursively search for the best .m3u8 URL in JSON data."""
+        urls = self._find_all_m3u8_in_json(data)
+        if not urls:
+            return None
+        return self._select_preferred_stream_url(urls)
     
     async def stream_chunked(self, url: str) -> AsyncIterator[bytes]:
         """

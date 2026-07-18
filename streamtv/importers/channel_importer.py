@@ -387,6 +387,9 @@ class ChannelImporter:
                 existing.logo_path = channel_config["logo_path"]
             if yaml_playout:
                 existing.playout_mode = str(yaml_playout).lower().replace("-", "_")
+            yaml_sync = channel_config.get("epg_sync_class")
+            if yaml_sync:
+                existing.epg_sync_class = str(yaml_sync).strip().upper()[:1]
             self.db.commit()
             self.db.refresh(existing)
             channel = existing
@@ -402,6 +405,9 @@ class ChannelImporter:
             )
             if yaml_playout:
                 create_kwargs["playout_mode"] = str(yaml_playout).lower().replace("-", "_")
+            yaml_sync = channel_config.get("epg_sync_class")
+            if yaml_sync:
+                create_kwargs["epg_sync_class"] = str(yaml_sync).strip().upper()[:1]
             channel = Channel(**create_kwargs)
             self.db.add(channel)
             self.db.commit()

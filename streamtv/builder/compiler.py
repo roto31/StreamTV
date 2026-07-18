@@ -59,6 +59,21 @@ def _collection_name(draft: BuilderDraft) -> str:
     return name
 
 
+def _epg_sync_class_for_draft(draft: BuilderDraft) -> Optional[str]:
+    if draft.channel.epg_sync_class:
+        return draft.channel.epg_sync_class
+    ok_links = [link for link in draft.links if link.status == LinkStatus.OK]
+    if not ok_links:
+        return None
+    if draft.channel.playout_mode != "continuous":
+        return None
+    if all((link.source or "") == "pbs" for link in ok_links):
+        return "C"
+    if any(link.expanded_from and "pbs.org/show/" in link.expanded_from.lower() for link in ok_links):
+        return "C"
+    return None
+
+
 def _streams_from_draft(
     draft: BuilderDraft,
     filler_store: FillerStore,
@@ -177,6 +192,38 @@ def compile_draft_to_unified(
     if not streams:
         raise ValueError("No resolved streams to compile")
 
+    # #region agent log
+    try:
+        import json
+        import time
+        from pathlib import Path as _Path
+
+        ids = [s.get("id") for s in streams if s.get("id")]
+        dupes = len(ids) - len(set(ids))
+        _Path("/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log").open("a").write(
+            json.dumps(
+                {
+                    "sessionId": "247576",
+                    "hypothesisId": "H1",
+                    "location": "compiler.py:compile_draft_to_unified",
+                    "message": "compile stream id uniqueness",
+                    "data": {
+                        "channel": draft.channel.number,
+                        "stream_count": len(streams),
+                        "unique_ids": len(set(ids)),
+                        "duplicate_id_count": dupes,
+                        "sample_ids": ids[:3],
+                    },
+                    "timestamp": int(time.time() * 1000),
+                    "runId": "pre-fix",
+                }
+            )
+            + "\n"
+        )
+    except Exception:
+        pass
+    # #endregion
+
     number = draft.channel.number
     if not number:
         raise ValueError("Channel number is required before build")
@@ -194,6 +241,9 @@ def compile_draft_to_unified(
         "streams": streams,
         "schedule": _schedule_from_draft(draft, store),
     }
+    epg_class = _epg_sync_class_for_draft(draft)
+    if epg_class:
+        unified["channel"]["epg_sync_class"] = epg_class
     unified["channel"] = {k: v for k, v in unified["channel"].items() if v is not None}
     return unified
 

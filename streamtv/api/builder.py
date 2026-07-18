@@ -18,7 +18,14 @@ from streamtv.builder.auth_service import (
     auth_status,
 )
 from streamtv.builder.compiler import _next_channel_number, build_channel_from_draft
-from streamtv.builder.cookie_io import cookies_path_for_scope, write_netscape_cookies
+from streamtv.builder.cookie_io import (
+    cookies_path_for_scope,
+    default_pbs_cookies_import_path,
+    ensure_pbs_cookies_for_builder,
+    import_pbs_cookies_from_downloads,
+    write_netscape_cookies,
+)
+from streamtv.builder.pbs_defaults import apply_pbs_source_defaults
 from streamtv.builder.jobs import job_store
 from streamtv.builder.models import (
     ArchiveLoginRequest,
@@ -108,6 +115,11 @@ async def _resolve_draft_links(job: BuilderJob) -> None:
         job_store.save(job)
         return
 
+    if draft.selected_source == "pbs":
+        imported = ensure_pbs_cookies_for_builder(auto_import_downloads=True)
+        if imported:
+            logger.info("PBS cookies ready for resolve: %s", imported)
+
     pending = [link for link in draft.links if link.status in (LinkStatus.PENDING, LinkStatus.ERROR)]
     job.total = len(pending)
     job.completed = 0
@@ -117,7 +129,7 @@ async def _resolve_draft_links(job: BuilderJob) -> None:
         link.status = LinkStatus.RESOLVING
         draft_store.save(draft)
         try:
-            expanded = await resolve_url_async(link.url)
+            expanded = await resolve_url_async(link.url, draft=draft)
             if len(expanded) == 1:
                 item = expanded[0]
                 link.status = LinkStatus.OK
@@ -252,6 +264,22 @@ async def builder_auth_plex(body: PlexLoginRequest) -> dict:
     return apply_plex_credentials(body.base_url, body.token)
 
 
+@router.post("/auth/pbs/cookies/import")
+async def builder_auth_pbs_import_downloads() -> dict:
+    """Import PBS cookies from ~/Downloads/cookies.txt (or pbs.cookies_import_path)."""
+    try:
+        path = import_pbs_cookies_from_downloads()
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    apply_pbs_cookies(path)
+    return {
+        "status": "success",
+        "scope": "pbs",
+        "cookies_file": str(path),
+        "import_source": str(default_pbs_cookies_import_path()),
+    }
+
+
 @router.post("/auth/{scope}/cookies")
 async def builder_auth_cookies(scope: str, file: UploadFile = File(...)) -> dict:
     scope_key = scope.replace("community:", "")
@@ -314,12 +342,20 @@ async def patch_draft(draft_id: str, body: DraftPatchRequest) -> BuilderDraft:
         if spec.status == "coming_soon":
             raise HTTPException(status_code=400, detail=f"{spec.label} is not available yet")
         draft.selected_source = body.selected_source
+        if body.selected_source == "pbs":
+            draft = apply_pbs_source_defaults(draft)
     if body.ordering is not None:
         draft.ordering = body.ordering
     if body.channel is not None:
         draft.channel = body.channel
     if body.filler_attachments is not None:
         draft.filler_attachments = body.filler_attachments
+    if body.pbs_filter_full_episodes is not None:
+        draft.pbs_filter_full_episodes = body.pbs_filter_full_episodes
+    if body.pbs_min_episode_seconds is not None:
+        draft.pbs_min_episode_seconds = body.pbs_min_episode_seconds
+    if body.pbs_exclude_passport_drm is not None:
+        draft.pbs_exclude_passport_drm = body.pbs_exclude_passport_drm
     return draft_store.save(draft)
 
 

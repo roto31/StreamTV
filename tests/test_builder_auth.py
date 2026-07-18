@@ -8,7 +8,13 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from streamtv.builder.auth_service import auth_status
-from streamtv.builder.cookie_io import cookies_path_for_scope, write_netscape_cookies
+from streamtv.builder.cookie_io import (
+    cookies_path_for_scope,
+    import_pbs_cookies_from_downloads,
+    write_netscape_cookies,
+)
+from streamtv.builder.models import BuilderDraft, ChannelInfo
+from streamtv.builder.pbs_defaults import apply_pbs_source_defaults
 from streamtv.builder.playwright_auth import PLAYWRIGHT_INSTALL_HINT, PlaywrightAuthError
 
 
@@ -35,6 +41,25 @@ def test_write_netscape_cookies(tmp_path: Path) -> None:
     text = path.read_text(encoding="utf-8")
     assert "Netscape HTTP Cookie File" in text
     assert "session" in text
+
+
+def test_import_pbs_cookies_from_downloads(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    src = tmp_path / "downloads" / "cookies.txt"
+    src.parent.mkdir(parents=True)
+    src.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
+    dest = tmp_path / "pbs_cookies.txt"
+    out = import_pbs_cookies_from_downloads(source=src, dest=dest, backup=False)
+    assert out == dest
+    assert dest.read_text(encoding="utf-8").startswith("# Netscape")
+
+
+def test_apply_pbs_source_defaults() -> None:
+    draft = BuilderDraft(channel=ChannelInfo(number="2319", name="Nature"))
+    updated = apply_pbs_source_defaults(draft)
+    assert updated.pbs_filter_full_episodes is True
+    assert updated.pbs_min_episode_seconds == 300
+    assert updated.pbs_exclude_passport_drm is True
+    assert updated.channel.playout_mode == "continuous"
 
 
 def test_auth_status_defaults() -> None:

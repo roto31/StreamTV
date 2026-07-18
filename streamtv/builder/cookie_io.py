@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import shutil
 import time
+from datetime import datetime, timezone
 from http.cookiejar import MozillaCookieJar
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 import requests
 
@@ -17,6 +19,62 @@ def cookies_path_for_scope(scope: str) -> Path:
         "archive_org": Path("data/cookies/archive_cookies.txt"),
     }
     return mapping.get(scope, Path(f"data/cookies/{scope}_cookies.txt"))
+
+
+def default_pbs_cookies_import_path() -> Path:
+    """Operator export path (browser extension → ~/Downloads/cookies.txt)."""
+    try:
+        from streamtv.config import config
+
+        raw = getattr(config.pbs, "cookies_import_path", None)
+        if raw:
+            return Path(raw).expanduser()
+    except Exception:
+        pass
+    return Path.home() / "Downloads" / "cookies.txt"
+
+
+def import_pbs_cookies_from_downloads(
+    *,
+    source: Optional[Path] = None,
+    dest: Optional[Path] = None,
+    backup: bool = True,
+) -> Path:
+    """Copy operator cookies export into data/cookies/pbs_cookies.txt."""
+    src = (source or default_pbs_cookies_import_path()).expanduser()
+    if not src.is_file():
+        raise FileNotFoundError(f"PBS cookies not found: {src}")
+    target = dest or cookies_path_for_scope("pbs")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if backup and target.exists():
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        backup_path = target.with_suffix(f".backup-{stamp}.txt")
+        shutil.copy2(target, backup_path)
+    shutil.copy2(src, target)
+    return target
+
+
+def ensure_pbs_cookies_for_builder(*, auto_import_downloads: bool = True) -> Optional[Path]:
+    """Use configured PBS cookies or import from Downloads when missing."""
+    from streamtv.builder.auth_service import apply_pbs_cookies
+    from streamtv.config import config
+
+    candidates: list[Path] = []
+    if getattr(config, "pbs", None) and config.pbs.cookies_file:
+        candidates.append(Path(config.pbs.cookies_file))
+    candidates.append(cookies_path_for_scope("pbs"))
+    for path in candidates:
+        if path.exists():
+            apply_pbs_cookies(path)
+            return path
+    if not auto_import_downloads:
+        return None
+    src = default_pbs_cookies_import_path()
+    if not src.is_file():
+        return None
+    path = import_pbs_cookies_from_downloads(source=src)
+    apply_pbs_cookies(path)
+    return path
 
 
 def write_netscape_cookies(path: Path, cookies: Iterable[dict]) -> Path:

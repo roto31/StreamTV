@@ -35,3 +35,15 @@ def init_db():
     # Import all models to ensure they're registered
     from . import models
     Base.metadata.create_all(bind=engine)
+    try:
+        from pathlib import Path
+        import subprocess
+        script = Path(__file__).resolve().parents[2] / "scripts" / "add_epg_sync_class_migration.py"
+        if script.is_file():
+            subprocess.run(
+                [__import__("sys").executable, str(script)],
+                check=False,
+                capture_output=True,
+            )
+    except Exception:
+        pass

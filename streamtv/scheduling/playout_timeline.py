@@ -31,6 +31,19 @@ def item_duration(schedule_item: Dict[str, Any], default: int = 1800) -> int:
     return default
 
 
+def epg_xml_duration(
+    schedule_item: Dict[str, Any],
+    *,
+    pad_seconds: int = 0,
+    default: int = 1800,
+) -> int:
+    """XMLTV-only duration (optional pad for future grid slots; does not affect playout)."""
+    base = item_duration(schedule_item, default=default)
+    if pad_seconds > 0:
+        return base + int(pad_seconds)
+    return base
+
+
 def stamp_cached_durations(schedule_items: List[Dict[str, Any]]) -> None:
     """Attach cached_duration on each item for stable timeline math."""
     for item in schedule_items:

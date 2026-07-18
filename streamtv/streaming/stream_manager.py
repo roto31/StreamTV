@@ -161,6 +161,19 @@ class StreamManager:
         elif self.plex_adapter and ('plex://' in url or '/library/metadata/' in url):
             return StreamSource.PLEX
         return StreamSource.UNKNOWN
+
+    @staticmethod
+    def _coerce_stream_source(source: object | None) -> StreamSource | None:
+        """Accept StreamManager or database StreamSource enums (and raw values)."""
+        if source is None:
+            return None
+        if isinstance(source, StreamSource):
+            return source
+        value = source.value if hasattr(source, "value") else source
+        try:
+            return StreamSource(value)
+        except ValueError:
+            return StreamSource.UNKNOWN
     
     async def get_stream_url(
         self,
@@ -173,6 +186,7 @@ class StreamManager:
     ) -> str:
         """Get streaming URL for a media URL"""
         
+        source = self._coerce_stream_source(source)
         if source is None:
             source = self.detect_source(url)
         
@@ -202,6 +216,7 @@ class StreamManager:
     
     async def get_media_info(self, url: str, source: Optional[StreamSource] = None) -> dict:
         """Get media information"""
+        source = self._coerce_stream_source(source)
         if source is None:
             source = self.detect_source(url)
         

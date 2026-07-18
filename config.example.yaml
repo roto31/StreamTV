@@ -67,6 +67,10 @@ plex:
   base_url: null  # Plex Media Server URL (e.g., "http://<your-plex-host>:32400")
   token: null  # Plex authentication token (get from Plex server settings)
   use_for_epg: false  # Use Plex API for EPG metadata enhancement and validation
+  auto_reload_guide: true
+  reload_on_item_boundary: true
+  item_boundary_cooldown_s: 90
+  global_reload_cooldown_s: 900
 
 ffmpeg:
   ffmpeg_path: "/usr/local/bin/ffmpeg"  # Path to FFmpeg binary
@@ -89,6 +93,17 @@ ffmpeg:
 
 playout:
   build_days: 1  # Number of days ahead to build playout schedules
+  # EPG sync classes — see docs/guides/EPG_SYNC_CLASSES.md
+  epg_sync_classes:
+    A:
+      playout_authoritative_epg: true
+      epg_pad_seconds: 5
+      prefetch_at_boundary: 1
+      reload_on_item_boundary: true
+    B:
+      archive_tune_seek: true
+    C: {}
+  epg_sync_class_fallback: {}  # per-channel overrides, e.g. "1986": "A"
 
 # Download-first caching (eliminates API rate-limit lockouts)
 cache:

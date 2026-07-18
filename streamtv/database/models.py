@@ -93,6 +93,7 @@ class Channel(Base):
     # Store as String to avoid SQLAlchemy enum validation issues with SQLite
     # Conversion to enum handled by @reconstructor method
     playout_mode = Column(String, default=PlayoutMode.CONTINUOUS.value, nullable=False)  # Continuous or on-demand
+    epg_sync_class = Column(String, nullable=True)  # A | B | C — EPG sync taxonomy
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

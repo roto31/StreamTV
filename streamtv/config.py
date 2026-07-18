@@ -74,6 +74,8 @@ class PBSConfig(BaseSettings):
     use_authentication: bool = False
     cookies_file: Optional[str] = None  # Path to cookies.txt file for authentication (preferred)
     use_headless_browser: bool = True  # Use headless browser for JavaScript-rendered pages (requires Playwright)
+    show_max_videos: int = 5000  # PBS show expand cap (Nature and similar catalogs)
+    cookies_import_path: Optional[str] = None  # default ~/Downloads/cookies.txt for Builder import
     # Common PBS stations - can be extended
     stations: Optional[Dict[str, str]] = None
 
@@ -127,6 +129,20 @@ class PlayoutConfig(BaseSettings):
         default_factory=lambda: ["1988", "1991", "1994"]
     )
     hybrid_boot_defer: List[str] = Field(default_factory=lambda: ["1984"])
+    # EPG sync taxonomy — see docs/guides/EPG_SYNC_CLASSES.md
+    epg_sync_classes: Dict[str, Dict[str, object]] = Field(
+        default_factory=lambda: {
+            "A": {
+                "playout_authoritative_epg": True,
+                "epg_pad_seconds": 5,
+                "prefetch_at_boundary": 1,
+                "reload_on_item_boundary": True,
+            },
+            "B": {"archive_tune_seek": True},
+            "C": {},
+        }
+    )
+    epg_sync_class_fallback: Dict[str, str] = Field(default_factory=dict)
 
     class Config:
         env_prefix = "STREAMTV_PLAYOUT_"
@@ -142,6 +158,9 @@ class PlexConfig(BaseSettings):
     )
     use_for_epg: bool = False  # Use Plex API for EPG metadata enhancement
     auto_reload_guide: bool = True  # POST livetv/dvrs/{id}/reloadGuide when playout lags wall-clock
+    reload_on_item_boundary: bool = True  # Class-A item advance → reloadGuide (per-channel cooldown)
+    item_boundary_cooldown_s: int = 90
+    global_reload_cooldown_s: int = 900  # Tune-connect lag reload cooldown
     dvr_id: Optional[str] = None  # Plex DVR key; auto-discovered when unset
     logs_path: Optional[str] = None  # Path to Plex Media Server logs directory (auto-detected if not set)
     

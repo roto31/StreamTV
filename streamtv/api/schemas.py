@@ -52,6 +52,7 @@ class ChannelBase(BaseModel):
     enabled: bool = True
     logo_path: Optional[str] = None
     playout_mode: Union[PlayoutMode, str] = PlayoutMode.CONTINUOUS  # Continuous or on-demand
+    epg_sync_class: Optional[str] = None  # A | B | C
     transcode_profile: Optional[str] = None  # "cpu", "nvidia", "intel" (legacy)
     is_yaml_source: bool = False
     
