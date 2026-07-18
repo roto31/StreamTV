@@ -45,11 +45,26 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 ### Channel Management
 - [Schedules Guide](SCHEDULES.md) - Create and manage schedules
 - [HDHomeRun Integration](HDHOMERUN.md) - Emulation setup
+- [Channel Builder](channel-builder.md) - URL-first channel assembly wizard
 - [Comparison](COMPARISON.md) - Feature comparisons
+
+### Operator guides (`guides/`)
+- [Core operator quickstart](guides/CORE_OPERATOR_QUICKSTART.md)
+- [Import vs Channel Builder](guides/IMPORT_VS_BUILDER.md)
+- [Metadata enrichment](guides/METADATA_ENRICHMENT.md) — TVDB/TVMaze/TMDB, SxxExx retitle, guide audits
+- [EPG sync classes A/B/C](guides/EPG_SYNC_CLASSES.md) — Plex guide vs continuous playout
+- [PBS + Playwright](guides/PBS_PLAYWRIGHT.md)
+- [Archive.org operator](guides/ARCHIVE_ORG_OPERATOR.md)
+- [FFmpeg profiles](guides/FFMPEG_PROFILES.md)
+- [YouTube geo-blocks](guides/YOUTUBE_GEO_BLOCKS.md)
+- [StreamTV + Tunarr hybrid](guides/STREAMTV_TUNARR_HYBRID.md)
+- [Add Tunarr in Plex](guides/ADD_TUNARR_IN_PLEX.md)
+- [Vimeo bedrock gate](guides/VIMEO_BEDROCK_GATE.md)
 
 ### External Integrations
 - **Plex** → [docs/plex/](plex/)
 - **ErsatzTV** → [ERSATZTV_COMPLETE_INTEGRATION.md](ERSATZTV_COMPLETE_INTEGRATION.md)
+- **Architecture (Mermaid)** → [ARCHITECTURE.md](../ARCHITECTURE.md)
 
 ---
 
@@ -206,50 +221,18 @@ repair_database.sh
 
 ```
 docs/
-├── INDEX.md (this file)
-│
+├── INDEX.md / README.md
+├── guides/                   # Operator guides (EPG, enrichment, PBS, Tunarr)
+├── wiki/                     # GitHub Wiki mirror
+├── channel-builder.md
 ├── archive-parser/           # Archive.org channel creation
-│   ├── QUICK_REFERENCE_ARCHIVE_PARSER.md
-│   ├── MAGNUM_PI_CHANNEL_COMPLETE.md
-│   ├── ARCHIVE_PARSER_IMPLEMENTATION_SUMMARY.md
-│   └── ...
-│
 ├── logging/                  # Logging system
-│   ├── LOGGING_QUICKSTART.md
-│   ├── LOGGING.md
-│   └── ...
-│
 ├── plex/                     # Plex integration
-│   ├── PLEX_SETUP_COMPLETE.md
-│   ├── PLEX_INTEGRATION_COMPLETE.md
-│   └── ...
-│
 ├── installation/             # Setup & installation
-│   ├── QUICK_START.md
-│   ├── INSTALL_MACOS.md
-│   └── ...
-│
 ├── swiftui/                  # SwiftUI applications
-│   ├── BUILD_SWIFTUI.md
-│   └── README_SWIFTUI.md
-│
 ├── implementation/           # Technical implementation
-│   ├── PROJECT_STRUCTURE.md
-│   ├── SECURITY_AUDIT_REPORT.md
-│   └── ...
-│
-├── wiki/                     # GitHub Wiki mirror (canonical)
-│   ├── Home.md
-│   ├── macOS.md
-│   └── ...
-│
-└── Core docs (in this directory)
-    ├── API.md
-    ├── SCHEDULES.md
-    ├── AUTHENTICATION_SYSTEM.md
-    ├── BEGINNER_GUIDE.md
-    ├── TROUBLESHOOTING.md
-    └── ...
+├── public-repo/              # Public README + sanitized CHANGELOG templates
+└── Core docs (API, SCHEDULES, AUTH*, BEGINNER/INTERMEDIATE/EXPERT, …)
 ```
 
 ---
@@ -260,6 +243,9 @@ docs/
 
 **I want to...**
 - **Create a channel from Archive.org** → [archive-parser/QUICK_REFERENCE_ARCHIVE_PARSER.md](archive-parser/QUICK_REFERENCE_ARCHIVE_PARSER.md)
+- **Build a channel in the UI** → [channel-builder.md](channel-builder.md)
+- **Enrich guide metadata (TVDB)** → [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md)
+- **Align Plex guide with playout** → [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md)
 - **Set up Plex integration** → [plex/PLEX_SETUP_COMPLETE.md](plex/PLEX_SETUP_COMPLETE.md)
 - **View application logs** → [logging/LOGGING_QUICKSTART.md](logging/LOGGING_QUICKSTART.md)
 - **Install on macOS** → [installation/INSTALL_MACOS.md](installation/INSTALL_MACOS.md)
@@ -308,6 +294,6 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
-**Last Updated**: December 3, 2025
-**Version**: 1.0.0
-**Status**: ✅ Complete and organized
+**Last Updated**: 2026-07-17
+**Version**: 1.3.3
+**Status**: Complete — guides/, wiki/, and architecture Mermaid indexed

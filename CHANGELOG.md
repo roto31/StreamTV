@@ -12,6 +12,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-07-17
+
+See [Metadata enrichment](docs/guides/METADATA_ENRICHMENT.md) · [EPG sync classes](docs/guides/EPG_SYNC_CLASSES.md) · [Architecture](ARCHITECTURE.md) · [Channel Builder](docs/channel-builder.md)
+
+### Added
+- **Metadata enrichment tooling** — Playback-safe enrichment (`--meta-only`, never writes duration); TVDB/TVMaze/TMDB merge into nested `meta_data`; Sesame Street / Mister Rogers SxxExx retitle helpers; stratified guide accuracy audit scripts
+- **EPG sync classes (A/B/C)** — Channel-level guide vs playout policy; class-A playout-authoritative XML and Plex guide reload helpers
+- **Channel Builder PBS improvements** — Full-episode filter, Passport/DRM public-stream filter, higher PBS show expand cap, cookies import for PBS resolve
+- **Documentation** — Operator guides indexed; Mermaid diagrams for enrichment and EPG sync in Architecture; wiki/docs indexes updated for 1.3.3
+
+### Changed
+- YouTube RAM full-cache default off under buffer mode (prefer CDN-direct to avoid disk-full playback errors)
+- Plex guide reload cooldowns and class-A item-boundary reload behavior
+
+### Fixed
+- Guide metadata false matches when Archive season/episode labels disagree with TVDB (re-match by air date where titles carry dates)
+- Nested Archive + enrichment metadata merge (providers no longer wipe Archive fields)
+- Plex guide reload when DVR id changes after PMS upgrades
+- PBS VOD preferring FFmpeg-playable clear HLS over DRM manifests; Playwright season harvest for PBS show expand
+- EPG live-air anchoring so Plex “now” matches continuous playout
+
 ## [1.3.2] - 2026-07-12
 
 ### Added

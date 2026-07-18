@@ -27,7 +27,12 @@
 | Resource | Link |
 |----------|------|
 | Docs index | [docs/README.md](docs/README.md) |
+| Complete topic map | [docs/INDEX.md](docs/INDEX.md) |
 | Wiki home | [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) |
+| Architecture (Mermaid) | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| Metadata enrichment | [docs/guides/METADATA_ENRICHMENT.md](docs/guides/METADATA_ENRICHMENT.md) |
+| EPG sync classes | [docs/guides/EPG_SYNC_CLASSES.md](docs/guides/EPG_SYNC_CLASSES.md) |
+| Channel Builder | [docs/channel-builder.md](docs/channel-builder.md) |
 | Beginner guide | [docs/BEGINNER_GUIDE.md](docs/BEGINNER_GUIDE.md) |
 | API reference | [docs/API.md](docs/API.md) |
 | Plex integration | [docs/wiki/Plex-Integration.md](docs/wiki/Plex-Integration.md) |

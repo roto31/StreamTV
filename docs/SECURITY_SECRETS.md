@@ -197,7 +197,7 @@ See `.env.example` for a complete list of all available environment variables.
 
 Key security-related variables:
 - `STREAMTV_SECURITY_ACCESS_TOKEN` - API authentication token
-- `STREAMTV_PLEX_TOKEN` - Plex authentication token
+- `STREAMTV_PLEX_TOKEN` - Plex authentication token (verify with `bash scripts/verify_plex_token.sh`)
 - `STREAMTV_YOUTUBE_API_KEY` - YouTube Data API key
 - `STREAMTV_YOUTUBE_OAUTH_CLIENT_SECRET` - YouTube OAuth client secret
 - `STREAMTV_YOUTUBE_OAUTH_REFRESH_TOKEN` - YouTube OAuth refresh token

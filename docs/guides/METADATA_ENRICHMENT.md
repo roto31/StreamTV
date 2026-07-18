@@ -1,335 +1,198 @@
 # Metadata Enrichment System
 
-Complete guide to enriching your StreamTV channels with metadata from TVDB, TVMaze, and TMDB.
+Guide to enriching StreamTV media with TVDB, TVMaze, TMDB, and cited historical sidecars for **richer Plex Live TV guide rows** (XMLTV).
 
 ---
 
-## 🎯 What is Metadata Enrichment?
+## Important limits
 
-Metadata enrichment fetches additional information about your TV shows and movies from external databases:
+| What enrichment does | What it does **not** do |
+|----------------------|-------------------------|
+| Better `title` / `sub-title` / `desc` / `icon` / `category` / `episode-num` in `/iptv/xmltv.xml` | Run Plex TVDB/TMDB **Match agents** on Live TV |
+| Store provider plots/posters/cast on `MediaItem.meta_data` | Emit cast in XMLTV `<credits>` (needs APPROVED `iptv.py` change) |
+| Survive Archive.org scrape under `meta_data.archive` | Link Live TV airings to library watched/resume |
+| Playback-safe `meta_data` writes | Change `duration`, playout indices, schedules, or URLs |
 
-- **Episode titles** (official names)
-- **Plot summaries** (descriptions)
-- **Episode posters** (artwork)
-- **Air dates** (original broadcast dates)
-- **Ratings** (community ratings)
-- **Cast information** (actors, directors)
-- **Genres** (categories)
+Plex Live TV is HDHomeRun + XMLTV only. For library-matched UX, use Tunarr library channels — see [STREAMTV_TUNARR_HYBRID.md](STREAMTV_TUNARR_HYBRID.md).
 
-This data enhances the EPG (Electronic Program Guide) that Plex and other IPTV clients display.
-
----
-
-## 🌟 Supported Providers
-
-### 1. **TVDB (TheTVDB.com)** - Primary for TV Shows
-- **Best for**: TV series metadata
-- **Coverage**: Comprehensive (especially classic shows)
-- **Requires**: API key or read token
-- **Rate Limit**: 100,000 requests/month (free tier)
-- **Image Quality**: Excellent (episode-specific posters)
-
-### 2. **TVMaze** - Fallback for TV Shows
-- **Best for**: Backup source, modern shows
-- **Coverage**: Good
-- **Requires**: Nothing! Completely free
-- **Rate Limit**: 20 calls per 10 seconds
-- **Image Quality**: Good (mostly show-level)
-
-### 3. **TMDB (TheMovieDB.org)** - For Movies
-- **Best for**: Movie metadata
-- **Coverage**: Excellent
-- **Requires**: API key (free)
-- **Rate Limit**: 1,000 requests per 10 minutes
-- **Image Quality**: Excellent (multiple resolutions)
+**Gracenote/TMS:** not integrated. Use for manual conflict confirmation only.
 
 ---
 
-## ⚙️ Configuration
+## Playback-safe defaults
 
-Already configured in `config.yaml`:
+Mass runs must:
+
+- Use `--meta-only` (default **true**) — never writes `MediaItem.duration`
+- Never run `reset_channel_playout.py` or `launchctl kickstart` as part of enrichment
+- Verify with `scripts/verify_enrichment_playback.py --duration-index backups/enrichment/.../duration_index.json`
+- Refresh Plex with `bash scripts/reload_plex_streamtv_guide.sh` only
+
+Optional `--update-columns` copies description/thumbnail onto columns (still never duration). `--no-meta-only` also rewrites titles (avoid for mass runs).
+
+---
+
+## Data contract (`MediaItem.meta_data`)
+
+```json
+{
+  "archive": { "identifier": "...", "url": "...", "...": "Archive.org scrape" },
+  "enrichment": {
+    "source": "tvmaze|tvdb|tmdb|historical|archive",
+    "sources_consulted": ["tvdb", "tvmaze"],
+    "title": "Episode or movie title",
+    "description": "Plot summary",
+    "description_completeness": 240,
+    "season": 5,
+    "episode": 19,
+    "thumbnail": "https://...",
+    "genres": ["Drama", "Action"],
+    "rating": 8.8,
+    "series_name": "Magnum P.I.",
+    "air_date": "1985-09-26",
+    "cast": [{"name": "...", "role": "actor|director"}],
+    "unverified": false,
+    "conflicts": [],
+    "citations": [{"type": "url|archive|book", "ref": "...", "accessed": "YYYY-MM-DD"}]
+  }
+}
+```
+
+Helpers: `streamtv/utils/media_meta.py` (`parse_meta_data`, `get_enrichment`, `merge_enrichment`, `prefer_longest_description`, `append_conflict_log`).
+
+**Conflict rule:** when two sources disagree on plot/title, keep the **longest description**, set `unverified: true`, append to `conflicts[]`, and log `data/enrichment/conflicts/YYYY-MM-DD.jsonl`.
+
+XMLTV (`streamtv/api/iptv.py`) prefers `enrichment.*` for description, icon, genres, episode numbers, and optional `star-rating`. Cast is stored in meta_data only until bedrock unlock — see [`data/enrichment/reports/CAST_DEFER.md`](../../data/enrichment/reports/CAST_DEFER.md).
+
+---
+
+## Providers
+
+1. **TVDB** — primary for TV series (API key / read token)
+2. **TVMaze** — consulted with TVDB; longest description wins
+3. **TMDB** — movies (`--type movie`); credits → `cast`
+4. **Historical sidecars** — Olympics / non-API (`scripts/enrich_historical.py`)
+5. **Archive fallback** — music / unresolved (`scripts/enrich_archive_fallback.py`, always `unverified`)
+
+---
+
+## Configuration
 
 ```yaml
 metadata:
   enabled: true
-  auto_enrich: false
-  tvdb_api_key: 70c40f6d-fad6-4955-a365-b7eca7191bbd
-  tvdb_read_token: eyJhbGci...
-  tmdb_api_key: <TMDB_API_KEY>
+  auto_enrich: false   # keep false until import hooks call merge_enrichment
+  tvdb_api_key: null   # or STREAMTV_METADATA_TVDB_API_KEY
+  tvdb_read_token: null
+  tmdb_api_key: null   # or STREAMTV_METADATA_TMDB_API_KEY
   enable_tvdb: true
   enable_tvmaze: true
   enable_tmdb: true
   cache_duration: 86400
 ```
 
-**Status**: ✅ Configured and ready to use!
-
 ---
 
-## 🚀 Usage
-
-### Method 1: Enrich Existing Channel (Recommended)
+## Usage
 
 ```bash
-# Enrich Channel 80 (Magnum P.I.)
-python3 scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980
+# Series — prefer schedule media (same set playout uses)
+./venv/bin/python scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980 --from-schedule --meta-only --dry-run
+./venv/bin/python scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980 --from-schedule --meta-only --update-columns
 
-# Dry run first (preview changes)
-python3 scripts/enrich_metadata.py 80 "Magnum P.I." --dry-run
+# Movies
+./venv/bin/python scripts/enrich_metadata.py 1980.1 "1980s Movies" --type movie --from-schedule --meta-only --update-columns
 
-# Force re-fetch (even if metadata exists)
-python3 scripts/enrich_metadata.py 80 "Magnum P.I." --force
+# Olympics / historical (cited sidecars)
+./venv/bin/python scripts/enrich_historical.py export --channel 1980
+# Edit data/enrichment/olympics/1980/entries.json citations, then:
+./venv/bin/python scripts/enrich_historical.py apply --file data/enrichment/olympics/1980/entries.json --update-description
+
+# Music / unresolved archive fallback (do NOT --force over good API data)
+./venv/bin/python scripts/enrich_archive_fallback.py 1986 1987 --genres Music
+
+# Force re-fetch
+./venv/bin/python scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980 --from-schedule --force --meta-only
+
+# Sampled guide accuracy audit (20% stratified by channel)
+./venv/bin/python scripts/audit_guide_metadata_sample.py --fraction 0.20 --seed 20260717
+# → data/enrichment/reports/GUIDE_ACCURACY_AUDIT_LATEST.md
+
+# Sesame Street / Mister Rogers → SxxExx titles (DB; needs TVDB key in env)
+export STREAMTV_METADATA_TVDB_API_KEY='…'   # do not commit
+./venv/bin/python scripts/streamtv_sxxexx_retitle_db.py --channel 123 --apply
+./venv/bin/python scripts/streamtv_sxxexx_retitle_db.py --channel 143 --apply
+./venv/bin/python scripts/enrich_metadata.py 123 "Sesame Street" --year 1969 --from-schedule --meta-only --update-columns
+./venv/bin/python scripts/enrich_metadata.py 143 "Mister Rogers' Neighborhood" --year 1968 --from-schedule --meta-only --update-columns
 ```
 
-### Method 2: Enrich During Import (Future)
+After enrichment:
 
 ```bash
-# When parsing Archive.org collection
-python3 scripts/archive_collection_parser.py \
-    "https://archive.org/details/JHiggens" \
-    --channel-number 80 \
-    --enrich-metadata \
-    --series-year 1980
+./venv/bin/python scripts/verify_enrichment_playback.py \
+  --baseline /tmp/enrich-playback-baseline.json \
+  --duration-index backups/enrichment/<pre>/duration_index.json
+bash scripts/reload_plex_streamtv_guide.sh
+```
+
+Retune the channel in Plex (Custom Streaming) so the client picks up new guide cards.
+
+---
+
+## Channel waves (operator order)
+
+| Wave | Channels | Method |
+|------|----------|--------|
+| B Movies | 1970, 1980.1, 1990, 2000, 2010, 1929 | TMDB `--type movie` |
+| A Series | 80, 1984.1, 143, 1954, 11, 1982, 123 | TVDB/TVMaze `--from-schedule` |
+| C Olympics | 1980, 1984, 1988, 1992, 1994, 1998 | Historical sidecars |
+| D Music / gaps | 1985–1987, 1991, leftovers | Archive fallback (`unverified`) |
+
+See `data/enrichment/olympics/CATALOG_HOLES.md` for missing day collections and Summer Olympics (no channels).
+
+---
+
+## Fallback chain (series)
+
+```
+Try TVDB + TVMaze (longest description; conflict → unverified)
+    ↓
+Archive description fallback (unverified + citations)
+    ↓
+Conflict JSONL for manual / Gracenote review
 ```
 
 ---
 
-## 📊 How It Works
+## Operator notes
 
-### Fallback Chain
-
-```
-Try TVDB (primary)
-    ↓ (if fails)
-Try TVMaze (fallback)
-    ↓ (if fails)
-Use basic info from Archive.org
-```
-
-### For Each Episode
-
-1. **Parse season/episode** from filename/title
-2. **Search series** on TVDB (cached after first lookup)
-3. **Fetch episode data** from TVDB
-4. **If TVDB fails**, try TVMaze
-5. **Normalize data** to unified format
-6. **Update database** with enriched metadata
-
-### Rate Limiting
-
-- **Built-in delays**: 0.1 second between requests
-- **Respects API limits**: Won't exceed provider limits
-- **Caching**: Series lookups cached to minimize API calls
+- Enrichment is **opt-in** (`auto_enrich: false`). Re-imports that overwrite `meta_data` wholesale will wipe `enrichment` unless they use `merge_enrichment`.
+- **Never** run `enrich_archive_fallback.py --force` on channels that already have TVDB/TMDB enrichment — it overwrites API plots.
+- Archive.org URLs must be percent-decoded before parsing `1x01` season markers.
+- ytimg / `.webp` programme icons are still omitted in XMLTV; TVMaze/TMDB JPEG/PNG posters are emitted.
+- Movie matching uses title/year scoring; prefer archive `episode_title` + year from filename.
+- TVDB genres often filled from TVMaze series record.
+- Phase 0 backups live under `backups/enrichment/pre-*`.
 
 ---
 
-## 📺 Example: Enriching Magnum P.I.
-
-### Before Enrichment
-
-```
-Title: S01E01 - Please Don't Eat The Snow In Hawaii (1)
-Description: null
-Thumbnail: null
-Rating: null
-```
-
-### After Enrichment (TVMaze)
-
-```
-Title: Don't Eat the Snow in Hawaii
-Description: When Oahu-based private investigator Thomas Magnum's
-             childhood friend and Naval comrade...
-Thumbnail: https://static.tvmaze.com/uploads/images/original_untouched/...
-Rating: 8.8
-Air Date: 1980-12-11
-Network: CBS
-Genres: ["Drama", "Action", "Adventure"]
-```
-
-### In Plex EPG
-
-```xml
-<programme start="202512032000" channel="80">
-  <title lang="en">Don't Eat the Snow in Hawaii</title>
-  <sub-title lang="en">Season 1, Episode 1</sub-title>
-  <desc lang="en">When Oahu-based private investigator...</desc>
-  <date>19801211</date>
-  <category lang="en">Drama</category>
-  <category lang="en">Action</category>
-  <episode-num system="onscreen">S01E01</episode-num>
-  <episode-num system="xmltv_ns">0.0.</episode-num>
-  <icon src="https://static.tvmaze.com/..." />
-  <star-rating system="TVMaze">
-    <value>8.8/10</value>
-  </star-rating>
-</programme>
-```
-
----
-
-## 🎬 **Real Test Results**
-
-### Test: Magnum P.I. S01E01
+## Verification
 
 ```bash
-$ python3 scripts/enrich_metadata.py 80 "Magnum P.I." --dry-run
-
-✅ Success!
-   Source: tvmaze
-   Title: Don't Eat the Snow in Hawaii
-   Air Date: 1980-12-11
-   Description: When Oahu-based private investigator Thomas Magnum's...
-   Thumbnail: https://static.tvmaze.com/uploads/...
-   Rating: 8.8
+curl -s "http://127.0.0.1:8410/iptv/xmltv.xml" -o /tmp/epg.xml
+# Channel ids are bare numbers (e.g. 80, 1970) — not streamtv.80
+python3 - <<'PY'
+import xml.etree.ElementTree as ET
+root = ET.parse("/tmp/epg.xml").getroot()
+for ch in ("80", "1970", "1980"):
+    for prog in root.findall("programme"):
+        if prog.get("channel") != ch:
+            continue
+        print(ch, prog.findtext("title"), prog.findtext("sub-title"))
+        print("  desc", (prog.findtext("desc") or "")[:80])
+        print("  icon", prog.find("icon") is not None)
+        print("  cats", [c.text for c in prog.findall("category")])
+        break
+PY
+bash scripts/verify_plex_token.sh
 ```
-
-**Status**: ✅ **Working with TVMaze!**
-
----
-
-## 🔧 Troubleshooting
-
-### TVDB Authentication Issue
-
-**Current Status**: TVDB returns 401 Unauthorized
-
-**Possible Causes**:
-- Token format may need adjustment for v4 API
-- Token may need refresh
-- API key format different than expected
-
-**Current Solution**: ✅ **TVMaze fallback is working!**
-
-### If TVMaze Also Fails
-
-Check:
-1. **Internet connection**: Can you reach https://api.tvmaze.com?
-2. **Rate limits**: Wait a few seconds and retry
-3. **Series name**: Try different variations ("Magnum P.I." vs "Magnum PI")
-
----
-
-## 📊 Provider Comparison for Magnum P.I.
-
-| Provider | Status | Data Quality | Images |
-|----------|--------|--------------|--------|
-| **TVMaze** | ✅ Working | Excellent | Show posters |
-| **TVDB** | ⚠️  Auth issue | Would be excellent | Episode posters |
-| **TMDB** | ✅ Configured | Good for movies | High quality |
-
-**Current**: TVMaze is working great as primary source!
-
----
-
-## 🎨 Benefits Already Available
-
-Even with just TVMaze working:
-
-- ✅ Official episode titles
-- ✅ Complete plot summaries
-- ✅ Episode ratings (8.8/10)
-- ✅ Original air dates
-- ✅ Network information (CBS)
-- ✅ Genre tags
-- ✅ Show artwork
-
----
-
-## 💡 Usage Examples
-
-### Enrich Magnum P.I. (All 298 Episodes)
-
-```bash
-# Preview changes
-python3 scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980 --dry-run
-
-# Apply changes
-python3 scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980
-
-# Expected: ~5-10 minutes for 298 episodes
-```
-
-### Enrich Other Channels
-
-```bash
-# If you add other shows
-python3 scripts/enrich_metadata.py 81 "The Rockford Files" --year 1974
-python3 scripts/enrich_metadata.py 82 "Murder She Wrote" --year 1984
-```
-
----
-
-## 📈 Performance
-
-### For 298 Episodes (Magnum P.I.)
-
-- **API Calls**: ~300 (1 per episode + 1 series lookup)
-- **Time**: ~5-10 minutes (with rate limiting)
-- **Cache**: Series lookup cached (only 1 API call)
-- **Retries**: Automatic retry on transient failures
-
-### Rate Limits
-
-- **TVMaze**: 20 calls/10 sec = ~120 calls/minute ✅
-- **With 0.1s delays**: ~10 calls/second (well within limits)
-- **For 298 episodes**: ~30-60 seconds of API calls
-
----
-
-## 🔄 After Enrichment
-
-### Restart Server
-
-```bash
-./start_server.sh
-```
-
-### Check EPG
-
-```bash
-curl http://localhost:8410/iptv/xmltv.xml | grep -A 10 "channel=\"80\""
-```
-
-### View in Plex
-
-Open Plex → Live TV → Guide → Channel 80
-
-You should see:
-- ✅ Rich episode descriptions
-- ✅ Proper episode titles
-- ✅ Episode artwork (if available)
-- ✅ Original air dates
-
----
-
-## 🎊 Current Status
-
-**Metadata System**: ✅ Operational
-
-**Working Providers**:
-- ✅ TVMaze (primary, working great!)
-- ✅ TMDB (configured, ready for movies)
-- ⚠️  TVDB (needs auth fix, but TVMaze covers it)
-
-**Ready to Use**: ✅ Yes!
-
-**Next Step**: Run enrichment on Channel 80!
-
-```bash
-python3 scripts/enrich_metadata.py 80 "Magnum P.I." --year 1980
-```
-
----
-
-## 📚 API Documentation Links
-
-- **TVMaze API**: https://www.tvmaze.com/api
-- **TVDB v4 API**: https://thetvdb.github.io/v4-api/
-- **TMDB API**: https://developer.themoviedb.org/reference/getting-started
-
----
-
-**Date**: December 3, 2025
-**Status**: ✅ Implemented and tested
-**Working**: TVMaze (excellent results!)

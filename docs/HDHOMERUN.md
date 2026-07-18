@@ -61,6 +61,10 @@ If Plex doesn't auto-discover the device:
 5. Emby should auto-discover the device
 6. If not, manually enter: `http://YOUR_SERVER_IP:8410/hdhomerun/discover.json`
 7. **Configure EPG** - Use the XMLTV endpoint: `http://YOUR_SERVER_IP:8410/iptv/xmltv.xml`
+
+**EPG alignment:** With `tuner_manager.merged_guide: false` (recommended), Plex
+should use `/iptv/xmltv.xml` so the guide follows live playout anchoring. See
+[EPG sync classes](guides/EPG_SYNC_CLASSES.md).
 8. **Save** and start watching
 
 ### Manual Setup

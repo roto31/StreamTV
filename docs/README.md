@@ -4,7 +4,7 @@ Welcome to the complete StreamTV documentation. This documentation is organized 
 
 ## Documentation Levels
 
-### 📚 [Beginner Guide](./BEGINNER_GUIDE.md)
+### [Beginner Guide](./BEGINNER_GUIDE.md)
 **For Novice Users**
 - What is StreamTV?
 - Basic concepts and terminology
@@ -12,7 +12,7 @@ Welcome to the complete StreamTV documentation. This documentation is organized 
 - Common tasks step-by-step
 - Basic troubleshooting
 
-### 🔧 [Intermediate Guide](./INTERMEDIATE_GUIDE.md)
+### [Intermediate Guide](./INTERMEDIATE_GUIDE.md)
 **For Technicians**
 - Architecture overview
 - Configuration details
@@ -21,7 +21,7 @@ Welcome to the complete StreamTV documentation. This documentation is organized 
 - Advanced troubleshooting
 - Script usage
 
-### 🏗️ [Expert Guide](./EXPERT_GUIDE.md)
+### [Expert Guide](./EXPERT_GUIDE.md)
 **For Engineers**
 - Complete system architecture
 - Component interactions
@@ -29,6 +29,10 @@ Welcome to the complete StreamTV documentation. This documentation is organized 
 - Advanced configuration
 - Customization and extension
 - Deep troubleshooting
+
+## Full index
+
+See **[INDEX.md](INDEX.md)** for the complete topic map (guides, wiki, plex, installation).
 
 ## Wiki (GitHub Wiki mirror)
 
@@ -38,18 +42,32 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 - [Documentation index](wiki/Documentation-Index.md)
 - [Platform: macOS](wiki/macOS.md) · [Linux](wiki/Linux.md)
 
+## Operator guides
+
+| Guide | Path |
+|-------|------|
+| Core operator quickstart | [guides/CORE_OPERATOR_QUICKSTART.md](guides/CORE_OPERATOR_QUICKSTART.md) |
+| Channel Builder | [channel-builder.md](channel-builder.md) |
+| Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
+| Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |
+| EPG sync classes | [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md) |
+| PBS + Playwright | [guides/PBS_PLAYWRIGHT.md](guides/PBS_PLAYWRIGHT.md) |
+| Archive.org operator | [guides/ARCHIVE_ORG_OPERATOR.md](guides/ARCHIVE_ORG_OPERATOR.md) |
+| StreamTV + Tunarr hybrid | [guides/STREAMTV_TUNARR_HYBRID.md](guides/STREAMTV_TUNARR_HYBRID.md) |
+
+## Architecture diagrams
+
+Mermaid diagrams (system, HDHomeRun tune, import, Archive URL resolution, MPEG-TS policy, metadata enrichment, EPG sync) live in **[ARCHITECTURE.md](../ARCHITECTURE.md)** at the repository root. Keep them updated when streaming, import, enrichment, or EPG paths change.
+
 ## Quick Links
 
 - [Installation Guide](./INSTALLATION.md)
-- [Quick Start Guide](./QUICKSTART.md)
+- [Quick Start Guide](./installation/QUICK_START.md)
 - [API Documentation](./API.md)
 - [HDHomeRun Integration](./HDHOMERUN.md)
 - [Schedule System](./SCHEDULES.md)
-- [Channel Builder](channel-builder.md) — guided channel assembly (vs [Import Channels](../streamtv/templates/import.html) for YAML migration)
+- [Troubleshooting](./TROUBLESHOOTING.md)
 - [Troubleshooting Scripts](./TROUBLESHOOTING_SCRIPTS.md)
-- [Executive summary — streaming / root-tree / tuner remediation (2026-07-08)](./reports/Executive_Summary_Streaming_RootTree_Tuner_Remediation_2026-07-08.md)
-- [Executive summary — per-channel restart (2026-07-08)](./reports/Executive_Summary_Per_Channel_Restart_2026-07-08.md)
-- [Tuner visibility resolution](./TUNER_VISIBILITY_RESOLUTION.md)
 
 ## Getting Help
 
@@ -62,15 +80,12 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 
 ```
 docs/
-├── README.md (this file)
-├── BEGINNER_GUIDE.md
-├── INTERMEDIATE_GUIDE.md
-├── EXPERT_GUIDE.md
-├── TROUBLESHOOTING_SCRIPTS.md
-├── INSTALLATION.md
-├── QUICKSTART.md
-├── API.md
-├── HDHOMERUN.md
-├── SCHEDULES.md
-└── YAML_VALIDATION.md
+├── README.md / INDEX.md
+├── guides/              # Operator guides
+├── wiki/                # Public wiki mirror
+├── channel-builder.md
+├── plex/ logging/ installation/ archive-parser/
+├── swiftui/ implementation/
+├── public-repo/         # Sanitized public README + CHANGELOG templates
+└── BEGINNER|INTERMEDIATE|EXPERT + API, SCHEDULES, HDHOMERUN, …
 ```

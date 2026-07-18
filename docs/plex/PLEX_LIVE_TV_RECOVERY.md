@@ -60,6 +60,7 @@ Use the server API instead:
 
 ```bash
 bash scripts/reload_plex_streamtv_guide.sh
+bash scripts/verify_plex_token.sh   # expect HTTP 200; 403 = fix STREAMTV_PLEX_TOKEN
 ```
 
 After StreamTV restart, when playout resumes behind wall-clock (`last_item_index`
@@ -87,12 +88,18 @@ start times per on-air item. To clear airings already stacked in Plex:
 
 ### 4. Re-add tuner (last resort)
 
-1. Plex → Settings → Live TV & DVR → remove the StreamTV/HDHomeRun device.
+**Before re-adding:** remove duplicate DVRs (physical HDHomeRun, Tunarr, or old
+StreamTV entries). Plex should use **one** StreamTV device at
+`http://<streamtv-host>:8410/hdhomerun/discover.json` with EPG
+`http://<streamtv-host>:8410/iptv/xmltv.xml` when `tuner_manager.merged_guide`
+is **false** (recommended for playout-aligned guide).
+
+1. Plex → Settings → Live TV & DVR → remove extra StreamTV/Tunarr/duplicate devices.
 2. Re-add using `http://<streamtv-host>:8410/hdhomerun/discover.json`.
-3. Rescan channels and reattach the XMLTV guide. When `tuner_manager.merged_guide`
-   is enabled (StreamTV + Tunarr on one Plex server), use the **merged** guide:
+3. Rescan channels and set XMLTV to `http://<streamtv-host>:8410/iptv/xmltv.xml`.
+   When `tuner_manager.merged_guide` is enabled (StreamTV + Tunarr on one Plex
+   server), use the merged guide:
    `http://<streamtv-host>:8410/tuners/guide.xml`
-   StreamTV-only DVRs can use `http://<streamtv-host>:8410/xmltv.xml`.
 
 ## StreamTV-side checks
 

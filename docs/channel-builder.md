@@ -47,6 +47,7 @@ npm run build
 | `/auth/archive` | POST | Archive.org username/password |
 | `/auth/youtube/login` | POST | Playwright YouTube sign-in (async job) |
 | `/auth/pbs/login` | POST | Playwright PBS sign-in (async job) |
+| `/auth/pbs/cookies/import` | POST | Copy `~/Downloads/cookies.txt` → `data/cookies/pbs_cookies.txt` |
 | `/auth/plex` | POST | Plex server URL + token |
 | `/auth/{scope}/cookies` | POST | Upload Netscape cookies.txt |
 | `/docs/custom-sources.pdf` | GET | Download custom-sources guide |
@@ -75,7 +76,15 @@ Filler libraries are stored in `data/filler_collections/*.json` and referenced a
 
 ## PBS sources
 
-PBS is supported in Channel Builder with `source: pbs` in generated channel YAML.
+PBS is supported in Channel Builder with `source: pbs` in generated channel YAML. Long-form show builds (e.g. Nature) use the same defaults as the operator rebuild script.
+
+| Feature | Builder behavior |
+|---------|------------------|
+| Full-episode filter | On by default — skips trailer/preview titles; drops items under 300s when duration is known |
+| Exclude Passport DRM | On by default — probes sample episode HLS manifests; keeps only FFmpeg-playable public streams (`pbs-cs`); skips Passport-only shows (e.g. Masterpiece) at resolve |
+| `epg_sync_class` | Auto **C** for continuous PBS / PBS show-expanded channels (override on Channel Info step) |
+| Show catalog cap | **5000** videos (`pbs.show_max_videos` / `STREAMTV_PBS_SHOW_MAX_VIDEOS`) |
+| PBS cookies | Playwright sign-in, cookie upload, or **Import from Downloads** (`~/Downloads/cookies.txt`) — auto-import on resolve when local cookies are missing |
 
 | URL type | Example | Supported? |
 |----------|---------|------------|
@@ -84,9 +93,13 @@ PBS is supported in Channel Builder with `source: pbs` in generated channel YAML
 | Live stream page | `https://www.pbs.org/watch-live/...` | Yes |
 | Direct HLS | `https://...lls.pbs.org/....m3u8` | Yes |
 
-Show pages harvest episode links from HTML; full season catalogs use Playwright season iteration when PBS cookies are configured. Catalogs cap at 500 videos per show.
+Show pages harvest episode links from HTML; full season catalogs use Playwright season iteration when PBS cookies are configured.
 
-Member-only or geo-restricted PBS content requires PBS sign-in on the Builder **Sign In** step (or cookie upload).
+Member-only Passport DRM episodes (Masterpiece, many member VOD pages) are **excluded by default** because StreamTV cannot decrypt PBS DRM in FFmpeg. Use public PBS shows (e.g. Nature) or turn off **Exclude Passport DRM** on the URLs step (playback will still fail for DRM-only streams).
+
+Other member-only or geo-restricted PBS content may require PBS sign-in on the Builder **Sign In** step, cookie upload, or importing `cookies.txt` from Downloads.
+
+Configure a custom import path with `pbs.cookies_import_path` in `config.yaml` (default `~/Downloads/cookies.txt`).
 
 ## macOS client
 
