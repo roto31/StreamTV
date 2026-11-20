@@ -13,7 +13,7 @@ from datetime import datetime
 from ..database import get_db, Channel, Playlist, PlaylistItem, MediaItem
 from ..streaming import StreamManager, StreamSource
 from ..config import config
-from .urls import resolve_hdhomerun_base_url
+from .urls import resolve_channel_logo_url, resolve_hdhomerun_base_url
 
 logger = logging.getLogger(__name__)
 
@@ -274,7 +274,8 @@ async def lineup(request: Request, db: Session = Depends(get_db)):
             "GuideNumber": str(guide_number),
             "GuideName": guide_name,
             "URL": stream_url,
-            "HD": 1 if "HD" in channel.name.upper() else 0
+            "HD": 1 if "HD" in channel.name.upper() else 0,
+            "Logo": resolve_channel_logo_url(channel),
         }
         
         lineup_data.append(channel_entry)

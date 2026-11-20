@@ -472,12 +472,21 @@ async def delete_ollama_model(model_id: str):
 
 @router.get("/ollama", response_class=HTMLResponse)
 async def ollama_page(request: Request):
-    """Serve the Ollama management page"""
+    """Serve the unified AI Recovery page (Foundation Models + Ollama)."""
     from streamtv.main import templates
-    
+    from streamtv.config import config
+    from streamtv.utils.ai_backend_selector import macos_major_version
+
     return templates.TemplateResponse(request, "ollama.html", {
-"title": "AI Troubleshooting Assistant (Ollama)"
-})
+        "title": "AI Recovery",
+        "ai_backend": getattr(config.auto_healer, "ai_backend", "auto"),
+        "fm_url": getattr(
+            config.auto_healer,
+            "foundation_models_url",
+            "http://127.0.0.1:11435",
+        ),
+        "macos_major": macos_major_version(),
+    })
 
 
 def get_streamtv_logs_context(max_lines: int = 200) -> str:

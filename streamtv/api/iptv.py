@@ -19,7 +19,7 @@ from ..database import get_db, Channel, Playlist, PlaylistItem, MediaItem, Sched
 from ..streaming import StreamManager, StreamSource
 from ..streaming.plex_api_client import PlexAPIClient
 from ..config import config
-from ..hdhomerun.urls import resolve_hdhomerun_base_url
+from ..hdhomerun.urls import resolve_channel_logo_url, resolve_hdhomerun_base_url
 from ..hdhomerun.api import guide_name_for_channel
 from ..scheduling import ScheduleParser, ScheduleEngine
 from ..scheduling.engine import playout_shuffle_seed
@@ -39,34 +39,11 @@ from ..epg_sync_class import (
     playout_authoritative_epg,
     resolve_epg_sync_class,
 )
-from ..utils.media_meta import get_enrichment, parse_meta_data
 from ..scheduling.media_format import mp4_only_for_content
 
 logger = logging.getLogger(__name__)
 
 _PLEX_EPG_TZ = zoneinfo.ZoneInfo("America/Chicago")
-
-# #region agent log
-_DEBUG_LOG = Path(__file__).resolve().parents[2] / ".cursor" / "debug-247576.log"
-
-
-def _agent_log(hypothesis_id: str, location: str, message: str, data: dict) -> None:
-    try:
-        payload = {
-            "sessionId": "247576",
-            "hypothesisId": hypothesis_id,
-            "location": location,
-            "message": message,
-            "data": data,
-            "timestamp": int(time.time() * 1000),
-        }
-        with _DEBUG_LOG.open("a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload) + "\n")
-    except OSError:
-        pass
-
-
-# #endregion
 
 
 def _format_xmltv_time(dt: datetime) -> str:
@@ -142,17 +119,6 @@ def _epg_playout_lags_guide(live_item_index: Optional[int], guide_index: int) ->
     return live_item_index is not None and live_item_index < guide_index
 
 
-def _epg_stream_active_in_memory(
-    channel_manager: Optional[object],
-    channel_number: str,
-) -> bool:
-    """True when a client is actively tuned (in-memory playout state)."""
-    if channel_manager is None:
-        return False
-    live_state = channel_manager.get_live_playout_state(str(channel_number))
-    return bool(live_state and live_state.get("item_index") is not None)
-
-
 def _enforce_on_air_epg_coverage(
     schedule_items: List[dict],
     now: datetime,
@@ -181,6 +147,12 @@ def _enforce_on_air_epg_coverage(
         capped_stop = st + timedelta(seconds=media_seconds + 120)
         if stop > capped_stop:
             stop = capped_stop
+        # Stale live_item_start + media cap would end before now (multi-hour lag).
+        # Rebase so the live title still covers now as a short slot, not a day-long block.
+        if stop <= now:
+            st = now
+            air["start_time"] = st
+            stop = now + timedelta(seconds=media_seconds + 120)
     if stop > natural_end or cap_stretch_to_media:
         air["cached_duration"] = (stop - st).total_seconds()
     rows[0] = air
@@ -243,20 +215,9 @@ def _build_channel_playlist_content(
 
 
 def _resolve_logo_url(channel, base_url: str) -> Optional[str]:
-    """
-    Build an absolute logo URL for M3U/XMLTV.
-    - Uses channel.logo_path if provided.
-    - Falls back to /static/channel_icons/channel_<number>.png.
-    """
-    logo_path = channel.logo_path
-    if logo_path:
-        if logo_path.startswith('http'):
-            return logo_path
-        if logo_path.startswith('/'):
-            return f"{base_url}{logo_path}"
-        return f"{base_url}/{logo_path}"
-    # Default fallback based on channel number icon
-    return f"{base_url}/static/channel_icons/channel_{channel.number}.png"
+    """HTTPS channel logo for Plex; tuner stream URLs stay on base_url."""
+    _ = base_url
+    return resolve_channel_logo_url(channel)
 
 
 @router.get("/iptv/channels.m3u")
@@ -616,10 +577,6 @@ async def get_epg(
                         guide_index,
                     )
                     authoritative = playout_authoritative_epg(str(channel.number), channel)
-                    sync_class = resolve_epg_sync_class(str(channel.number), channel)
-                    stream_active = _epg_stream_active_in_memory(
-                        channel_manager, str(channel.number)
-                    )
                     position = resolve_live_epg_air_position(
                         schedule_items,
                         playout_start_time,
@@ -640,77 +597,24 @@ async def get_epg(
                         live_item_start_time=live_item_start_time,
                     )
                     if live_item_index is not None and authoritative:
-                        schedule_items, stabilize_state = stabilize_epg_timeline_for_plex(
+                        schedule_items, _ = stabilize_epg_timeline_for_plex(
                             str(channel.number),
                             live_item_index,
                             schedule_items,
                             now,
                         )
-                    else:
-                        stabilize_state = "skip"
                     lagging = _epg_playout_lags_guide(live_item_index, guide_index)
+                    # Cap to media when lagging even for class A — uncapped stretch
+                    # turns stale live starts into multi-hour single Plex guide rows.
+                    enforce_cap = (not authoritative) or lagging
                     if (lagging or authoritative) and live_item_index is not None:
                         schedule_items = _enforce_on_air_epg_coverage(
                             schedule_items,
                             now,
                             live_item_index=live_item_index,
                             live_item_start_time=live_item_start_time,
-                            cap_stretch_to_media=not authoritative,
+                            cap_stretch_to_media=enforce_cap,
                         )
-                    # #region agent log
-                    if live_item_index is not None and schedule_items:
-                        on_air = schedule_items[0]
-                        on_air_title = (
-                            on_air.get("media_item").title
-                            if on_air.get("media_item")
-                            else None
-                        )
-                        saved_idx = (
-                            int(playback_pos.last_item_index)
-                            if playback_pos is not None
-                            and playback_pos.last_item_index is not None
-                            else None
-                        )
-                        memory_idx = None
-                        if channel_manager is not None:
-                            mem = channel_manager.get_live_playout_state(str(channel.number))
-                            if mem and mem.get("item_index") is not None:
-                                memory_idx = int(mem["item_index"])
-                        _agent_log(
-                            "E",
-                            "api/iptv.py:xmltv",
-                            "on-air EPG coverage after enforce",
-                            {
-                                "channel": str(channel.number),
-                                "sync_class": sync_class,
-                                "stream_active": stream_active,
-                                "authoritative": authoritative,
-                                "enforce_cap": not authoritative,
-                                "live_item_index": live_item_index,
-                                "memory_item_index": memory_idx,
-                                "saved_item_index": saved_idx,
-                                "guide_index": guide_index,
-                                "lagging": lagging,
-                                "stabilize": stabilize_state,
-                                "live_item_start": (
-                                    live_item_start_time.isoformat()
-                                    if live_item_start_time
-                                    else None
-                                ),
-                                "on_air_title": (on_air_title or "")[:80],
-                                "on_air_stop": (
-                                    on_air["start_time"]
-                                    + timedelta(seconds=item_duration(on_air))
-                                ).isoformat(),
-                                "covers_now": _epg_item_covers_now(on_air, now),
-                                "false_current_ahead": sum(
-                                    1
-                                    for row in schedule_items[1:6]
-                                    if _epg_item_covers_now(row, now)
-                                ),
-                            },
-                        )
-                    # #endregion
                     timeline_idx = position.get("timeline_item_index", position["item_index"])
                     guide_idx = position.get("guide_item_index", position["item_index"])
                     logger.info(
@@ -905,49 +809,25 @@ async def get_epg(
                         title = channel.name
                 title = title.strip()
                 
-                # Extract episode-specific information from metadata for better titles.
-                # Prefer nested meta_data.enrichment (TVDB/TVMaze/TMDB); fall back to legacy flat.
+                # Extract episode-specific information from metadata for better titles
                 episode_title = None
                 season_num = None
                 episode_num = None
-                enrichment = None
-                enrichment_rating = None
-                enrichment_genres: List = []
-                enrichment_thumb = None
-                enrichment_desc = None
                 if media_item.meta_data:
                     try:
-                        meta = parse_meta_data(media_item.meta_data)
-                        enrichment = get_enrichment(meta) or {}
-                        episode_title = (
-                            enrichment.get("episode_title")
-                            or enrichment.get("title")
-                            or meta.get("episode_title")
-                            or meta.get("title")
-                        )
-                        season_num = enrichment.get("season", meta.get("season"))
-                        episode_num = enrichment.get("episode", meta.get("episode"))
-                        show_name = (
-                            enrichment.get("series_name")
-                            or enrichment.get("show_name")
-                            or meta.get("show_name")
-                            or meta.get("series_name")
-                        )
-                        enrichment_rating = enrichment.get("rating")
-                        enrichment_genres = list(
-                            enrichment.get("genres")
-                            or meta.get("categories")
-                            or []
-                        )[:3]
-                        enrichment_thumb = enrichment.get("thumbnail")
-                        enrichment_desc = enrichment.get("description")
+                        import json
+                        meta = json.loads(media_item.meta_data)
+                        episode_title = meta.get('episode_title') or meta.get('title')
+                        season_num = meta.get('season')
+                        episode_num = meta.get('episode')
+                        show_name = meta.get('show_name')
                         if (
                             show_name
-                            and str(show_name).strip()
+                            and show_name.strip()
                             and season_num is not None
                             and episode_num is not None
                         ):
-                            title = str(show_name).strip()
+                            title = show_name.strip()
                     except Exception:
                         pass
                 
@@ -1047,98 +927,93 @@ async def get_epg(
                     elif episode_title and episode_title != title and 'Original air date' not in episode_title:
                         xml_content += f'    <sub-title lang="en">{_xml(episode_title)}</sub-title>\n'
                     
-                    # Description — prefer provider enrichment plot
-                    desc = (enrichment_desc or media_item.description or "").strip()
+                    # Description - always include for Plex compatibility
+                    # Plex requires desc tag even if empty
+                    desc = media_item.description or ""
+                    # Enhance description with episode info if available
                     if episode_title and episode_title not in desc and episode_title != title:
                         if desc:
                             desc = f"{episode_title}\n\n{desc}"
                         else:
                             desc = episode_title
                     if not desc:
+                        # Provide a non-empty description to avoid "Unknown Airing" in Plex
                         desc = title
                     if desc:
                         xml_content += f'    <desc lang="en">{_xml(desc)}</desc>\n'
                     else:
+                        # Include empty desc to ensure Plex compatibility
                         xml_content += '    <desc lang="en"></desc>\n'
                     
-                    # Programme icons: enrichment poster first; omit ytimg/webp
-                    thumb_raw = enrichment_thumb or media_item.thumbnail
-                    if thumb_raw:
+                    # Programme icons: omit external ytimg/webp URLs (Plex metadata grab failures).
+                    if media_item.thumbnail:
+                        thumb_raw = media_item.thumbnail
                         skip_thumb = (
                             _is_ytimg_thumbnail_url(thumb_raw)
-                            or str(thumb_raw).endswith(".webp")
+                            or thumb_raw.endswith(".webp")
                         )
                         if not skip_thumb:
-                            if str(thumb_raw).startswith("http"):
+                            if thumb_raw.startswith("http"):
                                 thumb_url = thumb_raw
                             else:
                                 thumb_url = (
                                     f"{base_url}{thumb_raw}"
-                                    if str(thumb_raw).startswith("/")
+                                    if thumb_raw.startswith("/")
                                     else f"{base_url}/{thumb_raw}"
                                 )
                             xml_content += f'    <icon src="{_xml(thumb_url)}"/>\n'
                     
-                    # Categories: filler_kind, then enrichment genres, else General
+                    # Enhanced EPG metadata - use standard XMLTV fields only
+                    # Plex expects at least one category
                     filler_kind = schedule_item.get('filler_kind')
-                    cats_emitted = 0
                     if filler_kind:
                         xml_content += f'    <category lang="en">{_xml(filler_kind)}</category>\n'
-                        cats_emitted += 1
-                    for cat in enrichment_genres:
-                        if not cat:
-                            continue
-                        xml_content += f'    <category lang="en">{_xml(str(cat))}</category>\n'
-                        cats_emitted += 1
-                    if cats_emitted == 0:
+                    else:
+                        # Default category for Plex compatibility
                         xml_content += '    <category lang="en">General</category>\n'
                     
+                    # Uploader/Creator (standard XMLTV credits field)
                     if media_item.uploader:
                         xml_content += f'    <credits>\n'
                         xml_content += f'      <director>{_xml(media_item.uploader)}</director>\n'
                         xml_content += f'    </credits>\n'
                     
-                    # Prefer enrichment air_date when upload_date missing
-                    date_val = media_item.upload_date
-                    if not date_val and enrichment and enrichment.get("air_date"):
-                        date_val = str(enrichment.get("air_date")).replace("-", "")[:8]
-                    if date_val:
-                        xml_content += f'    <date>{_xml(date_val)}</date>\n'
+                    # Upload date (standard XMLTV date field)
+                    if media_item.upload_date:
+                        xml_content += f'    <date>{_xml(media_item.upload_date)}</date>\n'
                     
-                    # Episode numbers from enrichment / parsed season_num
-                    ep_for_num = episode_num
-                    season_for_num = season_num
-                    if ep_for_num is not None:
-                        if season_for_num is not None:
-                            xml_content += (
-                                f'    <episode-num system="onscreen">'
-                                f'{_xml(f"S{int(season_for_num):02d}E{int(ep_for_num):02d}")}'
-                                f'</episode-num>\n'
-                            )
-                            try:
-                                season_idx = int(season_for_num) - 1
-                                episode_idx = int(ep_for_num) - 1
-                                season_ep = f'{season_idx}.{episode_idx}.'
-                                xml_content += (
-                                    f'    <episode-num system="xmltv_ns">'
-                                    f'{_xml(season_ep)}</episode-num>\n'
-                                )
-                            except (ValueError, TypeError):
-                                pass
-                        else:
-                            xml_content += (
-                                f'    <episode-num system="onscreen">'
-                                f'{_xml(str(ep_for_num))}</episode-num>\n'
-                            )
-
-                    if enrichment_rating is not None:
+                    # Simplified metadata parsing (reduced for performance)
+                    # Only parse essential fields to speed up XML generation
+                    if media_item.meta_data:
                         try:
-                            rating_f = float(enrichment_rating)
-                            xml_content += '    <star-rating>\n'
-                            xml_content += f'      <value>{_xml(f"{rating_f}/10")}</value>\n'
-                            xml_content += '    </star-rating>\n'
-                        except (TypeError, ValueError):
+                            import json
+                            meta = json.loads(media_item.meta_data)
+                            
+                            # Only include most important metadata fields
+                            if meta.get('episode'):
+                                xml_content += f'    <episode-num system="onscreen">{_xml(str(meta.get("episode")))}</episode-num>\n'
+                            
+                            if meta.get('season') and meta.get('episode'):
+                                try:
+                                    season_idx = int(meta.get("season", 0)) - 1
+                                    episode_idx = int(meta.get("episode", 0)) - 1
+                                    season_ep = f'{season_idx}.{episode_idx}.'
+                                    xml_content += f'    <episode-num system="xmltv_ns">{_xml(season_ep)}</episode-num>\n'
+                                except (ValueError, TypeError):
+                                    pass
+                            
+                            # Limit categories to first 3 for performance
+                            # Add lang attribute for Plex compatibility
+                            if meta.get('categories'):
+                                for cat in list(meta.get('categories', []))[:3]:
+                                    xml_content += f'    <category lang="en">{_xml(str(cat))}</category>\n'
+                        except Exception as e:
+                            # Skip metadata parsing errors to avoid slowing down EPG generation
                             pass
+                    
+                    # Only include standard XMLTV fields - remove custom fields that might confuse Plex
+                    # URL field is optional in XMLTV and can cause issues if it's not accessible
+                    # We'll skip it to avoid Plex metadata grab failures
                     
                     xml_content += '  </programme>\n'
                 

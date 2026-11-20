@@ -12,6 +12,81 @@ from ..database.models import (
 
 logger = logging.getLogger(__name__)
 
+# One-pass loudnorm for live MPEG-TS + peak limiter (anti-spike / anti-oversat).
+# TP=-2.0 gives more true-peak headroom than -1.5; alimiter ~-1 dBFS hard ceiling.
+LOUDNORM_AF_FILTER = (
+    "loudnorm=I=-16:TP=-2.0:LRA=11:linear=true,"
+    "alimiter=limit=0.89:attack=5:release=50"
+)
+
+
+def detach_ffmpeg_profile(db, profile: FFmpegProfile) -> FFmpegProfile:
+    """Expunge profile (+ resolution) for use after the Session is closed.
+
+    Continuous playout closes the channel DB session after bind; without an
+    eager load, build_ffmpeg_command hits DetachedInstanceError on
+    ``profile.resolution`` and falls back to legacy (no LoudNorm).
+    """
+    from sqlalchemy.orm import joinedload
+
+    # Re-fetch with joinedload when possible so resolution is present.
+    pid = getattr(profile, "id", None)
+    if pid is not None:
+        loaded = (
+            db.query(FFmpegProfile)
+            .options(joinedload(FFmpegProfile.resolution))
+            .filter(FFmpegProfile.id == pid)
+            .first()
+        )
+        if loaded is not None:
+            profile = loaded
+
+    # Touch attributes used by build_ffmpeg_command while still bound.
+    _ = (
+        profile.name,
+        profile.thread_count,
+        profile.hardware_acceleration,
+        profile.vaapi_driver,
+        profile.vaapi_device,
+        profile.qsv_extra_hardware_frames,
+        profile.scaling_behavior,
+        profile.video_format,
+        profile.video_profile,
+        profile.video_preset,
+        profile.allow_b_frames,
+        profile.bit_depth,
+        profile.video_bitrate,
+        profile.video_buffer_size,
+        profile.audio_format,
+        profile.audio_bitrate,
+        profile.normalize_loudness_mode,
+        profile.audio_channels,
+        profile.audio_sample_rate,
+        profile.normalize_framerate,
+        profile.deinterlace_video,
+    )
+    res = profile.resolution
+    if res is not None:
+        _ = (res.width, res.height, res.name)
+        db.expunge(res)
+    db.expunge(profile)
+    return profile
+
+
+def load_ffmpeg_profile_for_playout(db, profile_id: int) -> Optional[FFmpegProfile]:
+    """Load and detach an FFmpeg profile for continuous / HDHomeRun playout."""
+    from sqlalchemy.orm import joinedload
+
+    profile = (
+        db.query(FFmpegProfile)
+        .options(joinedload(FFmpegProfile.resolution))
+        .filter(FFmpegProfile.id == profile_id)
+        .first()
+    )
+    if profile is None:
+        return None
+    return detach_ffmpeg_profile(db, profile)
+
 
 def build_ffmpeg_command(
     profile: FFmpegProfile,
@@ -62,14 +137,19 @@ def build_ffmpeg_command(
     
     # Input options for HTTP streams
     if input_url.startswith("http"):
-        cmd.extend([
+        # Archive.org VOD must terminate at EOF (same as YouTube) so playout advances.
+        http_opts = [
             "-timeout", "10000000",  # 10 second timeout
             "-user_agent", "Mozilla/5.0 (compatible; StreamTV/1.0)",
             "-reconnect", "1",
-            "-reconnect_at_eof", "1",
+        ]
+        if "archive.org" not in input_url.lower():
+            http_opts.extend(["-reconnect_at_eof", "1"])
+        http_opts.extend([
             "-reconnect_streamed", "1",
             "-reconnect_delay_max", "2",
         ])
+        cmd.extend(http_opts)
     
     # Input flags
     cmd.extend([
@@ -178,9 +258,10 @@ def build_ffmpeg_command(
         cmd.extend(["-ar", str(profile.audio_sample_rate)])
         cmd.extend(["-ac", str(profile.audio_channels)])
         
-        # Normalize loudness
+        # Normalize loudness (streaming one-pass + hard ceiling to avoid TP overs).
+        # I=-16 streaming target; TP=-2.0 headroom; alimiter ~-1 dBFS catches residual spikes.
         if profile.normalize_loudness_mode.value == "loudnorm":
-            cmd.extend(["-af", "loudnorm=I=-16:TP=-1.5:LRA=11"])
+            cmd.extend(["-af", LOUDNORM_AF_FILTER])
     
     # Normalize framerate
     if profile.normalize_framerate:

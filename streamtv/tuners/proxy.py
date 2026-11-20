@@ -96,7 +96,7 @@ class TunerProxy:
             data["FriendlyName"] = self.name.title()
         return data
 
-    async def lineup(self) -> list[dict[str, Any]]:
+    async def lineup(self, streamtv_base: Optional[str] = None) -> list[dict[str, Any]]:
         try:
             data = await self.fetch_json("/lineup.json")
         except Exception as exc:
@@ -104,7 +104,11 @@ class TunerProxy:
             return []
         if not isinstance(data, list):
             return []
-        return [self._rewrite_lineup_item(item) for item in data if isinstance(item, dict)]
+        return [
+            self._rewrite_lineup_item(item, streamtv_base=streamtv_base)
+            for item in data
+            if isinstance(item, dict)
+        ]
 
     async def lineup_status(self) -> dict[str, Any]:
         try:
@@ -138,16 +142,34 @@ class TunerProxy:
 </root>
 """
 
-    def _rewrite_lineup_item(self, item: dict[str, Any]) -> dict[str, Any]:
+    def _rewrite_lineup_item(
+        self, item: dict[str, Any], *, streamtv_base: Optional[str] = None
+    ) -> dict[str, Any]:
         out = dict(item)
         url = out.get("URL")
         if isinstance(url, str) and url:
-            out["URL"] = self._rewrite_stream_url(url)
+            out["URL"] = self._rewrite_stream_url(url, streamtv_base=streamtv_base)
         return out
 
-    def _rewrite_stream_url(self, url: str) -> str:
-        """Point stream URLs at Tunarr LAN host; do not proxy video through StreamTV."""
+    def _rewrite_stream_url(
+        self, url: str, *, streamtv_base: Optional[str] = None
+    ) -> str:
+        """Point stream URLs through StreamTV proxy (video hold) when base is known.
+
+        Falls back to Tunarr LAN host rewrite for loopback-only URLs when no
+        streamtv_base is provided (legacy callers).
+        """
         parsed = urlparse(url)
+        path = parsed.path or "/"
+        query = parsed.query
+        if streamtv_base:
+            root = self.proxy_root(streamtv_base)
+            # Preserve Tunarr path under proxy so /tuners/proxy/{name}/stream/... works
+            suffix = path if path.startswith("/") else f"/{path}"
+            if query:
+                return f"{root}{suffix}?{query}"
+            return f"{root}{suffix}"
+
         host = (parsed.hostname or "").lower()
         if host not in _LOOPBACK and host:
             return url
@@ -164,3 +186,11 @@ class TunerProxy:
                 parsed.fragment,
             )
         )
+
+    def upstream_stream_url(self, rest_path: str, query: str = "") -> str:
+        """Build absolute upstream URL for a proxied stream path."""
+        path = rest_path if rest_path.startswith("/") else f"/{rest_path}"
+        url = f"{self.upstream_url}{path}"
+        if query:
+            url = f"{url}?{query}"
+        return url

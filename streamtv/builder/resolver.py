@@ -9,7 +9,7 @@ from urllib.parse import quote, urlparse
 import requests
 import yt_dlp
 
-from streamtv.builder.pbs_show import expand_pbs_show, pbs_video_stream_id
+from streamtv.builder.pbs_show import expand_pbs_show
 from streamtv.builder.sources import detect_source_for_url, get_source
 from streamtv.youtube.ydl_opts import youtube_ydl_opts
 
@@ -224,7 +224,7 @@ def resolve_single_url(url: str) -> dict[str, Any]:
             "url": url,
             "title": title,
             "source": "pbs",
-            "stream_id": pbs_video_stream_id(url),
+            "stream_id": _slugify(url),
             "duration": None,
             "upload_date": None,
         }
@@ -257,12 +257,10 @@ def expand_url(url: str, *, draft: Optional[BuilderDraft] = None) -> list[dict[s
     if kind == "pbs_show":
         filter_episodes = bool(draft and draft.pbs_filter_full_episodes)
         min_seconds = draft.pbs_min_episode_seconds if draft else 300
-        exclude_drm = bool(draft and draft.pbs_exclude_passport_drm)
         return expand_pbs_show(
             url,
             filter_full_episodes=filter_episodes,
             min_episode_seconds=min_seconds,
-            exclude_passport_drm=exclude_drm,
         )
     items = [resolve_single_url(url)]
     if draft and draft.pbs_filter_full_episodes and all(item.get("source") == "pbs" for item in items):
@@ -271,15 +269,6 @@ def expand_url(url: str, *, draft: Optional[BuilderDraft] = None) -> list[dict[s
         items = filter_full_pbs_episodes(items, min_seconds=draft.pbs_min_episode_seconds)
         if not items:
             raise ValueError("No full PBS episodes matched the duration/title filter")
-    if draft and draft.pbs_exclude_passport_drm and all(item.get("source") == "pbs" for item in items):
-        from streamtv.builder.pbs_stream_probe import filter_playable_pbs_episodes
-
-        items = filter_playable_pbs_episodes(items)
-        if not items:
-            raise ValueError(
-                "PBS video uses Passport DRM-only streams and was excluded. "
-                "Choose public PBS content or disable 'Exclude Passport DRM'."
-            )
     return items
 
 

@@ -390,6 +390,12 @@ class ChannelImporter:
             yaml_sync = channel_config.get("epg_sync_class")
             if yaml_sync:
                 existing.epg_sync_class = str(yaml_sync).strip().upper()[:1]
+            yaml_sub = channel_config.get("subtitle_mode")
+            if yaml_sub:
+                existing.subtitle_mode = str(yaml_sub).strip().lower().replace("-", "_")
+            yaml_sub_lang = channel_config.get("preferred_subtitle_language_code")
+            if yaml_sub_lang:
+                existing.preferred_subtitle_language_code = str(yaml_sub_lang).strip().lower()
             self.db.commit()
             self.db.refresh(existing)
             channel = existing
@@ -408,6 +414,14 @@ class ChannelImporter:
             yaml_sync = channel_config.get("epg_sync_class")
             if yaml_sync:
                 create_kwargs["epg_sync_class"] = str(yaml_sync).strip().upper()[:1]
+            yaml_sub = channel_config.get("subtitle_mode")
+            if yaml_sub:
+                create_kwargs["subtitle_mode"] = str(yaml_sub).strip().lower().replace("-", "_")
+            yaml_sub_lang = channel_config.get("preferred_subtitle_language_code")
+            if yaml_sub_lang:
+                create_kwargs["preferred_subtitle_language_code"] = str(
+                    yaml_sub_lang
+                ).strip().lower()
             channel = Channel(**create_kwargs)
             self.db.add(channel)
             self.db.commit()

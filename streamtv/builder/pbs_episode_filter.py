@@ -8,10 +8,9 @@ from typing import Any, Optional
 DEFAULT_MIN_EPISODE_SECONDS = 300
 SKIP_TITLE_RE = re.compile(
     r"\b(trailer|trailers|preview|previews|sneak peek|teaser|promo|coming soon|"
-    r"extended preview|clip reel|resume watching|watch with pbs passport)\b",
+    r"extended preview|clip reel)\b",
     re.IGNORECASE,
 )
-PASSPORT_URL_RE = re.compile(r"/video/watch-passport-", re.IGNORECASE)
 
 
 def is_full_pbs_episode(
@@ -19,9 +18,6 @@ def is_full_pbs_episode(
     *,
     min_seconds: int = DEFAULT_MIN_EPISODE_SECONDS,
 ) -> bool:
-    url = (item.get("url") or "").strip()
-    if url and PASSPORT_URL_RE.search(url):
-        return False
     title = (item.get("title") or "").strip()
     if not title:
         return False

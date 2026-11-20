@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Backup & Restore - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Backup &amp; Restore</div>
+            <p class="page-subtitle">Automatic portable backups of settings, channels, schedules, and secrets.</p>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--warning, #f59e0b);">
+        <strong>Credentials warning:</strong>
+        Backup zips may contain API tokens, cookies, and <code>secrets.env</code>.
+        Treat them like a password store — do not email or commit them.
+    </div>
+
+    <div class="card" style="padding: 20px; margin-bottom: 16px;">
+        <div style="font-weight: 600; margin-bottom: 12px;">Status</div>
+        <div id="backupStatus" style="font-family: ui-monospace, monospace; font-size: 13px; color: var(--text-secondary);">
+            Loading…
+        </div>
+        <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px;">
+            <button class="btn btn-primary" id="btnBackupNow" type="button">Backup now</button>
+            <a class="btn btn-secondary" id="btnDownload" href="/api/backup/latest">Download latest</a>
+            <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
+                Restore from zip…
+                <input type="file" id="restoreFile" accept=".zip,application/zip" hidden>
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 14px;">
+                <input type="checkbox" id="dryRun" checked>
+                Validate only (dry run)
+            </label>
+        </div>
+        <pre id="backupResult" style="margin-top: 16px; white-space: pre-wrap; font-size: 13px; display: none;"></pre>
+    </div>
+
+    <div class="card" style="padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 8px;">How it works</div>
+        <ul style="margin: 0; padding-left: 1.2rem; color: var(--text-secondary); font-size: 14px;">
+            <li>StreamTV writes <code>streamtv-backup-latest.zip</code> automatically after settings, channel, or schedule changes (30s debounce).</li>
+            <li>On a new Mac: download the latest zip, then Restore — or use the macOS app’s first-launch Restore.</li>
+            <li>Restore stages the zip and requires a server restart to apply (avoids mid-tune file swaps).</li>
+            <li>Machine-local FFmpeg/cache paths are not applied on restore.</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 14px;">
+            Operator guide: <a href="/docs">docs</a> → Backup &amp; Restore, or
+            <code>docs/guides/BACKUP_RESTORE.md</code>.
+        </p>
+    </div>
+</div>
+
+<script>
+(function () {
+    const statusEl = document.getElementById('backupStatus');
+    const resultEl = document.getElementById('backupResult');
+
+    function showResult(obj) {
+        resultEl.style.display = 'block';
+        resultEl.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+    }
+
+    async function refreshStatus() {
+        try {
+            const r = await authenticatedFetch('/api/backup/status');
+            const data = await r.json();
+            if (!r.ok) throw new Error(data.detail || r.statusText);
+            const lines = [
+                'enabled: ' + data.enabled,
+                'backup_dir: ' + data.backup_dir,
+                'latest: ' + (data.latest_exists ? data.latest_path : '(none yet)'),
+                'retained: ' + data.retained_count,
+                'scheduler.pending: ' + (data.scheduler && data.scheduler.pending),
+            ];
+            statusEl.textContent = lines.join('\n');
+        } catch (e) {
+            statusEl.textContent = 'Error: ' + e.message;
+        }
+    }
+
+    document.getElementById('btnBackupNow').addEventListener('click', async () => {
+        try {
+            const r = await authenticatedFetch('/api/backup/now', { method: 'POST' });
+            const data = await r.json();
+            if (!r.ok) throw new Error(data.detail || r.statusText);
+            showResult(data);
+            await refreshStatus();
+        } catch (e) {
+            showResult('Backup failed: ' + e.message);
+        }
+    });
+
+    document.getElementById('restoreFile').addEventListener('change', async (ev) => {
+        const file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        const dry = document.getElementById('dryRun').checked;
+        const body = new FormData();
+        body.append('file', file);
+        try {
+            const r = await authenticatedFetch('/api/backup/restore?dry_run=' + dry, {
+                method: 'POST',
+                body,
+            });
+            const data = await r.json();
+            if (!r.ok) throw new Error(data.detail || r.statusText);
+            showResult(data);
+            if (data.restart_required) {
+                alert('Restore staged. Restart the StreamTV server to apply.');
+            }
+        } catch (e) {
+            showResult('Restore failed: ' + e.message);
+        }
+        ev.target.value = '';
+    });
+
+    refreshStatus();
+})();
+</script>
+{% endblock %}

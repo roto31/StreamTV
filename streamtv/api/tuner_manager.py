@@ -215,9 +215,9 @@ async def proxy_discover(name: str, request: Request) -> JSONResponse:
 
 
 @tuner_router.get("/tuners/proxy/{name}/lineup.json")
-async def proxy_lineup(name: str) -> JSONResponse:
+async def proxy_lineup(name: str, request: Request) -> JSONResponse:
     proxy = _get_proxy(name)
-    return JSONResponse(await proxy.lineup())
+    return JSONResponse(await proxy.lineup(_streamtv_base(request)))
 
 
 @tuner_router.get("/tuners/proxy/{name}/lineup_status.json")
@@ -271,3 +271,59 @@ async def proxy_root(name: str, request: Request) -> Response:
 </body></html>"""
         return HTMLResponse(html)
     return JSONResponse(data)
+
+
+# Paths reserved for JSON/XML device endpoints (not video)
+_PROXY_META_SUFFIXES = frozenset(
+    {
+        "discover.json",
+        "lineup.json",
+        "lineup_status.json",
+        "device.xml",
+        "xmltv.xml",
+    }
+)
+
+
+@tuner_router.get("/tuners/proxy/{name}/{rest:path}", operation_id="proxy_tuner_stream_hold")
+async def proxy_stream_with_hold(name: str, rest: str, request: Request) -> Response:
+    """Proxy Tunarr (etc.) MPEG-TS through Plex video hold.
+
+    Lineup URLs stay under the same DeviceID/BaseURL
+    (``/tuners/proxy/{name}/...``). Hold emits h264+aac immediately; upstream
+    is opened in parallel.
+    """
+    from fastapi.responses import StreamingResponse
+
+    from ..tuners.video_hold import maybe_wrap_mpegts_hold, proxy_upstream_bytes
+
+    if not rest or rest.strip("/") == "":
+        raise HTTPException(status_code=404, detail="Not a stream path")
+
+    leaf = rest.rstrip("/").split("/")[-1]
+    if leaf in _PROXY_META_SUFFIXES:
+        raise HTTPException(status_code=404, detail="Not a stream path")
+
+    proxy = _get_proxy(name)
+    query = request.url.query or ""
+    upstream = proxy.upstream_stream_url(rest, query)
+
+    async def _gen():
+        try:
+            async for chunk in proxy_upstream_bytes(upstream):
+                yield chunk
+        except Exception as exc:
+            logger.warning("Tunarr proxy stream failed %s: %s", upstream, exc)
+            return
+
+    response = StreamingResponse(
+        _gen(),
+        media_type="video/mp2t",
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache, no-store, must-revalidate, private",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+    return maybe_wrap_mpegts_hold(response)

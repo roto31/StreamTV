@@ -192,38 +192,6 @@ def compile_draft_to_unified(
     if not streams:
         raise ValueError("No resolved streams to compile")
 
-    # #region agent log
-    try:
-        import json
-        import time
-        from pathlib import Path as _Path
-
-        ids = [s.get("id") for s in streams if s.get("id")]
-        dupes = len(ids) - len(set(ids))
-        _Path("/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log").open("a").write(
-            json.dumps(
-                {
-                    "sessionId": "247576",
-                    "hypothesisId": "H1",
-                    "location": "compiler.py:compile_draft_to_unified",
-                    "message": "compile stream id uniqueness",
-                    "data": {
-                        "channel": draft.channel.number,
-                        "stream_count": len(streams),
-                        "unique_ids": len(set(ids)),
-                        "duplicate_id_count": dupes,
-                        "sample_ids": ids[:3],
-                    },
-                    "timestamp": int(time.time() * 1000),
-                    "runId": "pre-fix",
-                }
-            )
-            + "\n"
-        )
-    except Exception:
-        pass
-    # #endregion
-
     number = draft.channel.number
     if not number:
         raise ValueError("Channel number is required before build")

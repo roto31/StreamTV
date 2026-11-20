@@ -36,14 +36,26 @@ def init_db():
     from . import models
     Base.metadata.create_all(bind=engine)
     try:
+        from streamtv.backup.hooks import register_db_hooks
+
+        register_db_hooks()
+    except Exception:
+        pass
+    try:
         from pathlib import Path
         import subprocess
-        script = Path(__file__).resolve().parents[2] / "scripts" / "add_epg_sync_class_migration.py"
-        if script.is_file():
-            subprocess.run(
-                [__import__("sys").executable, str(script)],
-                check=False,
-                capture_output=True,
-            )
+
+        root = Path(__file__).resolve().parents[2]
+        for script_name in (
+            "add_epg_sync_class_migration.py",
+            "add_cached_media_failure_columns.py",
+        ):
+            script = root / "scripts" / script_name
+            if script.is_file():
+                subprocess.run(
+                    [__import__("sys").executable, str(script)],
+                    check=False,
+                    capture_output=True,
+                )
     except Exception:
         pass

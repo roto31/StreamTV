@@ -3,13 +3,11 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 import os
 import subprocess
 import time as _time
-import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -17,36 +15,6 @@ _reload_lock = asyncio.Lock()
 _reload_done = False
 _last_reload_at: Optional[float] = None
 _last_boundary_reload_by_channel: Dict[str, float] = {}
-
-# #region agent log
-_DEBUG_LOG_PATH = "/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log"
-
-
-def _agent_dbg_log(
-    hypothesis_id: str,
-    location: str,
-    message: str,
-    data: dict,
-    *,
-    run_id: str = "post-fix",
-) -> None:
-    try:
-        payload = {
-            "sessionId": "247576",
-            "runId": run_id,
-            "hypothesisId": hypothesis_id,
-            "location": location,
-            "message": message,
-            "data": data,
-            "timestamp": int(_time.time() * 1000),
-        }
-        with open(_DEBUG_LOG_PATH, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload, default=str) + "\n")
-    except Exception:
-        pass
-
-
-# #endregion
 
 
 def _resolve_plex_base_url() -> Optional[str]:
@@ -89,70 +57,61 @@ def _resolve_plex_token() -> Optional[str]:
         return None
 
 
-def _configured_dvr_id() -> Optional[str]:
+def normalize_dvr_id(raw: Optional[str]) -> Optional[str]:
+    """Normalize Plex DVR id from ratingKey or /livetv/dvrs/{id} key path."""
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if not text:
+        return None
+    if "/" in text:
+        text = text.rstrip("/").split("/")[-1]
+    return text or None
+
+
+def _prefer_streamtv_dvr(dvrs: List[Dict]) -> List[str]:
+    """Order discovered DVR ids: StreamTV-titled first, then enabled, then rest."""
+    scored: List[tuple[int, str]] = []
+    for dvr in dvrs:
+        nid = normalize_dvr_id(dvr.get("id") or dvr.get("ratingKey") or dvr.get("key"))
+        if not nid:
+            continue
+        title = str(dvr.get("title") or "").lower()
+        enabled = bool(dvr.get("enabled"))
+        score = 0
+        if "streamtv" in title or "stream tv" in title:
+            score += 20
+        if enabled:
+            score += 10
+        scored.append((score, nid))
+    scored.sort(key=lambda item: (-item[0], item[1]))
+    ordered: List[str] = []
+    for _, nid in scored:
+        if nid not in ordered:
+            ordered.append(nid)
+    return ordered
+
+
+async def _candidate_dvr_ids(client) -> List[str]:
+    """Config/env first, then live PMS discovery (Plex DVR ids rotate on re-add)."""
     from streamtv.config import config
 
-    if config.plex.dvr_id:
-        return str(config.plex.dvr_id)
-    env_id = os.getenv("PLEX_DVR_ID")
-    if env_id:
-        return str(env_id)
-    return None
+    candidates: List[str] = []
+    for raw in (getattr(config.plex, "dvr_id", None), os.getenv("PLEX_DVR_ID")):
+        nid = normalize_dvr_id(raw if raw is None else str(raw))
+        if nid and nid not in candidates:
+            candidates.append(nid)
 
-
-def _dvr_prefers_streamtv(lineup: str, lineup_title: str) -> bool:
-    blob = f"{lineup} {lineup_title}".lower()
-    return "xmltv" in blob or "streamtv" in blob or ":8410" in blob
-
-
-async def _list_dvr_candidates(base_url: str, token: str) -> List[Tuple[str, str, str]]:
-    """Return (dvr_id, lineup, lineup_title), StreamTV XMLTV lineups first."""
-    import httpx
-
-    url = f"{base_url.rstrip('/')}/livetv/dvrs"
-    headers = {"X-Plex-Token": token, "Accept": "application/xml"}
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(url, headers=headers)
-            response.raise_for_status()
-            root = ET.fromstring(response.text)
+        dvrs = await client.get_dvrs()
     except Exception as exc:
-        logger.warning("Plex DVR list failed: %s", exc)
-        return []
+        logger.warning("Plex get_dvrs failed during DVR resolve: %s", exc)
+        dvrs = []
 
-    rows: List[Tuple[str, str, str, int]] = []
-    for dvr_elem in root.findall(".//Dvr"):
-        dvr_id = (dvr_elem.get("key") or "").strip()
-        if not dvr_id:
-            continue
-        lineup = dvr_elem.get("lineup") or ""
-        lineup_title = dvr_elem.get("lineupTitle") or dvr_elem.get("title") or ""
-        rank = 0 if _dvr_prefers_streamtv(lineup, lineup_title) else 1
-        rows.append((dvr_id, lineup, lineup_title, rank))
-    rows.sort(key=lambda r: (r[3], r[0]))
-    return [(r[0], r[1], r[2]) for r in rows]
-
-
-async def _resolve_dvr_id(client) -> Optional[str]:
-    """Prefer configured DVR id; else discover StreamTV XMLTV DVR."""
-    configured = _configured_dvr_id()
-    if configured:
-        return configured
-
-    base_url = _resolve_plex_base_url()
-    token = _resolve_plex_token()
-    if base_url and token:
-        discovered = await _list_dvr_candidates(base_url, token)
-        if discovered:
-            return discovered[0][0]
-
-    dvrs = await client.get_dvrs()
-    for dvr in dvrs:
-        if dvr.get("enabled") and dvr.get("id"):
-            return str(dvr["id"])
-    if dvrs and dvrs[0].get("id"):
-        return str(dvrs[0]["id"])
-    return None
+    for nid in _prefer_streamtv_dvr(dvrs or []):
+        if nid not in candidates:
+            candidates.append(nid)
+    return candidates
 
 
 async def _post_reload_guide(*, reason: str, channel_number: str = "") -> bool:
@@ -170,78 +129,44 @@ async def _post_reload_guide(*, reason: str, channel_number: str = "") -> bool:
 
     try:
         async with PlexAPIClient(base_url, token) as client:
-            primary = await _resolve_dvr_id(client)
-            candidates: List[str] = []
-            if primary:
-                candidates.append(primary)
-            for dvr_id, _lineup, _title in await _list_dvr_candidates(base_url, token):
-                if dvr_id not in candidates:
-                    candidates.append(dvr_id)
-
+            candidates = await _candidate_dvr_ids(client)
             if not candidates:
-                logger.warning("Plex guide reload skipped: no DVR id")
-                # #region agent log
-                _agent_dbg_log(
-                    "H-dvr",
-                    "guide_reload.py:_post_reload_guide",
-                    "no DVR candidates",
-                    {"reason": reason, "channel": channel_number, "base_url": base_url},
-                )
-                # #endregion
+                logger.warning("Plex guide reload skipped: no DVR id candidates")
                 return False
+
+            preferred = normalize_dvr_id(
+                str(getattr(config.plex, "dvr_id", "") or "")
+            ) or normalize_dvr_id(os.getenv("PLEX_DVR_ID"))
 
             for dvr_id in candidates:
                 ok = await client.reload_dvr_guide(dvr_id)
-                if ok:
-                    if primary and dvr_id != primary:
-                        logger.warning(
-                            "Plex reloadGuide: configured DVR %s failed; fell back to %s (%s)",
-                            primary,
-                            dvr_id,
-                            reason,
-                        )
-                    # #region agent log
-                    _agent_dbg_log(
-                        "H-dvr",
-                        "guide_reload.py:_post_reload_guide",
-                        "reloadGuide succeeded",
-                        {
-                            "reason": reason,
-                            "channel": channel_number,
-                            "dvr_id": dvr_id,
-                            "configured": primary,
-                            "fallback": bool(primary and dvr_id != primary),
-                            "candidates": candidates,
-                        },
+                if not ok:
+                    continue
+                if preferred and dvr_id != preferred:
+                    logger.warning(
+                        "Plex reloadGuide: configured/env DVR id %s failed; "
+                        "succeeded with live DVR %s — update config.plex.dvr_id "
+                        "and PLEX_DVR_ID / epg-health LaunchAgent",
+                        preferred,
+                        dvr_id,
                     )
-                    # #endregion
-                    if channel_number:
-                        logger.info(
-                            "Channel %s: Plex reloadGuide triggered (%s)",
-                            channel_number,
-                            reason,
-                        )
-                    else:
-                        logger.info("Plex reloadGuide succeeded (%s)", reason)
-                    return True
+                if channel_number:
+                    logger.info(
+                        "Channel %s: Plex reloadGuide triggered (%s) dvr=%s",
+                        channel_number,
+                        reason,
+                        dvr_id,
+                    )
+                else:
+                    logger.info(
+                        "Plex reloadGuide succeeded (%s) dvr=%s", reason, dvr_id
+                    )
+                return True
 
-            # #region agent log
-            _agent_dbg_log(
-                "H-dvr",
-                "guide_reload.py:_post_reload_guide",
-                "reloadGuide failed all candidates",
-                {
-                    "reason": reason,
-                    "channel": channel_number,
-                    "candidates": candidates,
-                    "configured": primary,
-                },
-            )
-            # #endregion
             logger.warning(
-                "Plex guide reload failed (%s): all DVR candidates exhausted %s",
+                "Plex guide reload failed (%s): tried DVR ids %s",
                 reason,
-                candidates,
+                ",".join(candidates),
             )
             return False
     except Exception as exc:

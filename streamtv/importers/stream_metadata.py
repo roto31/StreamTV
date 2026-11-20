@@ -37,8 +37,16 @@ def title_from_url(url: str) -> str:
     return ""
 
 
+def _is_movie(stream_data: dict[str, Any]) -> bool:
+    return str(stream_data.get("type") or "").strip().lower() == "movie"
+
+
 def resolve_media_title(stream_data: dict[str, Any]) -> str:
     """Best display title for a stream: slot/title/url basename, not collection."""
+    if _is_movie(stream_data):
+        title = (stream_data.get("title") or "").strip()
+        if title:
+            return title
     slot = (stream_data.get("slot") or "").strip()
     if slot:
         parsed = parse_slot(slot)
@@ -80,6 +88,16 @@ def build_stream_meta_data(
 ) -> Optional[str]:
     """JSON blob for media_items.meta_data (EPG season/episode/sub-title)."""
     meta: dict[str, Any] = {}
+    if _is_movie(stream_data):
+        # Movies are one-off titles. Season/episode + show_name make XMLTV use
+        # the channel/collection as a series name and the film as a sub-title.
+        if stream_data.get("year"):
+            meta["year"] = stream_data["year"]
+        if stream_data.get("broadcast_date"):
+            meta["broadcast_date"] = str(stream_data["broadcast_date"])
+        if stream_data.get("network"):
+            meta["network"] = stream_data["network"]
+        return json.dumps(meta) if meta else None
     slot = (stream_data.get("slot") or "").strip()
     if slot:
         meta.update(parse_slot(slot))

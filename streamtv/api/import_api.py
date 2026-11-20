@@ -176,6 +176,12 @@ async def import_channels_yaml(
         channels = await import_channels_from_yaml(tmp_path, validate=validate, db_session=db)
         
         logger.info(f"Successfully imported {len(channels)} channels from {yaml_file.filename}")
+        try:
+            from streamtv.backup.scheduler import schedule_backup
+
+            schedule_backup(reason="yaml_import")
+        except Exception:
+            pass
         return channels
     except HTTPException:
         raise
@@ -261,6 +267,12 @@ async def import_channels_yaml_path(
         # Import channels (reuse request session so returned objects stay attached)
         channels = await import_channels_from_yaml(yaml_path, validate=validate, db_session=db)
         
+        try:
+            from streamtv.backup.scheduler import schedule_backup
+
+            schedule_backup(reason="yaml_import_path")
+        except Exception:
+            pass
         return channels
     except HTTPException:
         raise

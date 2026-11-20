@@ -19,6 +19,7 @@ from .config import config
 from .database import init_db, get_db
 from .api import api_router, iptv_router_instance, docs_router, logs_router
 from .api.ollama import router as ollama_router
+from .api.foundation_models import router as foundation_models_router
 from .api.tuner_manager import tuner_router
 from .hdhomerun import (
     hdhomerun_router,
@@ -71,8 +72,32 @@ async def lifespan(app: FastAPI):
         logger.warning(f"Could not verify yt-dlp version: {e}")
 
     logger.info("LIFESPAN: About to call init_db()...")
+    # Apply staged restore from macOS onboarding / Settings before opening the DB.
+    try:
+        from streamtv.backup.restore import apply_pending_restore
+
+        restore_report = apply_pending_restore()
+        if restore_report:
+            logger.info("backup: pending restore applied: %s", restore_report.get("status"))
+            try:
+                config.reload_from_disk()
+                logger.info("backup: config reloaded after restore")
+            except Exception as reload_exc:
+                logger.warning("backup: config reload after restore failed: %s", reload_exc)
+    except Exception as e:
+        logger.warning("backup: pending restore failed: %s", e, exc_info=True)
+
     init_db()
     logger.info("Database initialized")
+
+    # Automatic configuration backups (non-fatal)
+    try:
+        from streamtv.backup.scheduler import start_scheduler
+
+        start_scheduler(take_initial_if_missing=True)
+        logger.info("backup: scheduler started")
+    except Exception as e:
+        logger.warning("backup: scheduler start failed: %s", e)
     
     # Start SSDP server for HDHomeRun discovery if enabled
     if config.hdhomerun.enabled and config.hdhomerun.enable_ssdp:
@@ -136,8 +161,14 @@ async def lifespan(app: FastAPI):
         logger.debug("Plex startup guide reload schedule skipped: %s", e)
 
     # Start download-first cache system (if enabled)
+    cache_retry_task = None
     if config.cache.enabled:
-        try:
+        import asyncio
+        from pathlib import Path as _P
+
+        from streamtv.utils.cache_startup import cache_volume_status, ensure_cache_dir
+
+        async def _start_cache_system() -> None:
             from streamtv.database.session import SessionLocal
             from streamtv.cache import (
                 CacheManager,
@@ -145,7 +176,10 @@ async def lifespan(app: FastAPI):
                 DownloadScheduler,
                 bind_runtime,
             )
+            from streamtv.cache.playback_mode import playback_mode
+            from .api.cache_files import configure_cache_serving, router as cache_files_router
 
+            ensure_cache_dir(config.cache.cache_directory)
             cache_manager = CacheManager(SessionLocal)
             download_queue = DownloadQueue(cache_manager, SessionLocal)
             download_scheduler = DownloadScheduler(
@@ -159,35 +193,143 @@ async def lifespan(app: FastAPI):
             app.state.download_queue = download_queue
             app.state.download_scheduler = download_scheduler
             bind_runtime(cache_manager, download_queue)
-            from streamtv.cache.playback_mode import playback_mode
-
-            logger.info(
-                f"Cache system started (playback_mode={playback_mode()})"
-            )
-
-            from .api.cache_files import configure_cache_serving, router as cache_files_router
-            from pathlib import Path as _P
 
             _cache_dir = _P(config.cache.cache_directory).expanduser()
-            _cache_dir.mkdir(parents=True, exist_ok=True)
             configure_cache_serving(_cache_dir)
-            app.include_router(cache_files_router)
-            logger.info(f"Cache file serving mounted at /cache/files → {_cache_dir}")
+            if not getattr(app.state, "_cache_files_router_mounted", False):
+                app.include_router(cache_files_router)
+                app.state._cache_files_router_mounted = True
+
+            logger.info(
+                "Cache system started (playback_mode=%s) dir=%s",
+                playback_mode(),
+                _cache_dir,
+            )
+            logger.info("Cache file serving mounted at /cache/files → %s", _cache_dir)
+
+        async def _cache_retry_loop() -> None:
+            interval = float(os.environ.get("STREAMTV_CACHE_RETRY_SEC", "30"))
+            while True:
+                await asyncio.sleep(interval)
+                if getattr(app.state, "cache_manager", None) is not None:
+                    return
+                ready, reason = cache_volume_status(config.cache.cache_directory)
+                if not ready:
+                    logger.error(
+                        "CACHE RETRY: TunarrRAM/cache still unavailable (%s) — "
+                        "next try in %.0fs",
+                        reason,
+                        interval,
+                    )
+                    continue
+                try:
+                    logger.info("CACHE RETRY: volume ready (%s) — starting cache", reason)
+                    await _start_cache_system()
+                    return
+                except Exception as retry_exc:
+                    logger.error(
+                        "CACHE RETRY failed: %s", retry_exc, exc_info=True
+                    )
+
+        try:
+            await _start_cache_system()
         except Exception as exc:
-            logger.warning(f"Failed to start cache system: {exc}", exc_info=True)
+            ready, reason = cache_volume_status(config.cache.cache_directory)
+            logger.error(
+                "CACHE START FAILED — cache disabled until volume appears "
+                "(ready=%s reason=%s): %s",
+                ready,
+                reason,
+                exc,
+                exc_info=True,
+            )
             app.state.cache_manager = None
             app.state.download_queue = None
             app.state.download_scheduler = None
+            cache_retry_task = asyncio.create_task(_cache_retry_loop())
+            app.state.cache_retry_task = cache_retry_task
     else:
         app.state.cache_manager = None
         app.state.download_queue = None
         app.state.download_scheduler = None
+
+    # Optional background auto-healer (CLI still works when disabled here)
+    auto_healer_task = None
+    app.state.auto_healer = None
+    if getattr(config.auto_healer, "enabled", False):
+        try:
+            import asyncio
+            from pathlib import Path as _Path
+            from streamtv.utils.auto_healer import AutoHealer
+
+            workspace = _Path(__file__).resolve().parent.parent
+            healer = AutoHealer(
+                workspace_root=workspace,
+                ollama_url=config.auto_healer.ollama_url,
+                ollama_model=config.auto_healer.ollama_model,
+                foundation_models_url=getattr(
+                    config.auto_healer,
+                    "foundation_models_url",
+                    "http://127.0.0.1:11435",
+                ),
+                ai_backend=getattr(config.auto_healer, "ai_backend", "auto"),
+                dry_run=not bool(config.auto_healer.apply_fixes),
+                enable_ai=bool(config.auto_healer.enable_ai),
+                max_fix_attempts=int(
+                    getattr(config.auto_healer, "max_fix_attempts", 3)
+                ),
+            )
+            await healer.__aenter__()
+            app.state.auto_healer = healer
+
+            async def _auto_heal_loop() -> None:
+                interval = max(1, int(config.auto_healer.check_interval))
+                while True:
+                    try:
+                        await healer.run_health_check()
+                    except Exception as heal_exc:
+                        logger.warning("Auto-healer cycle failed: %s", heal_exc)
+                    await asyncio.sleep(interval * 60)
+
+            auto_healer_task = asyncio.create_task(_auto_heal_loop())
+            logger.info(
+                "Auto-healer background loop started (interval=%smin, apply=%s)",
+                config.auto_healer.check_interval,
+                config.auto_healer.apply_fixes,
+            )
+        except Exception as exc:
+            logger.warning("Failed to start auto-healer: %s", exc, exc_info=True)
+            app.state.auto_healer = None
 
     logger.info(f"StreamTV started on {config.server.host}:{config.server.port}")
     yield
     
     # Shutdown
     logger.info("Shutting down StreamTV...")
+    try:
+        from streamtv.backup.scheduler import stop_scheduler
+
+        stop_scheduler()
+    except Exception:
+        pass
+    if auto_healer_task is not None:
+        auto_healer_task.cancel()
+        try:
+            await auto_healer_task
+        except Exception:
+            pass
+    cache_retry = getattr(app.state, "cache_retry_task", None) or cache_retry_task
+    if cache_retry is not None:
+        cache_retry.cancel()
+        try:
+            await cache_retry
+        except Exception:
+            pass
+    if getattr(app.state, "auto_healer", None) is not None:
+        try:
+            await app.state.auto_healer.__aexit__(None, None, None)
+        except Exception:
+            pass
     if hasattr(app.state, 'channel_manager') and app.state.channel_manager:
         await app.state.channel_manager.stop_all_channels()
         logger.info("Stopped all continuous channel streams")
@@ -285,6 +427,8 @@ app.add_middleware(
 # Include routers
 app.include_router(api_router)
 app.include_router(iptv_router_instance)
+from .api.player_preview import router as player_preview_router
+app.include_router(player_preview_router)
 
 
 @app.get("/xmltv.xml")
@@ -304,7 +448,8 @@ async def root_xmltv(
 
 app.include_router(docs_router)
 app.include_router(logs_router)
-app.include_router(ollama_router)  # Ollama routes (some are at root level like /ollama)
+app.include_router(ollama_router)  # Ollama routes (optional / legacy OS)
+app.include_router(foundation_models_router)  # Apple FM bridge status/query
 
 # Tuner manager: proxy Tunarr (etc.) for Plex GUI Add Device
 if config.tuner_manager.enabled:
@@ -346,9 +491,29 @@ if config.hdhomerun.enabled:
         request: Request,
         db: Session = Depends(get_db),
     ):
-        """Root-level HDHomeRun tune endpoint (Plex expects /auto/vN at device root)."""
+        """Root-level HDHomeRun tune endpoint (Plex expects /auto/vN at device root).
+
+        Native full hold (re-hold on silence) is opt-in via
+        STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1 — Archive copy-mode often lacks a near
+        IDR after a black-hold splice and freezes Apple TV on black.
+
+        Default: no YouTube wait-phase hold (was causing Apple TV spinner/black
+        while cold full-cache downloads deferred). Opt-in:
+        STREAMTV_PLEX_VIDEO_HOLD_YOUTUBE=1. Full native re-hold remains
+        STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1. Archive CDN-first stays unwrapped.
+        """
         from .hdhomerun.api import stream_channel
-        return await stream_channel(channel_number, request, db)
+        from .tuners.video_hold import (
+            maybe_wrap_mpegts_hold,
+            maybe_wrap_youtube_wait_hold,
+        )
+        import os
+
+        response = await stream_channel(channel_number, request, db)
+        native = os.environ.get("STREAMTV_PLEX_VIDEO_HOLD_NATIVE", "0").strip().lower()
+        if native in ("1", "true", "yes", "on"):
+            return maybe_wrap_mpegts_hold(response)
+        return maybe_wrap_youtube_wait_hold(response, channel_number, db)
 
 # Setup templates with auto-escaping enabled for XSS protection
 templates_dir = Path(__file__).parent / "templates"
@@ -416,8 +581,8 @@ async def channels_page(request: Request):
         return HTMLResponse("<h1>Channels Management</h1><p>Templates not available. Use API at /api/channels</p>")
 
 
-@app.get("/plex-logs", response_class=HTMLResponse)
-async def plex_logs_page(request: Request):
+@app.get("/plex-logs", response_class=HTMLResponse, operation_id="ui_plex_logs_page")
+async def ui_plex_logs_page(request: Request):
     """Plex server logs viewer page"""
     if templates:
         return templates.TemplateResponse(request, "plex_logs.html")
@@ -436,11 +601,29 @@ async def test_stream_page(request: Request):
 
 @app.get("/player", response_class=HTMLResponse)
 async def player_page(request: Request):
-    """IPTV player page"""
-    if templates:
-        return templates.TemplateResponse(request, "player.html")
-    else:
+    """IPTV player page — browser preview via mpegts.js (Tunarr-style live TS)."""
+    if not templates:
         return HTMLResponse("<h1>IPTV Player</h1><p>Templates not available.</p>")
+    response = templates.TemplateResponse(request, "player.html")
+    # Set CSP before SecurityHeadersMiddleware setdefault so workers/CDN work for preview.
+    nonce = getattr(request.state, "csp_nonce", None) or ""
+    nonce_src = f"'nonce-{nonce}'" if nonce else "'none'"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; "
+        "font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com; "
+        f"script-src 'self' {nonce_src} https://cdn.jsdelivr.net https://unpkg.com; "
+        "img-src 'self' data: blob: https:; "
+        "media-src 'self' blob:; "
+        "connect-src 'self'; "
+        "worker-src 'self' blob:; "
+        "frame-src 'self'; "
+        "frame-ancestors 'none'; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self'"
+    )
+    return response
 
 
 @app.get("/media", response_class=HTMLResponse)
@@ -484,6 +667,17 @@ async def settings_auth_hub_page(request: Request):
     if templates:
         return templates.TemplateResponse(request, "settings_auth.html")
     return HTMLResponse("<h1>Source Authentication</h1><p>Templates not available.</p>")
+
+
+@app.get("/settings/backup", response_class=HTMLResponse)
+async def settings_backup_page(request: Request):
+    """Backup and restore settings page"""
+    if templates:
+        return templates.TemplateResponse(request, "settings_backup.html")
+    return HTMLResponse(
+        "<h1>Backup &amp; Restore</h1>"
+        "<p>Templates not available. Use API at /api/backup/status</p>"
+    )
 
 
 @app.get("/cache", response_class=HTMLResponse)

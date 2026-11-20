@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
+from pathlib import Path
 from typing import Callable, Optional
 
 from streamtv.config import config
@@ -20,6 +21,12 @@ from streamtv.cache.playback_mode import (
 )
 
 logger = logging.getLogger(__name__)
+
+# On-tune YouTube full-cache: allow yt-dlp to finish (download_now is ungated).
+# 15s was too short for ~80–100 MB music videos → stream-miss + Plex spinner.
+_YOUTUBE_TUNE_WAIT_CAP_SEC = 60.0
+_MIN_YOUTUBE_MP4_BYTES = 50_000
+
 
 def min_buffer_seconds() -> float:
     return max(0.0, float(getattr(config.cache, "stream_buffer_seconds", 0.0) or 0.0))
@@ -38,14 +45,59 @@ def youtube_cache_wait_seconds() -> float:
 
 
 def resolve_buffer_max_wait_seconds(*, on_tune: bool, yt_full: bool) -> float:
-    """Cap blocking wait so Plex tuners do not spin on long RAM-cache fills."""
+    """Cap blocking wait so Plex tuners do not spin on long RAM-cache fills.
+
+    YouTube full-cache on tune: short cap then skip item (no CDN — mid-stream 403).
+    """
     if yt_full and on_tune:
-        return tune_max_wait_seconds()
+        return min(
+            youtube_cache_wait_seconds(),
+            max(tune_max_wait_seconds(), _YOUTUBE_TUNE_WAIT_CAP_SEC),
+        )
     if yt_full:
         return youtube_cache_wait_seconds()
     if on_tune:
         return tune_max_wait_seconds()
     return 120.0
+
+
+def _youtube_disk_mp4(cache_manager: CacheManager, source_id: str) -> Optional[Path]:
+    """Return on-disk youtube/{id}.mp4 if present (even when DB status is stale)."""
+    path = cache_manager.cache_dir / "youtube" / f"{source_id}.mp4"
+    try:
+        if path.is_file() and path.stat().st_size >= _MIN_YOUTUBE_MP4_BYTES:
+            return path
+    except OSError:
+        return None
+    return None
+
+
+def _adopt_youtube_disk_file(
+    cache_manager: CacheManager,
+    download_queue: DownloadQueue,
+    media_item: MediaItem,
+) -> bool:
+    """If the mp4 is already on TunarrRAM, mark READY and return True."""
+    source_id = media_item.source_id
+    disk = _youtube_disk_mp4(cache_manager, source_id)
+    if disk is None:
+        return False
+    if cache_manager.get_cached_path(source_id):
+        return True
+    try:
+        # Ensure manifest row exists, then mark READY from disk.
+        download_queue.cache_manager.queue_for_download(media_item)
+        cache_manager.register_download_complete(source_id, disk)
+        logger.info(
+            "Adopted on-disk YouTube cache %s → %s",
+            source_id,
+            disk,
+        )
+        return True
+    except Exception as exc:
+        logger.warning("Failed to adopt on-disk YouTube %s: %s", source_id, exc)
+        # Still allow playback if file exists — callers treat True as buffered.
+        return True
 
 def buffer_wait_enabled() -> bool:
     return (
@@ -86,6 +138,14 @@ async def wait_for_playback_buffer(
 
     min_sec = min_buffer_seconds()
     if cache_manager.get_cached_path(media_item.source_id):
+        return True
+
+    # Kickstart / DB race: file on TunarrRAM but manifest not READY yet.
+    if (
+        media_item.source == StreamSource.YOUTUBE
+        and youtube_full_cache_enabled()
+        and _adopt_youtube_disk_file(cache_manager, download_queue, media_item)
+    ):
         return True
 
     playable = cache_manager.get_playable_path(media_item.source_id)
@@ -129,7 +189,44 @@ async def wait_for_playback_buffer(
 
     if yt_full or tune_only_buffering():
         if yt_full:
-            await download_queue.ensure_download_started(media_item)
+            # Bypass prefetch gates: reload MediaItem in a task and download_now.
+            media_id = media_item.id
+            source_id = media_item.source_id
+            if source_id not in download_queue._in_flight:
+                download_queue._in_flight.add(source_id)
+                factory = download_queue.db_session_factory
+
+                async def _on_air_youtube_download() -> None:
+                    db = factory()
+                    try:
+                        from streamtv.database.models import MediaItem as _MI
+
+                        item = db.query(_MI).filter(_MI.id == media_id).first()
+                        if item is None:
+                            logger.warning(
+                                "Channel %s: on-air YouTube media_id=%s missing",
+                                channel_number,
+                                media_id,
+                            )
+                            return
+                        logger.info(
+                            "Channel %s: on-air YouTube download_now %s",
+                            channel_number,
+                            source_id,
+                        )
+                        await download_queue.download_now(item)
+                    except Exception as exc:
+                        logger.warning(
+                            "Channel %s: on-air YouTube download failed for %s: %s",
+                            channel_number,
+                            source_id,
+                            exc,
+                        )
+                    finally:
+                        db.close()
+                        download_queue._in_flight.discard(source_id)
+
+                asyncio.create_task(_on_air_youtube_download())
         elif tune_only_buffering():
             await download_queue.ensure_ring_buffer(
                 media_item, ring_buffer_max_bytes()
@@ -145,6 +242,10 @@ async def wait_for_playback_buffer(
             return False
 
         if cache_manager.get_cached_path(media_item.source_id):
+            return True
+
+        if _youtube_disk_mp4(cache_manager, media_item.source_id):
+            _adopt_youtube_disk_file(cache_manager, download_queue, media_item)
             return True
 
         buffered = cache_manager.estimate_buffered_seconds(
@@ -177,6 +278,21 @@ async def wait_for_playback_buffer(
         await asyncio.sleep(0.25)
 
     if on_tune:
+        if yt_full:
+            # Refuse googlevideo CDN fallback — signed URL mid-stream 403 stutter.
+            if cache_manager.get_cached_path(media_item.source_id) or (
+                cache_manager.get_playable_path(media_item.source_id)
+            ):
+                return True
+            if _youtube_disk_mp4(cache_manager, media_item.source_id):
+                _adopt_youtube_disk_file(cache_manager, download_queue, media_item)
+                return True
+            logger.warning(
+                f"Channel {channel_number}: YouTube full-cache tune wait "
+                f"({max_block:.0f}s) timed out with no local file for "
+                f"{media_item.title[:60]}; skipping item (no CDN fallback)"
+            )
+            return False
         logger.info(
             f"Channel {channel_number}: tune buffer cap ({max_block:.0f}s) reached; "
             f"starting CDN stream for {media_item.title[:60]}"

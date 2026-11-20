@@ -65,7 +65,18 @@ class ArchiveOrgHttpDownloader:
                     f"Could not parse Archive.org identifier from URL: "
                     f"{url_or_identifier[:120]}"
                 )
-                return None
+                from streamtv.utils.download_errors import (
+                    DownloadFailure,
+                    classify_download_error,
+                )
+
+                raise DownloadFailure(
+                    classify_download_error(
+                        f"Could not parse Archive.org identifier from URL: "
+                        f"{url_or_identifier[:120]}",
+                        source="archive_org",
+                    )
+                )
         else:
             identifier = url_or_identifier
 
@@ -109,6 +120,23 @@ class ArchiveOrgHttpDownloader:
                 last_error = "Download returned no file"
             except httpx.HTTPStatusError as exc:
                 status = exc.response.status_code
+                if status in (401, 403):
+                    from streamtv.utils.download_errors import (
+                        DownloadFailure,
+                        classify_download_error,
+                    )
+
+                    logger.error(
+                        f"Archive.org HTTP download auth failed for {identifier}: "
+                        f"HTTP {status}"
+                    )
+                    raise DownloadFailure(
+                        classify_download_error(
+                            f"HTTP {status}",
+                            source="archive_org",
+                            http_status=status,
+                        )
+                    ) from exc
                 if status in (429, 500, 502, 503, 504):
                     last_error = f"HTTP {status}"
                     logger.warning(
@@ -116,28 +144,66 @@ class ArchiveOrgHttpDownloader:
                         f"({status}) for {identifier}, attempt {attempt}/{_MAX_RETRIES}"
                     )
                 else:
+                    from streamtv.utils.download_errors import (
+                        DownloadFailure,
+                        classify_download_error,
+                    )
+
                     logger.error(
                         f"Archive.org HTTP download failed for {identifier}: {exc}"
                     )
-                    return None
+                    raise DownloadFailure(
+                        classify_download_error(
+                            str(exc),
+                            source="archive_org",
+                            http_status=status,
+                        )
+                    ) from exc
             except Exception as exc:
+                from streamtv.utils.download_errors import DownloadFailure
+
+                if isinstance(exc, DownloadFailure):
+                    raise
                 last_error = str(exc)
                 logger.error(
                     f"Archive.org HTTP download error for {identifier}: {exc}",
                     exc_info=True,
                 )
-                return None
+                from streamtv.utils.download_errors import classify_download_error
+
+                raise DownloadFailure(
+                    classify_download_error(str(exc), source="archive_org")
+                ) from exc
 
             if attempt < _MAX_RETRIES:
                 logger.info(f"Retrying {identifier} in {backoff:.0f}s")
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, _MAX_BACKOFF_SECONDS)
 
-        logger.error(
+        from streamtv.utils.download_errors import (
+            DownloadFailure,
+            classify_download_error,
+        )
+
+        msg = (
             f"Archive.org HTTP download exhausted retries for {identifier}: "
             f"{last_error}"
         )
-        return None
+        logger.error(msg)
+        http_status = None
+        if last_error and last_error.startswith("HTTP "):
+            try:
+                http_status = int(last_error.split()[1])
+            except (IndexError, ValueError):
+                http_status = None
+        raise DownloadFailure(
+            classify_download_error(
+                msg,
+                source="archive_org",
+                http_status=http_status,
+                rate_limit_cooldown_seconds=_MAX_BACKOFF_SECONDS,
+            )
+        )
 
     async def _download_once(
         self,
@@ -153,12 +219,32 @@ class ArchiveOrgHttpDownloader:
             video_files = item_info.get("video_files", [])
             if not video_files:
                 logger.error(f"No video files in metadata for {identifier}")
-                return None
+                from streamtv.utils.download_errors import (
+                    DownloadFailure,
+                    classify_download_error,
+                )
+
+                raise DownloadFailure(
+                    classify_download_error(
+                        f"No video files in metadata for {identifier}",
+                        source="archive_org",
+                    )
+                )
 
             selected = self._select_video_file(video_files, fmt)
             if not selected:
                 logger.error(f"No matching {fmt} file for {identifier}")
-                return None
+                from streamtv.utils.download_errors import (
+                    DownloadFailure,
+                    classify_download_error,
+                )
+
+                raise DownloadFailure(
+                    classify_download_error(
+                        f"No matching {fmt} file for {identifier}",
+                        source="archive_org",
+                    )
+                )
             selected_name = selected["name"]
 
         stream_url = await self._adapter.get_stream_url(identifier, selected_name)

@@ -7,18 +7,37 @@
     <div class="page-header">
         <h1>
             <span class="material-icons">psychology</span>
-            AI Troubleshooting Assistant (Ollama)
+            AI Recovery
         </h1>
         <p class="page-description">
-            Install and manage Ollama for AI-powered troubleshooting. 100% free and runs locally on your machine.
+            On-device Apple Foundation Models (StreamTVMac bridge) plus optional Ollama.
+            Prefer FM when the bridge is up; use Ollama on older macOS or as fallback.
         </p>
+    </div>
+
+    <div id="aiStatusSection" class="status-section">
+        <div class="status-card">
+            <div class="status-header">
+                <span class="material-icons" id="aiStatusIcon">smart_toy</span>
+                <h2>Backend status</h2>
+            </div>
+            <div id="aiStatusContent" class="status-content">
+                <p>Loading unified AI status…</p>
+            </div>
+            <p class="page-description" style="margin-top: 12px; font-size: 13px;">
+                Foundation Models require StreamTVMac with AI = Foundation Models
+                (loopback <code>{{ fm_url | default('http://127.0.0.1:11435') }}</code>).
+                Configured backend: <code>{{ ai_backend | default('auto') }}</code>
+                {% if macos_major %}· macOS {{ macos_major }}{% endif %}
+            </p>
+        </div>
     </div>
 
     <div id="statusSection" class="status-section">
         <div class="status-card">
             <div class="status-header">
                 <span class="material-icons" id="statusIcon">hourglass_empty</span>
-                <h2 id="statusTitle">Loading...</h2>
+                <h2 id="statusTitle">Ollama setup</h2>
             </div>
             <div id="statusContent" class="status-content">
                 <p>Checking Ollama installation status...</p>
@@ -88,17 +107,26 @@
         </div>
     </div>
 
-    <div id="querySection" class="query-section" style="display: none;">
+    <div id="querySection" class="query-section">
         <div class="query-card">
             <h2>
                 <span class="material-icons">chat</span>
-                AI Troubleshooting Assistant
+                Ask AI Recovery
             </h2>
             <p style="color: var(--text-secondary); margin-bottom: 16px;">
-                Ask questions about errors, issues, or get help troubleshooting. The AI will analyze StreamTV and Plex logs automatically.
+                Questions go to Foundation Models or Ollama based on the backend below.
+                StreamTV / Plex log context applies to Ollama; FM uses the on-device bridge.
             </p>
             
             <div class="query-controls" style="margin-bottom: 16px;">
+                <div style="margin-bottom: 12px;">
+                    <label for="aiBackendSelect" style="display: block; margin-bottom: 4px; font-size: 13px; color: var(--text-secondary);">Backend:</label>
+                    <select id="aiBackendSelect" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-primary); width: 100%; max-width: 300px;">
+                        <option value="auto">Auto (prefer Foundation Models)</option>
+                        <option value="foundation_models">Apple Foundation Models</option>
+                        <option value="ollama">Ollama</option>
+                    </select>
+                </div>
                 <label class="form-checkbox" style="margin-bottom: 8px;">
                     <input type="checkbox" id="includeStreamTVLogs" checked>
                     <span>Include StreamTV logs in context</span>
@@ -108,7 +136,7 @@
                     <span>Include Plex Media Server logs in context</span>
                 </label>
                 <div style="margin-top: 12px;">
-                    <label for="selectedModel" style="display: block; margin-bottom: 4px; font-size: 13px; color: var(--text-secondary);">AI Model:</label>
+                    <label for="selectedModel" style="display: block; margin-bottom: 4px; font-size: 13px; color: var(--text-secondary);">Ollama model (when using Ollama):</label>
                     <select id="selectedModel" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-primary); width: 100%; max-width: 300px;">
                         <option value="">Auto-select (first installed)</option>
                     </select>
@@ -469,18 +497,47 @@
 
     async function loadStatus() {
         try {
-            const response = await fetch('/api/ollama/status');
-            const data = await response.json();
-            ollamaStatus = data;
-            updateUI(data);
+            await Promise.all([loadUnifiedAiStatus(), loadOllamaStatus()]);
         } catch (error) {
             console.error('Error loading status:', error);
-            showError('Failed to load Ollama status');
+            showError('Failed to load AI status');
         }
     }
 
+    async function loadUnifiedAiStatus() {
+        const el = document.getElementById('aiStatusContent');
+        const fmOpt = document.querySelector('#aiBackendSelect option[value="foundation_models"]');
+        try {
+            const response = await fetch('/api/ai/status');
+            const data = await response.json();
+            const fm = data.foundation_models || {};
+            const ol = data.ollama || {};
+            const fmOk = !!fm.available;
+            const olOk = !!ol.available;
+            if (fmOpt) fmOpt.disabled = !fmOk;
+            el.innerHTML = `
+                <p><strong>Resolved:</strong> <code>${data.resolved_backend || '—'}</code>
+                   (config <code>${data.ai_backend_config || 'auto'}</code>)</p>
+                <p>Foundation Models: ${fmOk ? '✓ available' : '✗ unavailable'}
+                   ${fm.error ? `(${fm.error})` : ''}
+                   · bridge <code>${data.foundation_models_url || ''}</code></p>
+                <p>Ollama: ${olOk ? '✓ available' : '✗ unavailable'}
+                   ${ol.url ? `· <code>${ol.url}</code>` : ''}
+                   ${ol.model ? `· model <code>${ol.model}</code>` : ''}</p>
+            `;
+        } catch (error) {
+            el.innerHTML = `<p>Failed to load /api/ai/status: ${error.message}</p>`;
+        }
+    }
+
+    async function loadOllamaStatus() {
+        const response = await fetch('/api/ollama/status');
+        const data = await response.json();
+        ollamaStatus = data;
+        updateUI(data);
+    }
+
     function updateUI(data) {
-        const statusSection = document.getElementById('statusSection');
         const installSection = document.getElementById('installSection');
         const modelsSection = document.getElementById('modelsSection');
         const installedModelsSection = document.getElementById('installedModelsSection');
@@ -494,12 +551,12 @@
             statusIcon.textContent = window.iconMap && window.iconMap['check'] ? window.iconMap['check'] : '✓';
             statusIcon.style.color = '#4caf50';
             statusTitle.textContent = 'Ollama Installed';
-            statusContent.innerHTML = '<p>Ollama is installed and ready to use.</p>';
+            statusContent.innerHTML = '<p>Ollama is installed (optional fallback / older macOS).</p>';
         } else {
             statusIcon.textContent = 'error';
             statusIcon.style.color = '#f44336';
             statusTitle.textContent = 'Ollama Not Installed';
-            statusContent.innerHTML = '<p>Install Ollama to enable AI-powered troubleshooting.</p>';
+            statusContent.innerHTML = '<p>Optional: install Ollama if Foundation Models is unavailable.</p>';
             installSection.style.display = 'block';
         }
 
@@ -520,9 +577,6 @@
         if (data.installed && data.installed_models && data.installed_models.length > 0) {
             installedModelsSection.style.display = 'block';
             renderInstalledModels(data.installed_models);
-            
-            // Show query section and populate model selector
-            document.getElementById('querySection').style.display = 'block';
             populateModelSelector(data.installed_models);
         }
     }
@@ -737,6 +791,7 @@
         const queryContext = document.getElementById('queryContext');
         const queryLoading = document.getElementById('queryLoading');
         const selectedModel = document.getElementById('selectedModel').value;
+        const backend = document.getElementById('aiBackendSelect').value;
         const includeStreamTVLogs = document.getElementById('includeStreamTVLogs').checked;
         const includePlexLogs = document.getElementById('includePlexLogs').checked;
 
@@ -756,6 +811,7 @@
         try {
             const requestBody = {
                 query: query,
+                backend: backend,
                 include_streamtv_logs: includeStreamTVLogs,
                 include_plex_logs: includePlexLogs,
                 max_log_lines: 200
@@ -765,7 +821,7 @@
                 requestBody.model = selectedModel;
             }
 
-            const response = await fetch('/api/ollama/query', {
+            const response = await fetch('/api/ai/query', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -774,7 +830,7 @@
             });
 
             if (!response.ok) {
-                const error = await response.json();
+                const error = await response.json().catch(() => ({}));
                 throw new Error(error.detail || 'Query failed');
             }
 
@@ -785,6 +841,9 @@
             
             // Display context info
             const contextInfo = [];
+            if (result.backend) {
+                contextInfo.push(`Backend: ${result.backend}`);
+            }
             if (result.context_used) {
                 if (result.context_used.streamtv_logs) {
                     contextInfo.push('✓ StreamTV logs analyzed');
@@ -792,7 +851,9 @@
                 if (result.context_used.plex_logs) {
                     contextInfo.push('✓ Plex logs analyzed');
                 }
-                contextInfo.push(`Analyzed ${result.context_used.log_lines_analyzed || 200} log lines`);
+                if (result.context_used.log_lines_analyzed) {
+                    contextInfo.push(`Log lines: ${result.context_used.log_lines_analyzed}`);
+                }
             }
             if (result.model) {
                 contextInfo.push(`Model: ${result.model}`);

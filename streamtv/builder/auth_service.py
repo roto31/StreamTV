@@ -76,6 +76,42 @@ def apply_plex_credentials(base_url: str, token: str) -> dict:
     return {"status": "success", "scope": "plex"}
 
 
+def apply_tvdb_api_key(api_key: str) -> dict:
+    """Persist TVDB API key for Builder / CLI metadata enrichment. Never log the key."""
+    key = (api_key or "").strip()
+    if not key:
+        raise ValueError("TVDB API key is required")
+    config.update_section(
+        "metadata",
+        {
+            "enabled": True,
+            "enable_tvdb": True,
+            "tvdb_api_key": key,
+        },
+    )
+    return {"status": "success", "scope": "tvdb"}
+
+
+def apply_tvmaze_credentials(username: str, api_key: str) -> dict:
+    """Persist TVMaze username + dashboard API key (HTTP Basic). Never log the key."""
+    user = (username or "").strip()
+    key = (api_key or "").strip()
+    if not user:
+        raise ValueError("TVMaze username is required")
+    if not key:
+        raise ValueError("TVMaze API key is required")
+    config.update_section(
+        "metadata",
+        {
+            "enabled": True,
+            "enable_tvmaze": True,
+            "tvmaze_username": user,
+            "tvmaze_api_key": key,
+        },
+    )
+    return {"status": "success", "scope": "tvmaze"}
+
+
 def auth_status() -> dict[str, dict]:
     archive_cookies = Path("data/cookies/archive_cookies.txt").exists()
     archive_keychain = bool(config.archive_org.use_authentication and config.archive_org.username)
@@ -84,6 +120,8 @@ def auth_status() -> dict[str, dict]:
         "data/cookies/pbs_cookies.txt"
     ).exists()
     plex_ok = bool(config.plex.enabled and config.plex.base_url and config.plex.token)
+    tvdb_ok = bool(config.metadata.tvdb_api_key or config.metadata.tvdb_read_token)
+    tvmaze_ok = bool(config.metadata.tvmaze_api_key and config.metadata.tvmaze_username)
     return {
         "archive_org": {
             "configured": archive_cookies or archive_keychain,
@@ -100,6 +138,14 @@ def auth_status() -> dict[str, dict]:
         "plex": {
             "configured": plex_ok,
             "method": "token" if plex_ok else None,
+        },
+        "tvdb": {
+            "configured": tvdb_ok,
+            "method": "api_key" if config.metadata.tvdb_api_key else ("read_token" if tvdb_ok else None),
+        },
+        "tvmaze": {
+            "configured": tvmaze_ok,
+            "method": "basic_auth" if tvmaze_ok else None,
         },
     }
 

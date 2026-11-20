@@ -2,10 +2,8 @@
 
 # Standard 188-byte MPEG-TS null packet (sync 0x47, PID 0x1FFF)
 _MPEGTS_NULL_PACKET = bytes([0x47, 0x1F, 0xFF, 0x10] + [0xFF] * 184)
-# Exactly N full packets (~8 KiB). Never truncate mid-packet: 8192 % 188 == 108
-# would orphan trailing bytes and desync Plex/Apple TV demuxers (s1001).
-_KEEPALIVE_PACKET_COUNT = 43  # 43 * 188 = 8084
-_KEEPALIVE_CHUNK = _MPEGTS_NULL_PACKET * _KEEPALIVE_PACKET_COUNT
+_CHUNK_SIZE = 8192
+_KEEPALIVE_CHUNK = (_MPEGTS_NULL_PACKET * ((_CHUNK_SIZE // 188) + 1))[:_CHUNK_SIZE]
 
 
 def keepalive_chunk() -> bytes:

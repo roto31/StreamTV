@@ -22,7 +22,9 @@ class TVDBClient:
         self.base_url = "https://api4.thetvdb.com/v4"
         self._auth_token = None
         self._token_expires = None
-        
+        # series_id -> list of episode dicts (full default-order catalog)
+        self._episode_cache: Dict[int, List[Dict[str, Any]]] = {}
+
     async def _ensure_authenticated(self) -> str:
         """Ensure we have a valid auth token"""
         if self._auth_token and self._token_expires:
@@ -50,8 +52,10 @@ class TVDBClient:
             logger.error(f"TVDB authentication failed: {e}")
             raise
     
-    async def search_series(self, name: str) -> Optional[Dict[str, Any]]:
-        """Search for a TV series by name"""
+    async def search_series(
+        self, name: str, year: Optional[int] = None
+    ) -> Optional[Dict[str, Any]]:
+        """Search for a TV series by name, optionally preferring a premiere year."""
         try:
             token = await self._ensure_authenticated()
             headers = {
@@ -70,14 +74,40 @@ class TVDBClient:
                 data = response.json()
                 
                 results = data.get('data', [])
-                if results:
-                    # Filter for series type
-                    for result in results:
-                        if result.get('type') == 'series' or result.get('objectID'):
+                if not results:
+                    return None
+
+                series_results = [
+                    r for r in results
+                    if r.get("type") == "series" or r.get("objectID")
+                ] or list(results)
+
+                if year is not None:
+                    for result in series_results:
+                        result_year = result.get("year")
+                        if result_year is None:
+                            fat = result.get("first_air_time") or result.get("firstAired") or ""
+                            if isinstance(fat, str) and len(fat) >= 4 and fat[:4].isdigit():
+                                result_year = int(fat[:4])
+                        try:
+                            ry = int(result_year) if result_year is not None else None
+                        except (TypeError, ValueError):
+                            ry = None
+                        if ry is not None and abs(ry - year) <= 1:
+                            logger.info(
+                                "TVDB: matched %r year %s (requested %s)",
+                                result.get("name"),
+                                ry,
+                                year,
+                            )
                             return result
-                    # Return first if no type filter matches
-                    return results[0]
-                return None
+                    logger.warning(
+                        "TVDB: no year match for %r (%s); using first series hit",
+                        name,
+                        year,
+                    )
+
+                return series_results[0]
         except Exception as e:
             logger.error(f"TVDB search failed for '{name}': {e}")
             return None
@@ -99,68 +129,112 @@ class TVDBClient:
             logger.error(f"TVDB series details failed for ID {series_id}: {e}")
             return None
     
-    async def get_episode(
-        self, 
-        series_id: int, 
-        season: int, 
-        episode: int
-    ) -> Optional[Dict[str, Any]]:
-        """Get episode metadata by season and episode number"""
-        try:
-            token = await self._ensure_authenticated()
-            headers = {"Authorization": f"Bearer {token}"}
-            
-            # Get all episodes for the series
-            async with httpx.AsyncClient(timeout=30.0) as client:
+    async def _fetch_all_episodes(self, series_id: int) -> List[Dict[str, Any]]:
+        """Fetch every episode for a series, following TVDB v4 ``links.next`` pagination.
+
+        TVDB v4 does not put ``totalPages`` on the episode payload; long-running
+        series (e.g. Saturday Night Live, id 76177) span multiple 500-item pages.
+        Results are cached on the client instance for subsequent season/episode lookups.
+        """
+        if series_id in self._episode_cache:
+            return self._episode_cache[series_id]
+
+        token = await self._ensure_authenticated()
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        all_episodes: List[Dict[str, Any]] = []
+        page = 0
+        max_pages = 200  # hard cap (~100k episodes)
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            while page < max_pages:
                 response = await client.get(
                     f"{self.base_url}/series/{series_id}/episodes/default",
                     headers=headers,
-                    params={"page": 0}
+                    params={"page": page},
                 )
                 response.raise_for_status()
-                data = response.json()
-                
-                episodes = data.get('data', {}).get('episodes', [])
-                
-                # Find matching episode
-                for ep in episodes:
-                    if ep.get('seasonNumber') == season and ep.get('number') == episode:
-                        return ep
-                
-                # Check additional pages if needed
-                pages = data.get('data', {}).get('totalPages', 1)
-                for page in range(1, min(pages, 10)):  # Limit to 10 pages
-                    response = await client.get(
-                        f"{self.base_url}/series/{series_id}/episodes/default",
-                        headers=headers,
-                        params={"page": page}
-                    )
-                    response.raise_for_status()
-                    data = response.json()
-                    episodes = data.get('data', {}).get('episodes', [])
-                    
-                    for ep in episodes:
-                        if ep.get('seasonNumber') == season and ep.get('number') == episode:
-                            return ep
-                
-                logger.warning(f"TVDB episode not found: S{season:02d}E{episode:02d}")
-                return None
-                
+                payload = response.json()
+                data = payload.get("data") or {}
+                if isinstance(data, list):
+                    episodes = data
+                    links: Dict[str, Any] = payload.get("links") or {}
+                else:
+                    episodes = data.get("episodes") or []
+                    links = payload.get("links") or {}
+
+                if not episodes:
+                    break
+                all_episodes.extend(episodes)
+
+                # Prefer links.next; fall back to totalPages when present
+                if links.get("next"):
+                    page += 1
+                    continue
+                total_pages = (
+                    data.get("totalPages")
+                    if isinstance(data, dict)
+                    else None
+                ) or links.get("total_pages")
+                if total_pages is not None and page + 1 < int(total_pages):
+                    page += 1
+                    continue
+                break
+
+        self._episode_cache[series_id] = all_episodes
+        logger.info(
+            "TVDB series %s: cached %s episodes across %s page(s)",
+            series_id,
+            len(all_episodes),
+            page + 1,
+        )
+        return all_episodes
+
+    async def get_episode(
+        self,
+        series_id: int,
+        season: int,
+        episode: int,
+    ) -> Optional[Dict[str, Any]]:
+        """Get episode metadata by season and episode number."""
+        try:
+            episodes = await self._fetch_all_episodes(series_id)
+            for ep in episodes:
+                if ep.get("seasonNumber") == season and ep.get("number") == episode:
+                    return ep
+            logger.warning(f"TVDB episode not found: S{season:02d}E{episode:02d}")
+            return None
         except Exception as e:
             logger.error(f"TVDB episode fetch failed: {e}")
             return None
 
 
 class TVMazeClient:
-    """TVMaze API client for TV show metadata (free, no API key required)"""
-    
-    def __init__(self):
+    """TVMaze API client for TV show metadata.
+
+    Public show/episode endpoints work without auth (IP rate limits).
+    Free/premium accounts expose an API key on the dashboard; when username +
+    key are set, requests use HTTP Basic auth (username / api_key as password)
+    per https://www.tvmaze.com/api and the user API docs.
+    """
+
+    def __init__(
+        self,
+        username: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ):
         self.base_url = "https://api.tvmaze.com"
-    
+        self.username = (username or "").strip() or None
+        self.api_key = (api_key or "").strip() or None
+
+    def _auth(self) -> Optional[httpx.BasicAuth]:
+        if self.username and self.api_key:
+            return httpx.BasicAuth(self.username, self.api_key)
+        return None
+
     async def search_show(self, name: str, year: Optional[int] = None) -> Optional[Dict[str, Any]]:
         """Search for a TV show by name, optionally filtered by year"""
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=30.0, auth=self._auth()) as client:
                 # Use full search to get multiple results if year specified
                 if year:
                     response = await client.get(
@@ -213,7 +287,7 @@ class TVMazeClient:
     ) -> Optional[Dict[str, Any]]:
         """Get episode metadata by season and episode number"""
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=30.0, auth=self._auth()) as client:
                 response = await client.get(
                     f"{self.base_url}/shows/{show_id}/episodebynumber",
                     params={"season": season, "number": episode}
@@ -233,7 +307,9 @@ class TVMazeClient:
     async def lookup_by_tvdb_id(self, tvdb_id: int) -> Optional[Dict[str, Any]]:
         """Lookup show by TVDB ID"""
         try:
-            async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            async with httpx.AsyncClient(
+                timeout=30.0, follow_redirects=True, auth=self._auth()
+            ) as client:
                 response = await client.get(
                     f"{self.base_url}/lookup/shows",
                     params={"thetvdb": tvdb_id}
@@ -486,11 +562,10 @@ class MetadataManager:
         # Check cache with year to distinguish remakes/reboots
         cache_key = f"tvdb_{series_name}_{year}" if year else f"tvdb_{series_name}"
         if cache_key not in self._series_cache:
-            # Search for series
-            series = await self.tvdb.search_series(series_name)
+            # Search for series (pass year so remakes like Magnum P.I. 2018 lose to 1980)
+            series = await self.tvdb.search_series(series_name, year=year)
             if not series:
                 return None
-            # TODO: Filter by year when available in TVDB response
             self._series_cache[cache_key] = series
         else:
             series = self._series_cache[cache_key]
@@ -699,7 +774,9 @@ def create_metadata_manager(
     tmdb_api_key: Optional[str] = None,
     enable_tvdb: bool = True,
     enable_tvmaze: bool = True,
-    enable_tmdb: bool = True
+    enable_tmdb: bool = True,
+    tvmaze_username: Optional[str] = None,
+    tvmaze_api_key: Optional[str] = None,
 ) -> MetadataManager:
     """
     Create a metadata manager with configured providers
@@ -711,6 +788,8 @@ def create_metadata_manager(
         enable_tvdb: Enable TVDB provider
         enable_tvmaze: Enable TVMaze provider (free fallback)
         enable_tmdb: Enable TMDB provider (for movies)
+        tvmaze_username: TVMaze account username (Basic auth)
+        tvmaze_api_key: TVMaze dashboard API key (Basic auth password)
         
     Returns:
         Configured MetadataManager instance
@@ -722,7 +801,12 @@ def create_metadata_manager(
             read_token=tvdb_read_token
         )
     
-    tvmaze_client = TVMazeClient() if enable_tvmaze else None
+    tvmaze_client = None
+    if enable_tvmaze:
+        tvmaze_client = TVMazeClient(
+            username=tvmaze_username,
+            api_key=tvmaze_api_key,
+        )
     
     tmdb_client = None
     if enable_tmdb and tmdb_api_key:

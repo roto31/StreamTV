@@ -17,5 +17,4 @@ def apply_pbs_source_defaults(draft: BuilderDraft) -> BuilderDraft:
     draft.channel = channel
     draft.pbs_filter_full_episodes = True
     draft.pbs_min_episode_seconds = DEFAULT_MIN_EPISODE_SECONDS
-    draft.pbs_exclude_passport_drm = True
     return draft

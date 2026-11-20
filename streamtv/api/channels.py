@@ -589,6 +589,18 @@ async def restart_channel_stream_by_number(
     return await restart_channel_stream(channel.id, request, db)
 
 
+@router.post("/stream-restart-all")
+async def restart_all_channel_streams(request: Request):
+    """Restart every enabled channel stream without recycling uvicorn (Phase 3 soft deploy)."""
+    mgr = _get_channel_manager(request)
+    try:
+        result = await mgr.restart_all_channels()
+    except Exception as e:
+        logger.error("stream-restart-all failed: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e)) from e
+    return {"status": "ok", **result}
+
+
 @router.post("/{channel_id}/icon", response_model=ChannelResponse)
 async def upload_channel_icon(
     channel_id: int,

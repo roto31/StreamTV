@@ -85,6 +85,36 @@ class CacheFirstStreamManager:
             logger.info(
                 f"[CACHE HIT] {media_item.title[:60]} → {cached_path.name} (local)"
             )
+            # #region agent log
+            try:
+                import json as _json, time as _time
+                with open(
+                    "/Volumes/SSD Storage/XCode Projects/StreamTV/.cursor/debug-aded3c.log",
+                    "a",
+                    encoding="utf-8",
+                ) as _df:
+                    _df.write(
+                        _json.dumps(
+                            {
+                                "sessionId": "aded3c",
+                                "runId": "yt-403-fix",
+                                "hypothesisId": "H2",
+                                "location": "cache_first_stream_manager.py:cache_hit",
+                                "message": "playback URL is local cache",
+                                "data": {
+                                    "source": str(getattr(media_item.source, "value", media_item.source)),
+                                    "source_id": getattr(media_item, "source_id", None),
+                                    "path_kind": "local",
+                                    "yt_full": youtube_full_cache_enabled(),
+                                },
+                                "timestamp": int(_time.time() * 1000),
+                            }
+                        )
+                        + "\n"
+                    )
+            except Exception:
+                pass
+            # #endregion
             return local
 
         # ── 2. Non-cacheable source → direct stream ───────────────────
@@ -127,6 +157,34 @@ class CacheFirstStreamManager:
                 logger.info(
                     f"[CACHE HIT] {media_item.title[:60]} → {cached_path.name} (local)"
                 )
+                # #region agent log
+                try:
+                    import json as _json, time as _time
+                    with open(
+                        "/Volumes/SSD Storage/XCode Projects/StreamTV/.cursor/debug-aded3c.log",
+                        "a",
+                        encoding="utf-8",
+                    ) as _df:
+                        _df.write(
+                            _json.dumps(
+                                {
+                                    "sessionId": "aded3c",
+                                    "runId": "yt-403-fix",
+                                    "hypothesisId": "H2",
+                                    "location": "cache_first_stream_manager.py:yt_force_hit",
+                                    "message": "youtube_full_cache local hit after enqueue",
+                                    "data": {
+                                        "source_id": getattr(media_item, "source_id", None),
+                                        "path_kind": "local",
+                                    },
+                                    "timestamp": int(_time.time() * 1000),
+                                }
+                            )
+                            + "\n"
+                        )
+                except Exception:
+                    pass
+                # #endregion
                 return local
             if force_cache:
                 raise CacheNotReadyError(
@@ -135,6 +193,11 @@ class CacheFirstStreamManager:
             logger.info(
                 f"[YOUTUBE CACHE WAIT] {media_item.title[:60]} "
                 f"(download in progress; caller should wait)"
+            )
+            # Never fall through to googlevideo CDN while youtube_full_cache is on —
+            # runtime ch1991: [YOUTUBE CACHE WAIT] then [DIRECT] → mid-stream 403 stutter.
+            raise CacheNotReadyError(
+                f"YouTube content not yet cached: {media_item.source_id}"
             )
 
         if direct_stream_first():
@@ -159,6 +222,37 @@ class CacheFirstStreamManager:
                 f"[DIRECT] {media_item.title[:60]} "
                 f"(playback_mode={config.cache.playback_mode})"
             )
+            # #region agent log
+            try:
+                import json as _json, time as _time
+                with open(
+                    "/Volumes/SSD Storage/XCode Projects/StreamTV/.cursor/debug-aded3c.log",
+                    "a",
+                    encoding="utf-8",
+                ) as _df:
+                    _df.write(
+                        _json.dumps(
+                            {
+                                "sessionId": "aded3c",
+                                "runId": "yt-403-fix",
+                                "hypothesisId": "H2",
+                                "location": "cache_first_stream_manager.py:direct",
+                                "message": "playback URL is CDN direct",
+                                "data": {
+                                    "source": str(getattr(media_item.source, "value", media_item.source)),
+                                    "source_id": getattr(media_item, "source_id", None),
+                                    "path_kind": "cdn",
+                                    "yt_full": youtube_full_cache_enabled(),
+                                    "playback_mode": str(config.cache.playback_mode),
+                                },
+                                "timestamp": int(_time.time() * 1000),
+                            }
+                        )
+                        + "\n"
+                    )
+            except Exception:
+                pass
+            # #endregion
             return await self._stream.get_stream_url(
                 media_item.url,
                 source=media_item.source,

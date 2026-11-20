@@ -140,31 +140,11 @@ def test_pbs_episode_filter_skips_trailers() -> None:
 
     trailer = {"title": "Season 1 Trailer", "duration": 120, "source": "pbs"}
     episode = {"title": "Forest of the Lynx", "duration": 3200, "source": "pbs"}
-    passport = {
-        "title": "Watch with PBS Passport",
-        "url": "https://www.pbs.org/video/watch-passport-9nzs5h/",
-        "source": "pbs",
-    }
-    resume = {"title": "Resume Watching", "url": "https://www.pbs.org/video/masterpiece-downton-abbey-season-1-ep-1/", "source": "pbs"}
     assert not is_full_pbs_episode(trailer)
     assert is_full_pbs_episode(episode)
-    assert not is_full_pbs_episode(passport)
-    assert not is_full_pbs_episode(resume)
-    filtered = filter_full_pbs_episodes([trailer, episode, passport, resume])
+    filtered = filter_full_pbs_episodes([trailer, episode])
     assert len(filtered) == 1
     assert filtered[0]["title"] == "Forest of the Lynx"
-
-
-def test_pbs_video_stream_id_unique_for_downton() -> None:
-    from streamtv.builder.pbs_show import pbs_video_stream_id
-
-    urls = [
-        "https://www.pbs.org/video/masterpiece-downton-abbey-season-1-ep-1/",
-        "https://www.pbs.org/video/masterpiece-downton-abbey-season-1-ep-2/",
-        "https://www.pbs.org/video/masterpiece-downton-abbey-season-2-ep-1/",
-    ]
-    ids = [pbs_video_stream_id(u) for u in urls]
-    assert len(set(ids)) == len(ids)
 
 
 def test_compile_pbs_draft_defaults_epg_sync_class_c() -> None:
@@ -183,76 +163,6 @@ def test_compile_pbs_draft_defaults_epg_sync_class_c() -> None:
     )
     unified = compile_draft_to_unified(draft)
     assert unified["channel"]["epg_sync_class"] == "C"
-
-
-def test_pbs_stream_classify_clear_vs_drm() -> None:
-    from streamtv.builder.pbs_stream_probe import classify_pbs_m3u8_urls
-
-    clear = [
-        "https://ga.pbs-video.pbs.org/p/pbs-cs/sid/x/videos/nature/y/manifest.m3u8",
-        "https://livestream.pbskids.org/out/v1/x/est.m3u8",
-    ]
-    drm = [
-        "https://ga.pbs-video.pbs.org/p/-/sid/x/videos/downton-abbey/y/"
-        "z/cbc/mast4102_2026-AABR-AVC-720p_983.m3u8",
-    ]
-    assert classify_pbs_m3u8_urls(clear) == "clear"
-    assert classify_pbs_m3u8_urls(drm) == "drm_only"
-
-
-def test_expand_pbs_show_excludes_passport_drm_group(monkeypatch: pytest.MonkeyPatch) -> None:
-    from pathlib import Path
-
-    from streamtv.builder import pbs_show
-
-    html = (Path(__file__).parent / "fixtures" / "pbs_nature_show_snippet.html").read_text(
-        encoding="utf-8"
-    )
-
-    class FakeResponse:
-        text = html
-
-        def raise_for_status(self) -> None:
-            return None
-
-    class FakeSession:
-        def get(self, url: str, timeout: int = 60) -> FakeResponse:
-            return FakeResponse()
-
-    def fake_probe(items: list[dict], **kwargs: object) -> list[dict]:
-        return items
-
-    def empty_probe(items: list[dict], **kwargs: object) -> list[dict]:
-        return []
-
-    monkeypatch.setattr(pbs_show, "load_pbs_session", lambda: FakeSession())
-    monkeypatch.setattr(pbs_show, "extract_season_ids", lambda _html: [])
-    monkeypatch.setattr(
-        "streamtv.builder.pbs_stream_probe.filter_playable_pbs_episodes",
-        fake_probe,
-    )
-    expanded = pbs_show.expand_pbs_show(
-        "https://www.pbs.org/show/nature/",
-        exclude_passport_drm=True,
-    )
-    assert expanded
-
-    monkeypatch.setattr(
-        "streamtv.builder.pbs_stream_probe.filter_playable_pbs_episodes",
-        empty_probe,
-    )
-    with pytest.raises(ValueError, match="Passport-only DRM"):
-        pbs_show.expand_pbs_show(
-            "https://www.pbs.org/show/nature/",
-            exclude_passport_drm=True,
-        )
-
-
-def test_pbs_defaults_exclude_passport_drm() -> None:
-    from streamtv.builder.pbs_defaults import apply_pbs_source_defaults
-
-    draft = apply_pbs_source_defaults(BuilderDraft(channel=ChannelInfo(number="1", name="T")))
-    assert draft.pbs_exclude_passport_drm is True
 
 
 def test_expand_pbs_show_applies_filter(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -284,3 +194,145 @@ def test_expand_pbs_show_applies_filter(monkeypatch: pytest.MonkeyPatch) -> None
     )
     assert expanded
     assert all(item.get("duration") is None or item["duration"] >= 300 for item in expanded)
+
+
+def test_clean_channel_name_for_series() -> None:
+    from streamtv.builder.enrichment import clean_channel_name_for_series
+
+    assert (
+        clean_channel_name_for_series("Saturday Night Live (Seasons 1–30)")
+        == "Saturday Night Live"
+    )
+    assert clean_channel_name_for_series("Magnum P.I. Complete Series") == "Magnum P.I."
+
+
+def test_detect_series_from_titles() -> None:
+    from streamtv.builder.enrichment import detect_series_from_titles
+
+    name, year = detect_series_from_titles(
+        [
+            "Saturday Night Live - S01E01 - George Carlin (1975)",
+            "Saturday Night Live - S01E02 - Simon",
+        ]
+    )
+    assert name == "Saturday Night Live"
+    assert year == 1975
+
+
+def test_resolve_enrichment_identity_explicit() -> None:
+    from streamtv.builder.enrichment import resolve_enrichment_identity
+
+    draft = BuilderDraft(
+        channel=ChannelInfo(
+            number="1975",
+            name="SNL Marathon",
+            enrichment_series_name="Saturday Night Live",
+            enrichment_year=1975,
+        ),
+        links=[
+            LinkItem(
+                url="https://example.com/a",
+                status=LinkStatus.OK,
+                title="Wrong Show - S01E01",
+            )
+        ],
+    )
+    name, year, kind = resolve_enrichment_identity(draft)
+    assert name == "Saturday Night Live"
+    assert year == 1975
+    assert kind == "series"
+
+
+def test_resolve_enrichment_identity_auto_from_channel_name() -> None:
+    from streamtv.builder.enrichment import resolve_enrichment_identity
+
+    draft = BuilderDraft(
+        channel=ChannelInfo(
+            number="1975",
+            name="Saturday Night Live (Seasons 1–30)",
+        ),
+        links=[],
+    )
+    name, year, kind = resolve_enrichment_identity(draft)
+    assert name == "Saturday Night Live"
+    assert kind == "series"
+
+
+@pytest.mark.asyncio
+async def test_enrich_built_draft_respects_disabled(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from streamtv.builder import enrichment as enrich_mod
+
+    called = {"n": 0}
+
+    async def _boom(*_a: object, **_k: object) -> dict:
+        called["n"] += 1
+        return {}
+
+    monkeypatch.setattr(enrich_mod, "enrich_channel_media", _boom)
+    draft = BuilderDraft(
+        channel=ChannelInfo(
+            number="1975",
+            name="Saturday Night Live",
+            enrich_metadata=False,
+        )
+    )
+    summary = await enrich_mod.enrich_built_draft(draft)
+    assert summary.get("skipped_enrichment") is True
+    assert called["n"] == 0
+
+
+@pytest.mark.asyncio
+async def test_enrich_built_draft_calls_enricher(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from streamtv.builder import enrichment as enrich_mod
+
+    seen: dict = {}
+
+    async def _fake(
+        channel_number: str,
+        *,
+        series_name: str,
+        series_year: int | None = None,
+        enrich_type: str = "series",
+        series_provider: str | None = None,
+        **_kwargs: object,
+    ) -> dict:
+        seen.update(
+            {
+                "channel_number": channel_number,
+                "series_name": series_name,
+                "series_year": series_year,
+                "enrich_type": enrich_type,
+                "series_provider": series_provider,
+            }
+        )
+        return {
+            "updated": 2,
+            "failed": 0,
+            "total": 2,
+            "skipped": 0,
+            "series_name": series_name,
+        }
+
+    monkeypatch.setattr(enrich_mod, "enrich_channel_media", _fake)
+    draft = BuilderDraft(
+        channel=ChannelInfo(
+            number="1975",
+            name="SNL",
+            enrichment_series_name="Saturday Night Live",
+            enrichment_year=1975,
+            enrich_metadata=True,
+            enrichment_series_provider="both",
+        )
+    )
+    summary = await enrich_mod.enrich_built_draft(draft)
+    assert seen["channel_number"] == "1975"
+    assert seen["series_provider"] == "both"
+    assert summary.get("series_provider") == "both"
+    assert seen["series_name"] == "Saturday Night Live"
+    assert seen["series_year"] == 1975
+    assert summary["updated"] == 2
+    assert summary.get("identity_source") == "explicit"

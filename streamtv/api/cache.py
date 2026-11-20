@@ -1,49 +1,11 @@
 """Cache management API endpoints."""
 
-import json
-import time
-from pathlib import Path
-
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import Optional
 
 from ..database import get_db
 from ..database.models import CachedMedia, CacheStatus, MediaItem
-
-# #region agent log
-_DEBUG_LOG = Path(__file__).resolve().parents[2] / ".cursor" / "debug-247576.log"
-
-
-def _agent_log(hypothesis_id: str, location: str, message: str, data: dict) -> None:
-    try:
-        payload = {
-            "sessionId": "247576",
-            "hypothesisId": hypothesis_id,
-            "location": location,
-            "message": message,
-            "data": data,
-            "timestamp": int(time.time() * 1000),
-        }
-        with _DEBUG_LOG.open("a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload) + "\n")
-    except OSError:
-        pass
-
-
-def _filesystem_cache_bytes(cache_dir: Path) -> int:
-    total = 0
-    if not cache_dir.is_dir():
-        return 0
-    for path in cache_dir.rglob("*"):
-        if path.is_file():
-            try:
-                total += path.stat().st_size
-            except OSError:
-                continue
-    return total
-
-# #endregion
 
 router = APIRouter(prefix="/cache")
 
@@ -73,28 +35,7 @@ def _get_download_scheduler(request: Request):
 async def cache_stats(request: Request):
     """Return cache usage statistics."""
     cache_manager = _get_cache_manager(request)
-    stats = cache_manager.stats()
-    # #region agent log
-    cache_dir = Path(stats.get("cache_directory", cache_manager.cache_dir))
-    fs_bytes = _filesystem_cache_bytes(cache_dir)
-    part_count = sum(1 for p in cache_dir.rglob("*.part") if p.is_file())
-    _agent_log(
-        "A",
-        "api/cache.py:cache_stats",
-        "manifest vs filesystem cache usage",
-        {
-            "manifest_used_bytes": stats.get("used_bytes"),
-            "filesystem_bytes": fs_bytes,
-            "filesystem_gb": round(fs_bytes / 1024**3, 3),
-            "max_size_gb": stats.get("max_size_gb"),
-            "items_ready": stats.get("items_ready"),
-            "items_downloading": stats.get("items_downloading"),
-            "items_failed": stats.get("items_failed"),
-            "part_files": part_count,
-        },
-    )
-    # #endregion
-    return stats
+    return cache_manager.stats()
 
 
 @router.get("/items")
@@ -134,6 +75,10 @@ async def list_cache_items(
                 "size_bytes": item.size_bytes,
                 "status": item.status.value if item.status else None,
                 "error_message": item.error_message,
+                "failure_class": item.failure_class,
+                "retry_after": (
+                    item.retry_after.isoformat() if item.retry_after else None
+                ),
                 "expires_at": item.expires_at.isoformat() if item.expires_at else None,
                 "accessed_at": item.accessed_at.isoformat() if item.accessed_at else None,
                 "hit_count": item.hit_count,
@@ -142,6 +87,19 @@ async def list_cache_items(
             for item in items
         ],
     }
+
+
+@router.post("/items/{source_id}/retry")
+async def retry_cache_item(source_id: str, request: Request):
+    """Re-queue a FAILED cache item (including terminal failure classes)."""
+    cache_manager = _get_cache_manager(request)
+    ok = cache_manager.retry_failed_download(source_id)
+    if not ok:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No FAILED cache entry to retry: {source_id}",
+        )
+    return {"queued": source_id, "status": "queued"}
 
 
 @router.delete("/items/{source_id}")

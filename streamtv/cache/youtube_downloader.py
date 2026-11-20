@@ -93,7 +93,17 @@ class YouTubeDownloader:
         video_id = self._extract_video_id(url)
         if not video_id:
             logger.error(f"Cannot extract video ID from: {url}")
-            return None
+            from streamtv.utils.download_errors import (
+                DownloadFailure,
+                classify_download_error,
+            )
+
+            raise DownloadFailure(
+                classify_download_error(
+                    f"Cannot extract video ID from: {url}",
+                    source="youtube",
+                )
+            )
 
         fmt = format_preference or config.cache.download_strategy.format_preference
         existing = self._find_existing(video_id)
@@ -129,7 +139,17 @@ class YouTubeDownloader:
         results: list[Path] = []
         for entry in entries[:max_items]:
             video_url = f"https://www.youtube.com/watch?v={entry['id']}"
-            path = await self.download_video(video_url, format_preference)
+            try:
+                path = await self.download_video(video_url, format_preference)
+            except Exception as exc:
+                from streamtv.utils.download_errors import DownloadFailure
+
+                if isinstance(exc, DownloadFailure):
+                    logger.warning(
+                        f"Skipping playlist item {entry['id']}: {exc}"
+                    )
+                    continue
+                raise
             if path:
                 results.append(path)
         return results
@@ -187,10 +207,26 @@ class YouTubeDownloader:
                     f"Downloaded: {video_id} → {result.name} "
                     f"({result.stat().st_size / 1024 / 1024:.1f} MB)"
                 )
-            return result
+                return result
+            from streamtv.utils.download_errors import (
+                DownloadFailure,
+                classify_download_error,
+            )
+
+            raise DownloadFailure(
+                classify_download_error(
+                    "Download returned no file",
+                    source="youtube",
+                )
+            )
 
         except yt_dlp.utils.DownloadError as exc:
             err_str = str(exc).lower()
+            from streamtv.utils.download_errors import (
+                DownloadFailure,
+                classify_download_error,
+            )
+
             if "429" in err_str or "rate limit" in err_str or "too many" in err_str:
                 logger.warning(
                     f"YouTube rate-limited for {video_id}. "
@@ -199,13 +235,31 @@ class YouTubeDownloader:
                 YouTubeDownloader._rate_limited_until = (
                     time.time() + self._cooldown
                 )
-            else:
-                logger.error(f"yt-dlp DownloadError for {video_id}: {exc}")
-            return None
+                raise DownloadFailure(
+                    classify_download_error(
+                        str(exc),
+                        source="youtube",
+                        http_status=429,
+                        rate_limit_cooldown_seconds=self._cooldown,
+                    )
+                ) from exc
+            logger.error(f"yt-dlp DownloadError for {video_id}: {exc}")
+            raise DownloadFailure(
+                classify_download_error(str(exc), source="youtube")
+            ) from exc
 
         except Exception as exc:
+            from streamtv.utils.download_errors import (
+                DownloadFailure,
+                classify_download_error,
+            )
+
+            if isinstance(exc, DownloadFailure):
+                raise
             logger.error(f"Unexpected error downloading {video_id}: {exc}")
-            return None
+            raise DownloadFailure(
+                classify_download_error(str(exc), source="youtube")
+            ) from exc
 
     async def _list_playlist(
         self, playlist_url: str, max_items: int

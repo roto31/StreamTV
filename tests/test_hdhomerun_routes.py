@@ -19,7 +19,11 @@ def test_lineup_json() -> None:
     client = TestClient(app)
     resp = client.get("/hdhomerun/lineup.json")
     assert resp.status_code == 200
-    assert isinstance(resp.json(), list)
+    body = resp.json()
+    assert isinstance(body, list)
+    if body:
+        assert body[0]["URL"].startswith("http")
+        assert body[0]["Logo"].startswith("https://streamtv.lotushomeacademy.org/")
 
 
 def test_tune_unknown_channel_404() -> None:

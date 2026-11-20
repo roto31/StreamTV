@@ -12,6 +12,7 @@ from ..config import config
 logger = logging.getLogger(__name__)
 
 _LOOPBACK_HOSTS = frozenset({"127.0.0.1", "localhost", "::1"})
+ICON_PUBLIC_ORIGIN = "https://streamtv.lotushomeacademy.org"
 
 
 def resolve_hdhomerun_base_url(request: Optional[Request] = None) -> str:
@@ -40,3 +41,15 @@ def resolve_hdhomerun_base_url(request: Optional[Request] = None) -> str:
         resolved = f"{scheme}://{host}"
 
     return resolved
+
+
+def resolve_channel_logo_url(channel) -> str:
+    """HTTPS logo for Plex XMLTV/M3U/HDHR lineup (not the tuner BaseURL)."""
+    logo_path = getattr(channel, "logo_path", None)
+    if logo_path:
+        if str(logo_path).startswith("http"):
+            return str(logo_path)
+        if str(logo_path).startswith("/"):
+            return f"{ICON_PUBLIC_ORIGIN}{logo_path}"
+        return f"{ICON_PUBLIC_ORIGIN}/{logo_path}"
+    return f"{ICON_PUBLIC_ORIGIN}/static/channel_icons/channel_{channel.number}.png"

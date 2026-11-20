@@ -10,6 +10,24 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+# Streaming bedrock — ErrorFixer must never rewrite these (docs/STREAMING_BEDROCK_FROZEN.md).
+_FROZEN_PATH_PREFIXES = (
+    "streamtv/streaming/",
+    "streamtv/hdhomerun/",
+    "streamtv/cache/",
+    "streamtv/ffmpeg/",
+    "streamtv/scheduling/",
+)
+_FROZEN_PATH_EXACT = frozenset({"streamtv/api/iptv.py"})
+
+
+def is_frozen_fixer_target(target: str) -> bool:
+    """True if target is under frozen streaming trees or exact frozen files."""
+    norm = str(target).replace("\\", "/").lstrip("./")
+    if norm in _FROZEN_PATH_EXACT:
+        return True
+    return any(norm.startswith(prefix) for prefix in _FROZEN_PATH_PREFIXES)
+
 
 class FixAction:
     """Represents a fix action that can be applied"""
@@ -36,25 +54,19 @@ class FixAction:
 class ErrorFixer:
     """Applies automated fixes to detected errors"""
     
-    # Registry of known fixes for specific error patterns
+    # Registry of known fixes for specific error patterns.
+    # Never target streamtv/streaming/** (bedrock freeze).
     FIX_REGISTRY = {
         'ffmpeg_timeout': {
-            'type': 'config',
-            'target': 'streamtv/streaming/mpegts_streamer.py',
+            'type': 'advise',
+            'target': 'operator',
             'fixes': [
                 {
-                    'description': 'Increase first chunk timeout for problematic files',
-                    'search': r'first_chunk_timeout\s*=\s*(\d+\.?\d*)',
-                    'replace': lambda match: f'first_chunk_timeout = {float(match.group(1)) * 2}',
-                    'min_value': 5.0,
-                    'max_value': 30.0
-                },
-                {
-                    'description': 'Increase HTTP timeout for slow connections',
-                    'search': r'"-timeout",\s*"(\d+)"',
-                    'replace': lambda match: f'"-timeout", "{int(match.group(1)) * 2}"',
-                    'min_value': 10000000,
-                    'max_value': 60000000
+                    'description': (
+                        'FFmpeg timeout: use STREAMTV_FFMPEG_STALL_SEC (default 90) '
+                        'and scripts/heal_stalled_ffmpeg.py — do not rewrite mpegts_streamer.py'
+                    ),
+                    'action': 'operator_guidance',
                 }
             ]
         },
@@ -79,14 +91,15 @@ class ErrorFixer:
             ]
         },
         'archive_org_redirect': {
-            'type': 'code',
-            'target': 'streamtv/streaming/stream_manager.py',
+            'type': 'advice',
+            'target': 'operator',
             'fixes': [
                 {
-                    'description': 'Ensure follow_redirects is enabled',
-                    'search': r'httpx\.AsyncClient\([^)]*\)',
-                    'verify': r'follow_redirects\s*=\s*True',
-                    'action': 'verify_only'
+                    'description': (
+                        'Archive.org redirect issues: verify Archive cookies / '
+                        'follow_redirects in operator config — streaming code is frozen'
+                    ),
+                    'action': 'operator_guidance',
                 }
             ]
         },
@@ -104,23 +117,36 @@ class ErrorFixer:
         }
     }
     
-    def __init__(self, workspace_root: Path, dry_run: bool = True):
+    def __init__(
+        self,
+        workspace_root: Path,
+        dry_run: bool = True,
+        max_fix_attempts: int = 3,
+    ):
         """
         Initialize error fixer
         
         Args:
             workspace_root: Root directory of the workspace
             dry_run: If True, only simulate fixes without applying them
+            max_fix_attempts: Cap successful registry applies per error_pattern
+                for this process lifetime
         """
         self.workspace_root = Path(workspace_root)
         self.dry_run = dry_run
+        self.max_fix_attempts = max(1, int(max_fix_attempts))
         self.applied_fixes = []
+        self._attempt_counts: Dict[str, int] = {}
         self.backup_dir = self.workspace_root / ".streamtv_backups"
         
         # Create backup directory
         self.backup_dir.mkdir(exist_ok=True)
         
-        logger.info(f"Initialized ErrorFixer (dry_run={dry_run})")
+        logger.info(
+            "Initialized ErrorFixer (dry_run=%s, max_fix_attempts=%s)",
+            dry_run,
+            self.max_fix_attempts,
+        )
     
     async def apply_fix(
         self,
@@ -147,6 +173,16 @@ class ErrorFixer:
         }
         
         try:
+            attempts = self._attempt_counts.get(error_pattern, 0)
+            if attempts >= self.max_fix_attempts:
+                result['message'] = (
+                    f'Skipped: max_fix_attempts ({self.max_fix_attempts}) '
+                    f'reached for {error_pattern}'
+                )
+                result['skipped_max_attempts'] = True
+                logger.warning(result['message'])
+                return result
+
             # Check if we have a registered fix for this pattern
             if error_pattern in self.FIX_REGISTRY:
                 fix_config = self.FIX_REGISTRY[error_pattern]
@@ -184,6 +220,7 @@ class ErrorFixer:
             result['success'] = len(result['fixes_applied']) > 0
             
             if result['success']:
+                self._attempt_counts[error_pattern] = attempts + 1
                 logger.info(f"Applied {len(result['fixes_applied'])} fix(es) for {error_pattern}")
             else:
                 logger.warning(f"No fixes successfully applied for {error_pattern}")
@@ -206,6 +243,21 @@ class ErrorFixer:
             'target': target,
             'success': False
         }
+
+        if fix_spec.get('action') == 'operator_guidance' or fix_type == 'advice':
+            result['success'] = True
+            result['message'] = fix_spec.get('description', 'Operator guidance')
+            result['requires_review'] = True
+            logger.info("Operator guidance (no file write): %s", result['message'])
+            return result
+
+        if is_frozen_fixer_target(target):
+            result['error'] = (
+                f'Refused: target is frozen streaming bedrock ({target})'
+            )
+            result['frozen_target'] = True
+            logger.error(result['error'])
+            return result
         
         try:
             target_path = self.workspace_root / target

@@ -4,10 +4,15 @@ import socket
 import threading
 import logging
 import platform
+import time
 from typing import Optional
 from ..config import config
 
 logger = logging.getLogger(__name__)
+
+# Errno 65 = EHOSTUNREACH (macOS) — multicast NOTIFY with no route; log once per window.
+_SSDP_ERRNO_NO_ROUTE = 65
+_SSDP_ERR_LOG_INTERVAL_SEC = 300.0
 
 
 class SSDPServer:
@@ -23,6 +28,8 @@ class SSDPServer:
         self.running = False
         self.socket: Optional[socket.socket] = None
         self.thread: Optional[threading.Thread] = None
+        self._notify_errno65_suppressed = 0
+        self._last_errno65_log = 0.0
         
         # Get server info from config
         self.server_host = config.server.host
@@ -90,6 +97,28 @@ class SSDPServer:
         except Exception as e:
             logger.error(f"Error handling SSDP request: {e}")
     
+    def _log_ssdp_oserror(self, context: str, exc: BaseException) -> None:
+        """Rate-limit [Errno 65] No route to host; other errors log every time."""
+        errno = getattr(exc, "errno", None)
+        if errno == _SSDP_ERRNO_NO_ROUTE:
+            self._notify_errno65_suppressed += 1
+            now = time.monotonic()
+            if (
+                self._notify_errno65_suppressed == 1
+                or (now - self._last_errno65_log) >= _SSDP_ERR_LOG_INTERVAL_SEC
+            ):
+                logger.warning(
+                    "%s: [Errno 65] No route to host "
+                    "(suppressed %s since last log; next summary ≥%.0fs)",
+                    context,
+                    self._notify_errno65_suppressed,
+                    _SSDP_ERR_LOG_INTERVAL_SEC,
+                )
+                self._last_errno65_log = now
+                self._notify_errno65_suppressed = 0
+            return
+        logger.error("%s: %s", context, exc)
+
     def _send_notify(self):
         """Send SSDP NOTIFY message"""
         try:
@@ -97,6 +126,8 @@ class SSDPServer:
             addr = (self.SSDP_MULTICAST_IP, self.SSDP_PORT)
             self.socket.sendto(notify_msg, addr)
             logger.debug("Sent SSDP NOTIFY message")
+        except OSError as e:
+            self._log_ssdp_oserror("Error sending SSDP NOTIFY", e)
         except Exception as e:
             logger.error(f"Error sending SSDP NOTIFY: {e}")
     
@@ -186,7 +217,10 @@ class SSDPServer:
                         notify_count = 0
                 except Exception as e:
                     if self.running:
-                        logger.error(f"Error in SSDP server loop: {e}")
+                        if isinstance(e, OSError):
+                            self._log_ssdp_oserror("Error in SSDP server loop", e)
+                        else:
+                            logger.error(f"Error in SSDP server loop: {e}")
         except Exception as e:
             logger.error(f"SSDP server error: {e}")
             logger.info("HDHomeRun device can still be accessed manually at /hdhomerun/discover.json")

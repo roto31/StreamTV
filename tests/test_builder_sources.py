@@ -13,12 +13,14 @@ from streamtv.builder.sources.registry import detect_source_for_url
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
-def test_builtin_sources_include_vimeo_coming_soon() -> None:
+def test_builtin_sources_include_vimeo_resolve_only() -> None:
+    """Vimeo is active for Builder resolve; playout remains bedrock-gated."""
     reload_sources()
     vimeo = get_source("vimeo")
     assert vimeo is not None
-    assert vimeo.status == "coming_soon"
+    assert vimeo.status == "active"
     assert vimeo.playout_ready is False
+    assert vimeo.docs_anchor == "vimeo-bedrock-pending"
 
 
 def test_builtin_sources_playable() -> None:
@@ -71,7 +73,9 @@ def test_detect_source_for_url_youtube() -> None:
     assert spec.id == "youtube"
 
 
-def test_detect_source_skips_coming_soon() -> None:
+def test_detect_source_finds_vimeo_resolve_only() -> None:
     reload_sources()
     spec = detect_source_for_url("https://vimeo.com/123456")
-    assert spec is None
+    assert spec is not None
+    assert spec.id == "vimeo"
+    assert spec.playout_ready is False

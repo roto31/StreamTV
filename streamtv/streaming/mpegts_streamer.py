@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import os
 import platform
 import subprocess
 import shutil
@@ -27,39 +28,105 @@ from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
-# #region agent log
-_DEBUG_LOG_PATH = "/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log"
-
-
-def _agent_dbg_log(
-    hypothesis_id: str,
-    location: str,
-    message: str,
-    data: Dict[str, Any],
-    *,
-    run_id: str = "post-fix",
-) -> None:
-    try:
-        payload = {
-            "sessionId": "247576",
-            "runId": run_id,
-            "hypothesisId": hypothesis_id,
-            "location": location,
-            "message": message,
-            "data": data,
-            "timestamp": int(time.time() * 1000),
-        }
-        with open(_DEBUG_LOG_PATH, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload, default=str) + "\n")
-    except Exception:
-        pass
-
-
-# #endregion
-
 
 class StreamURLExpiredError(RuntimeError):
     """Signed CDN URL expired mid-stream; caller should re-resolve and retry."""
+
+
+class OverlayNoBytesError(RuntimeError):
+    """DVD/PGS overlay FFmpeg produced no MPEG-TS bytes; caller may retry without burn."""
+
+
+# Bitmap subtitle codecs that can be overlaid onto video for MPEG-TS (Plex Live TV
+# has no selectable DVD/PGS track). Text codecs (mov_text/srt/ass) are not burned.
+BITMAP_SUBTITLE_CODECS = frozenset(
+    {
+        "dvd_subtitle",
+        "dvdsub",
+        "dvb_subtitle",
+        "hdmv_pgs_subtitle",
+        "pgssub",
+        "xsub",
+    }
+)
+
+# Cover-art / attached-pic streams must not win video_codec (mjpeg mis-probe stall).
+_COVER_ART_VIDEO_CODECS = frozenset({"mjpeg", "png", "bmp", "gif"})
+
+
+def _normalize_media_lang(code: Optional[str]) -> str:
+    """Map ISO 639-1/2 / English names to a short compare key (eng/jpn/…)."""
+    if not code:
+        return ""
+    base = str(code).strip().lower().replace("_", "-").split("-", 1)[0]
+    if base in ("en", "eng", "english"):
+        return "eng"
+    if base in ("ja", "jpn", "jp", "japanese"):
+        return "jpn"
+    return base
+
+
+def midstream_stall_decision(
+    *,
+    overlay_active: bool,
+    silence_sec: float,
+    stall_limit_sec: float,
+    bytes_yielded: int,
+    first_silence_event: bool,
+) -> str:
+    """Lesson 41 + 59: abort true hangs; overlay encode pauses are not warnings.
+
+    Overlay libx264 often gaps stdout > subsequent_timeout while MPEG-TS is
+    still growing. Copy-path still warns on first silence, then aborts at
+    STREAMTV_FFMPEG_STALL_SEC of consecutive silence.
+    """
+    if silence_sec >= stall_limit_sec:
+        return "abort"
+    if overlay_active and bytes_yielded > 0:
+        return "continue"
+    if first_silence_event:
+        return "warn"
+    return "continue"
+
+
+def select_embedded_dvd_subtitle_index(
+    codec_info: Optional[Dict[str, Any]],
+    *,
+    burn_enabled: bool,
+    preferred_language: str = "eng",
+) -> Optional[int]:
+    """Return 0-based `0:s:N` index to overlay, or None.
+
+    Opt-in only. Skip when audio is already English, language is unlabeled
+    (preserves copy-mode goldens), or no matching bitmap subtitle exists.
+    """
+    if not burn_enabled or not codec_info:
+        return None
+    audio_lang = _normalize_media_lang(codec_info.get("audio_language"))
+    if audio_lang == "eng" or not audio_lang:
+        return None
+    want = _normalize_media_lang(preferred_language) or "eng"
+    for idx, sub in enumerate(codec_info.get("subtitle_streams") or []):
+        codec = str(sub.get("codec") or "").lower()
+        if codec not in BITMAP_SUBTITLE_CODECS:
+            continue
+        if _normalize_media_lang(sub.get("language")) == want:
+            return idx
+    return None
+
+
+def bind_embedded_subtitle_policy(streamer: "MPEGTSStreamer", channel: Any) -> None:
+    """Copy channel subtitle_mode onto the streamer (DB may be closed later)."""
+    mode = getattr(channel, "subtitle_mode", None) if channel is not None else None
+    value = getattr(mode, "value", mode)
+    normalized = str(value or "none").strip().lower().replace("-", "_")
+    streamer._burn_embedded_subtitles = normalized not in ("none", "")
+    lang = (
+        getattr(channel, "preferred_subtitle_language_code", None)
+        if channel is not None
+        else None
+    )
+    streamer._preferred_subtitle_language = str(lang or "eng").strip() or "eng"
 
 
 def youtube_expiry_reresolve_budget(duration_seconds: Optional[int]) -> int:
@@ -87,6 +154,8 @@ class MPEGTSStreamer:
         self._channel_profile: Optional[str] = None  # Legacy profile
         self._ffmpeg_profile: Optional['FFmpegProfile'] = None  # New profile-based system
         self._watermark: Optional['Watermark'] = None  # Channel watermark
+        self._burn_embedded_subtitles = False
+        self._preferred_subtitle_language = "eng"
     
     def _find_ffmpeg(self) -> str:
         """Find FFmpeg executable"""
@@ -227,6 +296,7 @@ class MPEGTSStreamer:
                         self._channel_profile = None
                         self._ffmpeg_profile = None
                         self._watermark = None
+                    bind_embedded_subtitle_policy(self, channel)
                     
                     item_source = getattr(media_item, "source", None)
                     if item_source is None:
@@ -351,6 +421,23 @@ class MPEGTSStreamer:
                 if channel_obj:
                     channel_name = channel_obj.name
                     self._channel_profile = getattr(channel_obj, 'transcode_profile', None)
+                    # Refresh profile if continuous boot did not bind one (or DB changed).
+                    if getattr(channel_obj, "ffmpeg_profile_id", None):
+                        if (
+                            self._ffmpeg_profile is None
+                            or getattr(self._ffmpeg_profile, "id", None)
+                            != channel_obj.ffmpeg_profile_id
+                        ):
+                            from ..transcoding.ffmpeg_builder import (
+                                load_ffmpeg_profile_for_playout,
+                            )
+
+                            self._ffmpeg_profile = load_ffmpeg_profile_for_playout(
+                                self.db, channel_obj.ffmpeg_profile_id
+                            )
+                    else:
+                        self._ffmpeg_profile = None
+                    bind_embedded_subtitle_policy(self, channel_obj)
 
             stream_url = None
             if config.cache.enabled and getattr(media_item, "source_id", None):
@@ -495,19 +582,46 @@ class MPEGTSStreamer:
                 logger.info(f"Stream cancelled after codec detection for {media_item.title}")
                 raise
             
-            # Transcode to MPEG-TS (with smart codec detection)
-            async for chunk in self._transcode_with_youtube_expiry_retries(
-                playback_url,
-                input_codec_info,
-                item_source=item_source,
-                media_item=media_item,
-                stream_manager=stream_manager,
-                channel_name=channel_name,
-                tune_priority=tune_priority,
-                archive_tune_seek_seconds=archive_tune_seek_seconds,
-            ):
-                yield chunk
-                
+            # Transcode to MPEG-TS (with smart codec detection).
+            # Overlay no-bytes → one rebuild without embedded burn (stall harden).
+            try:
+                async for chunk in self._transcode_with_youtube_expiry_retries(
+                    playback_url,
+                    input_codec_info,
+                    item_source=item_source,
+                    media_item=media_item,
+                    stream_manager=stream_manager,
+                    channel_name=channel_name,
+                    tune_priority=tune_priority,
+                    archive_tune_seek_seconds=archive_tune_seek_seconds,
+                ):
+                    yield chunk
+            except OverlayNoBytesError as overlay_exc:
+                if not getattr(self, "_burn_embedded_subtitles", False):
+                    raise
+                logger.warning(
+                    "Embedded subtitle overlay produced no bytes for %s — "
+                    "retrying once without burn (%s)",
+                    media_item.title[:60],
+                    overlay_exc,
+                )
+                prev_burn = self._burn_embedded_subtitles
+                self._burn_embedded_subtitles = False
+                try:
+                    async for chunk in self._transcode_with_youtube_expiry_retries(
+                        playback_url,
+                        input_codec_info,
+                        item_source=item_source,
+                        media_item=media_item,
+                        stream_manager=stream_manager,
+                        channel_name=channel_name,
+                        tune_priority=tune_priority,
+                        archive_tune_seek_seconds=archive_tune_seek_seconds,
+                    ):
+                        yield chunk
+                finally:
+                    self._burn_embedded_subtitles = prev_burn
+
         except Exception as e:
             logger.error(f"Error streaming {media_item.title}: {e}")
             raise
@@ -615,6 +729,8 @@ class MPEGTSStreamer:
         codec_info = {
             "video_codec": None,
             "audio_codec": None,
+            "audio_language": None,
+            "subtitle_streams": [],
             "container_format": None,
             "container": "",
             "can_copy_video": False,
@@ -632,21 +748,50 @@ class MPEGTSStreamer:
         codec_info["container"] = fmt_name
         codec_info["needs_annexb"] = any(h in fmt_name for h in AVCC_CONTAINER_HINTS)
 
+        cover_video_codec: Optional[str] = None
         for stream in probe_data.get("streams", []):
             codec_type = stream.get("codec_type")
             codec_name = stream.get("codec_name", "").lower()
 
             if codec_type == "video":
-                codec_info["video_codec"] = codec_name
-                codec_info["can_copy_video"] = codec_name in ["h264", "avc"]
-                if codec_name in ["h264", "avc"]:
-                    container = codec_info["container_format"] or ""
-                    if any(token in container for token in ("mp4", "mov", "quicktime")):
-                        codec_info["needs_annexb_filter"] = True
+                disposition = stream.get("disposition") or {}
+                if disposition.get("attached_pic"):
+                    if cover_video_codec is None:
+                        cover_video_codec = codec_name or "mjpeg"
+                    continue
+                if codec_name in _COVER_ART_VIDEO_CODECS:
+                    if cover_video_codec is None:
+                        cover_video_codec = codec_name
+                    continue
+                # Prefer the first real video stream (do not let later covers overwrite).
+                if codec_info["video_codec"] is None:
+                    codec_info["video_codec"] = codec_name
+                    codec_info["can_copy_video"] = codec_name in ["h264", "avc"]
+                    if codec_name in ["h264", "avc"]:
+                        container = codec_info["container_format"] or ""
+                        if any(
+                            token in container for token in ("mp4", "mov", "quicktime")
+                        ):
+                            codec_info["needs_annexb_filter"] = True
 
             elif codec_type == "audio":
                 codec_info["audio_codec"] = codec_name
                 codec_info["can_copy_audio"] = codec_name in ["aac", "mp3", "mp2"]
+                if not codec_info["audio_language"]:
+                    tags = stream.get("tags") or {}
+                    codec_info["audio_language"] = tags.get("language")
+            elif codec_type == "subtitle":
+                tags = stream.get("tags") or {}
+                codec_info["subtitle_streams"].append(
+                    {
+                        "codec": codec_name,
+                        "language": tags.get("language"),
+                    }
+                )
+
+        if codec_info["video_codec"] is None and cover_video_codec:
+            codec_info["video_codec"] = cover_video_codec
+            codec_info["can_copy_video"] = False
 
         if not (codec_info["video_codec"] or codec_info["audio_codec"]):
             return None
@@ -659,9 +804,23 @@ class MPEGTSStreamer:
         return codec_info
 
     async def _quick_ffprobe_codec(
-        self, probe_url: str, *, timeout: float = 5.0
+        self,
+        probe_url: str,
+        *,
+        timeout: float = 5.0,
+        subtitle_probe: bool = False,
     ) -> Optional[Dict[str, Any]]:
-        """Fast ffprobe for Archive.org tune path (small probesize, short timeout)."""
+        """Fast ffprobe for Archive.org tune path (small probesize, short timeout).
+
+        Do not enlarge probesize for every burn-enabled channel (mjpeg mis-probe).
+        Escalate only when subtitle_probe=True (non-English audio, missing sub list).
+        """
+        probesize = "500000"
+        analyzeduration = "500000"
+        if subtitle_probe:
+            probesize = "3000000"
+            analyzeduration = "3000000"
+            timeout = max(timeout, 8.0)
         ffprobe_cmd = [
             config.ffmpeg.ffprobe_path or "ffprobe",
             "-v", "quiet",
@@ -669,8 +828,8 @@ class MPEGTSStreamer:
             "-show_streams",
             "-show_format",
             "-timeout", "3000000",
-            "-probesize", "500000",
-            "-analyzeduration", "500000",
+            "-probesize", probesize,
+            "-analyzeduration", analyzeduration,
             "-user_agent", "Mozilla/5.0 (compatible; StreamTV/1.0)",
             probe_url,
         ]
@@ -746,12 +905,27 @@ class MPEGTSStreamer:
         if is_http and "archive.org" in probe_url.lower():
             quick = await self._quick_ffprobe_codec(probe_url, timeout=5.0)
             if quick:
+                audio_lang = _normalize_media_lang(quick.get("audio_language"))
+                need_subs = (
+                    getattr(self, "_burn_embedded_subtitles", False)
+                    and bool(audio_lang)
+                    and audio_lang != "eng"
+                    and not (quick.get("subtitle_streams") or [])
+                )
+                if need_subs:
+                    escalated = await self._quick_ffprobe_codec(
+                        probe_url, timeout=8.0, subtitle_probe=True
+                    )
+                    if escalated:
+                        quick = escalated
                 logger.info(
-                    "Archive.org quick probe: video=%s audio=%s copy_v=%s copy_a=%s",
+                    "Archive.org quick probe: video=%s audio=%s copy_v=%s copy_a=%s "
+                    "subs=%s",
                     quick["video_codec"],
                     quick["audio_codec"],
                     quick["can_copy_video"],
                     quick["can_copy_audio"],
+                    len(quick.get("subtitle_streams") or []),
                 )
                 return quick
             inferred = self._infer_mp4_codec_defaults(stream_url)
@@ -932,39 +1106,12 @@ class MPEGTSStreamer:
             archive_tune_seek_seconds=archive_tune_seek_seconds,
             youtube_resume_seek_seconds=youtube_resume_seek_seconds,
         )
+        overlay_active = "-filter_complex" in ffmpeg_cmd and any(
+            "overlay" in str(part) for part in ffmpeg_cmd
+        )
         
         
         logger.debug(f"FFmpeg command: {' '.join(ffmpeg_cmd)}")
-        # #region agent log
-        _ff_t0 = time.monotonic()
-        _ff_has_re = INPUT_FLAG_REALTIME in ffmpeg_cmd
-        _agent_dbg_log(
-            "H12",
-            "mpegts_streamer.py:ffmpeg_start",
-            "FFmpeg process starting",
-            {
-                "has_re": _ff_has_re,
-                "has_ss": "-ss" in ffmpeg_cmd,
-                "ss_val": (
-                    ffmpeg_cmd[ffmpeg_cmd.index("-ss") + 1]
-                    if "-ss" in ffmpeg_cmd
-                    else None
-                ),
-                "c_v": (
-                    ffmpeg_cmd[ffmpeg_cmd.index("-c:v") + 1]
-                    if "-c:v" in ffmpeg_cmd
-                    else None
-                ),
-                "c_a": (
-                    ffmpeg_cmd[ffmpeg_cmd.index("-c:a") + 1]
-                    if "-c:a" in ffmpeg_cmd
-                    else None
-                ),
-                "is_archive": "archive.org" in (primary_url or "").lower(),
-                "url_prefix": (primary_url or "")[:80],
-            },
-        )
-        # #endregion
         
         # Start FFmpeg process
         process = None
@@ -973,7 +1120,10 @@ class MPEGTSStreamer:
             process = await asyncio.create_subprocess_exec(
                 *ffmpeg_cmd,
                 stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                stderr=asyncio.subprocess.PIPE,
+                # Phase 3: own process group so killing one channel's FFmpeg
+                # does not signal siblings sharing the uvicorn process group.
+                start_new_session=True,
             )
             
             
@@ -1016,6 +1166,37 @@ class MPEGTSStreamer:
                             logger.warning(
                                 "YouTube signed URL expired mid-stream (403); will re-resolve"
                             )
+                            # #region agent log
+                            try:
+                                import json as _json, time as _time
+                                with open(
+                                    "/Volumes/SSD Storage/XCode Projects/StreamTV/.cursor/debug-aded3c.log",
+                                    "a",
+                                    encoding="utf-8",
+                                ) as _df:
+                                    _df.write(
+                                        _json.dumps(
+                                            {
+                                                "sessionId": "aded3c",
+                                                "runId": "yt-403-fix",
+                                                "hypothesisId": "H3",
+                                                "location": "mpegts_streamer.py:403_watchdog",
+                                                "message": "mid-stream googlevideo 403 detected",
+                                                "data": {
+                                                    "url_host": (
+                                                        "googlevideo"
+                                                        if "googlevideo" in (primary_url or "")
+                                                        else "other"
+                                                    ),
+                                                },
+                                                "timestamp": int(_time.time() * 1000),
+                                            }
+                                        )
+                                        + "\n"
+                                    )
+                            except Exception:
+                                pass
+                            # #endregion
                         
                         # Log errors and warnings
                         # Downgrade expected hardware acceleration errors for unsupported codecs to warnings
@@ -1082,6 +1263,16 @@ class MPEGTSStreamer:
             first_chunk_timeout = 15.0  # Wait up to 15 seconds for first chunk (increased for AVI files)
             first_chunk_received = False
             subsequent_timeout = 5.0  # Increased timeout for subsequent chunks to handle network issues
+            # Mid-stream stall: Archive.org FFmpeg can hang at 0% CPU with no stdout while still
+            # alive; unlimited TimeoutError continue → HDHomeRun keepalive-only → Plex guide.
+            # Lesson 41 / STREAMTV_FFMPEG_STALL_SEC (default 90s after first chunk).
+            try:
+                stall_limit_sec = float(os.environ.get("STREAMTV_FFMPEG_STALL_SEC", "90"))
+            except ValueError:
+                stall_limit_sec = 90.0
+            stall_limit_sec = max(15.0, stall_limit_sec)
+            stall_silence_started: Optional[float] = None
+            bytes_yielded = 0
             
             while True:
                 try:
@@ -1089,6 +1280,7 @@ class MPEGTSStreamer:
                         # Wait for first chunk with timeout - critical for immediate start
                         chunk = await asyncio.wait_for(process.stdout.read(8192), timeout=first_chunk_timeout)
                         first_chunk_received = True
+                        stall_silence_started = None
                         logger.debug("First chunk received, stream started")
                     else:
                         # Use shorter timeout for subsequent chunks
@@ -1099,20 +1291,6 @@ class MPEGTSStreamer:
                         if process.returncode is not None:
                             # Process ended, check for errors
                             await stderr_task
-                            # #region agent log
-                            _agent_dbg_log(
-                                "H12",
-                                "mpegts_streamer.py:ffmpeg_exit",
-                                "FFmpeg process ended",
-                                {
-                                    "returncode": process.returncode,
-                                    "has_re": _ff_has_re,
-                                    "elapsed_s": round(time.monotonic() - _ff_t0, 3),
-                                    "url_prefix": (primary_url or "")[:80],
-                                    "stderr_tail": "\n".join(stderr_lines[-5:])[:500],
-                                },
-                            )
-                            # #endregion
                             if process.returncode != 0:
                                 error_msg = '\n'.join(stderr_lines[-10:])
                                 logger.warning(f"FFmpeg exited with code {process.returncode}: {error_msg}")
@@ -1130,6 +1308,8 @@ class MPEGTSStreamer:
                         # Wait a bit and try again
                         await asyncio.sleep(0.1)
                         continue
+                    stall_silence_started = None
+                    bytes_yielded += len(chunk)
                     yield chunk
                     
                 except asyncio.TimeoutError:
@@ -1142,13 +1322,25 @@ class MPEGTSStreamer:
                                 chunk = await asyncio.wait_for(process.stdout.read(8192), timeout=10.0)
                                 if chunk:
                                     first_chunk_received = True
+                                    stall_silence_started = None
+                                    bytes_yielded += len(chunk)
                                     yield chunk
                                     continue
                             except asyncio.TimeoutError:
                                 # Still no data after extended timeout - file is likely problematic
                                 await stderr_task
                                 error_msg = '\n'.join(stderr_lines[-10:])
-                                raise RuntimeError(f"FFmpeg timeout - no data received after extended wait: {error_msg}")
+                                try:
+                                    process.kill()
+                                except ProcessLookupError:
+                                    pass
+                                if overlay_active:
+                                    raise OverlayNoBytesError(
+                                        f"Overlay FFmpeg produced no bytes: {error_msg}"
+                                    )
+                                raise RuntimeError(
+                                    f"FFmpeg timeout - no data received after extended wait: {error_msg}"
+                                )
                         else:
                             # Process ended - get error message
                             await stderr_task
@@ -1158,19 +1350,6 @@ class MPEGTSStreamer:
                         # Subsequent read timeout - might be end of file or network issue
                         # Check if process is still running
                         if process.returncode is not None:
-                            # #region agent log
-                            _agent_dbg_log(
-                                "H12",
-                                "mpegts_streamer.py:ffmpeg_exit",
-                                "FFmpeg process ended (timeout path)",
-                                {
-                                    "returncode": process.returncode,
-                                    "has_re": _ff_has_re,
-                                    "elapsed_s": round(time.monotonic() - _ff_t0, 3),
-                                    "url_prefix": (primary_url or "")[:80],
-                                },
-                            )
-                            # #endregion
                             # Process ended, likely end of file
                             break
                         # Check for fatal errors detected in stderr
@@ -1183,7 +1362,71 @@ class MPEGTSStreamer:
                                 )
                             logger.error(f"FFmpeg fatal error detected during timeout: {error_msg}")
                             raise RuntimeError(f"FFmpeg fatal demuxing error: {error_msg}")
-                        # Process still running but no data - continue waiting
+                        # Process still running but no data — accumulate silence; do not wait forever
+                        now = time.monotonic()
+                        first_silence_event = stall_silence_started is None
+                        if first_silence_event:
+                            stall_silence_started = now
+                        silence = now - stall_silence_started
+                        stall_action = midstream_stall_decision(
+                            overlay_active=overlay_active,
+                            silence_sec=silence,
+                            stall_limit_sec=stall_limit_sec,
+                            bytes_yielded=bytes_yielded,
+                            first_silence_event=first_silence_event,
+                        )
+                        if stall_action == "warn":
+                            logger.warning(
+                                "FFmpeg stdout silence after first chunk (url=%s…); "
+                                "will abort if no data for %.0fs",
+                                (primary_url or "")[:80],
+                                stall_limit_sec,
+                            )
+                        if stall_action == "abort":
+                            # #region agent log
+                            try:
+                                _dbg = Path(__file__).resolve().parents[2] / ".cursor" / "debug-aded3c.log"
+                                _dbg.parent.mkdir(parents=True, exist_ok=True)
+                                with _dbg.open("a", encoding="utf-8") as _fh:
+                                    _fh.write(
+                                        json.dumps(
+                                            {
+                                                "sessionId": "aded3c",
+                                                "runId": "stall-fix",
+                                                "hypothesisId": "H1",
+                                                "location": "mpegts_streamer.py:stall",
+                                                "message": "FFmpeg mid-stream stall abort",
+                                                "data": {
+                                                    "silence_sec": round(silence, 1),
+                                                    "stall_limit_sec": stall_limit_sec,
+                                                    "url_prefix": (primary_url or "")[:120],
+                                                    "pid": getattr(process, "pid", None),
+                                                },
+                                                "timestamp": int(time.time() * 1000),
+                                            }
+                                        )
+                                        + "\n"
+                                    )
+                            except Exception:
+                                pass
+                            # #endregion
+                            logger.error(
+                                "FFmpeg stalled — no stdout for %.1fs after first chunk "
+                                "(limit=%.0fs); terminating pid=%s url=%s…",
+                                silence,
+                                stall_limit_sec,
+                                getattr(process, "pid", None),
+                                (primary_url or "")[:80],
+                            )
+                            try:
+                                process.kill()
+                            except ProcessLookupError:
+                                pass
+                            await stderr_task
+                            raise RuntimeError(
+                                f"FFmpeg stalled — no stdout for {silence:.0f}s after first chunk "
+                                f"(STREAMTV_FFMPEG_STALL_SEC={stall_limit_sec:.0f})"
+                            )
                         continue
 
             # Stream ended (process exit / EOF): surface signed-URL expiry
@@ -1342,8 +1585,25 @@ class MPEGTSStreamer:
                 )
             input_url, aux_audio_url = input_url
 
-        # Use profile-based builder if profile is available
-        if self._ffmpeg_profile:
+        overlay_si: Optional[int] = None
+        src_val_early = getattr(source, "value", None)
+        if isinstance(src_val_early, str):
+            src_val_early = src_val_early.lower()
+        url_l_early = input_url.lower() if isinstance(input_url, str) else ""
+        is_archive_early = src_val_early == "archive_org" or "archive.org" in url_l_early
+        is_youtube_early = src_val_early == "youtube"
+        if is_archive_early and not is_youtube_early:
+            overlay_si = select_embedded_dvd_subtitle_index(
+                codec_info,
+                burn_enabled=getattr(self, "_burn_embedded_subtitles", False),
+                preferred_language=getattr(
+                    self, "_preferred_subtitle_language", "eng"
+                ),
+            )
+
+        # Use profile-based builder if profile is available.
+        # Embedded DVD overlay requires the legacy encoder path (cannot copy video).
+        if self._ffmpeg_profile and overlay_si is None:
             try:
                 from ..transcoding.ffmpeg_builder import build_ffmpeg_command
                 # Check for subtitle file (would need to be passed separately)
@@ -1355,7 +1615,10 @@ class MPEGTSStreamer:
                     subtitle_path=subtitle_path,
                     codec_info=codec_info
                 )
-                logger.debug(f"Using profile-based FFmpeg command: {self._ffmpeg_profile.name}")
+                logger.info(
+                    f"Using profile-based FFmpeg command: {self._ffmpeg_profile.name} "
+                    f"(loudnorm={getattr(self._ffmpeg_profile.normalize_loudness_mode, 'value', None)})"
+                )
                 return cmd
             except Exception as e:
                 logger.warning(f"Failed to build profile-based command, falling back to legacy: {e}")
@@ -1367,6 +1630,8 @@ class MPEGTSStreamer:
         # Determine if we can use copy mode (no transcoding)
         can_copy_video = codec_info and codec_info.get('can_copy_video', False)
         can_copy_audio = codec_info and codec_info.get('can_copy_audio', False)
+        if overlay_si is not None:
+            can_copy_video = False
         video_codec = codec_info.get('video_codec', 'unknown') if codec_info else 'unknown'
         
         # Prefer adapter-detected source over URL heuristics for accurate preset selection.
@@ -1508,9 +1773,10 @@ class MPEGTSStreamer:
                 timeout = "30000000"  # 30s for others
                 reconnect_delay = "5"  # Standard delay
             
-            if src_youtube:
-                # YouTube: no -reconnect_at_eof — finite VOD items must terminate
-                # so the playout loop advances (RC-3). Keep mid-stream reconnects.
+            if src_youtube or is_archive_org:
+                # YouTube / Archive.org VOD: no -reconnect_at_eof — finite items must
+                # terminate so continuous playout advances (RC-3; Magnum Archive loop
+                # 2026-07-17). Keep mid-stream reconnects only.
                 cmd.extend([
                     "-timeout", timeout,
                     "-user_agent", "Mozilla/5.0 (compatible; StreamTV/1.0)",
@@ -1718,7 +1984,22 @@ class MPEGTSStreamer:
             
         
         # Output options (come AFTER -i)
-        if aux_audio_url:
+        if overlay_si is not None:
+            cmd.extend(
+                [
+                    "-filter_complex",
+                    f"[0:v:0][0:s:{overlay_si}]overlay=eof_action=pass[vout]",
+                    "-map",
+                    "[vout]",
+                    "-map",
+                    "0:a:0",
+                ]
+            )
+            logger.info(
+                "Burning embedded subtitle 0:s:%s into MPEG-TS (Plex Live TV overlay)",
+                overlay_si,
+            )
+        elif aux_audio_url:
             cmd.extend(["-map", "0:v:0", "-map", "1:a:0"])
         # Threads (applies to encoding) - only if transcoding
         if config.ffmpeg.threads > 0 and not (can_copy_video and can_copy_audio):

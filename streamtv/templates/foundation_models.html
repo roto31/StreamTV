@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>StreamTV — Foundation Models Recovery</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    code { background: #f2f2f2; padding: 0.1rem 0.3rem; border-radius: 4px; }
+    textarea { width: 100%; min-height: 120px; }
+    pre { background: #111; color: #eee; padding: 1rem; overflow: auto; border-radius: 8px; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Apple Foundation Models Recovery</h1>
+  <p class="muted">
+    On-device recovery via StreamTVMac bridge (<code>{{ fm_url }}</code>).
+    Configured backend: <code>{{ ai_backend }}</code>
+    {% if macos_major %}· macOS major {{ macos_major }}{% endif %}
+  </p>
+  <p>
+    Ollama remains available at <a href="/ollama">/ollama</a> for optional / legacy installs.
+  </p>
+
+  <h2>Bridge status</h2>
+  <button id="refresh">Refresh status</button>
+  <pre id="status">Loading…</pre>
+
+  <h2>Query</h2>
+  <textarea id="query" placeholder="Describe a StreamTV issue (e.g. channel 80 guide ahead of video)…"></textarea>
+  <p><button id="ask">Ask</button></p>
+  <pre id="answer"></pre>
+
+  <script>
+    async function refresh() {
+      const r = await fetch('/foundation-models/status');
+      document.getElementById('status').textContent = JSON.stringify(await r.json(), null, 2);
+    }
+    document.getElementById('refresh').onclick = refresh;
+    document.getElementById('ask').onclick = async () => {
+      const query = document.getElementById('query').value;
+      const r = await fetch('/foundation-models/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      document.getElementById('answer').textContent = JSON.stringify(await r.json(), null, 2);
+    };
+    refresh();
+  </script>
+</body>
+</html>

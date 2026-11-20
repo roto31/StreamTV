@@ -734,6 +734,9 @@ class CachedMedia(Base):
         index=True,
     )
     error_message = Column(String, nullable=True)
+    # download_errors.FAILURE_CLASSES — sticky terminal vs retryable after retry_after
+    failure_class = Column(String, nullable=True, index=True)
+    retry_after = Column(DateTime, nullable=True, index=True)
     expires_at = Column(DateTime, nullable=True, index=True)
     accessed_at = Column(DateTime, nullable=True)
     hit_count = Column(Integer, default=0, nullable=False)

@@ -34,14 +34,6 @@ def _slugify(text: str, max_len: int = 48) -> str:
     return slug[:max_len] or "item"
 
 
-def pbs_video_stream_id(url: str) -> str:
-    """Stable per-episode id from PBS /video/{slug}/ path (avoids URL-prefix collisions)."""
-    match = PBS_VIDEO_PATH_RE.search(url)
-    if match:
-        return _slugify(match.group(1), max_len=80)
-    return _slugify(url, max_len=80)
-
-
 def parse_show_slug(url: str) -> str:
     path = urlparse(url).path.strip("/")
     parts = path.split("/")
@@ -63,7 +55,7 @@ def harvest_from_html(html: str, expanded_from: str) -> dict[str, dict[str, Any]
             "url": url,
             "title": slug.replace("-", " ").title(),
             "source": "pbs",
-            "stream_id": pbs_video_stream_id(url),
+            "stream_id": _slugify(url),
             "duration": None,
             "upload_date": None,
             "expanded_from": expanded_from,
@@ -72,7 +64,7 @@ def harvest_from_html(html: str, expanded_from: str) -> dict[str, dict[str, Any]
         url = _canonical_video_url(slug)
         entry = items.get(url, {"url": url, "source": "pbs", "expanded_from": expanded_from})
         entry["title"] = title.replace("\\'", "'")
-        entry["stream_id"] = pbs_video_stream_id(url)
+        entry["stream_id"] = _slugify(url)
         entry["duration"] = int(duration)
         items[url] = entry
     return items
@@ -180,7 +172,7 @@ async def harvest_seasons_playwright(
                     "url": url,
                     "title": display,
                     "source": "pbs",
-                    "stream_id": pbs_video_stream_id(url),
+                    "stream_id": _slugify(url),
                     "duration": None,
                     "upload_date": None,
                     "expanded_from": show_url,
@@ -195,7 +187,6 @@ def expand_pbs_show(
     season_harvester: Optional[Callable[..., list[dict[str, Any]]]] = None,
     filter_full_episodes: bool = False,
     min_episode_seconds: int = 300,
-    exclude_passport_drm: bool = False,
     max_videos: Optional[int] = None,
 ) -> list[dict[str, Any]]:
     slug = parse_show_slug(url)
@@ -223,17 +214,7 @@ def expand_pbs_show(
     ordered = list(items.values())
     if filter_full_episodes:
         ordered = filter_full_pbs_episodes(ordered, min_seconds=min_episode_seconds)
-    if exclude_passport_drm:
-        from streamtv.builder.pbs_stream_probe import filter_playable_pbs_episodes
-
-        ordered = filter_playable_pbs_episodes(ordered)
     if not ordered:
-        if exclude_passport_drm:
-            raise ValueError(
-                "No PBS videos with FFmpeg-playable streams found. "
-                "Passport-only DRM episodes were excluded — choose a public PBS show "
-                "or disable 'Exclude Passport DRM' in Channel Builder."
-            )
         raise ValueError(
             "No PBS videos found on this show page. Configure PBS sign-in for Passport content."
         )

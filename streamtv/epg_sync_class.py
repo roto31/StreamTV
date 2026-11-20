@@ -25,7 +25,7 @@ _CLASS_B = frozenset(
         "2010",
     }
 )
-_CLASS_C = frozenset({"11", "1929", "1954", "1982", "1985", "1990"})
+_CLASS_C = frozenset({"11", "1929", "1954", "1985", "1990", "2319"})
 
 
 def _normalize_class(value: Optional[str]) -> Optional[str]:

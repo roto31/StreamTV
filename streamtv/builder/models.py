@@ -57,6 +57,13 @@ class ChannelInfo(BaseModel):
     playout_mode: Literal["continuous", "on_demand"] = "continuous"
     primary_collection: Optional[str] = None
     epg_sync_class: Optional[Literal["A", "B", "C"]] = None
+    # Post-build TVDB/TVMaze/TMDB enrichment (see streamtv.builder.enrichment)
+    enrich_metadata: bool = True
+    enrichment_type: Literal["series", "movie"] = "series"
+    # Series providers: free TVMaze, keyed TVDB, or both (merge / longest plot)
+    enrichment_series_provider: Literal["tvmaze", "tvdb", "both"] = "tvmaze"
+    enrichment_series_name: Optional[str] = None
+    enrichment_year: Optional[int] = None
 
 
 class BuilderDraft(BaseModel):
@@ -70,7 +77,6 @@ class BuilderDraft(BaseModel):
     filler_attachments: list[FillerAttachment] = Field(default_factory=list)
     pbs_filter_full_episodes: bool = True
     pbs_min_episode_seconds: int = 300
-    pbs_exclude_passport_drm: bool = True
     built: bool = False
     built_channel_number: Optional[str] = None
 
@@ -118,7 +124,6 @@ class DraftPatchRequest(BaseModel):
     filler_attachments: Optional[list[FillerAttachment]] = None
     pbs_filter_full_episodes: Optional[bool] = None
     pbs_min_episode_seconds: Optional[int] = Field(default=None, ge=0, le=7200)
-    pbs_exclude_passport_drm: Optional[bool] = None
 
 
 class LinksBatchRequest(BaseModel):
@@ -175,6 +180,15 @@ class PlaywrightLoginRequest(BaseModel):
 class PlexLoginRequest(BaseModel):
     base_url: str
     token: str
+
+
+class TvdbKeyRequest(BaseModel):
+    api_key: str
+
+
+class TvmazeCredentialsRequest(BaseModel):
+    username: str
+    api_key: str
 
 
 class CommunityCookieLoginRequest(BaseModel):

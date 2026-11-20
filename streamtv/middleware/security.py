@@ -99,7 +99,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers.setdefault("Referrer-Policy", "no-referrer")
         response.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()")
         response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
-        response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
+        if request.url.path.startswith("/static/channel_icons"):
+            response.headers["Cross-Origin-Resource-Policy"] = "cross-origin"
+            response.headers.setdefault("Access-Control-Allow-Origin", "*")
+        else:
+            response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
         
         # Tightened CSP - removed 'unsafe-inline' from script-src for better XSS protection
         # Using nonces for inline scripts instead
@@ -112,6 +116,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "img-src 'self' data: blob: https:; "
             "media-src 'self' blob:; "
             "connect-src 'self'; "
+            "worker-src 'self' blob:; "  # HLS.js / mpegts.js workers (Issue 4 /player preview)
             "frame-src 'self'; "
             "frame-ancestors 'none'; "
             "object-src 'none'; "

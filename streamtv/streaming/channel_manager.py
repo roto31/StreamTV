@@ -1,43 +1,11 @@
 """Channel manager for continuous background streaming (StreamTV Schedule v1)."""
 
 import asyncio
-import json
 import logging
-import time
 from typing import Any, Dict, Optional, AsyncIterator, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from collections import deque
 import weakref
-
-# #region agent log
-_DEBUG_LOG_PATH = "/home/streamtv/XCode Projects/StreamTV/.cursor/debug-247576.log"
-
-
-def _agent_dbg_log(
-    hypothesis_id: str,
-    location: str,
-    message: str,
-    data: Dict[str, Any],
-    *,
-    run_id: str = "pre-fix",
-) -> None:
-    try:
-        payload = {
-            "sessionId": "247576",
-            "runId": run_id,
-            "hypothesisId": hypothesis_id,
-            "location": location,
-            "message": message,
-            "data": data,
-            "timestamp": int(time.time() * 1000),
-        }
-        with open(_DEBUG_LOG_PATH, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload, default=str) + "\n")
-    except Exception:
-        pass
-
-
-# #endregion
 
 from streamtv.database import Channel, MediaItem
 from streamtv.database.models import ChannelPlaybackPosition, PlayoutMode, StreamSource
@@ -243,6 +211,7 @@ class ChannelStream:
         self._stream_task: Optional[asyncio.Task] = None
         self._client_queues: List[asyncio.Queue] = []
         self._is_running = False
+        self._stop_requested = False
         self._lock = asyncio.Lock()
         self._client_count = 0
         
@@ -334,11 +303,48 @@ class ChannelStream:
                     finally:
                         db.close()
             
+            self._stop_requested = False
             self._is_running = True
             logger.info(f"ChannelStream.start() - Creating background task for channel {self.channel_number}...")
-            self._stream_task = asyncio.create_task(self._run_continuous_stream())
+            self._stream_task = asyncio.create_task(self._supervised_continuous_stream())
             logger.info(f"Started continuous stream for channel {self.channel_number} ({self.channel_name}) - background task created")
     
+    async def _supervised_continuous_stream(self) -> None:
+        """Run playout; on unexpected exit restart this channel only (Phase 3 isolation)."""
+        import os
+
+        delay = float(os.environ.get("STREAMTV_CHANNEL_SUPERVISE_SEC", "15"))
+        while not self._stop_requested:
+            self._is_running = True
+            try:
+                await self._run_continuous_stream()
+            except asyncio.CancelledError:
+                if self._stop_requested:
+                    raise
+                logger.warning(
+                    "Channel %s stream task cancelled unexpectedly — supervising restart",
+                    self.channel_number,
+                )
+            except Exception as exc:
+                logger.error(
+                    "Channel %s stream crashed (siblings unaffected): %s",
+                    self.channel_number,
+                    exc,
+                    exc_info=True,
+                )
+            if self._stop_requested:
+                break
+            logger.warning(
+                "Channel %s supervising restart in %.0fs (no full uvicorn kickstart)",
+                self.channel_number,
+                delay,
+            )
+            try:
+                await asyncio.sleep(delay)
+            except asyncio.CancelledError:
+                if self._stop_requested:
+                    raise
+                break
     async def stop(self, *, save_position: bool = True):
         """Stop the continuous stream.
 
@@ -349,7 +355,8 @@ class ChannelStream:
             return
         
         async with self._lock:
-            # Set flag FIRST to prevent new items from starting
+            # Set flags FIRST to prevent new items from starting / supervised respawn
+            self._stop_requested = True
             self._is_running = False
             if self._stream_task:
                 self._stream_task.cancel()
@@ -517,6 +524,7 @@ class ChannelStream:
 
                 if youtube_full_cache_enabled():
                     await download_queue.ensure_download_started(media_item)
+                    await download_queue.prioritize(media_item)
             else:
                 await download_queue.ensure_ring_buffer(
                     media_item, ring_buffer_max_bytes()
@@ -887,6 +895,11 @@ class ChannelStream:
                 
                 # Create independent streamer for this client
                 streamer = MPEGTSStreamer(db_session)
+                from streamtv.streaming.mpegts_streamer import (
+                    bind_embedded_subtitle_policy,
+                )
+
+                bind_embedded_subtitle_policy(streamer, channel)
                 
                 # Track items tried to prevent infinite loops if all items fail
                 items_yielded = 0
@@ -1045,100 +1058,20 @@ class ChannelStream:
         
         # Stream from the broadcast queue
         first_yield = True
-        # #region agent log
-        _tune_t0 = time.time()
-        _chunks_out = 0
-        _bytes_out = 0
-        _first_real_at = None
-        _ka = keepalive_chunk()
-        _ka_timeouts = 0
-        # #endregion
         try:
             while self._is_running:
                 try:
-                    # Short poll so cold FFmpeg startup still emits keepalive to Plex
-                    # (CDN-first skips buffer-wait ticks that used to fill this gap).
-                    chunk = await asyncio.wait_for(client_queue.get(), timeout=0.5)
+                    chunk = await asyncio.wait_for(client_queue.get(), timeout=2.0)
                     if first_yield:
                         first_yield = False
-                        # #region agent log
-                        _agent_dbg_log(
-                            "H3",
-                            "channel_manager.py:client_first_yield",
-                            "first chunk to HTTP client",
-                            {
-                                "channel": str(self.channel_number),
-                                "bytes": len(chunk),
-                                "is_keepalive": chunk == _ka,
-                                "ka_aligned": len(_ka) % 188 == 0,
-                                "elapsed_s": round(time.time() - _tune_t0, 3),
-                                "client_count": self._client_count,
-                            },
-                            run_id="post-fix",
-                        )
-                        # #endregion
-                    # #region agent log
-                    _chunks_out += 1
-                    _bytes_out += len(chunk)
-                    if _first_real_at is None and chunk != _ka:
-                        _first_real_at = time.time() - _tune_t0
-                        _agent_dbg_log(
-                            "H3",
-                            "channel_manager.py:client_first_real",
-                            "first non-keepalive media to client",
-                            {
-                                "channel": str(self.channel_number),
-                                "bytes": len(chunk),
-                                "elapsed_s": round(_first_real_at, 3),
-                                "chunks_before": _chunks_out,
-                                "ka_timeouts": _ka_timeouts,
-                            },
-                            run_id="post-fix",
-                        )
-                    # #endregion
                     yield chunk
                 except asyncio.TimeoutError:
+                    # Check if still running
                     if not self._is_running:
                         break
-                    # Keep Plex HDHomeRun tune alive while FFmpeg cold-starts.
-                    # #region agent log
-                    _ka_timeouts += 1
-                    _chunks_out += 1
-                    _bytes_out += len(_ka)
-                    if _ka_timeouts == 1:
-                        _agent_dbg_log(
-                            "H3",
-                            "channel_manager.py:client_ka_timeout",
-                            "emitting keepalive on client queue timeout",
-                            {
-                                "channel": str(self.channel_number),
-                                "elapsed_s": round(time.time() - _tune_t0, 3),
-                                "ka_len": len(_ka),
-                                "ka_mod188": len(_ka) % 188,
-                            },
-                            run_id="post-fix",
-                        )
-                    # #endregion
-                    yield _ka
+                    # Continue waiting
                     continue
         finally:
-            # #region agent log
-            _agent_dbg_log(
-                "H3",
-                "channel_manager.py:client_disconnect",
-                "client stream ended",
-                {
-                    "channel": str(self.channel_number),
-                    "chunks_out": _chunks_out,
-                    "bytes_out": _bytes_out,
-                    "elapsed_s": round(time.time() - _tune_t0, 3),
-                    "first_real_s": round(_first_real_at, 3) if _first_real_at is not None else None,
-                    "ka_timeouts": _ka_timeouts,
-                    "remaining_clients": max(0, self._client_count - 1),
-                },
-                run_id="post-fix",
-            )
-            # #endregion
             # Client disconnected
             async with self._lock:
                 if client_queue in self._client_queues:
@@ -1351,6 +1284,34 @@ class ChannelStream:
             
             # Get playout mode from channel (query from DB to get latest value)
             channel = db.query(Channel).filter(Channel.id == self.channel_id).first()
+            # Bind FFmpeg profile for continuous playout (LoudNorm etc.) before
+            # releasing the session — _stream_single_item must not rely on a closed DB.
+            if channel and getattr(channel, "ffmpeg_profile_id", None):
+                try:
+                    from streamtv.transcoding.ffmpeg_builder import (
+                        load_ffmpeg_profile_for_playout,
+                    )
+
+                    _ff_prof = load_ffmpeg_profile_for_playout(
+                        db, channel.ffmpeg_profile_id
+                    )
+                    if _ff_prof is not None:
+                        self.streamer._ffmpeg_profile = _ff_prof
+                        logger.info(
+                            f"Channel {self.channel_number}: FFmpeg profile "
+                            f"{_ff_prof.name!r} (loudnorm="
+                            f"{getattr(_ff_prof.normalize_loudness_mode, 'value', _ff_prof.normalize_loudness_mode)})"
+                        )
+                except Exception as _prof_exc:
+                    logger.warning(
+                        f"Channel {self.channel_number}: failed to load FFmpeg profile: {_prof_exc}"
+                    )
+            if channel:
+                from streamtv.streaming.mpegts_streamer import (
+                    bind_embedded_subtitle_policy,
+                )
+
+                bind_embedded_subtitle_policy(self.streamer, channel)
             playout_mode_raw = getattr(channel, 'playout_mode', PlayoutMode.CONTINUOUS) if channel else PlayoutMode.CONTINUOUS
             # Convert string to enum if needed (handle database string values)
             if isinstance(playout_mode_raw, str):
@@ -1394,43 +1355,71 @@ class ChannelStream:
             wall_clock_index = start_index
             resume_air_index: Optional[int] = None
             # After restart, resume the actual playout index when behind wall-clock guide.
-            try:
-                _resume_db = self.db_session_factory()
+            # Exception: tune-only idle never plays through the gap, so resuming behind
+            # freezes EPG until catch-up — start at wall-clock instead (heal/idle keep pace).
+            from streamtv.cache.playback_mode import tune_only_buffering as _boot_tune_only
+
+            if not _boot_tune_only():
                 try:
-                    from streamtv.database.models import ChannelPlaybackPosition
+                    _resume_db = self.db_session_factory()
+                    try:
+                        from streamtv.database.models import ChannelPlaybackPosition
 
-                    _saved = _resume_db.query(ChannelPlaybackPosition).filter(
-                        ChannelPlaybackPosition.channel_id == self.channel_id
-                    ).first()
-                    if (
-                        _saved
-                        and _saved.last_item_index is not None
-                        and _saved.last_item_index < start_index
-                    ):
-                        resume_air_index = int(_saved.last_item_index)
-                        logger.info(
-                            f"Channel {self.channel_number}: resuming playout item "
-                            f"{resume_air_index} (wall-clock guide at {start_index})"
-                        )
-                        start_index = resume_air_index
-                        lag = wall_clock_index - resume_air_index
-                        if lag > 0:
-                            from streamtv.plex.guide_reload import maybe_reload_plex_guide_on_lag
-
-                            asyncio.create_task(
-                                maybe_reload_plex_guide_on_lag(
-                                    lag_items=lag,
-                                    channel_number=str(self.channel_number),
-                                    wall_index=wall_clock_index,
-                                    air_index=resume_air_index,
-                                )
+                        _saved = _resume_db.query(ChannelPlaybackPosition).filter(
+                            ChannelPlaybackPosition.channel_id == self.channel_id
+                        ).first()
+                        if (
+                            _saved
+                            and _saved.last_item_index is not None
+                            and _saved.last_item_index < start_index
+                        ):
+                            resume_air_index = int(_saved.last_item_index)
+                            logger.info(
+                                f"Channel {self.channel_number}: resuming playout item "
+                                f"{resume_air_index} (wall-clock guide at {start_index})"
                             )
-                finally:
-                    _resume_db.close()
-            except Exception as resume_err:
-                logger.debug(
-                    f"Channel {self.channel_number}: saved playout index resume skipped: {resume_err}"
+                            start_index = resume_air_index
+                            lag = wall_clock_index - resume_air_index
+                            if lag > 0:
+                                from streamtv.plex.guide_reload import maybe_reload_plex_guide_on_lag
+
+                                asyncio.create_task(
+                                    maybe_reload_plex_guide_on_lag(
+                                        lag_items=lag,
+                                        channel_number=str(self.channel_number),
+                                        wall_index=wall_clock_index,
+                                        air_index=resume_air_index,
+                                    )
+                                )
+                    finally:
+                        _resume_db.close()
+                except Exception as resume_err:
+                    logger.debug(
+                        f"Channel {self.channel_number}: saved playout index resume skipped: {resume_err}"
+                    )
+            else:
+                logger.info(
+                    f"Channel {self.channel_number}: tune-only boot at wall-clock item "
+                    f"{start_index} (skip resume-behind)"
                 )
+                # Persist wall-clock anchor so XMLTV matches immediately after restart.
+                try:
+                    _boot_db = self.db_session_factory()
+                    try:
+                        media_boot = None
+                        if 0 <= start_index < len(self._schedule_items):
+                            media_boot = self._schedule_items[start_index].get("media_item")
+                        self._persist_playout_anchor(
+                            _boot_db,
+                            start_index,
+                            media_boot.id if media_boot else None,
+                        )
+                    finally:
+                        _boot_db.close()
+                except Exception as boot_err:
+                    logger.debug(
+                        f"Channel {self.channel_number}: tune-only boot persist skipped: {boot_err}"
+                    )
             elapsed = start_position['elapsed_seconds']
             cycle_position = start_position.get('cycle_position', 0)
             total_duration = start_position.get('total_duration', 0)
@@ -1491,85 +1480,41 @@ class ChannelStream:
                     from streamtv.cache.playback_mode import tune_only_buffering as _tune_only
 
                     if _tune_only() and self._client_count == 0:
-                        # Interruptible idle wait: wake within ~250ms when a tuner connects
-                        # instead of blocking up to 15s (Plex playback-error / s1001).
-                        idle_deadline = time.monotonic() + 15.0
-                        while (
-                            self._is_running
-                            and self._client_count == 0
-                            and time.monotonic() < idle_deadline
-                        ):
-                            await asyncio.sleep(0.25)
+                        await asyncio.sleep(15.0)
                         if not self._is_running:
                             break
-                        if self._client_count > 0:
-                            # #region agent log
-                            _agent_dbg_log(
-                                "H3",
-                                "channel_manager.py:idle_wake",
-                                "idle sleep interrupted by client connect",
-                                {
-                                    "channel": self.channel_number,
-                                    "idx": idx,
-                                    "client_count": self._client_count,
-                                },
-                                run_id="post-fix",
-                            )
-                            # #endregion
+                        pos = await self._get_current_position()
+                        guide_idx = int(pos.get("item_index", 0))
+                        if guide_idx >= len(self._schedule_items):
+                            guide_idx = 0
+                        # Snap back if idle playout drifted ahead of wall-clock.
+                        if idx > guide_idx:
+                            idx = guide_idx
+                        elif guide_idx > idx:
+                            # Untuned + tune-only: no FFmpeg runs, so without
+                            # catch-up last_item_index freezes and EPG stalls
+                            # (e.g. Magnum ch80 stuck for hours after restart).
                             logger.info(
-                                f"Channel {self.channel_number}: idle wake — "
-                                f"tuner connected, starting item {idx}"
+                                f"Channel {self.channel_number}: idle catch-up "
+                                f"{idx} -> {guide_idx} (wall-clock guide)"
                             )
-                            # Fall through to stream the current guide item.
-                        else:
-                            pos = await self._get_current_position()
-                            guide_idx = int(pos.get("item_index", 0))
-                            if guide_idx >= len(self._schedule_items):
-                                guide_idx = 0
-                            if idx > guide_idx:
-                                idx = guide_idx
-                            elif guide_idx > idx:
-                                lag = guide_idx - idx
-                                logger.info(
-                                    f"Channel {self.channel_number}: idle catch-up "
-                                    f"air {idx} -> guide {guide_idx} (lag {lag} items)"
+                            idx = guide_idx
+                            media_at = None
+                            if 0 <= idx < len(self._schedule_items):
+                                media_at = self._schedule_items[idx].get("media_item")
+                            async with self._timeline_lock:
+                                self._current_item_index = idx
+                                self._current_item_start_time = datetime.utcnow()
+                            save_db = self.db_session_factory()
+                            try:
+                                self._persist_playout_anchor(
+                                    save_db,
+                                    idx,
+                                    media_at.id if media_at else None,
                                 )
-                                # #region agent log
-                                _agent_dbg_log(
-                                    "A",
-                                    "channel_manager.py:idle_catchup",
-                                    "idle tune_only catch-up to wall-clock guide",
-                                    {
-                                        "channel": self.channel_number,
-                                        "air_before": idx,
-                                        "guide_idx": guide_idx,
-                                        "lag_items": lag,
-                                        "client_count": self._client_count,
-                                    },
-                                    run_id="post-fix",
-                                )
-                                # #endregion
-                                idx = guide_idx
-                                async with self._timeline_lock:
-                                    self._current_item_index = idx
-                                    self._current_item_start_time = datetime.utcnow()
-                                save_db = self.db_session_factory()
-                                try:
-                                    catch_item = self._schedule_items[idx]
-                                    mi = catch_item.get("media_item")
-                                    self._persist_playout_anchor(
-                                        save_db,
-                                        idx,
-                                        mi.id if mi else None,
-                                    )
-                                except Exception as catch_err:
-                                    logger.debug(
-                                        f"Channel {self.channel_number}: idle catch-up "
-                                        f"persist skipped: {catch_err}"
-                                    )
-                                finally:
-                                    save_db.close()
-                            continue
+                            finally:
+                                save_db.close()
+                        continue
 
                     if self._forced_item_index is not None:
                         forced = self._forced_item_index
@@ -1683,25 +1628,6 @@ class ChannelStream:
                             f"for channel {self.channel_number}: {e}"
                         )
                         streamed = False
-                    # #region agent log
-                    _agent_dbg_log(
-                        "H11",
-                        "channel_manager.py:stream_item_end",
-                        "single item stream finished",
-                        {
-                            "channel": str(self.channel_number),
-                            "idx": idx,
-                            "title": (media_item.title or "")[:80] if media_item else None,
-                            "streamed": streamed,
-                            "elapsed_s": round(
-                                (datetime.utcnow() - _stream_started).total_seconds(), 3
-                            ),
-                            "client_count": self._client_count,
-                            "abort_flag": bool(self._abort_current_item_for_tune),
-                        },
-                        run_id="post-fix",
-                    )
-                    # #endregion
 
                     if streamed and getattr(media_item, "source_id", None):
                         from streamtv.cache.playback_mode import tune_only_buffering
@@ -1831,23 +1757,6 @@ class ChannelStream:
                             f"Channel {self.channel_number}: playout resync skipped: {resync_err}"
                         )
                         idx += 1
-
-                    # #region agent log
-                    if _resync_action:
-                        _agent_dbg_log(
-                            "B",
-                            "channel_manager.py:resync",
-                            "playout resync decision",
-                            {
-                                "channel": self.channel_number,
-                                "idx_before": _idx_before_resync,
-                                "idx_after": idx,
-                                "action": _resync_action,
-                                "streamed": streamed,
-                                "client_count": self._client_count,
-                            },
-                        )
-                    # #endregion
 
                     if _resync_action in (
                         "advance_after_complete",
@@ -2146,4 +2055,35 @@ class ChannelManager:
             }
         finally:
             db.close()
+
+    async def restart_all_channels(self) -> dict:
+        """Restart every enabled channel stream without killing uvicorn (Phase 3 soft deploy)."""
+        db = self.db_session_factory()
+        try:
+            channels = (
+                db.query(Channel)
+                .filter(Channel.enabled == True)  # noqa: E712
+                .order_by(Channel.number)
+                .all()
+            )
+            numbers = [str(c.number) for c in channels]
+        finally:
+            db.close()
+
+        results: list[dict] = []
+        errors: list[dict] = []
+        for num in numbers:
+            try:
+                results.append(await self.restart_channel(num))
+            except Exception as exc:
+                logger.error(
+                    "restart_all: channel %s failed: %s", num, exc, exc_info=True
+                )
+                errors.append({"channel_number": num, "error": str(exc)})
+        return {
+            "restarted": len(results),
+            "failed": len(errors),
+            "results": results,
+            "errors": errors,
+        }
 

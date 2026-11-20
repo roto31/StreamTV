@@ -49,3 +49,33 @@ def test_meta_json_includes_season() -> None:
     )
     assert meta is not None
     assert '"season": 2' in meta
+
+
+def test_movie_meta_omits_series_fields() -> None:
+    import json
+
+    meta = build_stream_meta_data(
+        {
+            "type": "movie",
+            "title": "Godzilla",
+            "year": 1954,
+            "slot": "S1954E01 - Godzilla",
+            "collection": "Godzilla Movies",
+        },
+        channel_name="Godzilla Movies",
+    )
+    assert meta is not None
+    data = json.loads(meta)
+    assert "show_name" not in data
+    assert "season" not in data
+    assert "episode" not in data
+    assert data.get("year") == 1954
+    title = resolve_media_title(
+        {
+            "type": "movie",
+            "title": "Godzilla",
+            "slot": "S1954E01 - Godzilla",
+            "collection": "Godzilla Movies",
+        }
+    )
+    assert title == "Godzilla"

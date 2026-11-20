@@ -176,6 +176,9 @@ class MetadataConfig(BaseSettings):
     tvdb_pin: Optional[str] = None
     tvdb_read_token: Optional[str] = None  # Can be set via STREAMTV_METADATA_TVDB_READ_TOKEN env var
     tmdb_api_key: Optional[str] = None  # Can be set via STREAMTV_METADATA_TMDB_API_KEY env var
+    # TVMaze: free account dashboard key + username (HTTP Basic); public endpoints also work without
+    tvmaze_username: Optional[str] = None  # STREAMTV_METADATA_TVMAZE_USERNAME
+    tvmaze_api_key: Optional[str] = None  # STREAMTV_METADATA_TVMAZE_API_KEY
     enable_tvdb: bool = True  # Use TVDB (primary for TV)
     enable_tvmaze: bool = True  # Use TVMaze (fallback, free)
     enable_tmdb: bool = True  # Use TMDB (for movies)
@@ -188,9 +191,13 @@ class MetadataConfig(BaseSettings):
 
 class AutoHealerConfig(BaseSettings):
     enabled: bool = False  # Enable auto-healing system
-    enable_ai: bool = True  # Use Ollama AI for analysis
-    ollama_url: str = "http://localhost:11434"  # Ollama API URL
+    enable_ai: bool = True  # Use AI for analysis (FM bridge and/or Ollama)
+    # auto | foundation_models | ollama | none
+    ai_backend: str = "auto"
+    foundation_models_url: str = "http://127.0.0.1:11435"
+    ollama_url: str = "http://localhost:11434"  # Ollama API URL (optional / legacy OS)
     ollama_model: str = "llama3.2:latest"  # Ollama model to use
+    collect_training_samples: bool = True
     check_interval: int = 30  # Minutes between health checks
     apply_fixes: bool = False  # Auto-apply fixes (False = dry-run only)
     max_fix_attempts: int = 3  # Max attempts to fix same error
@@ -261,6 +268,40 @@ class TunerEndpointConfig(BaseSettings):
     force_base_url: Optional[str] = None
     xmltv_url: Optional[str] = None
     role: str = "proxy"
+
+
+class BackupConfig(BaseSettings):
+    """Automatic portable backup of settings, channels, and schedules."""
+
+    enabled: bool = True
+    debounce_seconds: float = 30.0
+    retain_count: int = 7
+    include_secrets: bool = True
+
+    class Config:
+        env_prefix = "STREAMTV_BACKUP_"
+        case_sensitive = False
+
+
+class TunarrLibraryConfig(BaseSettings):
+    """Export READY cache files to a Tunarr Local Media folder (not the live cache)."""
+
+    enabled: bool = False
+    # Absolute or project-relative path; must NOT nest under cache.cache_directory.
+    export_directory: str = "data/tunarr_library"
+    # archive_org only in v1
+    sources: List[str] = Field(default_factory=lambda: ["archive_org"])
+    naming: str = "source_id"  # source_id | basename
+    # Prefetch agent: download full Archive.org MP4s into export_directory ahead of Tunarr scan.
+    prefetch_hours: float = 6.0
+    prefetch_max_items: int = 5
+    prefetch_max_gb: float = 20.0
+    # Empty = all enabled continuous channels that have Archive.org playlist items.
+    channel_numbers: List[str] = Field(default_factory=list)
+
+    class Config:
+        env_prefix = "STREAMTV_TUNARR_LIBRARY_"
+        case_sensitive = False
 
 
 class TunerManagerConfig(BaseSettings):
@@ -335,6 +376,8 @@ class Config:
             "auto_healer": AutoHealerConfig,
             "cache": CacheConfig,
             "tuner_manager": TunerManagerConfig,
+            "backup": BackupConfig,
+            "tunarr_library": TunarrLibraryConfig,
         }
         
         # Store OAuth state temporarily (in production, use proper session storage)
@@ -356,6 +399,10 @@ class Config:
         self.plex = PlexConfig(**config_data.get("plex", {}))
         self.metadata = MetadataConfig(**config_data.get("metadata", {}))
         self.auto_healer = AutoHealerConfig(**config_data.get("auto_healer", {}))
+        self.backup = BackupConfig(**config_data.get("backup", {}))
+        self.tunarr_library = TunarrLibraryConfig(
+            **(config_data.get("tunarr_library", {}) or {})
+        )
 
         cache_data = dict(config_data.get("cache", {}) or {})
         ds_data = cache_data.pop("download_strategy", {}) or {}
@@ -410,6 +457,10 @@ class Config:
             self.metadata.tvdb_read_token = os.getenv("STREAMTV_METADATA_TVDB_READ_TOKEN")
         if os.getenv("STREAMTV_METADATA_TMDB_API_KEY"):
             self.metadata.tmdb_api_key = os.getenv("STREAMTV_METADATA_TMDB_API_KEY")
+        if os.getenv("STREAMTV_METADATA_TVMAZE_USERNAME"):
+            self.metadata.tvmaze_username = os.getenv("STREAMTV_METADATA_TVMAZE_USERNAME")
+        if os.getenv("STREAMTV_METADATA_TVMAZE_API_KEY"):
+            self.metadata.tvmaze_api_key = os.getenv("STREAMTV_METADATA_TVMAZE_API_KEY")
         if os.getenv("STREAMTV_ARCHIVE_ORG_USERNAME"):
             self.archive_org.username = os.getenv("STREAMTV_ARCHIVE_ORG_USERNAME")
         if os.getenv("STREAMTV_ARCHIVE_ORG_PASSWORD"):
@@ -494,7 +545,80 @@ class Config:
             yaml.safe_dump(self._config_data, f, sort_keys=False, default_flow_style=False, allow_unicode=True)
         
         section_class = self._section_classes[section]
-        setattr(self, section, section_class(**section_data))
+        if section == "cache":
+            # Nested download_strategy — rebuild like __init__
+            cache_data = dict(section_data)
+            ds_data = cache_data.pop("download_strategy", {}) or {}
+            setattr(
+                self,
+                section,
+                CacheConfig(download_strategy=DownloadStrategyConfig(**ds_data), **cache_data),
+            )
+        elif section == "tuner_manager":
+            tm_data = dict(section_data)
+            raw_tuners = tm_data.pop("tuners", []) or []
+            parsed_tuners = [
+                TunerEndpointConfig(**t) if isinstance(t, dict) else t for t in raw_tuners
+            ]
+            setattr(
+                self,
+                section,
+                TunerManagerConfig(tuners=parsed_tuners, **tm_data),
+            )
+        else:
+            setattr(self, section, section_class(**section_data))
+
+        # Automatic backup (debounced). Skip when only the backup section itself changes.
+        if section != "backup":
+            try:
+                from streamtv.backup.scheduler import schedule_backup
+
+                schedule_backup(reason=f"config:{section}")
+            except Exception:
+                pass
+
+    def reload_from_disk(self) -> None:
+        """Re-read config.yaml into memory (used after backup restore)."""
+        path = self._config_path
+        if path.exists():
+            with open(path, "r") as f:
+                config_data = yaml.safe_load(f) or {}
+        else:
+            config_data = {}
+        self._config_data = config_data
+        self.server = ServerConfig(**config_data.get("server", {}))
+        self.database = DatabaseConfig(**config_data.get("database", {}))
+        self.streaming = StreamingConfig(**config_data.get("streaming", {}))
+        self.youtube = YouTubeConfig(**config_data.get("youtube", {}))
+        self.archive_org = ArchiveOrgConfig(**config_data.get("archive_org", {}))
+        self.pbs = PBSConfig(**config_data.get("pbs", {}))
+        self.security = SecurityConfig(**config_data.get("security", {}))
+        self.logging = LoggingConfig(**config_data.get("logging", {}))
+        self.hdhomerun = HDHomeRunConfig(**config_data.get("hdhomerun", {}))
+        self.ffmpeg = FFmpegConfig(**config_data.get("ffmpeg", {}))
+        self.playout = PlayoutConfig(**config_data.get("playout", {}))
+        self.plex = PlexConfig(**config_data.get("plex", {}))
+        self.metadata = MetadataConfig(**config_data.get("metadata", {}))
+        self.auto_healer = AutoHealerConfig(**config_data.get("auto_healer", {}))
+        self.backup = BackupConfig(**config_data.get("backup", {}))
+        cache_data = dict(config_data.get("cache", {}) or {})
+        ds_data = cache_data.pop("download_strategy", {}) or {}
+        self.cache = CacheConfig(
+            download_strategy=DownloadStrategyConfig(**ds_data),
+            **cache_data,
+        )
+        tm_data = dict(config_data.get("tuner_manager", {}) or {})
+        raw_tuners = tm_data.pop("tuners", None)
+        if raw_tuners is None:
+            raw_tuners = []
+        parsed_tuners = [
+            TunerEndpointConfig(**t) if isinstance(t, dict) else t
+            for t in (raw_tuners or [])
+        ]
+        self.tuner_manager = TunerManagerConfig(
+            tuners=parsed_tuners,
+            **tm_data,
+        )
 
 
 # Global config instance (override path: STREAMTV_CONFIG=config.pilot-cache.yaml)

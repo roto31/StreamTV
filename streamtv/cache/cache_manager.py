@@ -367,8 +367,15 @@ class CacheManager:
         finally:
             db.close()
 
-    def register_download_failed(self, source_id: str, error: str) -> None:
-        """Mark a download as FAILED with an error message."""
+    def register_download_failed(
+        self,
+        source_id: str,
+        error: str,
+        *,
+        failure_class: Optional[str] = None,
+        retry_after: Optional[datetime] = None,
+    ) -> None:
+        """Mark a download as FAILED with an error message and optional class."""
         db = self.db_session_factory()
         try:
             row = (
@@ -379,12 +386,24 @@ class CacheManager:
             if row:
                 row.status = CacheStatus.FAILED
                 row.error_message = error[:1024]
+                row.failure_class = failure_class
+                row.retry_after = retry_after
                 db.commit()
         finally:
             db.close()
 
     def queue_for_download(self, media_item: MediaItem) -> None:
-        """Insert a QUEUED manifest row (idempotent)."""
+        """Insert a QUEUED manifest row (idempotent).
+
+        Terminal FAILED rows (auth_required / unavailable / no_playable_file)
+        stay FAILED until an operator calls retry_failed_download. Retryable
+        failures (rate_limited / transient) re-queue only after retry_after.
+        """
+        from streamtv.utils.download_errors import (
+            is_terminal_failure,
+            may_auto_requeue,
+        )
+
         if self.is_download_pending(media_item.source_id):
             logger.debug(
                 f"Already queued/downloading: {media_item.source_id}"
@@ -402,9 +421,27 @@ class CacheManager:
                     f"Already cached: {media_item.source_id}"
                 )
                 return
+            if existing and existing.status == CacheStatus.FAILED:
+                if is_terminal_failure(existing.failure_class):
+                    logger.debug(
+                        f"Sticky terminal failure, not re-queuing: "
+                        f"{media_item.source_id} ({existing.failure_class})"
+                    )
+                    return
+                if existing.failure_class and not may_auto_requeue(
+                    existing.failure_class, existing.retry_after
+                ):
+                    logger.debug(
+                        f"Retryable failure still cooling down: "
+                        f"{media_item.source_id} "
+                        f"(retry_after={existing.retry_after})"
+                    )
+                    return
             if existing:
                 existing.status = CacheStatus.QUEUED
                 existing.error_message = None
+                existing.failure_class = None
+                existing.retry_after = None
             else:
                 placeholder_path = (
                     self.cache_dir
@@ -425,6 +462,30 @@ class CacheManager:
                 )
             db.commit()
             logger.info(f"Queued for download: {media_item.source_id}")
+        finally:
+            db.close()
+
+    def retry_failed_download(self, source_id: str) -> bool:
+        """Operator override: move any FAILED row back to QUEUED.
+
+        Returns True if a FAILED row was re-queued.
+        """
+        db = self.db_session_factory()
+        try:
+            row = (
+                db.query(CachedMedia)
+                .filter(CachedMedia.source_id == source_id)
+                .first()
+            )
+            if not row or row.status != CacheStatus.FAILED:
+                return False
+            row.status = CacheStatus.QUEUED
+            row.error_message = None
+            row.failure_class = None
+            row.retry_after = None
+            db.commit()
+            logger.info(f"Operator retry queued: {source_id}")
+            return True
         finally:
             db.close()
 

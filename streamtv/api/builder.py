@@ -14,6 +14,8 @@ from streamtv.builder.auth_service import (
     apply_archive_credentials,
     apply_pbs_cookies,
     apply_plex_credentials,
+    apply_tvdb_api_key,
+    apply_tvmaze_credentials,
     apply_youtube_cookies,
     auth_status,
 )
@@ -46,6 +48,8 @@ from streamtv.builder.models import (
     LinksBatchRequest,
     PlaywrightLoginRequest,
     PlexLoginRequest,
+    TvdbKeyRequest,
+    TvmazeCredentialsRequest,
 )
 from streamtv.builder.playwright_auth import (
     capture_cookies_generic,
@@ -264,6 +268,22 @@ async def builder_auth_plex(body: PlexLoginRequest) -> dict:
     return apply_plex_credentials(body.base_url, body.token)
 
 
+@router.post("/auth/tvdb")
+async def builder_auth_tvdb(body: TvdbKeyRequest) -> dict:
+    try:
+        return apply_tvdb_api_key(body.api_key)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/auth/tvmaze")
+async def builder_auth_tvmaze(body: TvmazeCredentialsRequest) -> dict:
+    try:
+        return apply_tvmaze_credentials(body.username, body.api_key)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.post("/auth/pbs/cookies/import")
 async def builder_auth_pbs_import_downloads() -> dict:
     """Import PBS cookies from ~/Downloads/cookies.txt (or pbs.cookies_import_path)."""
@@ -354,8 +374,6 @@ async def patch_draft(draft_id: str, body: DraftPatchRequest) -> BuilderDraft:
         draft.pbs_filter_full_episodes = body.pbs_filter_full_episodes
     if body.pbs_min_episode_seconds is not None:
         draft.pbs_min_episode_seconds = body.pbs_min_episode_seconds
-    if body.pbs_exclude_passport_drm is not None:
-        draft.pbs_exclude_passport_drm = body.pbs_exclude_passport_drm
     return draft_store.save(draft)
 
 
@@ -506,6 +524,33 @@ async def _build_draft_job(job: BuilderJob, request: Request) -> None:
             None,
             db,
         )
+
+        enrichment_summary: dict = {}
+        warnings = list(result.get("warnings") or [])
+        if draft.channel.enrich_metadata:
+            try:
+                from streamtv.builder.enrichment import enrich_built_draft
+
+                enrichment_summary = await enrich_built_draft(draft)
+                if enrichment_summary.get("warning"):
+                    warnings.append(str(enrichment_summary["warning"]))
+            except Exception as enrich_exc:
+                logger.exception(
+                    "Post-build enrichment failed for channel %s",
+                    result["channel_number"],
+                )
+                enrichment_summary = {
+                    "skipped_enrichment": True,
+                    "warning": f"Enrichment error: {enrich_exc}",
+                    "updated": 0,
+                    "failed": 0,
+                    "total": 0,
+                    "skipped": 0,
+                }
+                warnings.append(enrichment_summary["warning"])
+
+        result["enrichment"] = enrichment_summary
+        result["warnings"] = warnings
         job.result = result
         job_store.save(job)
     finally:

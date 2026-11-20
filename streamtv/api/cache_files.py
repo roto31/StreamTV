@@ -59,8 +59,7 @@ async def _stream_file_chunks(path: Path, chunk_size: int = 1024 * 1024):
             yield chunk
 
 
-@router.api_route("/cache/files/{file_path:path}", methods=["GET", "HEAD"])
-async def serve_cache_file(file_path: str, request: Request):
+async def _serve_cache_file_impl(file_path: str, request: Request):
     """Serve cached files; partial .part downloads use chunked encoding (no Content-Length)."""
     path = _resolve_cache_path(file_path)
     media_type = _guess_media_type(path)
@@ -90,3 +89,13 @@ async def serve_cache_file(file_path: str, request: Request):
         media_type=media_type,
         headers={"Cache-Control": "public, max-age=3600"},
     )
+
+
+@router.get("/cache/files/{file_path:path}", operation_id="serve_cache_file_get")
+async def serve_cache_file_get(file_path: str, request: Request):
+    return await _serve_cache_file_impl(file_path, request)
+
+
+@router.head("/cache/files/{file_path:path}", operation_id="serve_cache_file_head")
+async def serve_cache_file_head(file_path: str, request: Request):
+    return await _serve_cache_file_impl(file_path, request)

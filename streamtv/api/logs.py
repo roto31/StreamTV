@@ -592,8 +592,8 @@ async def get_plex_log_entries(
         }, status_code=500)
 
 
-@router.get("/plex/logs", response_class=HTMLResponse)
-async def plex_logs_page(request: Request):
+@router.get("/plex/logs", response_class=HTMLResponse, operation_id="api_plex_logs_html")
+async def api_plex_logs_html(request: Request):
     """Plex logs viewer page"""
     return templates.TemplateResponse(request, "plex_logs.html")
 

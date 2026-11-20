@@ -124,10 +124,43 @@ cache:
   tune_buffer_max_wait_seconds: 5  # buffer: max seconds to block Plex tune before starting CDN stream
   tune_only_buffer: true      # buffer: only write RAM when a tuner is connected
   archive_org_stream_while_caching: true  # full mode only: CDN while download runs
+  # Buffer mode: download YouTube VOD to cache_directory before FFmpeg (avoids googlevideo 403).
+  # Prefer true only with RAM-disk headroom + heal_tunarr_ram (≥300 Mi free).
+  youtube_full_cache: false
+  youtube_cache_wait_seconds: 120
+  evict_after_play: true
+  evict_off_schedule: true
   download_strategy:
     enabled: false
     format_preference: "mp4"
+    # youtube_full_cache caps this to 1 at runtime (Lesson 48). Prefetch also
+    # pauses at ≥50% volume used or <400 Mi free (healer is 55%/300 Mi).
     max_concurrent_downloads: 2
     youtube_rate_limit_seconds: 30.0
     youtube_rate_limit_cooldown_seconds: 3600.0
     scheduled_downloads: []
+
+# Optional: export READY Archive.org cache files for Tunarr Local Media.
+# Must NOT nest under cache.cache_directory. Do not point Tunarr at the live cache.
+# See docs/guides/STREAMTV_TUNARR_HYBRID.md
+tunarr_library:
+  enabled: false
+  export_directory: data/tunarr_library
+  sources:
+    - archive_org
+  naming: source_id  # source_id | basename
+  # Prefetch full Archive.org MP4s into export_directory (not TunarrRAM).
+  # See scripts/prefetch_tunarr_library.py and STREAMTV_TUNARR_HYBRID.md
+  prefetch_hours: 6
+  prefetch_max_items: 5
+  prefetch_max_gb: 20
+  channel_numbers: []  # empty = all enabled continuous Archive.org channels
+
+# Automatic portable backup (settings, channels, schedules, secrets).
+# Zips land in Application Support/StreamTV/backups/ (or <config parent>/backups/).
+# See docs/guides/BACKUP_RESTORE.md
+backup:
+  enabled: true
+  debounce_seconds: 30
+  retain_count: 7
+  include_secrets: true  # Include secrets.env and API tokens in config for machine moves

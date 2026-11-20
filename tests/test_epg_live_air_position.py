@@ -288,3 +288,29 @@ def test_enforce_on_air_epg_caps_stretch_for_archive_channels() -> None:
 
     max_dur = items[0]["media_item"].duration + 120
     assert enforced[0]["cached_duration"] <= max_dur
+    assert _epg_item_covers_now(enforced[0], now)
+
+
+def test_enforce_on_air_epg_caps_class_a_when_lagging() -> None:
+    """Class-A lag with stale live start must not emit a multi-hour on-air row."""
+    from streamtv.api.iptv import _enforce_on_air_epg_coverage, _epg_item_covers_now
+
+    items = [_item("Blue Savannah", 266), _item("Next", 200)]
+    stale_start = datetime(2026, 7, 19, 20, 5, 0)
+    now = stale_start + timedelta(hours=15)
+
+    rows = [
+        {**items[0], "start_time": stale_start, "cached_duration": 15 * 3600},
+        {**items[1], "start_time": stale_start + timedelta(hours=15)},
+    ]
+    enforced = _enforce_on_air_epg_coverage(
+        rows,
+        now,
+        live_item_index=0,
+        live_item_start_time=stale_start,
+        cap_stretch_to_media=True,
+    )
+
+    assert enforced[0]["cached_duration"] <= 266 + 120
+    assert _epg_item_covers_now(enforced[0], now)
+    assert enforced[0]["media_item"].title == "Blue Savannah"

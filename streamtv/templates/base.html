@@ -372,7 +372,8 @@
             font-weight: 500;
         }
         
-        .drawer .nav-link .material-icons {
+        .drawer .nav-link .material-icons,
+        .drawer .nav-link .icon-emoji {
             font-size: 20px;
             width: 20px;
             height: 20px;
@@ -384,7 +385,7 @@
             line-height: 1;
         }
         
-        .drawer .nav-link > span:not(.material-icons) {
+        .drawer .nav-link > span:not(.material-icons):not(.icon-emoji):not(.dropdown-icon) {
             flex: 1;
             min-width: 0;
             line-height: 1.25;
@@ -708,14 +709,16 @@
         }
         
         /* Material Icons - Apple Style Sizing - Hidden until converted */
-        .material-icons:not(.icon-converted) {
-            font-size: 0;
-            width: 0;
-            height: 0;
-            overflow: hidden;
-            visibility: hidden;
-            position: absolute;
-            opacity: 0;
+        .material-icons:not(.icon-converted),
+        .material-icons.icon-converted:not(.icon-emoji) {
+            font-size: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            visibility: hidden !important;
+            position: absolute !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
         
         /* Once converted, show the emoji */
@@ -1579,6 +1582,10 @@
                         <span class="material-icons">vpn_key</span>
                         <span>Source Authentication</span>
                     </a>
+                    <a href="/settings/backup" class="nav-link {% if '/settings/backup' in request.url.path %}active{% endif %}" aria-label="Backup and Restore">
+                        <span class="material-icons">backup</span>
+                        <span>Backup &amp; Restore</span>
+                    </a>
                 </div>
             </div>
             
@@ -1674,9 +1681,9 @@
                         <span class="material-icons">dvr</span>
                         <span>Plex Server Logs</span>
                     </a>
-                    <a href="/ollama" class="nav-link {% if '/ollama' in request.url.path %}active{% endif %}" aria-label="AI Troubleshooting Assistant">
+                    <a href="/ollama" class="nav-link {% if '/ollama' in request.url.path or '/foundation-models' in request.url.path %}active{% endif %}" aria-label="AI Recovery">
                         <span class="material-icons">psychology</span>
-                        <span>AI Troubleshooting</span>
+                        <span>AI Recovery</span>
                     </a>
                     <a href="/test-stream" class="nav-link {% if '/test-stream' in request.url.path %}active{% endif %}" aria-label="Test Stream">
                         <span class="material-icons">bug_report</span>
@@ -2182,6 +2189,13 @@
             // Settings
             'settings_applications': '⚙️',
             'integration_instructions': '🔗',
+            'aspect_ratio': '📐',
+            'movie_filter': '🎬',
+            'branding_watermark': '🏷️',
+            'vpn_key': '🔐',
+            'backup': '📦',
+            'construction': '🚧',
+            'import_export': '📥',
             'account_circle': '👤',
             'live_tv': '📡',
             
@@ -2239,6 +2253,21 @@
             'login': '🔑',
             'upload_file': '📤',
             'fingerprint': '👆',
+            'add_link': '🔗',
+            'open_in_new': '↗️',
+            'list': '📃',
+            'arrow_upward': '⬆️',
+            'arrow_downward': '⬇️',
+            'verified_user': '✅',
+            'skip_next': '⏭️',
+            'network_check': '🌐',
+            'visibility': '👁️',
+            'chat': '💬',
+            'send': '📨',
+            'hourglass_empty': '⏳',
+            'healing': '🩺',
+            'auto_fix_high': '🪄',
+            'devices': '📱',
             
             // Toggle and state icons
             'toggle_on': '🔛',
@@ -2275,9 +2304,11 @@
                     // If there's other text in the button, this might be button text, not an icon
                     // Only convert if the icon text is a single word and matches an icon name exactly
                     if (otherText.length > 0) {
-                        // Very strict check: only convert if it's a known icon name AND no other text
-                        if (!window.iconMap[iconText] || iconText.includes(' ') || iconText.length > 25) {
+                        // Skip sentence-like text mistaken for an icon; unmapped
+                        // single-token names still convert below (map or fallback).
+                        if (iconText.includes(' ') || iconText.length > 25) {
                             icon.classList.add('icon-converted');
+                            icon.textContent = '';
                             return;
                         }
                     }
@@ -2301,17 +2332,19 @@
                     // If it contains button words but is a known icon, still convert
                     if (!window.iconMap[iconName]) {
                         icon.classList.add('icon-converted');
+                        icon.textContent = '';
                         return;
                     }
                 }
                 
-                // Only convert if it's a known icon name (single word, no spaces)
-                if (window.iconMap[iconName] && !iconName.includes(' ')) {
+                // Convert known names; unmapped single tokens use a fallback
+                // so ligature text (aspect_ratio, vpn_key, …) never overlaps labels.
+                const emoji = (!iconName.includes(' ') && iconName.length > 0 && iconName.length <= 25)
+                    ? (window.iconMap[iconName] || '▫️')
+                    : null;
+                if (emoji) {
                     // Store original icon name as data attribute
                     icon.setAttribute('data-icon', iconName);
-                    
-                    // Get emoji from map
-                    const emoji = window.iconMap[iconName];
                     
                     // Clear all child nodes and text completely - CRITICAL to prevent duplication
                     while (icon.firstChild) {
@@ -2345,8 +2378,8 @@
                         parent.style.cursor = 'pointer';
                     }
                 } else {
-                    // Mark as processed even if no mapping found to prevent re-processing
                     icon.classList.add('icon-converted');
+                    icon.textContent = '';
                 }
             });
         }

@@ -21,6 +21,7 @@ from .cache_manager import CacheManager
 from .archive_org_downloader import ArchiveOrgDownloader
 from .archive_org_http_downloader import ArchiveOrgHttpDownloader
 from .youtube_downloader import YouTubeDownloader
+from .volume_guard import can_start_download, cache_volume_pressure, download_dispatch_limit
 
 logger = logging.getLogger(__name__)
 
@@ -178,6 +179,30 @@ class DownloadQueue:
         if not part_path or not part_path.exists():
             self.cache_manager.release_ring_buffer(source_id)
 
+    def _prefetch_can_start(self) -> bool:
+        from streamtv.cache.playback_mode import youtube_full_cache_enabled
+
+        used_pct, free_bytes = cache_volume_pressure(config.cache.cache_directory)
+        return can_start_download(
+            in_flight_count=len(self._in_flight),
+            configured_max=config.cache.download_strategy.max_concurrent_downloads,
+            youtube_full_cache=youtube_full_cache_enabled(),
+            used_pct=used_pct,
+            free_bytes=free_bytes,
+        )
+
+    def _prefetch_slot_count(self) -> int:
+        from streamtv.cache.playback_mode import youtube_full_cache_enabled
+
+        used_pct, free_bytes = cache_volume_pressure(config.cache.cache_directory)
+        limit = download_dispatch_limit(
+            configured_max=config.cache.download_strategy.max_concurrent_downloads,
+            youtube_full_cache=youtube_full_cache_enabled(),
+            used_pct=used_pct,
+            free_bytes=free_bytes,
+        )
+        return max(0, limit - len(self._in_flight))
+
     async def ensure_download_started(self, media_item: MediaItem) -> None:
         """Queue and kick off a background download without blocking the caller."""
         from streamtv.cache.playback_mode import source_downloads_enabled
@@ -187,6 +212,12 @@ class DownloadQueue:
         await self.enqueue(media_item)
         source_id = media_item.source_id
         if source_id in self._in_flight:
+            return
+        if not self._prefetch_can_start():
+            logger.info(
+                "DownloadQueue: defer prefetch %s (volume or concurrency)",
+                source_id,
+            )
             return
         self._in_flight.add(source_id)
 
@@ -243,6 +274,9 @@ class DownloadQueue:
         yt_only = youtube_full_cache_enabled() and not background_downloads_enabled()
         if not background_downloads_enabled() and not youtube_full_cache_enabled():
             return
+        slots = self._prefetch_slot_count()
+        if slots <= 0:
+            return
         db = self.db_session_factory()
         try:
             queued = (
@@ -253,7 +287,7 @@ class DownloadQueue:
                     | (CachedMedia.error_message != "ring_buffer")
                 )
                 .order_by(CachedMedia.created_at.asc())
-                .limit(config.cache.download_strategy.max_concurrent_downloads)
+                .limit(slots)
                 .all()
             )
             if not queued:
@@ -276,14 +310,25 @@ class DownloadQueue:
         finally:
             db.close()
 
-        # Dispatch downloads (concurrently up to max_concurrent_downloads)
-        tasks = [
-            self._download_one(source_id, media_item)
-            for source_id, media_item in items
-            if media_item is not None
-        ]
+        # Dispatch downloads (concurrently up to volume/concurrency slots)
+        tasks = []
+        for source_id, media_item in items:
+            if media_item is None or source_id in self._in_flight:
+                continue
+            if not self._prefetch_can_start():
+                break
+            self._in_flight.add(source_id)
+            tasks.append(self._download_one_tracked(source_id, media_item))
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def _download_one_tracked(
+        self, source_id: str, media_item: MediaItem
+    ) -> None:
+        try:
+            await self._download_one(source_id, media_item)
+        finally:
+            self._in_flight.discard(source_id)
 
     async def _download_one(
         self, source_id: str, media_item: MediaItem
@@ -303,6 +348,8 @@ class DownloadQueue:
 
         result: Path | None = None
         error: str | None = None
+        failure_class: str | None = None
+        retry_after = None
 
         try:
             if media_item.source == StreamSource.ARCHIVE_ORG:
@@ -312,6 +359,11 @@ class DownloadQueue:
                         "No Archive.org downloader available "
                         "(HTTP adapter disabled and ia CLI missing)"
                     )
+                    from streamtv.utils.download_errors import classify_download_error
+
+                    classified = classify_download_error(error, source="archive_org")
+                    failure_class = classified.failure_class
+                    retry_after = classified.retry_after
                     logger.error(error)
                 else:
                     result = await downloader.download_item(
@@ -326,9 +378,34 @@ class DownloadQueue:
             else:
                 error = f"Unsupported source for caching: {media_item.source}"
                 logger.warning(error)
+                from streamtv.utils.download_errors import classify_download_error
+
+                classified = classify_download_error(error)
+                failure_class = classified.failure_class
+                retry_after = classified.retry_after
 
         except Exception as exc:
-            error = str(exc)
+            from streamtv.utils.download_errors import (
+                DownloadFailure,
+                classify_download_error,
+            )
+
+            if isinstance(exc, DownloadFailure):
+                error = exc.classified.message
+                failure_class = exc.classified.failure_class
+                retry_after = exc.classified.retry_after
+            else:
+                classified = classify_download_error(
+                    str(exc),
+                    source=(
+                        media_item.source.value
+                        if hasattr(media_item.source, "value")
+                        else None
+                    ),
+                )
+                error = classified.message
+                failure_class = classified.failure_class
+                retry_after = classified.retry_after
             logger.error(
                 f"Download failed for {source_id}: {exc}", exc_info=True
             )
@@ -336,8 +413,25 @@ class DownloadQueue:
         if result and result.exists():
             self.cache_manager.register_download_complete(source_id, result)
         else:
+            if failure_class is None:
+                from streamtv.utils.download_errors import classify_download_error
+
+                classified = classify_download_error(
+                    error or "Download returned no file",
+                    source=(
+                        media_item.source.value
+                        if hasattr(media_item.source, "value")
+                        else None
+                    ),
+                )
+                failure_class = classified.failure_class
+                retry_after = classified.retry_after
+                error = classified.message
             self.cache_manager.register_download_failed(
-                source_id, error or "Download returned no file"
+                source_id,
+                error or "Download returned no file",
+                failure_class=failure_class,
+                retry_after=retry_after,
             )
 
     def _dest_path(self, media_item: MediaItem) -> Path:
