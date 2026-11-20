@@ -134,7 +134,7 @@ cache:
     enabled: false
     format_preference: "mp4"
     # youtube_full_cache caps this to 1 at runtime (Lesson 48). Prefetch also
-    # pauses at ≥50% volume used or <400 Mi free (healer is 55%/300 Mi).
+    # pauses at ≥50% volume used or <400 Mi free (healer: 45% / 1.7 GiB / 300 Mi).
     max_concurrent_downloads: 2
     youtube_rate_limit_seconds: 30.0
     youtube_rate_limit_cooldown_seconds: 3600.0
