@@ -20,8 +20,32 @@ Both paths end at `import_channels_from_yaml()`; Builder also writes `data/unifi
 3. **Sign In** — Inline authentication on the Builder page (Playwright for YouTube/PBS, forms for Archive.org/Plex).
 4. **URLs** — Paste or drop links; playlists, collections, and PBS show pages expand on resolve.
 5. **Order & Fillers** — Choose playback order; attach reusable filler libraries.
-6. **Channel Info** — Set channel number, name, and collection name.
-7. **Review & Build** — Compiles unified YAML, imports inventory, writes schedule, resets playout.
+6. **Channel Info** — Set channel number, name, collection name, and optional **metadata enrichment** fields (series name / year; defaults on).
+7. **Review & Build** — Compiles unified YAML, imports inventory, writes schedule, resets playout, then **enriches** media via TVDB/TVMaze/TMDB when enabled.
+
+### Metadata enrichment (post-build)
+
+After a successful build, Channel Builder runs playback-safe enrichment (`meta_data.enrichment` + description/thumbnail columns) when **Enrich metadata after build** is checked (default).
+
+| Channel Info field | Purpose |
+|--------------------|---------|
+| Enrich metadata after build | On/off (default on) |
+| Enrichment type | `series` or `movie` (TMDB) |
+| Series metadata provider | **TVMaze** (free account username + dashboard API key), **TVDB** (API key), or **Both** |
+| TVMaze credentials | Saved via Builder to `metadata.tvmaze_username` / `metadata.tvmaze_api_key` (HTTP Basic; not in the draft) |
+| TVDB API key | Saved via Builder to `metadata.tvdb_api_key` in operator `config.yaml` (not stored in the draft) |
+| Series / show name | Explicit override; if empty, auto from channel name (noise stripped) or episode titles |
+| Year | Optional year hint for provider search |
+
+**Provider choice (series):**
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| TVMaze | Free [tvmaze.com](https://www.tvmaze.com) account → dashboard API key + username | Titles/plots via [TVMaze API](https://www.tvmaze.com/api); public calls also work without a key (IP rate limits) |
+| TVDB | Free API key from [thetvdb.com](https://thetvdb.com/api-information) | Often better for long-running / deep catalogs |
+| Both | Both keys recommended | Queries both; soft-falls back when a key is missing |
+
+Failures become **warnings** on the build job — the channel still imports. See [Metadata Enrichment](guides/METADATA_ENRICHMENT.md).
 
 ### Extensibility
 

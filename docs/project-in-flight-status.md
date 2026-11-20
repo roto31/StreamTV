@@ -1,32 +1,34 @@
-# StreamTV — project in-flight status (rolling)
+# StreamTV — project in-flight status
 
-**Updated:** 2026-07-18  
-**Tip:** `main` @ `3b73c56` · **Shipped:** `v1.3.4`
+Rolling snapshot: **2026-09-19** (Phase 1 packaging: **`VERSION` → 1.4.0**; tag/DMG pending operator).
 
-## Snapshot
+| Field | Value |
+|-------|--------|
+| VERSION | 1.4.0 (packaging PR; not yet tagged) |
+| HEAD | `main` tip past `v1.3.6` + release bump branch |
+| Latest tag | `v1.3.6` (2026-07-18) until `v1.4.0` is pushed |
+| Public DMG | https://github.com/roto31/StreamTV/releases/tag/v1.3.6 (1.4.0 after release CI) |
 
-| Item | State |
+## Shipped in 1.4.0 packaging cut
+
+Material product commits previously under `CHANGELOG.md` **`## [Unreleased]`** moved to **`## [1.4.0]`**, including:
+
+- Automatic backup and restore (+ Settings UI, macOS first-launch, `/api/backup/*`)
+- Apple Foundation Models + AutoHealer dual-backend
+- LoudNorm / TunarrRAM / FFmpeg stall / playout-lag operator docs and in-repo heals where present
+- Magnum ch80 classic artwork notes; YouTube 403 / Clean-CI / release pytest gate
+- Docs index sync (`docs/INDEX.md`)
+
+**Next:** Merge packaging PR → Chris confirms bedrock tip acceptance → `git tag v1.4.0 && git push origin v1.4.0` → signed DMG + clean-Mac `DISTRIBUTION_CHECKLIST.md` smoke.
+
+## Do not touch without owner `APPROVED:`
+
+Streaming bedrock / scheduling / HDHomeRun / cache behavioral keys / `api/iptv.py` — see `docs/STREAMING_BEDROCK_FROZEN.md`. Tip past `v1.3.6` already contains `c4943f2` bedrock paths on `main`; packaging release does not add new bedrock edits.
+
+## Doc truth pointers
+
+| Need | Where |
 |------|--------|
-| Public release | [v1.3.4](https://github.com/roto31/StreamTV/releases/tag/v1.3.4) — notarized DMG |
-| Working tree | Clean |
-| Stashes | 3 (PBS/Builder WIP from pre-merge) |
-| Release CI | GitHub-hosted `macos-latest` (not M4) |
-| Day-to-day CI | Still M4 self-hosted (`ci.yml`) |
-
-## Recent movement
-
-- Merged `cursor/sync-streamtvmac-v1-3-2-bundle` → `main` for 1.3.4
-- Archive `-reconnect_at_eof` fix; hosted sign/notary; publish `RELEASE_TAG` guard
-- Operator smoke: Magnum 80, Nature 1982, XMLTV on-air
-
-## Recommended next actions
-
-1. Fix clean-CI pytest fixtures (promote full suite to hard-gate)
-2. Sync public docs/wiki for 1.3.4
-3. Triage `git stash` WIP vs live 1982 Nature
-4. Optional: install public DMG and log Plex soak
-
-## Reports
-
-- [Status Report 2026-07-18](StreamTV_Status_Report_2026-07-18.md)
-- [Gap Closure Plan 2026-07-18](StreamTV_Gap_Closure_Plan_2026-07-18.md)
+| What VERSION is tip | Root `VERSION` + this file |
+| What’s shipping next | `CHANGELOG.md` `[Unreleased]` (empty after 1.4.0 cut) |
+| Historical Jul-2026 status | Superseded banners on `EXECUTIVE_SUMMARY.md` / dated status reports |

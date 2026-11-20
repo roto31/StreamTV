@@ -8,6 +8,20 @@ Complete documentation for StreamTV on macOS.
 
 StreamTV is an efficient online media streaming platform that emulates HDHomeRun tuners for integration with Plex, Emby, and Jellyfin.
 
+### AI Self-Recovery (StreamTVMac)
+
+On first launch after Python setup (or in **Settings → AI Self-Recovery**), choose:
+
+- **Apple Foundation Models** (macOS 26+ / Apple Intelligence) — on-device bridge on port `11435`
+- **Ollama** (optional on any supported macOS)
+- **No AI** — deterministic heal scripts only
+
+See [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md) and [Auto-healer](../AUTO_HEALER.md).
+
+### Backup and restore
+
+Automatic portable zips and first-launch restore: [Backup and restore](../guides/BACKUP_RESTORE.md).
+
 ## What's Included
 
 - **StreamTV Core**: Complete streaming platform

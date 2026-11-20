@@ -47,6 +47,14 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Guide | Path |
 |-------|------|
 | Core operator quickstart | [guides/CORE_OPERATOR_QUICKSTART.md](guides/CORE_OPERATOR_QUICKSTART.md) |
+| Backup and restore | [guides/BACKUP_RESTORE.md](guides/BACKUP_RESTORE.md) |
+| Foundation Models recovery | [guides/FOUNDATION_MODELS_RECOVERY.md](guides/FOUNDATION_MODELS_RECOVERY.md) · [AUTO_HEALER.md](AUTO_HEALER.md) |
+| LoudNorm fleet audio | [guides/LOUDNORM_FLEET_AUDIO.md](guides/LOUDNORM_FLEET_AUDIO.md) |
+| FFmpeg stall / keepalive | [guides/FFMPEG_STALL_KEEPALIVE.md](guides/FFMPEG_STALL_KEEPALIVE.md) |
+| Plex video hold | [guides/PLEX_VIDEO_HOLD.md](guides/PLEX_VIDEO_HOLD.md) |
+| TunarrRAM playout recovery | [guides/TUNARRRAM_PLAYOUT_RECOVERY.md](guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
+| Soft deploy (no full kickstart) | [guides/SOFT_DEPLOY.md](guides/SOFT_DEPLOY.md) |
+| Lessons Learned (Issues 1–61) | [../LESSONS_LEARNED.md](../LESSONS_LEARNED.md) |
 | Channel Builder | [channel-builder.md](channel-builder.md) |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |

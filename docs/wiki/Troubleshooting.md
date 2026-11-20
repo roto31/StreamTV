@@ -16,6 +16,17 @@ Run these diagnostic scripts directly from this page to check your installation:
 
 **How to use:** Click on any script link above. You'll be prompted to confirm before the script runs. The results will appear below.
 
+### Ops symptoms → guides
+
+| Symptom | Guide |
+|---------|--------|
+| Schedule / playout lag | [EPG sync classes](../guides/EPG_SYNC_CLASSES.md) |
+| Keepalive-only / stalled FFmpeg | [FFmpeg stall keepalive](../guides/FFMPEG_STALL_KEEPALIVE.md) |
+| TunarrRAM full | [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
+| Loudness / loudnorm CPU | [LoudNorm fleet audio](../guides/LOUDNORM_FLEET_AUDIO.md) |
+| AI recovery / Ollama | [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md) |
+| Streaming detail | [STREAMING_ISSUES](../troubleshooting/STREAMING_ISSUES.md) |
+
 ## Using the Web Interface for Troubleshooting
 
 StreamTV includes powerful web-based troubleshooting tools accessible from the web interface:

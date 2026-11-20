@@ -17,6 +17,12 @@ Plex Live TV is HDHomeRun + XMLTV only. For library-matched UX, use Tunarr libra
 
 **Gracenote/TMS:** not integrated. Use for manual conflict confirmation only.
 
+### Channel 80 — Magnum, P.I. classic artwork
+
+Guide metadata and logo for channel **80** should use classic Magnum, P.I. (**TVMaze 956** / **TVDB 74380**), not the 2018 reboot (**TVDB 350068**). TVDB series search prefers premiere year so remakes do not win.
+
+In-tree helpers: `scripts/enrich_all_channels.py`, `scripts/enrich_magnum_rogers.py`, and `scripts/apply_channel_icons.py` (place classic poster at `data/channel_icons/channel_80.png` on the operator machine — **that PNG and `fix_magnum_ch80_classic_artwork.py` were never committed**). Reload Plex guide after fixing.
+
 ---
 
 ## Playback-safe defaults
@@ -68,11 +74,13 @@ XMLTV (`streamtv/api/iptv.py`) prefers `enrichment.*` for description, icon, gen
 
 ## Providers
 
-1. **TVDB** — primary for TV series (API key / read token)
-2. **TVMaze** — consulted with TVDB; longest description wins
+1. **TVDB** — primary for TV series (API key / read token); set via `config.yaml`, env, or **Channel Builder → Channel Info → Save TVDB API key**
+2. **TVMaze** — free account dashboard API key + username (HTTP Basic); also works without a key at IP rate limits ([API](https://www.tvmaze.com/api)); Builder default for series; “Both” merges with TVDB (longest description wins)
 3. **TMDB** — movies (`--type movie`); credits → `cast`
 4. **Historical sidecars** — Olympics / non-API (`scripts/enrich_historical.py`)
 5. **Archive fallback** — music / unresolved (`scripts/enrich_archive_fallback.py`, always `unverified`)
+
+**Builder series provider** (`enrichment_series_provider`): `tvmaze` | `tvdb` | `both` — see [Channel Builder](../channel-builder.md).
 
 ---
 
@@ -85,6 +93,8 @@ metadata:
   tvdb_api_key: null   # or STREAMTV_METADATA_TVDB_API_KEY
   tvdb_read_token: null
   tmdb_api_key: null   # or STREAMTV_METADATA_TMDB_API_KEY
+  tvmaze_username: null  # or STREAMTV_METADATA_TVMAZE_USERNAME
+  tvmaze_api_key: null   # or STREAMTV_METADATA_TVMAZE_API_KEY (dashboard key)
   enable_tvdb: true
   enable_tvmaze: true
   enable_tmdb: true
@@ -94,6 +104,8 @@ metadata:
 ---
 
 ## Usage
+
+Channel Builder runs the same enrichment automatically after **Build** when enabled on Channel Info — see [Channel Builder](../channel-builder.md). Shared module: `streamtv.builder.enrichment`.
 
 ```bash
 # Series — prefer schedule media (same set playout uses)
@@ -169,6 +181,7 @@ Conflict JSONL for manual / Gracenote review
 - Enrichment is **opt-in** (`auto_enrich: false`). Re-imports that overwrite `meta_data` wholesale will wipe `enrichment` unless they use `merge_enrichment`.
 - **Never** run `enrich_archive_fallback.py --force` on channels that already have TVDB/TMDB enrichment — it overwrites API plots.
 - Archive.org URLs must be percent-decoded before parsing `1x01` season markers.
+- TVDB v4 episode lists paginate via `links.next` (often 500/page). `TVDBClient` caches the full series catalog so long-running shows (e.g. [Saturday Night Live](https://thetvdb.com/series/saturday-night-live#seasons), series id **76177**) resolve past page 0.
 - ytimg / `.webp` programme icons are still omitted in XMLTV; TVMaze/TMDB JPEG/PNG posters are emitted.
 - Movie matching uses title/year scoring; prefer archive `episode_title` + year from filename.
 - TVDB genres often filled from TVMaze series record.

@@ -13,6 +13,30 @@ a specific channel after StreamTV restarts or after the Plex Tuner Service hangs
 - Off-schedule cache eviction is scoped per channel schedule so channel 1986
   prefetch cannot delete channel 1991 cache files.
 
+## Plex DVR id for `reloadGuide`
+
+Plex assigns a **new numeric DVR id** whenever the Live TV / DVR source is
+removed and re-added. Hardcoded ids go stale and `reloadGuide` returns **HTTP 404**
+while StreamTV XMLTV stays healthy.
+
+**Current operator default:** DVR **119** (retired: 117, 113, 109).
+
+StreamTV `streamtv/plex/guide_reload.py` tries `config.plex.dvr_id` / `PLEX_DVR_ID`
+first, then **falls back to live `/livetv/dvrs` discovery** on failure. Still update
+config + LaunchAgent so health scripts stay quiet.
+
+```bash
+# List live ids (token from PMS plist / env — do not commit)
+curl -s "http://192.0.2.1:32400/livetv/dvrs?X-Plex-Token=$PLEX_TOKEN" | head
+echo "${PLEX_DVR_ID:-119}"
+bash scripts/verify_plex_token.sh
+bash scripts/reload_plex_streamtv_guide.sh   # discovers on 404
+```
+
+Ensure `com.streamtv.epg-health` has `WorkingDirectory` set to the StreamTV root and
+`PLEX_DVR_ID` matching the live DVR (relative `sqlite:///./streamtv.db` fails without
+a working directory). Reinstall with `bash scripts/install-epg-health-launchagent.sh`.
+
 ## What Plex does not do
 
 - Plex clients do **not** auto-retune when StreamTV restarts.

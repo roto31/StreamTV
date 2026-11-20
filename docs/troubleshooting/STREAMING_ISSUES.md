@@ -2,6 +2,27 @@
 
 Common issues with video streaming and playback in StreamTV.
 
+## Symptoms → operator guides
+
+| Symptom | Guide |
+|---------|--------|
+| Guide ahead of video / frozen `last_item_index` | [EPG sync classes / playout lag](../guides/EPG_SYNC_CLASSES.md) |
+| ~8 KiB keepalives, FFmpeg ~0% CPU mid-Archive item | [FFmpeg stall / keepalive](../guides/FFMPEG_STALL_KEEPALIVE.md) |
+| TunarrRAM full / `Errno 28` / black screens | [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
+| Uneven loudness / true-peak spikes / loudnorm CPU | [LoudNorm fleet audio](../guides/LOUDNORM_FLEET_AUDIO.md) |
+| Want AI classify + approved heals | [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md), [Auto-healer](../AUTO_HEALER.md) |
+| Plex guide stale after StreamTV OK | [Plex Live TV recovery](../plex/PLEX_LIVE_TV_RECOVERY.md) (DVR **117**) |
+| YouTube mid-song 403 / full-cache tradeoffs | Section below + [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
+
+## YouTube mid-stream 403 (music channels)
+
+Signed googlevideo URLs can 403 mid-item. Mitigations operators use:
+
+- Keep Netscape cookies fresh; avoid stale `cookies_json_file` overwrite.
+- Prefer local TunarrRAM / cache files when `youtube_full_cache` download is pending (refuse CDN fallback while pending).
+- On-tune wait can be extended (keepalive) while prioritize download completes.
+- Phase 1: full-cache is on when TunarrRAM has ≥300 Mi free + heal agent; if disk fills (`Errno 28`), set `youtube_full_cache: false` and run `scripts/heal_tunarr_ram.sh` — see [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+
 ## Channels Won't Play
 
 ### Symptoms

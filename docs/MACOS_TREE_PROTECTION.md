@@ -70,9 +70,9 @@ bash scripts/protect_macos_tree.sh --writable
 
 | Workflow | Runner | Purpose |
 |----------|--------|---------|
-| `forbidden-paths.yml` | `ubuntu-latest` | Fail PR/push if forbidden paths change |
-| `pr-path-report.yml` | `ubuntu-latest` | PR comment: forbidden vs allowed paths |
-| `ci.yml` (first step) | M4 self-hosted | Defense in depth before pytest/Swift |
+| `forbidden-paths.yml` | `ubuntu-latest` | Fail **PRs** if forbidden paths change; **push to main is allowed** (owner macOS runtime) |
+| `pr-path-report.yml` | `ubuntu-latest` | PR comment: forbidden vs allowed paths; still fails the PR job |
+| `ci.yml` (first step) | M4 self-hosted | Same: fail on PR, skip fail on push |
 
 ## GitHub branch protection (optional — not on Free private repos)
 
@@ -83,9 +83,9 @@ GitHub **branch protection rules** for private repositories require **GitHub Pro
 | Layer | What it does |
 |-------|----------------|
 | **Local pre-commit** | `bash scripts/install_git_hooks.sh` — blocks commits that touch forbidden paths |
-| **`forbidden-paths.yml`** | Runs on every PR and push to `main`; job fails if forbidden paths change |
+| **`forbidden-paths.yml`** | Fails **PRs** that touch locked trees; **push to `main` skips the fail** (owner macOS runtime) |
 | **`pr-path-report.yml`** | PR comment listing forbidden vs allowed path touches |
-| **`ci.yml` (M4, first step)** | Same guard before pytest/Swift on self-hosted runner |
+| **`ci.yml` (M4, first step)** | Same as forbidden-paths: fail on **PR**, skip fail on **push** |
 | **Process** | Merge via PR only; review diffs for `streamtv/`, `StreamTVMac/`, `packaging/macos/` |
 
 ### If you upgrade or go public later

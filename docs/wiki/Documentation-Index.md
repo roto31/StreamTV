@@ -37,6 +37,12 @@ Complete guide to all StreamTV documentation, organized by topic.
 ### HDHomeRun & Tunarr
 - [HDHomeRun Integration](HDHOMERUN.md) - Emulation setup
 - [Core operator quickstart](../guides/CORE_OPERATOR_QUICKSTART.md) - Dashboard → build → tune
+- [Backup and restore](../guides/BACKUP_RESTORE.md) - Portable zip backups
+- [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md) - StreamTVMac AI picker
+- [Auto-healer](../AUTO_HEALER.md) - FM / Ollama dual backend
+- [LoudNorm fleet audio](../guides/LOUDNORM_FLEET_AUDIO.md)
+- [FFmpeg stall / keepalive](../guides/FFMPEG_STALL_KEEPALIVE.md)
+- [TunarrRAM playout recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md)
 - [Import vs Channel Builder](../guides/IMPORT_VS_BUILDER.md) - Migration vs greenfield
 - [Channel Builder](../channel-builder.md) - URL-first wizard
 - [Metadata enrichment](../guides/METADATA_ENRICHMENT.md) - TVDB/TVMaze/TMDB, SxxExx retitle, guide audits
@@ -307,6 +313,6 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
-**Last Updated**: December 3, 2025
-**Version**: 1.0.0
-**Status**: ✅ Complete and organized
+**Last Updated**: 2026-09-19
+**Version**: 1.4.0
+**Status**: In-tree wiki mirror synced for operator guides (backup / FM / LoudNorm / stall / TunarrRAM). Public GitHub wiki publish deferred to operator (`create-wiki.sh` / `scripts/sync_public_docs.sh`).

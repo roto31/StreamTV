@@ -12,6 +12,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **In-browser `/player` preview** — Channel preview uses mpegts.js against a remuxed live TS feed, with mid-join keyframe wait and a VLC open handoff. Plex / HDHomeRun tuning paths are unchanged.
+- **Vintage holiday channel packs** — New Year's (**1201**), Valentine's (**214**), Easter (**401**), Fourth of July (**704**), Halloween (**1031**), Thanksgiving (**1128**), plus Kids Christmas (**1225**), each with matching mid-century guide icons.
+- **Plex Live TV video hold** — Cold start and mid-show gaps send a real H.264+AAC placeholder instead of empty keepalive packets so Apple TV is less likely to bounce to the guide — see [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
+
+### Fixed
+- **Channel 1989 guide titles** — Humanized Archive.org filename stems into readable guide titles (URLs / stream ids unchanged).
+- **YouTube wait-phase hold** — Default YouTube hold wrap is off to avoid cold-cache black/spinner; on-tune YouTube wait capped at **60s**; native re-hold remains opt-in. See [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
+- **TunarrRAM / Live TV black screen** — Universal TunarrRAM watchdog every 60 s (45% / **1.7 GiB** hard ceiling / 300 Mi free); YouTube full-cache under that ceiling; see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+- **Video hold / return-to-guide** — YouTube full-cache channels get a wait-phase H.264+AAC hold on tune; Archive stays unwrapped. See [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
+
+### Fixed
+- **RAM cache download race** — YouTube full-cache prefetch pauses before the RAM disk is full and only downloads one file at a time — see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+- **Godzilla English overlay stall warnings** — Live subtitle overlay no longer logs false “FFmpeg stalled” warnings while video is still flowing — see [FFmpeg stall / keepalive](docs/guides/FFMPEG_STALL_KEEPALIVE.md).
+- **Softer channel restarts** — Operators can refresh Live TV channel streams without restarting the whole StreamTV server — see [Soft deploy](docs/guides/SOFT_DEPLOY.md).
+- **Phase 2 ops** — Cache waits for the RAM disk if it is missing at boot; SSDP “no route” spam is quieted; a small resource log samples CPU/memory; Nature (1982) removed from the Live TV lineup until guide lag is fixed.
+- **RAM cache auto-empty at 55% full** — When the TunarrRAM volume fills past about half, StreamTV’s heal job clears cached files except whatever is actively playing — see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+- **YouTube music mid-stream 403s** — With TunarrRAM headroom and the free-space healer running, YouTube items download to local cache before playout again — see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+- **macOS app no longer fights the production server** — Opening StreamTV.app while the LaunchAgent is already on port 8410 attaches to that server instead of spawning a second copy.
+- **Safer stalled-FFmpeg healer** — External stall cleanup no longer kills subtitle overlay encodes that are quietly busy (e.g. Godzilla English burn). See [FFmpeg stall / keepalive](docs/guides/FFMPEG_STALL_KEEPALIVE.md).
+- **Weekly yt-dlp update** — Production restarts only when yt-dlp actually upgrades, not on every Sunday “already up to date” run.
+- **Foundation Models page** — Missing template returns a clear unavailable page instead of a blank server error.
+
+### Changed
+- **Godzilla Live TV English subtitles** — Channel 1954.1 again overlays embedded English DVD subtitles on Japanese-audio prints, with hardenings so Plex is less likely to stall — see [FFmpeg profiles](docs/guides/FFMPEG_PROFILES.md).
+
+### Fixed
+- **Plex Live TV guide reload** — Operator defaults and auto-reload now track the current Plex DVR id after PMS recreates the Live TV source (stale ids returned 404). See [Plex Live TV recovery](docs/plex/PLEX_LIVE_TV_RECOVERY.md).
+- **Auto-healer safety** — Automated fixes no longer rewrite streaming core files; repeated applies for the same error pattern are capped — see [Auto-Healer](docs/AUTO_HEALER.md).
+- **Stuck cache downloads** — Dead or auth-blocked YouTube/Archive.org downloads no longer retry forever on every tune; use the cache retry API after fixing cookies or removing bad items.
+- **Godzilla channel guide titles** — Each listing shows the movie name only, not the channel name as a series.
+
+### Added
+- **Channel 1954.1 — Godzilla Movies** — 30 Godzilla films from Archive.org in release-year order (1954–2004), with a channel guide icon. Guide listings use the movie title only. Disney Anthology remains channel 1954.
+- **Optional offline English burn for Archive.org** — Inventory checks every audio track for English first; optional idle burn tooling remains for rare titles without embedded English — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
+- **Optional Tunarr library export** — Export ready Archive.org cache files to a separate folder for Tunarr Local Media (does not change live TV) — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
+- **Optional Tunarr library prefetch** — Download full Archive.org files into the Tunarr library folder from StreamTV channel inventory; re-scan Tunarr after apply — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
+
+### Docs
+- Operator guides for FFmpeg stall heal, LoudNorm CPU monitor, and TunarrRAM heal scripts match the in-repo tooling — see [FFmpeg stall](docs/guides/FFMPEG_STALL_KEEPALIVE.md), [LoudNorm](docs/guides/LOUDNORM_FLEET_AUDIO.md), [TunarrRAM](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+- Soft stream refresh without a full server restart — see [Soft deploy](docs/guides/SOFT_DEPLOY.md).
+- GitHub Actions on **push to main** no longer fail only because macOS runtime files changed; **pull requests** still block those paths.
+
+## [1.4.0] - 2026-09-19
+
+See [macOS release CI](docs/macos-release-ci.md)
+
+### Added
+- **Automatic backup and restore** — Portable zip of settings, channels, schedules, and secrets; Settings → Backup & Restore; optional first-launch restore — see [Backup and restore](docs/guides/BACKUP_RESTORE.md).
+- **Optional on-device AI recovery** — On macOS 26+, choose Apple Foundation Models (or Ollama / no AI) for classifying issues and suggesting approved heals — see [Foundation Models recovery](docs/guides/FOUNDATION_MODELS_RECOVERY.md).
+
+### Changed
+- **Fleet audio leveling** — Software FFmpeg profile loudness normalization for more consistent channel volume — see [LoudNorm fleet audio](docs/guides/LOUDNORM_FLEET_AUDIO.md).
+- **RAM-cache recovery guidance** — Operator docs for keeping YouTube cache disk from filling and recovering playout — see [TunarrRAM playout recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
+
+### Fixed
+- **Plex Live TV guide reload** — Operator health scripts default to the current StreamTV DVR id after PMS upgrades — see [Plex Live TV recovery](docs/plex/PLEX_LIVE_TV_RECOVERY.md).
+- **Idle playout / guide alignment** — Continuous channels catch up when untuned; class-A guide slots no longer stretch for hours when playout lags — see [EPG sync classes](docs/guides/EPG_SYNC_CLASSES.md).
+- **macOS first-launch / Run Setup** — Bundled `PYTHONPATH` and Homebrew `python3.12` shim detection on Apple Silicon.
+- **CI release gate** — Full pytest suite is a hard gate on GitHub-hosted macOS release builds.
+
+## [1.3.6] - 2026-07-18
+
+See [macOS release CI](docs/macos-release-ci.md)
+
+### Fixed
+- **First-launch Run Setup** — Setup no longer fails silently on a new Mac when the server log file is missing; Homebrew Python 3.10+ is detected; setup errors stay visible until resolved.
+
+## [1.3.5] - 2026-07-18
+
+See [Channel Builder](docs/channel-builder.md) · [Metadata enrichment](docs/guides/METADATA_ENRICHMENT.md) · [macOS release CI](docs/macos-release-ci.md)
+
+### Added
+- **Channel Builder — post-build metadata enrichment** — After import, optional TVDB/TVMaze/TMDB enrichment for guide titles and plots (series name/year fields; soft-skip if credentials missing).
+- **Channel Builder — TVMaze or TVDB credentials** — Choose TVMaze (free-account username + dashboard API key), TVDB (API key), or both; keys saved in operator config via Builder auth endpoints.
+- **Builder metadata auth tests** — Provider readiness checks and mocked TVMaze/TVDB auth route coverage.
+
+### Fixed
+- **TVDB episode pagination** — Long series episode lists follow TVDB v4 `links.next` so enrichment resolves past the first page.
+
 ## [1.3.4] - 2026-07-18
 
 ### Fixed

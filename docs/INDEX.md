@@ -29,6 +29,7 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 
 ### Essential Guides
 - [README](README.md) - Project overview and features
+- [Lessons Learned](../LESSONS_LEARNED.md) - Issues 1–61 + Cursor rules/skills index
 - [API Documentation](API.md) - Complete API reference
 - [Troubleshooting](TROUBLESHOOTING.md) - Common issues and solutions
 - [YAML Validation](YAML_VALIDATION.md) - Validate your configurations
@@ -50,9 +51,18 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 
 ### Operator guides (`guides/`)
 - [Core operator quickstart](guides/CORE_OPERATOR_QUICKSTART.md)
+- [Backup and restore](guides/BACKUP_RESTORE.md) — automatic portable zip; new-machine restore
+- [Foundation Models recovery](guides/FOUNDATION_MODELS_RECOVERY.md) — StreamTVMac AI picker + bridge
+- [Auto-healer](AUTO_HEALER.md) — dual-backend FM/Ollama + approved heal scripts
+- [Offline FM adapter training](FOUNDATION_MODELS_ADAPTER.md)
+- [LoudNorm fleet audio](guides/LOUDNORM_FLEET_AUDIO.md)
+- [FFmpeg stall / keepalive](guides/FFMPEG_STALL_KEEPALIVE.md) — Lessons 41, 44, 59
+- [Plex video hold](guides/PLEX_VIDEO_HOLD.md) — h264+aac hold for Apple TV tune / mid-show gaps
+- [Fleet probe protocol](guides/FLEET_PROBE_PROTOCOL.md) — safe 1-at-a-time channel checks (avoid TunarrRAM fill)
+- [TunarrRAM playout recovery](guides/TUNARRRAM_PLAYOUT_RECOVERY.md)
 - [Import vs Channel Builder](guides/IMPORT_VS_BUILDER.md)
 - [Metadata enrichment](guides/METADATA_ENRICHMENT.md) — TVDB/TVMaze/TMDB, SxxExx retitle, guide audits
-- [EPG sync classes A/B/C](guides/EPG_SYNC_CLASSES.md) — Plex guide vs continuous playout
+- [EPG sync classes A/B/C](guides/EPG_SYNC_CLASSES.md) — Plex guide vs continuous playout; playout-lag heal
 - [PBS + Playwright](guides/PBS_PLAYWRIGHT.md)
 - [Archive.org operator](guides/ARCHIVE_ORG_OPERATOR.md)
 - [FFmpeg profiles](guides/FFMPEG_PROFILES.md)
@@ -60,9 +70,12 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 - [StreamTV + Tunarr hybrid](guides/STREAMTV_TUNARR_HYBRID.md)
 - [Add Tunarr in Plex](guides/ADD_TUNARR_IN_PLEX.md)
 - [Vimeo bedrock gate](guides/VIMEO_BEDROCK_GATE.md)
+- [Soft deploy (no full uvicorn kickstart)](guides/SOFT_DEPLOY.md) — Lesson 51
+- [macOS release CI](macos-release-ci.md) — tag → signed/notarized DMG
+- [Distribution checklist](../DISTRIBUTION_CHECKLIST.md) — preflight + clean-Mac smoke
 
 ### External Integrations
-- **Plex** → [docs/plex/](plex/)
+- **Plex** → [docs/plex/](plex/) · [Plex Live TV recovery](plex/PLEX_LIVE_TV_RECOVERY.md)
 - **ErsatzTV** → [ERSATZTV_COMPLETE_INTEGRATION.md](ERSATZTV_COMPLETE_INTEGRATION.md)
 - **Architecture (Mermaid)** → [ARCHITECTURE.md](../ARCHITECTURE.md)
 
@@ -244,9 +257,18 @@ docs/
 **I want to...**
 - **Create a channel from Archive.org** → [archive-parser/QUICK_REFERENCE_ARCHIVE_PARSER.md](archive-parser/QUICK_REFERENCE_ARCHIVE_PARSER.md)
 - **Build a channel in the UI** → [channel-builder.md](channel-builder.md)
+- **Back up / restore operator data** → [guides/BACKUP_RESTORE.md](guides/BACKUP_RESTORE.md)
+- **Set up Foundation Models / Auto-Healer** → [guides/FOUNDATION_MODELS_RECOVERY.md](guides/FOUNDATION_MODELS_RECOVERY.md)
 - **Enrich guide metadata (TVDB)** → [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md)
 - **Align Plex guide with playout** → [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md)
+- **Recover TunarrRAM / YouTube cache disk** → [guides/TUNARRRAM_PLAYOUT_RECOVERY.md](guides/TUNARRRAM_PLAYOUT_RECOVERY.md)
+- **Fix FFmpeg stall / keepalive wedge** → [guides/FFMPEG_STALL_KEEPALIVE.md](guides/FFMPEG_STALL_KEEPALIVE.md)
+- **Refresh streams without full kickstart** → [guides/SOFT_DEPLOY.md](guides/SOFT_DEPLOY.md)
+- **Platform lessons / Cursor rules** → [../LESSONS_LEARNED.md](../LESSONS_LEARNED.md)
+- **Level fleet audio (LoudNorm)** → [guides/LOUDNORM_FLEET_AUDIO.md](guides/LOUDNORM_FLEET_AUDIO.md)
+- **Cut a signed macOS release** → [macos-release-ci.md](macos-release-ci.md)
 - **Set up Plex integration** → [plex/PLEX_SETUP_COMPLETE.md](plex/PLEX_SETUP_COMPLETE.md)
+- **Reload Plex Live TV after DVR id change** → [plex/PLEX_LIVE_TV_RECOVERY.md](plex/PLEX_LIVE_TV_RECOVERY.md)
 - **View application logs** → [logging/LOGGING_QUICKSTART.md](logging/LOGGING_QUICKSTART.md)
 - **Install on macOS** → [installation/INSTALL_MACOS.md](installation/INSTALL_MACOS.md)
 - **Troubleshoot issues** → [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
@@ -294,6 +316,6 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
-**Last Updated**: 2026-07-17
-**Version**: 1.3.3
-**Status**: Complete — guides/, wiki/, and architecture Mermaid indexed
+**Last Updated**: 2026-09-19
+**Version**: 1.4.0
+**Status**: Complete — guides/, wiki/, and architecture Mermaid indexed (backup / FM / LoudNorm / stall / TunarrRAM)
