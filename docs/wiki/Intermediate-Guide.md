@@ -19,63 +19,42 @@
 
 ## Architecture Overview
 
-### System Components
+**Canonical diagrams (Mermaid):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md)
 
-StreamTV consists of several key components that work together:
+### System Components (summary)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Web Interface                         │
-│              (HTML/JavaScript Frontend)                  │
-└────────────────────┬────────────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────────────┐
-│                  FastAPI Server                          │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐             │
-│  │   API    │  │   IPTV    │  │ HDHomeRun│             │
-│  │  Routes  │  │  Routes   │  │  Routes  │             │
-│  └──────────┘  └──────────┘  └──────────┘             │
-└────────────────────┬────────────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────────────┐
-│              Business Logic Layer                       │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │  Scheduling  │  │  Streaming   │  │  Importers   │ │
-│  │    Engine    │  │   Manager    │  │              │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘ │
-└────────────────────┬────────────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────────────┐
-│              Data Layer                                  │
-│  ┌──────────────┐  ┌──────────────┐                    │
-│  │  Database    │  │  File System │                    │
-│  │  (SQLite)    │  │  (YAML/Logs) │                    │
-│  └──────────────┘  └──────────────┘                    │
-└─────────────────────────────────────────────────────────┘
+Clients: Web /player · Plex/Emby/Jellyfin (HDHomeRun) · IPTV M3U/XMLTV
+    │
+FastAPI: API (channels, import, backup, builder, cache, AI…)
+         IPTV · HDHomeRun · /player live TS remux
+    │
+PlayOut: ChannelManager → MPEGTSStreamer → StreamManager
+         adapters (YouTube / Archive.org / PBS / Plex)
+         optional cache (TunarrRAM youtube_full_cache) · video hold (Plex)
+    │
+Data: SQLite · YAML schedules · config · heal LaunchAgents
 ```
 
 ### Component Interactions
 
-1. **Web Interface → API**: User actions trigger API calls
-2. **API → Business Logic**: API routes call business logic functions
-3. **Business Logic → Data**: Logic reads/writes to database and files
-4. **Streaming → External**: Streams video from YouTube/Archive.org
-5. **HDHomeRun → Plex**: Emulates HDHomeRun device for Plex integration
+1. **Web / API** — Dashboard, Builder, Import, Backup, `/player`
+2. **HDHomeRun / IPTV** — Plex Live TV and playlist clients
+3. **ChannelManager** — Continuous playout timeline
+4. **StreamManager + FFmpeg** — Resolve URLs / local cache → MPEG-TS
+5. **Soft deploy** — `stream-restart*` recycles streams without uvicorn kickstart
 
 ### Data Flow
 
 **Channel Creation Flow:**
 ```
-User uploads YAML → Import API → Channel Importer →
-Parse YAML → Create Collections → Create Media Items →
-Create Playlist → Create Channel → Database
+YAML or Builder → Import/Builder API → Channel + Media + Playlist → SQLite
 ```
 
 **Streaming Flow:**
 ```
-Client Request → IPTV Endpoint → Channel Manager →
-Schedule Engine → Stream Manager → YouTube/Archive.org →
-FFmpeg (MPEG-TS) → Client
+Plex/IPTV/Player → ChannelManager → schedule item →
+StreamManager (CDN or TunarrRAM cache) → FFmpeg MPEG-TS → client
 ```
 
 ---
@@ -597,7 +576,7 @@ sqlite3 streamtv.db ".tables"
 sqlite3 streamtv.db "SELECT * FROM channels;"
 ```
 
-**Backup Database**:
+**Backup Database** (prefer Settings → Backup / [BACKUP_RESTORE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) and `/api/backup/*`):
 ```bash
 cp streamtv.db streamtv.db.backup
 ```

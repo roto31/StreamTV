@@ -21,10 +21,13 @@ Logs / health  →  ErrorMonitor (regex)
   StreamTVMac :11435          localhost:11434
           │
           ▼
-  Whitelisted scripts only:
-    heal_playout_lag.py          ← in tree
-    heal_stalled_ffmpeg.py       ← NOT in tree (FM returns “not found”)
+  Whitelisted scripts only (in tree):
+    heal_playout_lag.py
+    heal_stalled_ffmpeg.py
+    (+ LoudNorm / TunarrRAM helpers)
 ```
+
+**Production defaults:** `auto_healer.enabled: false`, `apply_fixes: false` (dry-run / advise only until an operator change window).
 
 | Layer | Role |
 |-------|------|

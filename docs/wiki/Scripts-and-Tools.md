@@ -2,6 +2,8 @@
 
 Complete documentation for all StreamTV utility scripts and tools.
 
+> **Heal / soft-deploy scripts (tip):** `scripts/heal_stalled_ffmpeg.py`, `scripts/heal_playout_lag.py`, `scripts/heal_tunarr_ram.sh`, `scripts/deploy_soft.sh` — see [SOFT_DEPLOY](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md), [FFMPEG_STALL_KEEPALIVE](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md), [TUNARRRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md). macOS install: prefer [Releases DMG](https://github.com/roto31/StreamTV/releases) or `packaging/macos/install_macos.sh` (not `./install_macos.sh` at repo root).
+
 # Scripts
 
 Utility scripts for managing StreamTV.

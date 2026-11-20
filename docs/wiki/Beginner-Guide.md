@@ -67,7 +67,7 @@ A **collection** is a group of related media items. For example, "1980 Olympics 
 
 2. **Run the Installer**
    ```bash
-   bash install_macos.sh
+   bash packaging/macos/install_macos.sh
    ```
    - The script will:
      - Install Python and required tools

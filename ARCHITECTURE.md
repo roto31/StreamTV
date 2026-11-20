@@ -16,22 +16,25 @@ flowchart TD
     subgraph Clients
         PLEX["Plex / Emby / Jellyfin"]
         KODI["Kodi / VLC"]
-        BROWSER["Web browser"]
+        BROWSER["Web browser /player"]
     end
 
     subgraph App["StreamTV FastAPI app (streamtv/)"]
         MW["Middleware: CORS, security headers, CSRF, API key, rate limit"]
         subgraph Routers
-            HDHR["HDHomeRun router: discover / lineup / auto stream"]
-            IPTV["IPTV router: M3U, XMLTV, HLS"]
-            API["REST API: channels, media, playlists, import, settings"]
-            WEB["Web UI: dashboard, channels, player"]
+            HDHR["HDHomeRun: discover / lineup / auto + optional video hold"]
+            IPTV["IPTV: M3U, XMLTV, channel TS"]
+            API["REST: channels, import, backup, builder, cache, settings, AI"]
+            WEB["Web UI + GET /player"]
+            PLAYER["Player remux: GET /player/live/{n}.ts"]
         end
         SSDP["SSDP server (UDP 1900 discovery)"]
         CM["ChannelManager -> ChannelStream (continuous playout)"]
         SCHED["Scheduling: ScheduleParser + ScheduleEngine"]
-        STREAMER["MPEGTSStreamer (FFmpeg transcode to MPEG-TS)"]
+        STREAMER["MPEGTSStreamer (FFmpeg -> MPEG-TS)"]
         SM["StreamManager (source detection + URL resolution)"]
+        CACHE["Optional cache: TunarrRAM youtube_full_cache"]
+        HOLD["Optional Plex video hold (native re-hold; YT wait default off)"]
         subgraph Adapters
             YT["YouTubeAdapter (yt-dlp)"]
             AO["ArchiveOrgAdapter"]
@@ -44,18 +47,23 @@ flowchart TD
 
     EXT["Source origins: archive.org, youtube.com, pbs.org, Plex server"]
     FFMPEG["FFmpeg / FFprobe"]
+    HEAL["LaunchAgents: TunarrRAM heal, yt-dlp upgrade; soft deploy stream-restart"]
 
     PLEX -->|discover/lineup/tune| HDHR
     KODI -->|M3U / XMLTV| IPTV
     BROWSER --> WEB
-    BROWSER --> IPTV
+    BROWSER --> PLAYER
+    PLAYER --> CM
 
-    HDHR --> CM
+    HDHR --> HOLD
+    HOLD --> CM
     IPTV --> CM
     CM --> SCHED
     CM --> STREAMER
     SCHED --> DB
     STREAMER --> SM
+    SM --> CACHE
+    CACHE --> YT
     SM --> YT & AO & PBS & PX
     YT & AO & PBS & PX --> EXT
     STREAMER --> FFMPEG
@@ -63,6 +71,7 @@ flowchart TD
     API --> IMP
     IMP --> DB
     App --> SSDP
+    HEAL -.-> CM
 ```
 
 ## 2. HDHomeRun streaming (how Plex tunes a channel)
@@ -183,7 +192,9 @@ flowchart TD
 | Plex / Emby / Jellyfin (tuner) | `/discover.json`, `/lineup.json`, `/hdhomerun/auto/v{n}` | MPEG-TS (`video/mp2t`) |
 | Kodi / VLC / IPTV clients | `/iptv/channels.m3u`, `/iptv/xmltv.xml` | M3U + XMLTV EPG |
 | Direct channel stream | `/iptv/channel/{n}.ts` | MPEG-TS |
-| Browser preview player | `/player`, `/iptv/channel/{n}.m3u8` | HLS (needs AAC audio; see Known Issues) |
+| Browser preview player | `/player`, `/player/live/{n}.ts` | MPEG-TS remux via mpegts.js (not HLS) |
+| Soft deploy (no uvicorn reload) | `POST /api/channels/.../stream-restart*` | Recycle channel streams in-process |
+| Settings backup | `/api/backup/*` | Zip export/import of settings + DB metadata |
 
 ## 6. Metadata enrichment (guide quality)
 

@@ -20,12 +20,14 @@ Run these diagnostic scripts directly from this page to check your installation:
 
 | Symptom | Guide |
 |---------|--------|
-| Schedule / playout lag | [EPG sync classes](../guides/EPG_SYNC_CLASSES.md) |
-| Keepalive-only / stalled FFmpeg | [FFmpeg stall keepalive](../guides/FFMPEG_STALL_KEEPALIVE.md) |
-| TunarrRAM full | [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
-| Loudness / loudnorm CPU | [LoudNorm fleet audio](../guides/LOUDNORM_FLEET_AUDIO.md) |
-| AI recovery / Ollama | [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md) |
-| Streaming detail | [STREAMING_ISSUES](../troubleshooting/STREAMING_ISSUES.md) |
+| Schedule / playout lag | [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md) |
+| Keepalive-only / stalled FFmpeg | [FFmpeg stall keepalive](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
+| TunarrRAM full | [TunarrRAM recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
+| Plex spinner / YouTube cold cache | [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) |
+| Soft restart (no kickstart) | [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) |
+| Loudness / loudnorm CPU | [LoudNorm fleet audio](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
+| AI recovery / Ollama | [Foundation Models recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/FOUNDATION_MODELS_RECOVERY.md) |
+| Streaming detail | [STREAMING_ISSUES](https://github.com/roto31/StreamTV/blob/main/docs/troubleshooting/STREAMING_ISSUES.md) |
 
 ## Using the Web Interface for Troubleshooting
 
@@ -195,7 +197,9 @@ Install Ollama for AI-powered troubleshooting:
 4. View streaming logs for errors
 5. Test stream URL directly:
    ```bash
-   curl http://localhost:8410/api/channels/{channel_id}/stream
+   # Prefer HDHomeRun tune or soft-restart (dead route removed):
+   curl -o /dev/null -w '%{http_code} %{size_download}\n' 'http://127.0.0.1:8410/auto/v{channel_number}'
+   curl -X POST 'http://127.0.0.1:8410/api/channels/by-number/{channel_number}/stream-restart'
    ```
 
 ### Video Buffering or Stuttering
@@ -391,7 +395,9 @@ Test individual components:
 
 3. **Test Streaming**:
    ```bash
-   curl http://localhost:8410/api/channels/{channel_id}/stream
+   # Prefer HDHomeRun tune or soft-restart (dead route removed):
+   curl -o /dev/null -w '%{http_code} %{size_download}\n' 'http://127.0.0.1:8410/auto/v{channel_number}'
+   curl -X POST 'http://127.0.0.1:8410/api/channels/by-number/{channel_number}/stream-restart'
    ```
 
 ### Log Analysis

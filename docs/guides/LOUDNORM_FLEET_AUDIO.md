@@ -3,7 +3,10 @@
 StreamTV can apply a one-pass FFmpeg `loudnorm` + peak limiter profile across channels
 so Plex/Live TV levels stay consistent and true-peak spikes are reduced.
 
-Related: [FFmpeg profiles](FFMPEG_PROFILES.md).
+**Production default: off.** Do not enable fleet-wide LoudNorm while isolation/CPU work is
+open; Soft Deploy / Issue 57 keep LoudNorm policy tier **off** until an operator change window.
+
+Related: [FFmpeg profiles](FFMPEG_PROFILES.md), [Soft deploy](SOFT_DEPLOY.md).
 
 ## What it does
 

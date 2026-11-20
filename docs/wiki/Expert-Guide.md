@@ -20,84 +20,51 @@
 
 ## System Architecture
 
+**Canonical Mermaid diagrams:** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md)  
+(ASCII below is a tip **1.4.2** summary — trust Mermaid if they diverge.)
+
 ### High-Level Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Client Layer                            │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
-│  │   Web    │  │   Plex   │  │  Emby    │  │ Jellyfin │      │
-│  │ Browser  │  │          │  │          │  │          │      │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘      │
-└───────┼─────────────┼─────────────┼─────────────┼─────────────┘
-        │             │             │             │
-        │ HTTP        │ HDHomeRun   │ HDHomeRun   │ HDHomeRun
-        │             │ Protocol    │ Protocol    │ Protocol
-┌───────▼─────────────▼─────────────▼─────────────▼─────────────┐
-│                    FastAPI Application Layer                   │
-│  ┌──────────────────────────────────────────────────────────┐ │
-│  │                    Main Application                      │ │
-│  │  - Lifespan Management                                   │ │
-│  │  - Middleware (CORS, Logging)                            │ │
-│  │  - Router Registration                                   │ │
-│  └──────────────────────────────────────────────────────────┘ │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │  API Router  │  │  IPTV Router │  │ HDHomeRun    │        │
-│  │              │  │              │  │ Router       │        │
-│  │ - Channels   │  │ - M3U        │  │ - Discover   │        │
-│  │ - Media      │  │ - XMLTV      │  │ - Lineup     │        │
-│  │ - Collections│  │ - HLS        │  │ - Stream     │        │
-│  │ - Playlists  │  │ - Direct     │  │ - SSDP       │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘        │
-└───────────────────────────────┬───────────────────────────────┘
+│ Client Layer: Web /player · Plex/Emby/Jellyfin · IPTV clients │
+└───────┬──────────────────┬──────────────────┬───────────────────┘
+        │ HTTP UI/API      │ HDHomeRun tune   │ M3U / XMLTV
+┌───────▼──────────────────▼──────────────────▼───────────────────┐
+│ FastAPI: middleware · API (channels, import, backup, builder,   │
+│ cache, AI) · IPTV · HDHomeRun · /player live TS remux · SSDP  │
+└───────────────────────────────┬─────────────────────────────────┘
                                 │
-┌───────────────────────────────▼───────────────────────────────┐
-│                    Business Logic Layer                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │  Scheduling  │  │  Streaming    │  │  Importers   │        │
-│  │              │  │              │  │              │        │
-│  │ - Parser     │  │ - Manager    │  │ - Channel    │        │
-│  │ - Engine     │  │ - Adapters   │  │   Importer   │        │
-│  │ - Timeline   │  │ - MPEG-TS    │  │ - Validator  │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘        │
-│  ┌──────────────┐  ┌──────────────┐                          │
-│  │  Channel     │  │  Validation  │                          │
-│  │  Manager     │  │              │                          │
-│  │              │  │ - YAML       │                          │
-│  │ - Streams    │  │ - Schema     │                          │
-│  │ - Timeline   │  │ - Data       │                          │
-│  └──────────────┘  └──────────────┘                          │
-└───────────────────────────────┬───────────────────────────────┘
+┌───────────────────────────────▼─────────────────────────────────┐
+│ Playout: ChannelManager · ScheduleParser/Engine · MPEGTSStreamer│
+│ StreamManager + adapters (YT/Archive/PBS/Plex) · optional cache │
+│ (TunarrRAM) · optional Plex video hold · soft stream-restart    │
+└───────────────────────────────┬─────────────────────────────────┘
                                 │
-┌───────────────────────────────▼───────────────────────────────┐
-│                      Data Layer                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │  Database    │  │  File System  │  │  External    │        │
-│  │              │  │              │  │              │        │
-│  │ - SQLite     │  │ - YAML       │  │ - YouTube    │        │
-│  │ - SQLAlchemy │  │ - Logs       │  │ - Archive.org│        │
-│  │ - Models     │  │ - Config     │  │ - FFmpeg     │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘        │
-└───────────────────────────────────────────────────────────────┘
+┌───────────────────────────────▼─────────────────────────────────┐
+│ Data: SQLite · YAML schedules · config · heal LaunchAgents      │
+│ External: YouTube · Archive.org · PBS · Plex · FFmpeg           │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Request Flow
 
-**Web Request Flow:**
+**Web / player:**
 ```
-Browser → FastAPI → API Router → Business Logic → Database → Response
-```
-
-**Streaming Request Flow:**
-```
-Client → IPTV Router → Channel Manager → Schedule Engine →
-Stream Manager → YouTube/Archive.org → FFmpeg → MPEG-TS → Client
+Browser → /player → /player/live/{n}.ts (mpegts.js remux) → ChannelManager
 ```
 
-**HDHomeRun Request Flow:**
+**Streaming (IPTV TS):**
 ```
-Plex → HDHomeRun Router → Channel Manager → MPEG-TS Streamer →
-FFmpeg → Continuous Stream → Plex
+Client → /iptv/channel/{n}.ts → ChannelManager → StreamManager →
+FFmpeg MPEG-TS → Client
+```
+
+**HDHomeRun (Plex):**
+```
+Plex → /auto/v{n} or /hdhomerun/auto/v{n}
+  → optional video hold (YouTube wait opt-in; native re-hold opt-in)
+  → ChannelManager → MPEGTSStreamer → FFmpeg → Plex
 ```
 
 ---
@@ -108,66 +75,20 @@ FFmpeg → Continuous Stream → Plex
 
 ```
 streamtv/
-├── __init__.py                 # Package initialization
-├── main.py                     # FastAPI app entry point
-├── config.py                   # Configuration management
-│
-├── api/                        # API endpoints
-│   ├── __init__.py            # Router aggregation
-│   ├── channels.py            # Channel CRUD
-│   ├── media.py               # Media item management
-│   ├── collections.py         # Collection management
-│   ├── playlists.py           # Playlist management
-│   ├── schedules.py           # Schedule management
-│   ├── iptv.py                # IPTV streaming endpoints
-│   ├── import_api.py          # YAML import endpoints
-│   ├── playouts.py            # Playout information
-│   ├── settings.py            # Settings management
-│   └── schemas.py             # Pydantic schemas
-│
-├── database/                   # Database layer
-│   ├── __init__.py            # Database exports
-│   ├── session.py             # Session management
-│   └── models.py              # SQLAlchemy models
-│
-├── streaming/                  # Streaming system
-│   ├── __init__.py            # Streaming exports
-│   ├── stream_manager.py     # Unified stream interface
-│   ├── youtube_adapter.py     # YouTube streaming
-│   ├── archive_org_adapter.py # Archive.org streaming
-│   ├── mpegts_streamer.py     # MPEG-TS transcoding
-│   └── channel_manager.py     # Continuous stream management
-│
-├── scheduling/                 # Schedule system
-│   ├── __init__.py            # Scheduling exports
-│   ├── parser.py              # YAML schedule parser
-│   └── engine.py              # Schedule execution engine
-│
-├── hdhomerun/                  # HDHomeRun emulation
-│   ├── __init__.py            # HDHomeRun exports
-│   ├── api.py                 # HDHomeRun API endpoints
-│   └── ssdp_server.py         # SSDP discovery server
-│
-├── importers/                  # Import system
-│   ├── __init__.py            # Importer exports
-│   └── channel_importer.py    # Channel YAML importer
-│
-├── validation/                 # Validation system
-│   ├── __init__.py            # Validation exports
-│   └── validator.py           # YAML schema validation
-│
-├── utils/                      # Utilities
-│   ├── __init__.py            # Utility exports
-│   ├── macos_credentials.py   # macOS Keychain integration
-│   └── yaml_to_json.py        # YAML conversion
-│
-└── templates/                  # Web interface
-    ├── base.html              # Base template
-    ├── index.html             # Dashboard
-    ├── channels.html          # Channel management
-    ├── player.html            # Video player
-    ├── import.html            # Import interface
-    └── ...                    # Other templates
+├── main.py                     # FastAPI entry
+├── config.py
+├── api/                        # channels, media, playlists, import, builder,
+│                               # backup, cache, settings, ai, playouts, schemas…
+├── streaming/                  # ChannelManager, MPEGTSStreamer, StreamManager,
+│                               # adapters (youtube, archive, pbs, plex)  [FROZEN]
+├── scheduling/                 # parser, engine, timeline  [LOCKED]
+├── ffmpeg/                     # constants + command builders  [FROZEN]
+├── cache/                      # youtube_full_cache, TunarrRAM guards
+├── hdhomerun/                  # discover/lineup/auto + SSDP
+├── importers/                  # ChannelImporter
+├── validation/
+├── utils/
+└── templates/                  # Web UI + /player
 ```
 
 ### Key Classes and Their Responsibilities
@@ -449,81 +370,34 @@ CREATE TABLE playlist_items (
 
 ## Streaming Architecture
 
-### Stream Manager Architecture
+**Canonical diagrams / consumer endpoints:** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md)
 
-```python
+FFmpeg flag literals live only in `streamtv/ffmpeg/constants.py` (golden-tested). Do **not** copy historical flag lists from older wiki text.
+
+### Stream Manager (summary)
+
+```
 StreamManager
-├── detect_source(url) → StreamSource
-├── get_stream_url(url) → str
-└── get_media_info(url) → Dict
-    │
-    ├── YouTubeAdapter
-    │   ├── Uses yt-dlp
-    │   ├── Extracts direct stream URL
-    │   └── Handles geo-restrictions
-    │
-    └── ArchiveOrgAdapter
-        ├── Uses Archive.org API
-        ├── Handles authentication
-        └── Selects preferred format
+├── detect_source(url)
+├── get_stream_url(url) → str | (video_url, audio_url)
+└── adapters: YouTube · Archive.org · PBS · Plex
+Optional: TunarrRAM youtube_full_cache (local .mp4) before CDN
 ```
 
-### MPEG-TS Streaming
+### MPEG-TS / HDHomeRun
 
-**FFmpeg Command Structure:**
-```bash
-ffmpeg \
-  # Global options
-  -loglevel info \
-  # Input options (before -i)
-  -hwaccel videotoolbox \
-  -fflags +genpts+discardcorrupt+fastseek \
-  -flags +low_delay \
-  -probesize 1000000 \
-  -analyzeduration 2000000 \
-  -i <input_url> \
-  # Output options (after -i)
-  -threads 0 \
-  -c:v mpeg2video \
-  -b:v 4M \
-  -c:a mp2 \
-  -b:a 192k \
-  -f mpegts \
-  -flush_packets 1 \
-  -
+- `MPEGTSStreamer` builds commands from frozen helpers; Plex path is continuous playout MPEG-TS.
+- Optional **video hold** on tune (YouTube wait default **off**; native re-hold opt-in).
+- Soft deploy: `POST .../stream-restart*` recycles streams without uvicorn restart.
+
+### Channel Manager (summary)
+
 ```
-
-**Process Management:**
-- Async subprocess execution
-- Real-time stderr monitoring
-- Graceful cleanup on errors
-- Process lifecycle tracking
-
-### Channel Manager Architecture
-
-```python
-ChannelManager
-├── start_all_channels()
-├── stop_all_channels()
-├── get_channel_stream(channel_number)
-└── _start_channel(channel)
-    │
-    └── ChannelStream
-        ├── start() → Initialize timeline
-        ├── stop() → Cleanup
-        ├── get_stream() → Client connection
-        └── _run_continuous_stream()
-            ├── Load schedule items
-            ├── Calculate start position
-            ├── Stream items sequentially
-            └── Broadcast to clients
+ChannelManager → ChannelStream
+  continuous timeline from playout_start_time + schedule durations
+  item starts at 0:00 of current file (no mid-program -ss)
+  broadcast MPEG-TS to HDHomeRun / IPTV / player remux clients
 ```
-
-**Timeline System:**
-- `_playout_start_time`: Midnight of channel creation day
-- `_current_item_index`: Current item in schedule
-- `_get_current_position()`: Calculate position from system time
-- Continuous timeline (doesn't reset on loops)
 
 ---
 

@@ -43,7 +43,7 @@ Building a channel requires a streaming adapter in the playout engine. Until `pl
 
 See also:
 
-- [Channel Builder](channel-builder.md) (in-tree docs)
+- [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) (in-tree docs)
 - [Authentication](Authentication.md)
 - [API Reference](API-Reference.md)
 

@@ -2,6 +2,8 @@
 
 Complete documentation for StreamTV on Linux.
 
+> **Canonical guides (prefer these):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) · [Player preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Auto-Healer](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (defaults **off**). This page is a large historical amalgam — if it conflicts, trust the linked guides.
+
 ## Quick Links
 
 ### Overview
@@ -482,16 +484,16 @@ Complete guide to all StreamTV documentation, organized by topic with descriptio
 
 ### Advanced Features
 
-**Location**: [features/](features/)
+**Location**: [features/](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_INTEGRATION.md)
 
-- **[AUTO_HEALER.md](features/AUTO_HEALER.md)** - AI-powered auto-healing system that automatically monitors logs, detects errors, and applies fixes using Ollama AI
-- **[ERSATZTV_INTEGRATION.md](features/ERSATZTV_INTEGRATION.md)** - ErsatzTV integration guide and setup instructions
-- **[ERSATZTV_COMPLETE_INTEGRATION.md](features/ERSATZTV_COMPLETE_INTEGRATION.md)** - Complete ErsatzTV integration status, all integrated features, and compatibility confirmation
+- **[AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md)** — optional AI-assisted recovery; production defaults **`enabled: false`**, **`apply_fixes: false`** (advise / dry-run). Prefer in-tree heal scripts.
+- **[ERSATZTV_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_INTEGRATION.md)** - ErsatzTV integration guide and setup instructions
+- **[ERSATZTV_COMPLETE_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_COMPLETE_INTEGRATION.md)** - Complete ErsatzTV integration status, all integrated features, and compatibility confirmation
 
 ### External Integrations
 
 - **Plex** → [plex/](plex/) - Complete Plex Media Server integration guides
-- **ErsatzTV** → [features/ERSATZTV_COMPLETE_INTEGRATION.md](features/ERSATZTV_COMPLETE_INTEGRATION.md)
+- **ErsatzTV** → [features/ERSATZTV_COMPLETE_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_COMPLETE_INTEGRATION.md)
 
 ---
 
@@ -1981,7 +1983,9 @@ Common issues with video streaming and playback in StreamTV.
 
 4. **Test stream URL directly:**
    ```bash
-   curl http://localhost:8410/api/channels/{channel_id}/stream
+   # Prefer HDHomeRun tune or soft-restart (dead route removed):
+   curl -o /dev/null -w '%{http_code} %{size_download}\n' 'http://127.0.0.1:8410/auto/v{channel_number}'
+   curl -X POST 'http://127.0.0.1:8410/api/channels/by-number/{channel_number}/stream-restart'
    ```
    Or use channel number:
    ```bash

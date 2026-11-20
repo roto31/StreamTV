@@ -2,6 +2,8 @@
 
 Complete installation documentation for all platforms.
 
+> **Preferred install:** signed [macOS DMG releases](https://github.com/roto31/StreamTV/releases). CLI path: `bash packaging/macos/install_macos.sh` (legacy `./install_macos.sh` references below may be stale). Production LaunchAgent: `com.streamtv` with WorkingDirectory = repo. See [INSTALLATION.md](https://github.com/roto31/StreamTV/blob/main/docs/INSTALLATION.md).
+
 ## Quick Start
 
 # StreamTV Quick Start Guide for macOS

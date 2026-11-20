@@ -54,6 +54,12 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Plex video hold | [guides/PLEX_VIDEO_HOLD.md](guides/PLEX_VIDEO_HOLD.md) |
 | TunarrRAM playout recovery | [guides/TUNARRRAM_PLAYOUT_RECOVERY.md](guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | Soft deploy (no full kickstart) | [guides/SOFT_DEPLOY.md](guides/SOFT_DEPLOY.md) |
+| Browser `/player` preview | [guides/PLAYER_PREVIEW.md](guides/PLAYER_PREVIEW.md) |
+| Fleet probe protocol | [guides/FLEET_PROBE_PROTOCOL.md](guides/FLEET_PROBE_PROTOCOL.md) |
+| Add Tunarr in Plex | [guides/ADD_TUNARR_IN_PLEX.md](guides/ADD_TUNARR_IN_PLEX.md) |
+| FFmpeg profiles | [guides/FFMPEG_PROFILES.md](guides/FFMPEG_PROFILES.md) |
+| YouTube geo-blocks | [guides/YOUTUBE_GEO_BLOCKS.md](guides/YOUTUBE_GEO_BLOCKS.md) |
+| Vimeo bedrock gate | [guides/VIMEO_BEDROCK_GATE.md](guides/VIMEO_BEDROCK_GATE.md) |
 | Lessons Learned (Issues 1–61) | [../LESSONS_LEARNED.md](../LESSONS_LEARNED.md) |
 | Channel Builder | [channel-builder.md](channel-builder.md) |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
@@ -62,6 +68,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | PBS + Playwright | [guides/PBS_PLAYWRIGHT.md](guides/PBS_PLAYWRIGHT.md) |
 | Archive.org operator | [guides/ARCHIVE_ORG_OPERATOR.md](guides/ARCHIVE_ORG_OPERATOR.md) |
 | StreamTV + Tunarr hybrid | [guides/STREAMTV_TUNARR_HYBRID.md](guides/STREAMTV_TUNARR_HYBRID.md) |
+| Sanitization policy (public sync) | [SANITIZATION_POLICY.md](SANITIZATION_POLICY.md) |
 
 ## Architecture diagrams
 

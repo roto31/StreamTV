@@ -49,7 +49,7 @@ Signed googlevideo URLs can 403 mid-item. Mitigations operators use:
 
 4. **Test stream URL directly:**
    ```bash
-   curl http://localhost:8410/api/channels/{channel_id}/stream
+   curl -o /tmp/ch.ts -m 15 "http://localhost:8410/auto/v{channel_number}"
    ```
    Or use channel number:
    ```bash
@@ -320,7 +320,7 @@ logging:
 
 2. **Test API endpoint:**
    ```bash
-   curl http://localhost:8410/api/channels/1/stream > test.ts
+   curl -o test.ts -m 15 "http://localhost:8410/auto/v80"
    ```
 
 3. **Monitor FFmpeg:**

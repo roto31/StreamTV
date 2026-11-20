@@ -5,20 +5,24 @@
 
 **StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
-> **Source code** is maintained in a private repository. Culled, sanitized code may be published later via `scripts/sync_public_code.sh` (see [Sanitization policy](docs/public-repo/SANITIZATION_POLICY.md)). This public repo provides documentation, wiki, and release downloads.
+> **Source:** Canonical development is private [`roto31/StreamTV-source`](https://github.com/roto31/StreamTV-source). This public repo publishes **sanitized documentation**, the **GitHub Wiki**, **signed macOS releases**, and a **culled copy of `streamtv/`** (plus tests/examples) via `scripts/sync_public_code.sh` / `scripts/sync_public_docs.sh`. Channel inventory YAML, schedules, cookies, and secrets are never published — see [Sanitization policy](docs/SANITIZATION_POLICY.md).
 
 ## Features
 
-- Direct streaming from YouTube and Archive.org
+- Direct streaming from YouTube and Archive.org (plus PBS / Plex adapters)
 - HDHomeRun emulation for Plex, Emby, and Jellyfin
-- YAML-based schedules with commercial breaks
-- Cross-platform: macOS and Linux (MIT — community ports welcome)
-- IPTV: M3U playlists and XMLTV EPG
+- YAML-based schedules with commercial breaks; M3U + XMLTV EPG
+- In-browser `/player` preview (mpegts.js live TS) with VLC handoff
+- Soft per-channel stream restart without full server kickstart
+- Plex Live TV video hold (H.264+AAC placeholder; YouTube wait-phase opt-in)
+- Portable backup / restore (Settings + `/api/backup`)
+- Optional Foundation Models / Auto-Healer and LoudNorm (defaults **off**)
+- Cross-platform: macOS (signed DMG) and Linux (community ports welcome)
 - Passkey and OAuth support for YouTube
 
 ## Quick start
 
-1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases)
+1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (current tip: **v1.4.2**)
 2. Read the [Installation Guide](docs/wiki/Installation-Guide.md)
 3. Follow the [Quick Start](docs/installation/QUICK_START.md) in docs
 
@@ -30,6 +34,10 @@
 | Complete topic map | [docs/INDEX.md](docs/INDEX.md) |
 | Wiki home | [GitHub Wiki](https://github.com/roto31/StreamTV/wiki) |
 | Architecture (Mermaid) | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| Browser `/player` preview | [docs/guides/PLAYER_PREVIEW.md](docs/guides/PLAYER_PREVIEW.md) |
+| Soft deploy | [docs/guides/SOFT_DEPLOY.md](docs/guides/SOFT_DEPLOY.md) |
+| Plex video hold | [docs/guides/PLEX_VIDEO_HOLD.md](docs/guides/PLEX_VIDEO_HOLD.md) |
+| Backup and restore | [docs/guides/BACKUP_RESTORE.md](docs/guides/BACKUP_RESTORE.md) |
 | Metadata enrichment | [docs/guides/METADATA_ENRICHMENT.md](docs/guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [docs/guides/EPG_SYNC_CLASSES.md](docs/guides/EPG_SYNC_CLASSES.md) |
 | Channel Builder | [docs/channel-builder.md](docs/channel-builder.md) |
@@ -37,6 +45,7 @@
 | API reference | [docs/API.md](docs/API.md) |
 | Plex integration | [docs/wiki/Plex-Integration.md](docs/wiki/Plex-Integration.md) |
 | Troubleshooting | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) |
+| Sanitization policy | [docs/SANITIZATION_POLICY.md](docs/SANITIZATION_POLICY.md) |
 
 ### Platform guides (wiki)
 

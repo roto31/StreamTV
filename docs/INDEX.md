@@ -12,6 +12,10 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 - [Documentation Index](wiki/Documentation-Index.md)
 - [macOS](wiki/macOS.md) · [Linux](wiki/Linux.md)
 - [Beginner](wiki/Beginner-Guide.md) · [Intermediate](wiki/Intermediate-Guide.md) · [Expert](wiki/Expert-Guide.md)
+- [Installation](wiki/Installation-Guide.md) · [Schedules](wiki/Schedules.md) · [Logging](wiki/Logging.md)
+- [Authentication](wiki/Authentication.md) · [Authentication System](wiki/Authentication-System.md)
+- [Archive Parser](wiki/Archive-Parser.md) · [Channel Builder Custom Sources](wiki/Channel-Builder-Custom-Sources.md)
+- [Scripts and Tools](wiki/Scripts-and-Tools.md) · [SwiftUI](wiki/SwiftUI.md) · [Implementation](wiki/Implementation.md)
 - [Plex](wiki/Plex-Integration.md) · [Troubleshooting](wiki/Troubleshooting.md) · [API](wiki/API-Reference.md)
 
 ---
@@ -51,6 +55,7 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 
 ### Operator guides (`guides/`)
 - [Core operator quickstart](guides/CORE_OPERATOR_QUICKSTART.md)
+- [Browser `/player` preview](guides/PLAYER_PREVIEW.md) — mpegts.js live TS; Plex path unchanged
 - [Backup and restore](guides/BACKUP_RESTORE.md) — automatic portable zip; new-machine restore
 - [Foundation Models recovery](guides/FOUNDATION_MODELS_RECOVERY.md) — StreamTVMac AI picker + bridge
 - [Auto-healer](AUTO_HEALER.md) — dual-backend FM/Ollama + approved heal scripts
@@ -316,6 +321,6 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
-**Last Updated**: 2026-09-19
-**Version**: 1.4.0
-**Status**: Complete — guides/, wiki/, and architecture Mermaid indexed (backup / FM / LoudNorm / stall / TunarrRAM)
+**Last Updated**: 2026-11-19
+**Version**: 1.4.2
+**Status**: Complete — guides/, wiki/, and architecture Mermaid indexed (player / soft deploy / hold / backup / FM / LoudNorm / stall / TunarrRAM)

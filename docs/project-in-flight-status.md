@@ -1,19 +1,19 @@
 # StreamTV — project in-flight status
 
-Rolling snapshot: **2026-11-19** (signed public DMG cut **`v1.4.1`**).
+Rolling snapshot: **2026-11-19** (signed public DMG **`v1.4.2`**; docs/wiki currency pass).
 
 | Field | Value |
 |-------|--------|
-| VERSION | 1.4.1 |
-| HEAD | `main` tip tagged `v1.4.1` |
-| Latest tag | `v1.4.1` |
-| Public DMG | https://github.com/roto31/StreamTV/releases/tag/v1.4.1 |
+| VERSION | 1.4.2 |
+| HEAD | `main` tip tagged `v1.4.2` |
+| Latest tag | `v1.4.2` |
+| Public DMG | https://github.com/roto31/StreamTV/releases/tag/v1.4.2 |
 
-## Shipped in 1.4.1
+## Shipped in 1.4.2
 
-Material product work previously under `CHANGELOG.md` **`## [Unreleased]`** moved to **`## [1.4.1]`**, including `/player` preview, holiday channel packs + icons, Plex video hold / TunarrRAM / soft-deploy hardenings, and related operator docs. Public sanitized notes: `docs/public-repo/CHANGELOG.md`.
+Release packaging hardenings (DMG notarize soft-fail after app staple; flaky YouTube expiry test). Prior **1.4.1** cut included `/player` preview, holiday channel packs, Plex video hold / TunarrRAM / soft-deploy operator guides. Public sanitized notes: `docs/public-repo/CHANGELOG.md`.
 
-**Next:** Confirm Release workflow green → promote prerelease if needed → clean-Mac `DISTRIBUTION_CHECKLIST.md` smoke when convenient.
+**Next:** Keep public docs/wiki synced after platform changes (rule `streamtv-public-repo-sync`); clean-Mac `DISTRIBUTION_CHECKLIST.md` smoke when convenient.
 
 ## Do not touch without owner `APPROVED:`
 
@@ -25,4 +25,5 @@ Streaming bedrock / scheduling / HDHomeRun / cache behavioral keys / `api/iptv.p
 |------|--------|
 | What VERSION is tip | Root `VERSION` + this file |
 | What’s shipping next | `CHANGELOG.md` `[Unreleased]` |
+| Architecture diagrams | Root `ARCHITECTURE.md` (Mermaid; canonical) |
 | Historical Jul-2026 status | Superseded banners on `EXECUTIVE_SUMMARY.md` / dated status reports |

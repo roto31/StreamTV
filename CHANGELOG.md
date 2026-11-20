@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Docs
+- Public docs and GitHub wiki refreshed to tip **1.4.2** (player/backup/FM/soft-restart API, hold/TunarrRAM/LoudNorm/AutoHealer defaults, ARCHITECTURE Mermaid + wiki absolute guide links).
+
 ## [1.4.2] - 2026-11-19
 
 ### Fixed
@@ -36,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Godzilla English overlay stall warnings** — Live subtitle overlay no longer logs false “FFmpeg stalled” warnings while video is still flowing — see [FFmpeg stall / keepalive](docs/guides/FFMPEG_STALL_KEEPALIVE.md).
 - **Softer channel restarts** — Operators can refresh Live TV channel streams without restarting the whole StreamTV server — see [Soft deploy](docs/guides/SOFT_DEPLOY.md).
 - **Phase 2 ops** — Cache waits for the RAM disk if it is missing at boot; SSDP “no route” spam is quieted; a small resource log samples CPU/memory; Nature (1982) removed from the Live TV lineup until guide lag is fixed.
-- **RAM cache auto-empty at 55% full** — When the TunarrRAM volume fills past about half, StreamTV’s heal job clears cached files except whatever is actively playing — see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
 - **YouTube music mid-stream 403s** — With TunarrRAM headroom and the free-space healer running, YouTube items download to local cache before playout again — see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
 - **macOS app no longer fights the production server** — Opening StreamTV.app while the LaunchAgent is already on port 8410 attaches to that server instead of spawning a second copy.
 - **Safer stalled-FFmpeg healer** — External stall cleanup no longer kills subtitle overlay encodes that are quietly busy (e.g. Godzilla English burn). See [FFmpeg stall / keepalive](docs/guides/FFMPEG_STALL_KEEPALIVE.md).

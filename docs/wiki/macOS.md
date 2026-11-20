@@ -2,6 +2,8 @@
 
 Complete documentation for StreamTV on macOS.
 
+> **Canonical guides (prefer these):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) · [Player preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Backup](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) · [Auto-Healer](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (production **defaults off**). This page is a large historical amalgam — if it conflicts, trust the linked guides.
+
 ## Quick Links
 
 ### Overview
@@ -16,11 +18,11 @@ On first launch after Python setup (or in **Settings → AI Self-Recovery**), ch
 - **Ollama** (optional on any supported macOS)
 - **No AI** — deterministic heal scripts only
 
-See [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md) and [Auto-healer](../AUTO_HEALER.md).
+**Production:** `auto_healer.enabled` and `apply_fixes` default **false** (advise-only until an operator change window). See [Foundation Models recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/FOUNDATION_MODELS_RECOVERY.md) and [Auto-Healer](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md).
 
 ### Backup and restore
 
-Automatic portable zips and first-launch restore: [Backup and restore](../guides/BACKUP_RESTORE.md).
+Automatic portable zips and first-launch restore: [Backup and restore](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md).
 
 ## What's Included
 
@@ -31,9 +33,13 @@ Automatic portable zips and first-launch restore: [Backup and restore](../guides
 
 ## Quick Installation
 
+**Preferred:** install the signed DMG from [Releases](https://github.com/roto31/StreamTV/releases) (tip **v1.4.2**).
+
+From a source checkout:
+
 1. **Run the installer:**
    ```bash
-   ./install_macos.sh
+   bash packaging/macos/install_macos.sh
    ```
 
 2. **Start the server:**
@@ -42,8 +48,7 @@ Automatic portable zips and first-launch restore: [Backup and restore](../guides
    ```
 
 3. **Access the web interface:**
-   Open http://localhost:8410 in your browser
-
+   Open http://localhost:8410 in your browser (`/player` for browser preview)
 ## Key Features
 
 ### HDHomeRun Emulation
@@ -414,16 +419,16 @@ Complete guide to all StreamTV documentation, organized by topic with descriptio
 
 ### Advanced Features
 
-**Location**: [features/](features/)
+**Location**: [features/](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_INTEGRATION.md)
 
-- **[AUTO_HEALER.md](features/AUTO_HEALER.md)** - AI-powered auto-healing system that automatically monitors logs, detects errors, and applies fixes using Ollama AI
-- **[ERSATZTV_INTEGRATION.md](features/ERSATZTV_INTEGRATION.md)** - ErsatzTV integration guide and setup instructions
-- **[ERSATZTV_COMPLETE_INTEGRATION.md](features/ERSATZTV_COMPLETE_INTEGRATION.md)** - Complete ErsatzTV integration status, all integrated features, and compatibility confirmation
+- **[AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md)** — optional AI-assisted recovery; production defaults **`enabled: false`**, **`apply_fixes: false`** (advise / dry-run). Prefer in-tree heal scripts.
+- **[ERSATZTV_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_INTEGRATION.md)** - ErsatzTV integration guide and setup instructions
+- **[ERSATZTV_COMPLETE_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_COMPLETE_INTEGRATION.md)** - Complete ErsatzTV integration status, all integrated features, and compatibility confirmation
 
 ### External Integrations
 
 - **Plex** → [plex/](plex/) - Complete Plex Media Server integration guides
-- **ErsatzTV** → [features/ERSATZTV_COMPLETE_INTEGRATION.md](features/ERSATZTV_COMPLETE_INTEGRATION.md)
+- **ErsatzTV** → [features/ERSATZTV_COMPLETE_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_COMPLETE_INTEGRATION.md)
 
 ---
 
@@ -1828,7 +1833,9 @@ Common issues with video streaming and playback in StreamTV.
 
 4. **Test stream URL directly:**
    ```bash
-   curl http://localhost:8410/api/channels/{channel_id}/stream
+   # Prefer HDHomeRun tune or soft-restart (dead route removed):
+   curl -o /dev/null -w '%{http_code} %{size_download}\n' 'http://127.0.0.1:8410/auto/v{channel_number}'
+   curl -X POST 'http://127.0.0.1:8410/api/channels/by-number/{channel_number}/stream-restart'
    ```
    Or use channel number:
    ```bash

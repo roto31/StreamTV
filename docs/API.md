@@ -283,6 +283,65 @@ GET /iptv/stream/{media_id}?access_token=TOKEN
 
 Streams a media item directly.
 
+## Browser player preview
+
+Not under `/api`. See [Player preview](guides/PLAYER_PREVIEW.md).
+
+```
+GET /player
+GET /player/live/{channel_number}.ts
+```
+
+HTML UI and mpegts.js live TS remux of continuous playout. Plex HDHomeRun paths are unchanged.
+
+## Channel stream soft-restart
+
+```
+POST /api/channels/{channel_id}/stream-restart
+POST /api/channels/by-number/{channel_number}/stream-restart
+POST /api/channels/stream-restart-all
+```
+
+Recycles channel FFmpeg streams inside the running server (no uvicorn kickstart).
+See [Soft deploy](guides/SOFT_DEPLOY.md).
+
+## Backup and restore
+
+```
+GET  /api/backup/status
+POST /api/backup/now
+GET  /api/backup/latest
+POST /api/backup/restore
+```
+
+Portable zip backups (config, SQLite, channel YAML, schedules, icons, cookies).
+UI: `GET /settings/backup`. See [Backup and restore](guides/BACKUP_RESTORE.md).
+
+## Foundation Models / AI status
+
+```
+GET  /foundation-models
+GET  /foundation-models/status
+POST /foundation-models/query
+POST /foundation-models/recover
+GET  /api/ai/status
+POST /api/ai/query
+```
+
+Optional Apple Foundation Models bridge / Ollama. **Production default: Auto-Healer off**
+(`auto_healer.enabled: false`). See [Auto-Healer](AUTO_HEALER.md).
+
+## HDHomeRun / tune (not under `/api`)
+
+```
+GET /discover.json
+GET /lineup.json
+GET /hdhomerun/auto/v{channel_number}
+GET /auto/v{channel_number}
+```
+
+MPEG-TS for Plex Live TV. Optional video hold: [Plex video hold](guides/PLEX_VIDEO_HOLD.md).
+
 ## Error Responses
 
 All errors follow this format:

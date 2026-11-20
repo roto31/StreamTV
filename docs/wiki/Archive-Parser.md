@@ -2,6 +2,8 @@
 
 Create channels from Archive.org collections automatically.
 
+> **Canonical playout path:** Archive adapter → StreamManager → MPEG-TS is documented in [ARCHITECTURE.md §4](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) and [ARCHIVE_ORG_OPERATOR.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_ORG_OPERATOR.md). UI ASCII boxes below describe the parser dialog only.
+
 ## Quick Reference
 
 # 🎯 Archive.org Collection Parser - Quick Reference

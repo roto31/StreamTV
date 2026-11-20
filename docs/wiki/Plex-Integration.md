@@ -2,6 +2,8 @@
 
 Complete Plex Media Server integration documentation.
 
+> **Canonical operator guides:** [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Fleet probe](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md) · [Add Tunarr in Plex](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md)
+
 ## Setup Guide
 
 # Plex API Integration - Setup Complete! ✅
