@@ -222,7 +222,11 @@ async def test_youtube_near_complete_403_does_not_restart():
     media_item.title = "Rodney Crowell - I Couldn't Leave You If I Tried"
     media_item.url = "https://www.youtube.com/watch?v=testvid01"
 
+    clock = {"t": 0.0}
+
     async def expire_only(url, codec_info, source=None, **kwargs):
+        # Simulate ~170s of wall time before the signed URL 403s.
+        clock["t"] += 170.0
         raise StreamURLExpiredError("expired")
         yield b""  # pragma: no cover
 
@@ -230,19 +234,10 @@ async def test_youtube_near_complete_403_does_not_restart():
     stream_manager = MagicMock()
     stream_manager.get_stream_url = AsyncMock()
 
-    original_monotonic = time.monotonic
-    base = original_monotonic()
-    call_n = [0]
+    from unittest.mock import patch
 
-    def fake_monotonic():
-        call_n[0] += 1
-        if call_n[0] == 1:
-            return base
-        return base + 170.0
-
-    time.monotonic = fake_monotonic
     chunks = []
-    try:
+    with patch("time.monotonic", side_effect=lambda: clock["t"]):
         async for chunk in streamer._transcode_with_youtube_expiry_retries(
             "https://stale.example/v",
             None,
@@ -253,8 +248,6 @@ async def test_youtube_near_complete_403_does_not_restart():
             tune_priority=True,
         ):
             chunks.append(chunk)
-    finally:
-        time.monotonic = original_monotonic
 
     assert chunks == []
     stream_manager.get_stream_url.assert_not_awaited()
