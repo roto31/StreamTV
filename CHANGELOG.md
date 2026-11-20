@@ -12,18 +12,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-19
+
 ### Added
 - **In-browser `/player` preview** — Channel preview uses mpegts.js against a remuxed live TS feed, with mid-join keyframe wait and a VLC open handoff. Plex / HDHomeRun tuning paths are unchanged.
 - **Vintage holiday channel packs** — New Year's (**1201**), Valentine's (**214**), Easter (**401**), Fourth of July (**704**), Halloween (**1031**), Thanksgiving (**1128**), plus Kids Christmas (**1225**), each with matching mid-century guide icons.
 - **Plex Live TV video hold** — Cold start and mid-show gaps send a real H.264+AAC placeholder instead of empty keepalive packets so Apple TV is less likely to bounce to the guide — see [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
+- **Channel 1954.1 — Godzilla Movies** — 30 Godzilla films from Archive.org in release-year order (1954–2004), with a channel guide icon. Guide listings use the movie title only. Disney Anthology remains channel 1954.
+- **Optional offline English burn for Archive.org** — Inventory checks every audio track for English first; optional idle burn tooling remains for rare titles without embedded English — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
+- **Optional Tunarr library export** — Export ready Archive.org cache files to a separate folder for Tunarr Local Media (does not change live TV) — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
 
 ### Fixed
 - **Channel 1989 guide titles** — Humanized Archive.org filename stems into readable guide titles (URLs / stream ids unchanged).
 - **YouTube wait-phase hold** — Default YouTube hold wrap is off to avoid cold-cache black/spinner; on-tune YouTube wait capped at **60s**; native re-hold remains opt-in. See [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
 - **TunarrRAM / Live TV black screen** — Universal TunarrRAM watchdog every 60 s (45% / **1.7 GiB** hard ceiling / 300 Mi free); YouTube full-cache under that ceiling; see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
 - **Video hold / return-to-guide** — YouTube full-cache channels get a wait-phase H.264+AAC hold on tune; Archive stays unwrapped. See [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
-
-### Fixed
 - **RAM cache download race** — YouTube full-cache prefetch pauses before the RAM disk is full and only downloads one file at a time — see [TunarrRAM recovery](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
 - **Godzilla English overlay stall warnings** — Live subtitle overlay no longer logs false “FFmpeg stalled” warnings while video is still flowing — see [FFmpeg stall / keepalive](docs/guides/FFMPEG_STALL_KEEPALIVE.md).
 - **Softer channel restarts** — Operators can refresh Live TV channel streams without restarting the whole StreamTV server — see [Soft deploy](docs/guides/SOFT_DEPLOY.md).
@@ -34,20 +37,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Safer stalled-FFmpeg healer** — External stall cleanup no longer kills subtitle overlay encodes that are quietly busy (e.g. Godzilla English burn). See [FFmpeg stall / keepalive](docs/guides/FFMPEG_STALL_KEEPALIVE.md).
 - **Weekly yt-dlp update** — Production restarts only when yt-dlp actually upgrades, not on every Sunday “already up to date” run.
 - **Foundation Models page** — Missing template returns a clear unavailable page instead of a blank server error.
-
-### Changed
-- **Godzilla Live TV English subtitles** — Channel 1954.1 again overlays embedded English DVD subtitles on Japanese-audio prints, with hardenings so Plex is less likely to stall — see [FFmpeg profiles](docs/guides/FFMPEG_PROFILES.md).
-
-### Fixed
 - **Plex Live TV guide reload** — Operator defaults and auto-reload now track the current Plex DVR id after PMS recreates the Live TV source (stale ids returned 404). See [Plex Live TV recovery](docs/plex/PLEX_LIVE_TV_RECOVERY.md).
 - **Auto-healer safety** — Automated fixes no longer rewrite streaming core files; repeated applies for the same error pattern are capped — see [Auto-Healer](docs/AUTO_HEALER.md).
 - **Stuck cache downloads** — Dead or auth-blocked YouTube/Archive.org downloads no longer retry forever on every tune; use the cache retry API after fixing cookies or removing bad items.
 - **Godzilla channel guide titles** — Each listing shows the movie name only, not the channel name as a series.
 
-### Added
-- **Channel 1954.1 — Godzilla Movies** — 30 Godzilla films from Archive.org in release-year order (1954–2004), with a channel guide icon. Guide listings use the movie title only. Disney Anthology remains channel 1954.
-- **Optional offline English burn for Archive.org** — Inventory checks every audio track for English first; optional idle burn tooling remains for rare titles without embedded English — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
-- **Optional Tunarr library export** — Export ready Archive.org cache files to a separate folder for Tunarr Local Media (does not change live TV) — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
+### Changed
+- **Godzilla Live TV English subtitles** — Channel 1954.1 again overlays embedded English DVD subtitles on Japanese-audio prints, with hardenings so Plex is less likely to stall — see [FFmpeg profiles](docs/guides/FFMPEG_PROFILES.md).
 - **Optional Tunarr library prefetch** — Download full Archive.org files into the Tunarr library folder from StreamTV channel inventory; re-scan Tunarr after apply — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
 
 ### Docs
