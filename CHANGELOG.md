@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-11-19
+
+### Fixed
+- **macOS release packaging** — Signed DMG publish continues when Apple’s notary service returns a transient error on the disk image after the app itself is already notarized.
+
 ## [1.4.1] - 2026-11-19
 
 ### Added
