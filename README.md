@@ -3,7 +3,7 @@
 [![Releases](https://img.shields.io/github/v/release/roto31/StreamTV)](https://github.com/roto31/StreamTV/releases)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**StreamTV** is a cross-platform IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
+**StreamTV** is an IPTV streaming platform that creates TV channels from online video sources like YouTube and Archive.org. Stream directly to Plex, Emby, Jellyfin, and HDHomeRun-compatible devices without requiring local media storage.
 
 > **Source:** Canonical development is private [`roto31/StreamTV-source`](https://github.com/roto31/StreamTV-source). This public repo publishes **sanitized documentation**, the **GitHub Wiki**, **signed macOS releases**, and a **culled copy of `streamtv/`** (plus tests/examples) via `scripts/sync_public_code.sh` / `scripts/sync_public_docs.sh`. Channel inventory YAML, schedules, cookies, and secrets are never published — see [Sanitization policy](docs/SANITIZATION_POLICY.md).
 
