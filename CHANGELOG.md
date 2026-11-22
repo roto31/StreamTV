@@ -18,8 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Collections UI** — Manual/Smart/Multi Collections page and `/api/collections` retired; use Playlists + Builder + Import.
 - **AI Recovery** — Foundation Models / Ollama / AutoHealer operator surface retired; ops healing remains scripts only.
 
+### Added
+- **Channel Creator MCP** — Optional stdio MCP for natural-language channel creation via Builder + soft-deploy tools — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md).
+
 ### Docs
-- Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces) on tip **1.4.2**.
+- Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces) and Channel Creator MCP guide on tip **1.4.2**.
 
 ## [1.4.2] - 2026-11-19
 
