@@ -18,7 +18,8 @@ Thank you for your interest in contributing to StreamTV! This document provides 
 
 ### Code Contributions
 
-**This repository (StreamTV-source) accepts macOS contributions only.** Linux port work belongs in the separate [StreamTV-linux](https://github.com/roto31/StreamTV-linux) repository. See [macOS tree protection](docs/MACOS_TREE_PROTECTION.md) and [Linux repo workflow](docs/LINUX_REPO_WORKFLOW.md).
+**This repository (StreamTV-source) is macOS-only.** There is no Linux product or
+maintained Linux fork. See [macOS tree protection](docs/MACOS_TREE_PROTECTION.md).
 
 1. Install git hooks (required):
    ```bash
@@ -132,21 +133,19 @@ See the [Expert Guide](https://github.com/roto31/StreamTV/wiki/Expert-Guide) for
 
 ## Distribution Updates
 
-If updating distribution files:
-- Test install scripts on target platform
-- Update platform-specific documentation
-- Verify all files are included in commit
-- Test the distribution package
+If updating macOS packaging:
+- Test install scripts on macOS
+- Update macOS documentation
+- Verify files are included in the commit
+- Prefer signed DMG release workflow for product cuts
 
 ### Building distributions
 
-Assemble platform packages from the canonical tree:
-
 ```bash
-python3 scripts/build_distributions.py macos linux
+python3 scripts/build_distributions.py macos
 ```
 
-Overlays live under `packaging/macos/` and `packaging/linux/`. Windows and container targets were removed; community ports are welcome under MIT.
+Overlay: `packaging/macos/` only. Linux packaging and the StreamTV-linux fork were removed.
 
 ## Questions?
 
