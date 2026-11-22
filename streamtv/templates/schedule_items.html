@@ -219,8 +219,9 @@
     <div class="divider"></div>
 
     <div class="info-banner" style="background: rgba(255, 149, 0, 0.1); border-left: 4px solid var(--warning); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
-        <strong>Playout authority:</strong> Edits saved here update the database only. Export to
-        <code>schedules/{number}.yml</code> before expecting playout changes.
+        <strong>Read-only (legacy DB view):</strong>
+        Create / update / delete / reorder via API return <strong>410 Gone</strong>.
+        Edit <code>schedules/{number}.yml</code> on disk for playout + XMLTV, then soft-restart the channel.
     </div>
     
     <div class="schedule-items-container">
@@ -233,13 +234,13 @@
                 </div>
             </div>
             <div class="schedule-actions-bar">
-                <button class="btn btn-primary" id="openItemModalButton">
+                <button class="btn btn-primary" id="openItemModalButton" disabled title="API returns 410 — edit YAML on disk">
                     <span class="material-icons" style="font-size: 18px;">add</span>
-                    Add Item
+                    Add Item (disabled)
                 </button>
-                <button class="btn btn-outlined" id="saveScheduleButton">
+                <button class="btn btn-outlined" id="saveScheduleButton" disabled title="API returns 410 — edit YAML on disk">
                     <span class="material-icons" style="font-size: 18px;">save</span>
-                    Save Schedule
+                    Save (disabled)
                 </button>
             </div>
         </div>

@@ -1,0 +1,54 @@
+Third-party acknowledgments
+===========================
+
+StreamTV is licensed under the MIT License (see LICENSE).
+
+The following projects inspired or optionally interoperate with StreamTV.
+StreamTV does **not** vendor their source trees into `streamtv/`. Acknowledgments
+are provided so origins are not misrepresented (zlib clause 1).
+
+
+ErsatzTV Legacy (zlib)
+----------------------
+Project: https://github.com/ErsatzTV/legacy  
+License: zlib (Copyright (c) Jason Dove — see upstream LICENSE)  
+Current ErsatzTV line: https://github.com/ErsatzTV/ErsatzTV  
+
+StreamTV’s schedule YAML patterns and directives such as `padToNext`, `padUntil`,
+`waitUntil`, `skipItems`, and `shuffleSequence` were inspired by the **legacy**
+ErsatzTV YAML scheduling model (now archived/deprecated upstream). The
+implementation in StreamTV is an independent Python reimplementation under
+`streamtv/scheduling/`, not a fork or redistribution of ErsatzTV source.
+
+
+Tunarr (zlib)
+-------------
+Project: https://github.com/chrisbenincasa/tunarr  
+License: zlib — see https://github.com/chrisbenincasa/tunarr?tab=Zlib-1-ov-file  
+Upstream LICENSE copyright line (as published): Copyright (c) 2020 Dan Ferguson,
+Victor Hugo Soliz Kuncar
+
+StreamTV may optionally talk to a separately installed Tunarr process via HTTP
+(`streamtv/integrations/tunarr_client.py`, `/api/integrations/tunarr/*`) and
+HDHomeRun-style proxying (`tuner_manager`). Tunarr source is not copied into
+this repository. The volume name “TunarrRAM” is a local StreamTV RAM-disk label
+only; it is not Tunarr software.
+
+
+zlib license text (for reference)
+---------------------------------
+This software is provided 'as-is', without any express or implied warranty. In
+no event will the authors be held liable for any damages arising from the use of
+this software.
+
+Permission is granted to anyone to use this software for any purpose, including
+commercial applications, and to alter it and redistribute it freely, subject to
+the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim
+   that you wrote the original software. If you use this software in a product,
+   an acknowledgment in the product documentation would be appreciated but is
+   not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
