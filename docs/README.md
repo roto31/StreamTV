@@ -63,7 +63,8 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Lessons Learned (Issues 1–61) | [../LESSONS_LEARNED.md](../LESSONS_LEARNED.md) |
 | Channel Builder (Archive.org + YouTube) | [channel-builder.md](channel-builder.md) |
 | Schedules (YAML authority; UI read-only) | [SCHEDULES.md](SCHEDULES.md) |
-| Channel Creator MCP (NL / Cursor / local models) | [guides/CHANNEL_CREATOR_MCP.md](guides/CHANNEL_CREATOR_MCP.md) |
+| Channel Creator MCP (NL + signal paths) | [guides/CHANNEL_CREATOR_MCP.md](guides/CHANNEL_CREATOR_MCP.md) |
+| Channel Creator MCP host wiring (Cursor / VS Code / Claude / local / ChatGPT) | [guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md) |

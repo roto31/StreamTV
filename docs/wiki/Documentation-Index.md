@@ -57,6 +57,7 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | FFmpeg stall / keepalive | [FFMPEG_STALL_KEEPALIVE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
 | Channel Builder | [channel-builder.md](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) |
 | Channel Creator MCP (NL + signal-path diagrams) | [guides/CHANNEL_CREATOR_MCP.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) · wiki [Channel-Creator-MCP](Channel-Creator-MCP) |
+| Channel Creator MCP host wiring | [guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) (Cursor, VS Code, Claude, local, ChatGPT) |
 | Import vs Builder | [IMPORT_VS_BUILDER.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [METADATA_ENRICHMENT.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [EPG_SYNC_CLASSES.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md) |

@@ -244,7 +244,8 @@ flowchart TD
 
 Optional stdio MCP (`mcp_streamtv/`, companion `mcp_archive_org/`) lets an AI host
 create channels via the Builder API without loading streaming bedrock into context.
-Full diagrams and host wiring: [docs/guides/CHANNEL_CREATOR_MCP.md](docs/guides/CHANNEL_CREATOR_MCP.md).
+Full diagrams: [docs/guides/CHANNEL_CREATOR_MCP.md](docs/guides/CHANNEL_CREATOR_MCP.md).  
+Host wiring (Cursor / VS Code / Claude / local / ChatGPT): [docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
 
 ```mermaid
 flowchart TD

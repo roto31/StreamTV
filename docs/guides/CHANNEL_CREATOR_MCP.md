@@ -223,44 +223,29 @@ export STREAMTV_BASE_URL=http://127.0.0.1:8410
 python3 -m mcp_streamtv.main
 ```
 
-### Cursor
+**Full per-host wiring (Cursor, VS Code, Claude Desktop, ChatGPT deferred, local models)
+with diagrams:** [CHANNEL_CREATOR_MCP_HOST_WIRING.md](CHANNEL_CREATOR_MCP_HOST_WIRING.md)
 
-```json
-{
-  "mcpServers": {
-    "streamtv": {
-      "command": "python3",
-      "args": ["-m", "mcp_streamtv.main"],
-      "cwd": "/path/to/StreamTV",
-      "env": { "STREAMTV_BASE_URL": "http://127.0.0.1:8410" }
-    },
-    "archive-org": {
-      "command": "python3",
-      "args": ["-m", "mcp_archive_org.main"],
-      "cwd": "/path/to/StreamTV"
-    }
-  }
-}
+```mermaid
+flowchart LR
+  Cursor --> MCP["mcp_streamtv"]
+  VSCode["VS Code"] --> MCP
+  Claude["Claude Desktop"] --> MCP
+  Local["Local Qwen3 / Llama"] --> MCP
+  ChatGPT["ChatGPT deferred"] -.-> Bridge["Future HTTPS bridge"]
+  MCP --> API["StreamTV :8410"]
+  Bridge -.-> API
 ```
 
-Enable the **streamtv-channel-creator** skill when creating channels.
+| Host | Fit | Start here |
+|------|-----|------------|
+| Cursor | Best | MCP settings + `streamtv-channel-creator` skill |
+| VS Code (Continue / Cline) | Good | Same stdio MCP + intake system rule |
+| Claude Desktop | Good | `claude_desktop_config.json` + prompt `channel_intake` |
+| Local (Ollama) | Good @ Qwen3 32B+ | Same MCP; see model table in host-wiring guide |
+| ChatGPT | Deferred | Needs authenticated remote Actions/MCP — not LAN stdio |
 
-### Claude Desktop
-
-Same stdio server entry in `claude_desktop_config.json`. Use prompt `channel_intake`
-or read `streamtv://prompts/channel-intake`.
-
-### VS Code (Continue / Cline)
-
-Attach the same MCP and the intake prompt as a system rule.
-
-### Local models
-
-| Hardware | Recommended | Notes |
-|----------|-------------|--------|
-| ~20–24 GB | **Qwen3 32B** | Best default for multi-step Builder |
-| ~40+ GB | **Llama 3.3 70B** Q4 | Highest reliability; slower |
-| ~8–16 GB | **Qwen3 8B** | Stricter confirm gates; one tool at a time |
+**Local model picks:** Qwen3 32B (default) · Llama 3.3 70B (40+ GB) · Qwen3 8B (tight RAM).
 
 ---
 
@@ -282,11 +267,6 @@ Attach the same MCP and the intake prompt as a system rule.
 - Prefer `127.0.0.1` in sandboxed clients
 - Never paste Netscape cookies into cloud chats
 - Do not publish private channel packs or schedules to public docs
-
-## ChatGPT (deferred)
-
-Remote Custom GPT / Actions against a LAN StreamTV instance needs an authenticated
-HTTPS bridge. Not supported in this phase.
 
 ## Troubleshooting
 
