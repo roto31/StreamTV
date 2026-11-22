@@ -5,7 +5,7 @@ import os
 from typing import Optional
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
@@ -468,6 +468,22 @@ channel_icons_dir = Path(__file__).parent.parent / "data" / "channel_icons"
 channel_icons_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/static/channel_icons", StaticFiles(directory=str(channel_icons_dir)), name="channel_icons")
 
+# App branding (favicon / touch icon); fallback to repo branding/ if static copy missing
+_branding_static = Path(__file__).parent / "static" / "branding"
+_branding_repo = Path(__file__).parent.parent / "branding" / "app-icon"
+if _branding_static.is_dir():
+    app.mount("/static/branding", StaticFiles(directory=str(_branding_static)), name="branding")
+
+
+def _branding_file(*names: str) -> Optional[Path]:
+    for base in (_branding_static, _branding_repo):
+        for name in names:
+            candidate = base / name
+            if candidate.is_file():
+                return candidate
+    return None
+
+
 # Channel Builder SPA (built assets from frontend/builder/dist)
 builder_dist = Path(__file__).parent.parent / "frontend" / "builder" / "dist"
 if builder_dist.exists():
@@ -777,15 +793,22 @@ async def health_check_page(request: Request):
 
 @app.get("/favicon.ico")
 async def favicon():
-    """Favicon endpoint - returns 204 to prevent 404 errors"""
-    return Response(status_code=204)
+    """Serve StreamTV favicon when branding assets are present."""
+    path = _branding_file("favicon.ico", "favicon-32.png")
+    if path is None:
+        return Response(status_code=204)
+    media = "image/x-icon" if path.suffix.lower() == ".ico" else "image/png"
+    return FileResponse(path, media_type=media)
 
 
 @app.get("/apple-touch-icon.png")
 @app.get("/apple-touch-icon-precomposed.png")
 async def apple_touch_icon():
-    """Apple touch icon endpoint - returns 204 to prevent 404 errors"""
-    return Response(status_code=204)
+    """Serve StreamTV Apple touch icon when branding assets are present."""
+    path = _branding_file("apple-touch-icon.png", "StreamTV-app-icon-1024.png")
+    if path is None:
+        return Response(status_code=204)
+    return FileResponse(path, media_type="image/png")
 
 
 if __name__ == "__main__":
