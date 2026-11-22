@@ -77,7 +77,7 @@ A zsh shell script that creates channels via the StreamTV API. This is the recom
 ./scripts/create_channel.sh --number "10" --name "Classic Sports" --group "Sports"
 
 # Use custom API URL
-./scripts/create_channel.sh --api-url http://192.0.2.1:8410
+./scripts/create_channel.sh --api-url http://127.0.0.1:8410
 
 # Interactive mode
 ./scripts/create_channel.sh -i
@@ -191,7 +191,7 @@ Guide: [CHANNEL_CREATOR_MCP_HOST_WIRING.md](https://github.com/roto31/StreamTV/b
 
 #### Channel Management
 - `create_channel.sh` - Create channels via API
-- `create_schedule.sh` - Create schedule files
+- `create_schedule.sh` - Optional helper that writes `schedules/{n}.yml` on disk (not a web UI; `/api/schedules` create returns **410**)
 
 #### Archive.org Parser
 - `archive_collection_parser_dialog.sh` - Interactive GUI parser
@@ -213,7 +213,7 @@ Guide: [CHANNEL_CREATOR_MCP_HOST_WIRING.md](https://github.com/roto31/StreamTV/b
 #### Channel Management
 - `create_channel.py` - Create channels programmatically
 - `import_channels.py` - Import channels from YAML
-- `import_collections.py` - Import collections
+- `import_collections.py` - Legacy/parked collections import (Collections UI/`/api/collections` retired)
 - `rename_channels.py` - Rename existing channels
 - `remove_tpt_channels.py` - Remove specific channels
 

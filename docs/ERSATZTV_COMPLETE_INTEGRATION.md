@@ -1,10 +1,17 @@
 # Complete ErsatzTV Integration Status
 
-This document confirms that all ErsatzTV-compatible features are fully integrated and operational in the StreamTV platform.
+> **Historical (not current product marketing).** StreamTV reimplements selected
+> ErsatzTV-inspired schedule YAML patterns in Python (`streamtv/scheduling/`).
+> It is **not** a fork of ErsatzTV and does not vendor ErsatzTV source.
+> For current directive how-to see [features/ERSATZTV_INTEGRATION.md](features/ERSATZTV_INTEGRATION.md).
+> For integrations overview see the wiki [Implementation](wiki/Implementation.md) page.
+> Schedules UI create/edit is removed (`POST`/`PUT` `/api/schedules` → 410).
 
-## ✅ Integration Status: COMPLETE
+## Status (living summary)
 
-All ErsatzTV scheduling features have been successfully integrated and are actively used throughout the platform.
+ErsatzTV-**style** directives (`padToNext`, `padUntil`, `waitUntil`, `skipItems`,
+`shuffleSequence`) remain in `streamtv/scheduling/engine.py`. The checklist below
+is a 2024 status dump kept for history.
 
 ## Core Components
 

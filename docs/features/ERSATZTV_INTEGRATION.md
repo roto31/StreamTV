@@ -1,10 +1,16 @@
-# ErsatzTV Integration - Enhanced Scheduling Features
+# ErsatzTV-inspired Scheduling Features
 
-This document describes the ErsatzTV-compatible features that have been integrated into the StreamTV platform.
+This document describes schedule YAML patterns inspired by [ErsatzTV](https://github.com/ErsatzTV/ErsatzTV), reimplemented in Python under `streamtv/scheduling/`.
+
+## Attribution
+
+StreamTV is **not** a fork of ErsatzTV and does **not** vendor ErsatzTV C#/.NET source.
+Handlers such as `padToNext` / `waitUntil` live in `streamtv/scheduling/engine.py`.
+Schedules are authored as `schedules/{n}.yml` on disk (web create/edit removed; API create/update returns **410**).
 
 ## Overview
 
-The platform now supports advanced scheduling features inspired by [ErsatzTV](https://github.com/ErsatzTV/ErsatzTV), allowing for more sophisticated channel programming while maintaining compatibility with direct streaming from YouTube and Archive.org.
+Advanced scheduling directives allow sophisticated channel programming while keeping direct streaming from YouTube and Archive.org.
 
 ## New Features
 
@@ -243,6 +249,7 @@ All existing YAML schedule files remain compatible. New features are optional an
 
 ## Implementation Notes
 
-- The platform uses Python instead of C#/.NET, so some ErsatzTV features that require .NET-specific libraries are adapted for Python
-- Direct streaming from YouTube/Archive.org is maintained (no local file requirements)
-- All ErsatzTV scheduling patterns are supported while keeping the lightweight Python architecture
+- Python reimplementation of selected YAML patterns (not a line-for-line port of all ErsatzTV features)
+- Direct streaming from YouTube/Archive.org is maintained
+- Collections UI / `/api/collections` is retired; `collection:` keys in YAML still name SQLite inventory groups
+- See also: wiki [Implementation](../wiki/Implementation.md) · [SCHEDULES.md](../SCHEDULES.md)

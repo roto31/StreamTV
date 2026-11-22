@@ -1,8 +1,11 @@
 # ErsatzTV Integration Summary
 
+> **Historical.** Prefer [features/ERSATZTV_INTEGRATION.md](../features/ERSATZTV_INTEGRATION.md)
+> and wiki [Implementation](../wiki/Implementation.md). Not an ErsatzTV fork.
+
 ## Overview
 
-Successfully integrated ErsatzTV-compatible scheduling features into the StreamTV platform, enhancing the scheduling engine with advanced capabilities while maintaining backward compatibility with existing YAML files.
+Selected ErsatzTV-inspired scheduling features were reimplemented in Python, with backward compatibility for existing YAML files.
 
 ## What Was Integrated
 

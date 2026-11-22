@@ -25,7 +25,7 @@ Canonical copy of the [StreamTV GitHub Wiki](https://github.com/roto31/StreamTV/
 | [Scripts-and-Tools.md](Scripts-and-Tools.md) | CLI tools |
 | [Channel-Builder-Custom-Sources.md](Channel-Builder-Custom-Sources.md) | Add custom Builder sources |
 | [Troubleshooting.md](Troubleshooting.md) | Common issues |
-| [Implementation.md](Implementation.md) | Technical notes |
+| [Implementation.md](Implementation.md) | Implementation & Integrations (code-traced) |
 
 StreamTV ships **macOS only**. The former Linux packaging overlay and StreamTV-linux fork were removed.
 

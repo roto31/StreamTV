@@ -32,18 +32,20 @@
         │ HTTP UI/API      │ HDHomeRun tune   │ M3U / XMLTV
 ┌───────▼──────────────────▼──────────────────▼───────────────────┐
 │ FastAPI: middleware · API (channels, import, backup, builder,   │
-│ cache, AI) · IPTV · HDHomeRun · /player live TS remux · SSDP  │
+│ cache) · IPTV · HDHomeRun · /player · SSDP                      │
+│ Retired: Collections UI, AI Recovery operator UI                │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
 │ Playout: ChannelManager · ScheduleParser/Engine · MPEGTSStreamer│
-│ StreamManager + adapters (YT/Archive; PBS/Plex if inventory) · cache │
+│ StreamManager + adapters (YT/Archive; others only if inventory) │
+│ Builder first-party: Archive.org + YouTube                      │
 │ (TunarrRAM) · optional Plex video hold · soft stream-restart    │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
-│ Data: SQLite · YAML schedules · config · heal LaunchAgents      │
-│ External: YouTube · Archive.org · FFmpeg (+ PBS/Plex if present) │
+│ Data: SQLite · YAML schedules (UI read-only) · config · heals │
+│ External: YouTube · Archive.org · FFmpeg · optional Tunarr peer │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -305,6 +307,9 @@ CREATE TABLE media_items (
 - Many-to-many with `playlists` (via `playlist_items`)
 
 #### `collections`
+
+> SQLite inventory groups (YAML `collection:` keys). Collections **web UI** / `/api/collections` are **retired**.
+
 ```sql
 CREATE TABLE collections (
     id INTEGER PRIMARY KEY,
@@ -380,7 +385,7 @@ FFmpeg flag literals live only in `streamtv/ffmpeg/constants.py` (golden-tested)
 StreamManager
 ├── detect_source(url)
 ├── get_stream_url(url) → str | (video_url, audio_url)
-└── adapters: YouTube · Archive.org · PBS · Plex (Builder first-party: YT + Archive only)
+└── adapters: YouTube · Archive.org (Builder first-party); PBS/Plex parked from Builder
 Optional: TunarrRAM youtube_full_cache (local .mp4) before CDN
 ```
 

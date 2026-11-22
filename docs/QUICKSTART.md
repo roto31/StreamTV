@@ -100,18 +100,17 @@ curl -X POST http://localhost:8410/api/media \
 
 ## Scheduling
 
-Create a schedule for a channel:
+Schedules are on-disk YAML: `schedules/{channel_number}.yml`.  
+The Schedules web UI is **read-only**. `POST` / `PUT` `/api/schedules` return **410 Gone**.
+
+Create or change schedules via Channel Builder, Import, editing YAML on disk, or the optional `scripts/create_schedule.sh` helper. Then soft-restart the channel.
 
 ```bash
-curl -X POST http://localhost:8410/api/schedules \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel_id": 1,
-    "playlist_id": 1,
-    "start_time": "2024-01-01T00:00:00",
-    "repeat": true
-  }'
+# Inventory only (read-only)
+curl http://localhost:8410/api/schedules/yaml-inventory
 ```
+
+See [SCHEDULES.md](SCHEDULES.md).
 
 ## API Documentation
 

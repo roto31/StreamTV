@@ -48,7 +48,7 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 ## 📺 Features & Integration
 
 ### Channel Management
-- [Schedules Guide](SCHEDULES.md) - Create and manage schedules
+- [Schedules Guide](SCHEDULES.md) - YAML schedules (UI read-only; API create/update = 410)
 - [HDHomeRun Integration](HDHOMERUN.md) - Emulation setup
 - [Channel Builder](channel-builder.md) - URL-first channel assembly wizard
 - [Comparison](COMPARISON.md) - Feature comparisons
@@ -81,7 +81,7 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 
 ### External Integrations
 - **Plex** → [docs/plex/](plex/) · [Plex Live TV recovery](plex/PLEX_LIVE_TV_RECOVERY.md)
-- **ErsatzTV** → [ERSATZTV_COMPLETE_INTEGRATION.md](ERSATZTV_COMPLETE_INTEGRATION.md)
+- **ErsatzTV-inspired schedules** → [features/ERSATZTV_INTEGRATION.md](features/ERSATZTV_INTEGRATION.md) · wiki [Implementation](wiki/Implementation.md) (COMPLETE status dump is historical)
 - **Architecture (Mermaid)** → [ARCHITECTURE.md](../ARCHITECTURE.md)
 
 ---
@@ -277,7 +277,7 @@ docs/
 - **View application logs** → [logging/LOGGING_QUICKSTART.md](logging/LOGGING_QUICKSTART.md)
 - **Install on macOS** → [installation/INSTALL_MACOS.md](installation/INSTALL_MACOS.md)
 - **Troubleshoot issues** → [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-- **Create schedules** → [SCHEDULES.md](SCHEDULES.md)
+- **Edit schedules (YAML)** → [SCHEDULES.md](SCHEDULES.md)
 - **Use the API** → [API.md](API.md)
 
 ### By Experience Level

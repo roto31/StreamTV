@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Documentation / Wiki** — Implementation page rewritten for current integrations (Tunarr proxy, YAML schedules); schedule create/edit docs match read-only UI and API 410; ErsatzTV described as inspired schedule patterns (not a fork); Tunarr described as optional external peer.
+
 ### Fixed
 - **Channel Builder guide titles** — Archive.org percent-encoded filename stems are decoded before YAML/XMLTV so Plex guide cells show human-readable titles.
 - **Channel Builder Archive runtimes** — Download URLs resolve real durations into schedule/XMLTV so the guide matches what is on air; build refuses Archive items without a runtime.

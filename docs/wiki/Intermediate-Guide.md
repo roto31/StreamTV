@@ -26,11 +26,13 @@
 ```
 Clients: Web /player · Plex/Emby/Jellyfin (HDHomeRun) · IPTV M3U/XMLTV
     │
-FastAPI: API (channels, import, backup, builder, cache, AI…)
+FastAPI: API (channels, import, backup, builder, cache…)
          IPTV · HDHomeRun · /player live TS remux
+         (AI Recovery / Collections UI retired)
     │
 PlayOut: ChannelManager → MPEGTSStreamer → StreamManager
-         adapters (YouTube / Archive.org; PBS / Plex if in inventory)
+         adapters (YouTube / Archive.org; other adapters only if already in inventory)
+         Builder first-party sources: Archive.org + YouTube
          optional cache (TunarrRAM youtube_full_cache) · video hold (Plex)
     │
 Data: SQLite · YAML schedules · config · heal LaunchAgents

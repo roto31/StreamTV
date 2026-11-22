@@ -2,18 +2,23 @@
 
 StreamTV and [Tunarr](https://github.com/chrisbenincasa/tunarr) complement each other. Use this guide to choose the right tool for each workflow.
 
+**Attribution:** StreamTV does **not** vendor Tunarr source. It uses an HTTP client
+(`streamtv/integrations/tunarr_client.py`), optional `/api/integrations/tunarr/*`
+proxy routes, and `tuner_manager` HDHomeRun-style proxying. **TunarrRAM** is a
+local RAM-disk volume name for StreamTV cache — not Tunarr software.
+
 ## When to use StreamTV Builder
 
-- YouTube, Archive.org, PBS, and custom HTTP sources
+- YouTube and Archive.org (first-party Builder builtins; PBS/Plex/Vimeo are parked)
 - YAML-first channel inventory (`data/unified/*.channel.yaml`)
-- Continuous playout from `schedules/{number}.yml`
+- Continuous playout from `schedules/{number}.yml` (web schedule create/edit removed)
 - Channel Builder at `/builder`
 
 ## When to use Tunarr
 
 - Plex / Jellyfin / Emby library browsing and slot scheduling
 - Custom Shows synced from Plex playlists
-- Smart Collections and filler lists
+- Smart Collections and filler lists (in Tunarr’s own UI)
 - Tunarr web UI at `http://<tunarr-host>:8000/web`
 
 ## When to use both (recommended for Plex households)
@@ -21,7 +26,7 @@ StreamTV and [Tunarr](https://github.com/chrisbenincasa/tunarr) complement each 
 1. Configure `tuner_manager` in `config.yaml` (see [ADD_TUNARR_IN_PLEX.md](ADD_TUNARR_IN_PLEX.md)).
 2. Add Tunarr in Plex using the StreamTV proxy URL from `/tuners`.
 3. Point Plex DVR guide at merged EPG: `http://<streamtv>:8410/tuners/guide.xml`.
-4. Browse Plex libraries in StreamTV Collections via `/api/integrations/tunarr/*` when Tunarr is reachable; native `/api/plex/*` is the fallback.
+4. Call `/api/integrations/tunarr/*` when Tunarr is reachable; native `/api/plex/*` remains available. StreamTV **Collections UI is retired** (`/collections` → `/media`).
 
 ## Archive.org library export (optional)
 

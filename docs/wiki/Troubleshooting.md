@@ -2,6 +2,10 @@
 
 # StreamTV Troubleshooting Guide
 
+> StreamTV is **macOS-only**. Linux/systemd steps in older amalgam sections below are
+> leftover host tips for optional Plex-on-Linux servers — not a StreamTV Linux product.
+> Schedules: edit `schedules/{n}.yml` (web create removed). Prefer the ops table first.
+
 ## Quick Diagnostics
 
 Run these diagnostic scripts directly from this page to check your installation:

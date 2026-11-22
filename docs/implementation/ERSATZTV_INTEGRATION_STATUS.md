@@ -1,11 +1,14 @@
 # ErsatzTV Integration - Complete Status Report
 
-**Date:** 2024
-**Status:** ✅ **FULLY INTEGRATED AND OPERATIONAL**
+> **Historical (2024).** Prefer [features/ERSATZTV_INTEGRATION.md](../features/ERSATZTV_INTEGRATION.md)
+> and wiki [Implementation](../wiki/Implementation.md). StreamTV is not an ErsatzTV fork.
+
+**Date:** 2024  
+**Status:** Historical status dump — ErsatzTV-**style** directives remain in `engine.py`
 
 ## Executive Summary
 
-All ErsatzTV-compatible scheduling features have been successfully integrated into the StreamTV platform. The platform now provides ErsatzTV-level scheduling capabilities while maintaining its lightweight Python architecture and direct streaming from YouTube/Archive.org.
+Selected ErsatzTV-inspired scheduling features were reimplemented in Python. See the living how-to for current wording.
 
 ## Integration Checklist
 

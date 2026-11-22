@@ -2,7 +2,10 @@
 
 Complete Plex Media Server integration documentation.
 
-> **Canonical operator guides:** [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Fleet probe](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md) · [Add Tunarr in Plex](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md)
+> **Canonical operator guides:** [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Fleet probe](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md) · [Add Tunarr in Plex](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md) · [Schedules](Schedules) (YAML authority; UI read-only) · [Tunarr hybrid](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md)
+
+> This page is a large historical amalgam. Prefer the linked guides when they disagree.
+> Guide data comes from `schedules/{n}.yml` → XMLTV — not from web schedule creation.
 
 ## Setup Guide
 
@@ -121,7 +124,7 @@ plex:
 If your Plex server is on a different IP:
 1. Find your Plex server IP address
 2. Update `base_url` in `config.yaml`
-3. Example: `"http://192.0.2.1:32400"`
+3. Example: `"http://127.0.0.1:32400"`
 
 ### Token Not Working
 
@@ -569,7 +572,7 @@ Add Plex configuration to `config.yaml`:
 ```yaml
 plex:
   enabled: true
-  base_url: "http://192.0.2.1:32400"  # Your Plex server URL
+  base_url: "http://127.0.0.1:32400"  # Your Plex server URL
   token: "your-plex-token-here"  # Your Plex authentication token
   use_for_epg: true  # Enable EPG enhancement via Plex API
 ```

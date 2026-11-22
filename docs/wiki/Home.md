@@ -53,6 +53,7 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 ## Wiki pages
 
 - [Documentation Index](Documentation-Index)
+- [Implementation & Integrations](Implementation)
 - [Channel Creator MCP](Channel-Creator-MCP)
 - [API Reference](API-Reference)
 - [Plex Integration](Plex-Integration)

@@ -1,15 +1,20 @@
 # Features Documentation
 
-This directory contains documentation for advanced StreamTV features.
+Advanced / specialized StreamTV feature notes.
 
-## Files
+## Current
 
-- **[AUTO_HEALER.md](AUTO_HEALER.md)** - AI-powered auto-healing system for automatic error detection and fixes
-- **[ERSATZTV_COMPLETE_INTEGRATION.md](ERSATZTV_COMPLETE_INTEGRATION.md)** - Complete ErsatzTV integration status and features
-- **[ERSATZTV_INTEGRATION.md](ERSATZTV_INTEGRATION.md)** - ErsatzTV integration guide and setup
+- **[ERSATZTV_INTEGRATION.md](ERSATZTV_INTEGRATION.md)** — ErsatzTV-**inspired** schedule YAML directives (Python in `streamtv/scheduling/`; not a fork)
+- Wiki **[Implementation](../wiki/Implementation.md)** — Integrations (Tunarr proxy), scheduling surface, attribution
 
-## Quick Links
+## Hybrid / operator
 
-- **Auto-healing system** → [AUTO_HEALER.md](AUTO_HEALER.md)
-- **ErsatzTV integration** → [ERSATZTV_INTEGRATION.md](ERSATZTV_INTEGRATION.md)
-- **Complete ErsatzTV status** → [ERSATZTV_COMPLETE_INTEGRATION.md](ERSATZTV_COMPLETE_INTEGRATION.md)
+- **[STREAMTV_TUNARR_HYBRID.md](../guides/STREAMTV_TUNARR_HYBRID.md)** — Optional external Tunarr peer (not vendored)
+
+## Retired / parked
+
+- **[AUTO_HEALER.md](AUTO_HEALER.md)** — AI Recovery / Auto-Healer operator UI is **retired**; see `parked/ai-recovery/`
+
+## Historical
+
+- **[ERSATZTV_COMPLETE_INTEGRATION.md](ERSATZTV_COMPLETE_INTEGRATION.md)** — 2024 status dump; prefer ERSATZTV_INTEGRATION.md for living how-to
