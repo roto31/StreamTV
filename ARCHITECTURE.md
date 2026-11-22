@@ -240,8 +240,27 @@ flowchart TD
     XML --> PLEX
 ```
 
+## 8. Channel Creator MCP (NL → Builder → live tune)
+
+Optional stdio MCP (`mcp_streamtv/`, companion `mcp_archive_org/`) lets an AI host
+create channels via the Builder API without loading streaming bedrock into context.
+Full diagrams and host wiring: [docs/guides/CHANNEL_CREATOR_MCP.md](docs/guides/CHANNEL_CREATOR_MCP.md).
+
+```mermaid
+flowchart TD
+  NL["Natural language"] --> Host["AI host + MCP tools"]
+  Host --> Builder["POST /api/builder drafts resolve build"]
+  Builder --> Artifacts["unified YAML + schedule + import"]
+  Artifacts --> CM["ChannelManager"]
+  CM --> Clients["HDHomeRun / IPTV / Plex"]
+```
+
+**Invariant:** Archive.org URLs must be canonical `…/download/<id>/<file>.mp4` —
+never `*.ia.mp4` derivatives (`builder_add_links` + playout guards).
+
 ## Distributions
 
 The canonical application is the root `streamtv/` package. Platform mirrors
 are kept in sync with `python3 scripts/build_distributions.py` when that script
-is part of the release workflow.
+is part of the release workflow. Public code releases may also include
+`mcp_streamtv/` and `mcp_archive_org/` per `config/public_release_manifest.yaml`.

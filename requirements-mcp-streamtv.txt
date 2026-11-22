@@ -1,0 +1,8 @@
+# StreamTV MCP Server Dependencies
+# Note: mcp requires Python >= 3.10
+# MCP 2.x uses MCPServer (tool/resource/prompt registration)
+mcp>=2.0.0
+httpx>=0.28.1
+pydantic>=2.12.5
+pydantic-settings>=2.0.0
+
