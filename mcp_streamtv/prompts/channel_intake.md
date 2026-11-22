@@ -29,6 +29,12 @@ If URLs are already in the message, skip the search ask.
 - Skip auth prompts until resolve/auth-check says auth is required
 - One channel at a time; no fleet soft-restart-all; no multi-YouTube probe after create
 
+## Guide titles — always humanized
+
+When resolving Archive.org download URLs, programme titles must be **decoded**
+(no `%20` / `%26` / `%2C` in the guide). Prefer Builder resolve (it humanizes
+filename stems). Never leave percent-encoded filename stems as `title` in YAML.
+
 ## Archive.org URLs — never `.ia.mp4` (Issue 24)
 
 **Hard rule:** Do **not** use Internet Archive **derivative** URLs ending in `.ia.mp4`.

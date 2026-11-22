@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import re
 from typing import Any, Optional
-from urllib.parse import quote, urlparse
+from urllib.parse import quote, unquote, urlparse
 
 import requests
 import yt_dlp
 
 from streamtv.builder.pbs_show import expand_pbs_show
 from streamtv.builder.sources import detect_source_for_url, get_source
+from streamtv.builder.titles import humanize_media_title, title_from_media_url
 from streamtv.youtube.ydl_opts import youtube_ydl_opts
 
 from .models import BuilderDraft
@@ -91,14 +92,14 @@ def resolve_archive_collection(url: str) -> list[dict[str, Any]]:
             continue
         encoded = quote(filename, safe="")
         file_url = f"https://archive.org/download/{identifier}/{encoded}"
-        title = re.sub(r"[._]+", " ", filename.rsplit(".", 1)[0]).strip()
+        title = humanize_media_title(filename)
         length = file_info.get("length")
         duration = int(float(length)) if length else None
         stream_id = _slugify(f"{identifier}_{filename}")
         results.append(
             {
                 "url": file_url,
-                "title": title.title() if title else filename,
+                "title": title or humanize_media_title(filename),
                 "source": "archive_org",
                 "stream_id": stream_id,
                 "duration": duration,
@@ -198,10 +199,10 @@ def resolve_single_url(url: str) -> dict[str, Any]:
 
     if kind == "archive":
         identifier = _extract_archive_identifier(url)
-        title = identifier or url
+        title = humanize_media_title(unquote(identifier or "")) or (identifier or url)
         if _is_archive_file_url(url):
-            filename = urlparse(url).path.rsplit("/", 1)[-1]
-            title = re.sub(r"[._]+", " ", filename.rsplit(".", 1)[0]).strip()
+            filename = unquote(urlparse(url).path.rsplit("/", 1)[-1])
+            title = title_from_media_url(url) or humanize_media_title(filename)
             stream_id = _slugify(f"{identifier}_{filename}" if identifier else filename)
         else:
             stream_id = _slugify(identifier or url)

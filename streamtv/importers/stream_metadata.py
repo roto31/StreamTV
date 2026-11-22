@@ -28,13 +28,30 @@ def parse_slot(slot: str) -> dict[str, Any]:
 
 def title_from_url(url: str) -> str:
     try:
-        path = urllib.parse.unquote(url or "")
-        base = Path(path).name
-        if base and "." in base:
-            return base.rsplit(".", 1)[0]
+        from streamtv.builder.titles import title_from_media_url
+
+        return title_from_media_url(url or "")
+    except Exception:
+        try:
+            path = urllib.parse.unquote(url or "")
+            base = Path(path).name
+            if base and "." in base:
+                return base.rsplit(".", 1)[0]
+        except Exception:
+            pass
+    return ""
+
+
+def _humanize_stored_title(title: str) -> str:
+    """Unquote percent-encoded titles already stored in YAML/DB."""
+    try:
+        from streamtv.builder.titles import humanize_media_title, looks_url_encoded
+
+        if looks_url_encoded(title) or "%20" in title or "%2C" in title.upper():
+            return humanize_media_title(title)
     except Exception:
         pass
-    return ""
+    return title
 
 
 def _is_movie(stream_data: dict[str, Any]) -> bool:
@@ -46,18 +63,19 @@ def resolve_media_title(stream_data: dict[str, Any]) -> str:
     if _is_movie(stream_data):
         title = (stream_data.get("title") or "").strip()
         if title:
-            return title
+            return _humanize_stored_title(title)
     slot = (stream_data.get("slot") or "").strip()
     if slot:
         parsed = parse_slot(slot)
         if parsed.get("episode_title"):
             ep = parsed["episode"]
             sn = parsed["season"]
-            return f"S{sn:02d}E{ep:02d} - {parsed['episode_title']}"
-        return slot
+            ep_title = _humanize_stored_title(parsed["episode_title"])
+            return f"S{sn:02d}E{ep:02d} - {ep_title}"
+        return _humanize_stored_title(slot)
     title = (stream_data.get("title") or "").strip()
     if title:
-        return title
+        return _humanize_stored_title(title)
     from_url = title_from_url(stream_data.get("url") or "")
     if from_url:
         return from_url

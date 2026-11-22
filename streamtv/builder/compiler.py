@@ -11,6 +11,8 @@ import yaml
 from streamtv.importers import import_channels_from_yaml
 from streamtv.validation.playout_guards import validate_unified_channel
 
+from streamtv.builder.titles import humanize_media_title
+
 from .models import BuilderDraft, FillerCollection, LinkStatus, OrderingMode, PaddingMode
 from .store import FillerStore
 
@@ -18,6 +20,10 @@ ROOT = Path(__file__).resolve().parents[2]
 UNIFIED_DIR = ROOT / "data" / "unified"
 DATA_DIR = ROOT / "data"
 SCHEDULES_DIR = ROOT / "schedules"
+
+
+def _humanize_title(raw: Optional[str]) -> str:
+    return humanize_media_title(raw or "")
 
 
 def _iso_duration(seconds: Optional[int]) -> Optional[str]:
@@ -89,7 +95,7 @@ def _streams_from_draft(
             "type": "event",
             "source": link.source or "youtube",
             "url": link.url,
-            "title": link.title or link.stream_id,
+            "title": _humanize_title(link.title) or link.stream_id,
         }
         runtime = _iso_duration(link.duration)
         if runtime:
@@ -110,7 +116,7 @@ def _streams_from_draft(
                 "type": flink.clip_type,
                 "source": flink.source or "youtube",
                 "url": flink.url,
-                "title": flink.title or sid,
+                "title": _humanize_title(flink.title) or sid,
             }
             runtime = _iso_duration(flink.duration)
             if runtime:

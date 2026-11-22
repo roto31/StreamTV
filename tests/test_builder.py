@@ -14,6 +14,19 @@ def test_detect_archive_collection() -> None:
     assert kind == "archive_collection"
 
 
+def test_archive_file_url_title_is_humanized() -> None:
+    url = (
+        "https://archive.org/download/winnie-the-pooh-christmas-too-flintstone-"
+        "family-christmas-the-wish-that-changed-christmas-1993/"
+        "Winnie%20The%20Pooh%20%26%20Christmas%20Too%2C%20Flintstone%20Family%"
+        "20Christmas%2C%20The%20Wish%20That%20Changed%20Christmas%201993.mp4"
+    )
+    item = resolve_single_url(url)
+    assert "%" not in item["title"]
+    assert "Winnie The Pooh & Christmas Too" in item["title"]
+    assert "Flintstone Family Christmas" in item["title"]
+
+
 def test_detect_youtube_playlist() -> None:
     kind = detect_url_kind("https://www.youtube.com/playlist?list=PLtest123")
     assert kind == "youtube_playlist"

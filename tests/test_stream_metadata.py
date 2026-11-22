@@ -34,6 +34,17 @@ def test_resolve_title_from_yaml_title() -> None:
     assert "Barn Dance" in t
 
 
+def test_resolve_title_unquotes_percent_encoding() -> None:
+    t = resolve_media_title(
+        {
+            "title": "Winnie%20The%20Pooh%20%26%20Christmas%20Too%2C%20Flintstone%20Family%20Christmas",
+            "url": "https://archive.org/download/x/Winnie%20The%20Pooh%20%26%20Christmas%20Too.mp4",
+        }
+    )
+    assert "%" not in t
+    assert "Winnie The Pooh & Christmas Too" in t
+
+
 def test_show_name_from_collection() -> None:
     show = resolve_show_name(
         {"collection": "Magnum P.I. - Season 1"},
