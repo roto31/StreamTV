@@ -41,6 +41,7 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 - [Metadata enrichment](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md)
 - [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md)
 - [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) (Archive.org + YouTube)
+- [Channel Creator MCP](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) — NL create via MCP (signal-path diagrams)
 - [Schedules (YAML authority)](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) — web UI is read-only
 - [Core operator quickstart](https://github.com/roto31/StreamTV/blob/main/docs/guides/CORE_OPERATOR_QUICKSTART.md)
 
@@ -53,6 +54,7 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 ## Wiki pages
 
 - [Documentation Index](Documentation-Index)
+- [Channel Creator MCP](Channel-Creator-MCP)
 - [API Reference](API-Reference)
 - [Plex Integration](Plex-Integration)
 - [Troubleshooting](Troubleshooting)

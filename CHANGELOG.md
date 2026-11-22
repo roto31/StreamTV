@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Window **2026-11-17 → 2026-11-21** (also shipped **v1.4.1** / **v1.4.2** on 2026-11-19 — see those sections).
 
 ### Added
-- **Channel Creator MCP** — Optional stdio MCP for natural-language channel creation via Builder + soft-deploy tools — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md).
+- **Channel Creator MCP** — Optional stdio MCP (`mcp_streamtv` + optional `mcp_archive_org`) for natural-language channel creation via Builder + soft-deploy tools. Full signal-path diagrams (create → import → HDHomeRun tune), intake UX, tool catalog, and host wiring — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md) and wiki [Channel-Creator-MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP).
+- **Archive.org URL guard for MCP** — `builder_add_links` rejects `*.ia.mp4` derivative URLs; agents must use canonical `…/download/<id>/<file>.mp4`.
 - **Vintage holiday lineup (in v1.4.1)** — New Year's, Valentine's, Easter, Fourth of July, Halloween, Thanksgiving, and Kids Christmas channels with matching guide icons.
 - **`/player` browser preview (in v1.4.1)** — Watch channels in the browser with a remuxed live feed and optional VLC handoff.
 
@@ -33,7 +34,7 @@ Window **2026-11-17 → 2026-11-21** (also shipped **v1.4.1** / **v1.4.2** on 20
 - **v1.4.2** — Signed DMG publish tolerates a transient Apple notary error after the app is already notarized.
 
 ### Docs
-- Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces) and Channel Creator MCP guide on tip **1.4.2**.
+- Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces), Channel Creator MCP guide with Mermaid signal-path diagrams, and `ARCHITECTURE.md` §8 on tip **1.4.2**.
 
 ## [1.4.2] - 2026-11-19
 

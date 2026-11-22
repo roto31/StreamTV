@@ -56,6 +56,7 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | LoudNorm (default **off**) | [LOUDNORM_FLEET_AUDIO.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
 | FFmpeg stall / keepalive | [FFMPEG_STALL_KEEPALIVE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
 | Channel Builder | [channel-builder.md](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) |
+| Channel Creator MCP (NL + signal-path diagrams) | [guides/CHANNEL_CREATOR_MCP.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) · wiki [Channel-Creator-MCP](Channel-Creator-MCP) |
 | Import vs Builder | [IMPORT_VS_BUILDER.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [METADATA_ENRICHMENT.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [EPG_SYNC_CLASSES.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md) |
@@ -78,7 +79,7 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 - [Beginner-Guide](Beginner-Guide) · [Intermediate-Guide](Intermediate-Guide) · [Expert-Guide](Expert-Guide)
 - [Installation-Guide](Installation-Guide) · [Schedules](Schedules) · [Logging](Logging)
 - [Authentication](Authentication) · [Authentication-System](Authentication-System)
-- [Archive-Parser](Archive-Parser) · [Channel-Builder-Custom-Sources](Channel-Builder-Custom-Sources)
+- [Archive-Parser](Archive-Parser) · [Channel-Builder-Custom-Sources](Channel-Builder-Custom-Sources) · [Channel-Creator-MCP](Channel-Creator-MCP)
 - [Plex-Integration](Plex-Integration) · [Scripts-and-Tools](Scripts-and-Tools)
 - [SwiftUI](SwiftUI) · [Implementation](Implementation) · [Troubleshooting](Troubleshooting)
 - [API-Reference](API-Reference)
