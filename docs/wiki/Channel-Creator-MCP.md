@@ -242,9 +242,11 @@ export STREAMTV_BASE_URL=http://127.0.0.1:8410
 ./venv/bin/python -m mcp_streamtv.main --profile guided
 ```
 
-**Host configs:**
+**GitHub one-liner / interactive wire:**
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/roto31/StreamTV/main/scripts/install_channel_creator_mcp.sh | bash
+bash scripts/setup_channel_creator_mcp.sh
 zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
 ```
 

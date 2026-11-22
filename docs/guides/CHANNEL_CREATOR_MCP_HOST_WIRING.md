@@ -22,7 +22,19 @@ flowchart TD
   PubHTTP --> API
 ```
 
-**Preferred generator (§7B):**
+**GitHub one-liner** (clone public repo + interactive wire):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/roto31/StreamTV/main/scripts/install_channel_creator_mcp.sh | bash
+```
+
+**Interactive (existing checkout):**
+
+```bash
+bash scripts/setup_channel_creator_mcp.sh
+```
+
+**Generator (§7B):**
 
 ```bash
 zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
@@ -32,7 +44,9 @@ zsh scripts/channel_creator_mcp_hosts.zsh --host cursor --mode apply --profile g
 
 ```mermaid
 flowchart TD
-  Gen["channel_creator_mcp_hosts.zsh"] --> Mode{"mode"}
+  OneLiner["curl install_channel_creator_mcp.sh"] --> Setup["setup_channel_creator_mcp.sh"]
+  Setup --> Gen["channel_creator_mcp_hosts.zsh"]
+  Gen --> Mode{"mode"}
   Mode -->|emit| Out["scripts/channel-creator-mcp/generated/*.json"]
   Mode -->|apply| Bak["Backup .bak.stamp"]
   Bak --> Merge["Merge live host config"]
@@ -40,9 +54,6 @@ flowchart TD
   Out --> Smoke["mcp_smoke.py stdio"]
   Merge --> Smoke
 ```
-
-Legacy interactive installer: `bash scripts/setup_channel_creator_mcp.sh`
-(prints a pointer to the zsh generator).
 
 ---
 

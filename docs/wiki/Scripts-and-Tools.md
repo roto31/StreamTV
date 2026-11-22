@@ -167,28 +167,30 @@ python3 scripts/create_channel.py --number "99" --name "Test Channel" --disabled
 - `install_macos.sh` - macOS installation
 - `start_server.sh` - Start StreamTV server
 - `verify-installation.sh` - Verify installation
-- `channel_creator_mcp_hosts.zsh` — Preferred §7B host config emit/apply/smoke
+- `install_channel_creator_mcp.sh` — GitHub one-liner bootstrap (clone + venv + setup)
+- `setup_channel_creator_mcp.sh` — Interactive MCP host wiring (wraps hosts.zsh)
+- `channel_creator_mcp_hosts.zsh` — Host config emit/apply/smoke
 - `channel_creator_mcp_remote.zsh` — Cloudflare tunnel checklist (`bearer` / `oauth` / `dual`)
 - `channel_creator_e2e_rehearsal.zsh` — Phase 7 throwaway e2e
-- `setup_channel_creator_mcp.sh` — Legacy interactive installer (points at hosts.zsh)
 
 ### Channel Creator MCP setup
 
-**Preferred:**
+**GitHub one-liner:**
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/roto31/StreamTV/main/scripts/install_channel_creator_mcp.sh | bash
+```
+
+**Existing checkout:**
+
+```bash
+bash scripts/setup_channel_creator_mcp.sh
 zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
 zsh scripts/channel_creator_mcp_remote.zsh   # remote ChatGPT / Claude web
 ```
 
-Legacy interactive installer (still works):
-
-```bash
-bash scripts/setup_channel_creator_mcp.sh
-```
-
-Guides: [HOST_WIRING](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) ·
-[AUTH](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_AUTH.md)
+Guides: wiki [Host wiring](Channel-Creator-MCP-Host-Wiring) ·
+[AUTH](Channel-Creator-MCP-Auth)
 
 #### Channel Management
 - `create_channel.sh` - Create channels via API
