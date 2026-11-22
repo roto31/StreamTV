@@ -153,7 +153,7 @@
             <p style="color: var(--text-secondary); margin-top: 4px;">Real-time streaming log viewer</p>
         </div>
         <div class="logs-controls">
-            <select id="filterLevel">
+            <select id="filterLevel" aria-label="Filter by log level">
                 <option value="">All Levels</option>
                 <option value="DEBUG">DEBUG</option>
                 <option value="INFO">INFO</option>
@@ -161,7 +161,7 @@
                 <option value="ERROR">ERROR</option>
                 <option value="CRITICAL">CRITICAL</option>
             </select>
-            <input type="number" id="linesCount" value="500" min="100" max="10000" step="100" style="width: 100px;">
+            <input type="number" id="linesCount" aria-label="Number of log lines" value="500" min="100" max="10000" step="100" style="width: 100px;">
             <button class="btn btn-outlined" data-action="loadLogs">Refresh</button>
             <button class="btn btn-outlined" data-action="toggleAutoScroll" id="autoScrollBtn">Auto-scroll: ON</button>
             <button class="btn btn-outlined" data-action="clearLogs">Clear</button>

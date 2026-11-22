@@ -5,7 +5,7 @@
 <div class="page">
     <div class="page-header">
         <div>
-            <div class="page-title">Playlists</div>
+            <div class="page-title" role="heading" aria-level="1">Playlists</div>
             <p class="page-subtitle">Browse, filter, and inspect channel playlists with Apple HIG-aligned controls.</p>
         </div>
         <div class="page-actions">
@@ -80,8 +80,8 @@
                 <p>Loading playlists…</p>
             </div>
             <div id="emptyState" class="empty-state" style="display: none;">
-                <div class="empty-state-icon">🎶</div>
-                <h3 style="margin-bottom: 8px;">No playlists</h3>
+                <div class="empty-state-icon"><span class="material-icons" aria-hidden="true">playlist_play</span></div>
+                <h3 aria-level="2" style="margin-bottom: 8px;">No playlists</h3>
                 <p>Create or import channels to populate playlists.</p>
             </div>
         </div>
@@ -198,7 +198,7 @@
         background: transparent;
         color: var(--text-primary);
         font-size: 17px;
-        outline: none;
+        outline: 2px solid var(--focus); outline-offset: 1px;
     }
     
     .segmented-control {

@@ -115,7 +115,7 @@
 }
 
 .alert-success {
-    background: var(--success);
+    background: var(--success-solid);
     color: white;
 }
 
@@ -169,14 +169,14 @@
 
 .method-card {
     background: white;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--separator);
     border-radius: 8px;
     padding: 2rem;
 }
 
 .method-card h3 {
     margin-top: 0;
-    color: #007bff;
+    color: var(--accent);
 }
 
 .method-card h4 {
@@ -198,7 +198,7 @@
 }
 
 .method-card code {
-    background: #f8f9fa;
+    background: var(--surface-2);
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
     font-family: monospace;
@@ -219,15 +219,15 @@
     display: block;
     width: 100%;
     padding: 0.5rem;
-    border: 2px dashed #dee2e6;
+    border: 2px dashed var(--separator);
     border-radius: 8px;
-    background: #f8f9fa;
+    background: var(--surface-2);
 }
 
 .form-group small {
     display: block;
     margin-top: 0.5rem;
-    color: #6c757d;
+    color: var(--label-2);
 }
 
 .btn {
@@ -265,21 +265,21 @@
 }
 
 .btn-primary {
-    background: #007bff;
+    background: var(--accent-fill);
     color: white;
 }
 
 .btn-primary:hover {
-    background: #0056b3;
+    background: var(--accent-fill-hover);
 }
 
 .btn-danger {
-    background: #dc3545;
+    background: var(--error-solid);
     color: white;
 }
 
 .btn-danger:hover {
-    background: #c82333;
+    background: color-mix(in srgb, var(--error-solid) 82%, #000);
 }
 
 .actions {

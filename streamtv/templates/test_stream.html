@@ -10,21 +10,21 @@
             border-radius: 5px;
         }
         .info {
-            background: #f8f9fa;
+            background: var(--surface-2);
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
         }
         .error {
-            background: #fee2e2;
-            color: #991b1b;
+            background: color-mix(in srgb, var(--error) 14%, var(--surface));
+            color: var(--error);
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
         }
         input {
             padding: 10px;
-            border: 2px solid #e5e7eb;
+            border: 2px solid var(--separator);
             border-radius: 5px;
             width: 300px;
             margin-right: 10px;
@@ -33,12 +33,12 @@
 
 {% block content %}
     <div class="content-header">
-        <h1>📺 Test Video Stream</h1>
+        <h1><span class="material-icons inline-icon" aria-hidden="true">tv</span>Test Video Stream</h1>
     </div>
 
     <div class="card">
         <div>
-            <label>Media ID: </label>
+            <label for="mediaId">Media ID: </label>
             <input type="number" id="mediaId" value="1" min="1">
             <button class="btn" id="loadStreamButton">Load Stream</button>
         </div>
@@ -51,7 +51,7 @@
         </video>
         
         <div>
-            <h3>Available Media IDs:</h3>
+            <h3 aria-level="2">Available Media IDs:</h3>
             <ul id="mediaList"></ul>
         </div>
     </div>

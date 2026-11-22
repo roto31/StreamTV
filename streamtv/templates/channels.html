@@ -176,7 +176,7 @@
     }
     
     .form-input:focus {
-        outline: none;
+        outline: 2px solid var(--focus); outline-offset: 1px;
         border-color: var(--primary);
     }
     
@@ -304,8 +304,8 @@
             </tbody>
         </table>
         <div id="emptyState" class="empty-state" style="display: none;">
-            <div class="empty-state-icon">📺</div>
-            <h3 style="margin-bottom: 8px;">No channels found</h3>
+            <div class="empty-state-icon"><span class="material-icons" aria-hidden="true">tv</span></div>
+            <h3 aria-level="2" style="margin-bottom: 8px;">No channels found</h3>
             <p style="margin-bottom: 16px;">Create your first channel to get started</p>
             <button class="btn btn-primary" id="emptyStateCreateButton" type="button" data-action="openCreateModal">Create Channel</button>
         </div>
@@ -531,7 +531,7 @@
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     ${channel.logo_path 
                                         ? `<img src="${channel.logo_path}" class="channel-logo" alt="${channel.name}">`
-                                        : `<div class="channel-logo" style="background: var(--hover); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 20px;">📺</div>`
+                                        : `<div class="channel-logo" style="background: var(--hover); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 20px;"><span class="material-icons" aria-hidden="true">tv</span></div>`
                                     }
                                     <div style="display: flex; flex-direction: column; gap: 4px;">
                                         <button class="btn-icon" data-action="openUploadIconModal" data-args='[${channel.id}, ${JSON.stringify(channel.name)}]' title="Upload Icon">

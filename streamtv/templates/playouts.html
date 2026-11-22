@@ -84,7 +84,7 @@
     }
     
     #playoutsTable tbody tr.selected {
-        background: var(--apple-fill-secondary);
+        background: var(--accent-tint);
     }
     
     #playoutsTable tr:last-child td {
@@ -179,7 +179,7 @@
     }
     
     .status-indicator.active {
-        background: var(--success);
+        background: var(--success-solid);
     }
     
     .status-indicator.inactive {
@@ -294,7 +294,7 @@
     }
     
     .search-input:focus {
-        outline: none;
+        outline: 2px solid var(--focus); outline-offset: 1px;
         border-color: var(--primary);
     }
     
@@ -352,8 +352,8 @@
             </tbody>
         </table>
         <div id="emptyState" class="empty-state" style="display: none;">
-            <div class="empty-state-icon">📺</div>
-            <h3 style="margin-bottom: 8px;">No playouts found</h3>
+            <div class="empty-state-icon"><span class="material-icons" aria-hidden="true">tv</span></div>
+            <h3 aria-level="2" style="margin-bottom: 8px;">No playouts found</h3>
             <p>Create channels with schedule files to see playouts</p>
         </div>
     </div>
@@ -439,11 +439,11 @@
                     </td>
                     <td id="schedule-${playout.channelNumber}">
                         <div class="schedule-info">
-                            <div class="schedule-name" style="color: var(--text-disabled);">Loading…</div>
+                            <div class="schedule-name" style="color: var(--text-secondary);">Loading…</div>
                         </div>
                     </td>
                     <td id="file-${playout.channelNumber}">
-                        <div class="schedule-file" style="color: var(--text-disabled);">-</div>
+                        <div class="schedule-file" style="color: var(--text-secondary);">-</div>
                     </td>
                     <td>
                         <div class="status-cell">
@@ -593,9 +593,9 @@
                         }
                     }
                 } else {
-                    summaryCell.innerHTML = '<div class="schedule-info"><div class="schedule-name" style="color: var(--text-disabled);">No schedule</div></div>';
+                    summaryCell.innerHTML = '<div class="schedule-info"><div class="schedule-name" style="color: var(--text-secondary);">No schedule</div></div>';
                     if (fileCell) {
-                        fileCell.innerHTML = '<div class="schedule-file" style="color: var(--text-disabled);">-</div>';
+                        fileCell.innerHTML = '<div class="schedule-file" style="color: var(--text-secondary);">-</div>';
                     }
                     if (kindCell) {
                         kindCell.textContent = 'No Schedule';

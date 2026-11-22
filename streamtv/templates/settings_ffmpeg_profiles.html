@@ -5,7 +5,7 @@
 <div class="page">
     <div class="page-header">
         <div>
-            <div class="page-title">Channel profiles</div>
+            <div class="page-title" role="heading" aria-level="1">Channel profiles</div>
             <p class="page-subtitle">
                 Optional encode templates. Default Live TV remuxes at source resolution (no scale).
                 <a href="/settings/transcoding">Transcoding hub</a> · <a href="/settings/ffmpeg">Global FFmpeg</a>
@@ -38,7 +38,7 @@
             <tbody id="profilesTableBody">
                 <tr>
                     <td colspan="5" class="empty-state">
-                        <div class="empty-state-icon">⚙️</div>
+                        <div class="empty-state-icon"><span class="material-icons" aria-hidden="true">settings_applications</span></div>
                         <div>Loading profiles...</div>
                     </td>
                 </tr>
@@ -271,7 +271,7 @@ function renderProfiles() {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="empty-state">
-                    <div class="empty-state-icon">⚙️</div>
+                    <div class="empty-state-icon"><span class="material-icons" aria-hidden="true">settings_applications</span></div>
                     <div>No profiles found. Add one to get started.</div>
                 </td>
             </tr>

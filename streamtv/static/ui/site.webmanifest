@@ -1,0 +1,25 @@
+{
+  "name": "StreamTV",
+  "short_name": "StreamTV",
+  "description": "IPTV platform with HDHomeRun emulation for Plex Live TV",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#0b0b0d",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/static/branding/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/branding/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

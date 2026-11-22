@@ -5,7 +5,7 @@
 <div class="page">
     <div class="page-header">
         <div>
-            <div class="page-title">Plex API Integration</div>
+            <div class="page-title" role="heading" aria-level="1">Plex API Integration</div>
             <p class="page-subtitle">Plex Media Server credentials for <strong>EPG guide reload</strong> and optional hybrid tuner merge. This is not a Plex library browser (Collections UI retired). For unified StreamTV + Tunarr EPG in Plex DVR, use <code>/tuners/guide.xml</code> when tuner_manager is enabled.</p>
         </div>
         <div class="page-actions">
@@ -51,7 +51,7 @@
                 <label for="token">Authentication Token</label>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <input type="password" id="token" placeholder="Your Plex authentication token" style="flex: 1;">
-                    <button class="btn btn-outlined" type="button" id="togglePlexTokenButton" style="white-space: nowrap;">
+                    <button class="btn btn-outlined" type="button" id="togglePlexTokenButton" aria-label="Show or hide Plex token" title="Show or hide Plex token" style="white-space: nowrap;">
                         <span class="material-icons" id="tokenVisibilityIcon">visibility</span>
                     </button>
                 </div>
@@ -89,7 +89,7 @@
             How to Get Your Plex Token
         </div>
         <div style="margin-top: 12px; color: var(--text-secondary); font-size: 15px; line-height: 1.5;">
-            <h3 style="color: var(--text-primary); margin-top: 16px; margin-bottom: 8px;">Method 1: Browser Developer Tools</h3>
+            <h3 aria-level="2" style="color: var(--text-primary); margin-top: 16px; margin-bottom: 8px;">Method 1: Browser Developer Tools</h3>
             <ol style="padding-left: 20px; margin-top: 8px;">
                 <li style="margin-bottom: 8px;">Open Plex Web App in your browser: <code style="background: var(--surface-light); padding: 2px 6px; border-radius: 4px;">http://localhost:32400/web</code> or <code style="background: var(--surface-light); padding: 2px 6px; border-radius: 4px;">https://app.plex.tv/desktop</code></li>
                 <li style="margin-bottom: 8px;">Open Developer Tools:
@@ -107,7 +107,7 @@
             </ol>
             
             <div style="background: var(--surface-light); padding: 16px; border-radius: 8px; margin: 16px 0; border: 0.5px solid var(--divider);">
-                <p style="margin: 0; color: var(--text-primary); font-weight: 500; margin-bottom: 8px;">📸 Screenshot Guide:</p>
+                <p style="margin: 0; color: var(--text-primary); font-weight: 500; margin-bottom: 8px;"><span class="material-icons inline-icon" aria-hidden="true">image</span>Screenshot Guide:</p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">1. Open Developer Tools → Network tab<br>
                 2. Refresh page → Find request → Headers tab<br>
                 3. Look for X-Plex-Token header → Copy value</p>
@@ -139,7 +139,7 @@
                     </h4>
                     <div style="background: var(--surface-light); padding: 12px; border-radius: 8px; margin-top: 8px;">
                         <div style="margin-bottom: 8px;">
-                            <strong style="color: var(--text-primary);">✅ Integrated:</strong>
+                            <strong style="color: var(--text-primary);"><span class="material-icons inline-icon" aria-hidden="true">check_circle</span>Integrated:</strong>
                             <ul style="margin: 4px 0 0 20px; color: var(--text-secondary);">
                                 <li><code>/livetv/dvrs/epg/channels</code> - Get channels for a lineup</li>
                                 <li><code>/livetv/dvrs/epg/lineups</code> - Get available lineups</li>
@@ -148,7 +148,7 @@
                             </ul>
                         </div>
                         <div style="margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--divider);">
-                            <strong style="color: var(--text-primary);">📋 Available:</strong>
+                            <strong style="color: var(--text-primary);"><span class="material-icons inline-icon" aria-hidden="true">list</span>Available:</strong>
                             <ul style="margin: 4px 0 0 20px; color: var(--text-secondary);">
                                 <li><code>/livetv/dvrs/epg/regions</code> - Get regions for a country</li>
                                 <li><code>/livetv/dvrs/epg/languages</code> - Get all languages</li>
@@ -165,14 +165,14 @@
                     </h4>
                     <div style="background: var(--surface-light); padding: 12px; border-radius: 8px; margin-top: 8px;">
                         <div style="margin-bottom: 8px;">
-                            <strong style="color: var(--text-primary);">✅ Integrated:</strong>
+                            <strong style="color: var(--text-primary);"><span class="material-icons inline-icon" aria-hidden="true">check_circle</span>Integrated:</strong>
                             <ul style="margin: 4px 0 0 20px; color: var(--text-secondary);">
                                 <li><code>/livetv/dvrs</code> - Get all DVRs</li>
                                 <li><code>/livetv/dvrs/{dvrId}</code> - Get single DVR</li>
                             </ul>
                         </div>
                         <div style="margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--divider);">
-                            <strong style="color: var(--text-primary);">📋 Available:</strong>
+                            <strong style="color: var(--text-primary);"><span class="material-icons inline-icon" aria-hidden="true">list</span>Available:</strong>
                             <ul style="margin: 4px 0 0 20px; color: var(--text-secondary);">
                                 <li><code>POST /livetv/dvrs</code> - Create a DVR</li>
                                 <li><code>PUT /livetv/dvrs/{dvrId}/lineup</code> - Add a DVR Lineup</li>
@@ -190,7 +190,7 @@
                     </h4>
                     <div style="background: var(--surface-light); padding: 12px; border-radius: 8px; margin-top: 8px;">
                         <div style="margin-bottom: 8px;">
-                            <strong style="color: var(--text-primary);">📋 Available:</strong>
+                            <strong style="color: var(--text-primary);"><span class="material-icons inline-icon" aria-hidden="true">list</span>Available:</strong>
                             <ul style="margin: 4px 0 0 20px; color: var(--text-secondary);">
                                 <li><code>/livetv/devices</code> - Get all devices</li>
                                 <li><code>POST /livetv/devices</code> - Add a device</li>
@@ -211,7 +211,7 @@
             Integration Guide
         </div>
         <div style="margin-top: 12px; color: var(--text-secondary); font-size: 15px; line-height: 1.5;">
-            <h3 style="color: var(--text-primary); margin-top: 16px; margin-bottom: 8px;">Step 1: Enable Integration</h3>
+            <h3 aria-level="2" style="color: var(--text-primary); margin-top: 16px; margin-bottom: 8px;">Step 1: Enable Integration</h3>
             <p>Check the "Enable Plex API Integration" checkbox above and save your settings.</p>
             
             <h3 style="color: var(--text-primary); margin-top: 24px; margin-bottom: 8px;">Step 2: Configure Server</h3>
@@ -230,7 +230,7 @@
             <p>After saving your settings, restart the StreamTV server for changes to take effect.</p>
             
             <div style="background: var(--surface-light); padding: 16px; border-radius: 8px; margin: 16px 0; border: 0.5px solid var(--divider);">
-                <p style="margin: 0; color: var(--text-primary); font-weight: 500; margin-bottom: 8px;">📚 Reference:</p>
+                <p style="margin: 0; color: var(--text-primary); font-weight: 500; margin-bottom: 8px;"><span class="material-icons inline-icon" aria-hidden="true">menu_book</span>Reference:</p>
                 <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">
                     Full Plex API documentation: <a href="https://developer.plex.tv/pms/" target="_blank" style="color: var(--primary);">https://developer.plex.tv/pms/</a><br>
                     EPG API endpoints: <a href="https://developer.plex.tv/pms/#tag/EPG" target="_blank" style="color: var(--primary);">https://developer.plex.tv/pms/#tag/EPG</a>
@@ -499,7 +499,7 @@
             if (data.success) {
                 statusDiv.innerHTML = `
                     <div style="color: var(--success);">
-                        <strong>✅ Connection Successful!</strong>
+                        <strong><span class="material-icons inline-icon" aria-hidden="true">check_circle</span>Connection Successful!</strong>
                         <ul style="margin-top: 8px; padding-left: 20px;">
                             <li>Server: ${data.server_info?.friendlyName || 'Unknown'}</li>
                             <li>Version: ${data.server_info?.version || 'Unknown'}</li>
@@ -511,7 +511,7 @@
             } else {
                 statusDiv.innerHTML = `
                     <div style="color: var(--error);">
-                        <strong>❌ Connection Failed</strong>
+                        <strong><span class="material-icons inline-icon" aria-hidden="true">error</span>Connection Failed</strong>
                         <p style="margin-top: 8px;">${data.error || 'Unknown error'}</p>
                     </div>
                 `;
@@ -520,7 +520,7 @@
         } catch (error) {
             statusDiv.innerHTML = `
                 <div style="color: var(--error);">
-                    <strong>❌ Connection Error</strong>
+                    <strong><span class="material-icons inline-icon" aria-hidden="true">error</span>Connection Error</strong>
                     <p style="margin-top: 8px;">${error.message}</p>
                 </div>
             `;

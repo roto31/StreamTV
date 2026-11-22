@@ -5,7 +5,7 @@
 <div class="page">
     <div class="page-header">
         <div>
-            <div class="page-title">Media Library</div>
+            <div class="page-title" role="heading" aria-level="1">Media Library</div>
             <p class="page-subtitle">Browse all ingested assets, filter by source, and inspect full metadata.</p>
         </div>
         <div class="page-actions">
@@ -85,8 +85,8 @@
                 <p>Loading media…</p>
             </div>
             <div id="emptyState" class="empty-state" style="display: none;">
-                <div class="empty-state-icon">🎬</div>
-                <h3 style="margin-bottom: 8px;">No media found</h3>
+                <div class="empty-state-icon"><span class="material-icons" aria-hidden="true">video_library</span></div>
+                <h3 aria-level="2" style="margin-bottom: 8px;">No media found</h3>
                 <p>Import channel YAMLs or scan sources to populate the library.</p>
             </div>
         </div>
@@ -199,7 +199,7 @@
         background: transparent;
         color: var(--text-primary);
         font-size: 17px;
-        outline: none;
+        outline: 2px solid var(--focus); outline-offset: 1px;
     }
     
     .segmented-control {
@@ -338,13 +338,13 @@
     }
     
     .tag.youtube {
-        color: #ff375f;
+        color: var(--error);
         border-color: rgba(255, 55, 95, 0.6);
         background: rgba(255, 55, 95, 0.1);
     }
     
     .tag.archive {
-        color: #ffd60a;
+        color: var(--warning);
         border-color: rgba(255, 214, 10, 0.6);
         background: rgba(255, 214, 10, 0.1);
     }
@@ -550,7 +550,7 @@
             <div class="card-header">
                 <div>
                     <div class="card-title">
-                        <input type="text" id="editTitle" value="${item.title.replace(/"/g, '&quot;')}" style="width:100%;font:inherit;font-weight:600;">
+                        <input type="text" id="editTitle" aria-label="Title" value="${item.title.replace(/"/g, '&quot;')}" style="width:100%;font:inherit;font-weight:600;">
                     </div>
                     <div class="card-subtitle" style="margin-top: 4px;">${item.description || 'No description provided.'}</div>
                 </div>

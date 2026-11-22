@@ -107,7 +107,7 @@
     
     .progress-fill {
         height: 100%;
-        background: var(--primary);
+        background: var(--accent-fill);
         width: 0%;
         transition: width 0.3s;
     }
@@ -191,7 +191,7 @@
     <div class="divider"></div>
     
     <div class="info-box">
-        <h3>📋 YAML Format</h3>
+        <h3 aria-level="2"><span class="material-icons inline-icon" aria-hidden="true">list</span>YAML Format</h3>
         <p>Your YAML file should contain a <code>channels</code> list with channel definitions.</p>
         <p>Each channel should include:</p>
         <ul>
@@ -213,7 +213,7 @@
     
     <div class="import-card">
         <div class="upload-area" id="uploadArea">
-            <div class="upload-area-icon">📁</div>
+            <div class="upload-area-icon"><span class="material-icons" aria-hidden="true">folder_open</span></div>
             <h2>Drag & Drop YAML File</h2>
             <p>or</p>
             <div class="file-input-wrapper">
@@ -224,6 +224,7 @@
                 <input 
                     type="file" 
                     id="fileInput" 
+                    aria-label="Choose a YAML channel file"
                     class="file-input" 
                     accept=".yaml,.yml"
                     data-action="handleFileSelect"
@@ -387,11 +388,11 @@
                 progressText.textContent = 'Import complete!';
                 
                 // Show success result
-                let resultHtml = '<h3 style="margin-bottom: 8px;">✅ Import Successful!</h3>';
+                let resultHtml = '<h3 style="margin-bottom: 8px;"><span class="material-icons inline-icon" aria-hidden="true">check_circle</span>Import Successful!</h3>';
                 resultHtml += `<p>Successfully imported <strong>${channels.length}</strong> channel(s):</p>`;
                 resultHtml += '<ul style="margin-left: 20px; margin-top: 8px;">';
                 channels.forEach(channel => {
-                    resultHtml += `<li><strong>${channel.number}</strong>: ${channel.name} ${channel.enabled ? '✅' : '❌'}</li>`;
+                    resultHtml += `<li><strong>${channel.number}</strong>: ${channel.name} ${channel.enabled ? '<span class="material-icons inline-icon" aria-hidden="true">check_circle</span><span class="sr-only">enabled</span>' : '<span class="material-icons inline-icon" aria-hidden="true">error</span><span class="sr-only">disabled</span>'}</li>`;
                 });
                 resultHtml += '</ul>';
                 resultHtml += '<p style="margin-top: 12px;">Channels, collections, playlists, and media items have been created.</p>';
@@ -405,7 +406,7 @@
                 
             } catch (error) {
                 console.error('Import error:', error);
-                showResult('error', `<h3 style="margin-bottom: 8px;">❌ Import Failed</h3><p>${error.message}</p>`);
+                showResult('error', `<h3 style="margin-bottom: 8px;"><span class="material-icons inline-icon" aria-hidden="true">error</span>Import Failed</h3><p>${error.message}</p>`);
                 progressDiv.classList.remove('show');
             } finally {
                 document.getElementById('importBtn').disabled = false;

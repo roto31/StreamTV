@@ -486,6 +486,11 @@ _branding_repo = Path(__file__).parent.parent / "branding" / "app-icon"
 if _branding_static.is_dir():
     app.mount("/static/branding", StaticFiles(directory=str(_branding_static)), name="branding")
 
+# UI design system (CSS, fonts, icon + shell scripts) served from streamtv/static/ui
+_ui_static = Path(__file__).parent / "static" / "ui"
+if _ui_static.is_dir():
+    app.mount("/static/ui", StaticFiles(directory=str(_ui_static)), name="ui_static")
+
 
 def _branding_file(*names: str) -> Optional[Path]:
     for base in (_branding_static, _branding_repo):

@@ -1,0 +1,192 @@
+<h1 id="channel-builder-custom-streaming-sources">Channel Builder —
+Custom streaming sources</h1>
+<p>This guide explains how to add <strong>community</strong>
+(operator-local) streaming sources to Channel Builder without modifying
+playout bedrock until you are ready.</p>
+<h2 id="architecture">Architecture</h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 69%" />
+</colgroup>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Builder registry</strong></td>
+<td><code>streamtv/builder/sources/</code> — source picker, URL
+validation, auth methods</td>
+</tr>
+<tr>
+<td><strong>Builder resolver</strong></td>
+<td><code>streamtv/builder/resolver.py</code> — metadata and expansion
+(PBS show pages, playlists)</td>
+</tr>
+<tr>
+<td><strong>Builder auth</strong></td>
+<td><code>/api/builder/auth/*</code> — inline sign-in; cookies saved
+under <code>data/cookies/</code></td>
+</tr>
+<tr>
+<td><strong>Playout bedrock</strong></td>
+<td><code>streamtv/streaming/**</code> — FFmpeg adapters, golden tests
+(owner approval required)</td>
+</tr>
+</tbody>
+</table>
+<p>Community sources can appear in Builder with
+<code>playout_ready: false</code> so you prepare channel YAML while
+implementing the streaming adapter separately.</p>
+<h2 id="quick-start">Quick start</h2>
+<ol type="1">
+<li>Copy <a
+href="../examples/builder-source.example.yaml"><code>docs/examples/builder-source.example.yaml</code></a>
+to <code>data/builder_sources/my_site.yaml</code>.</li>
+<li>Edit <code>id</code>, <code>label</code>, and
+<code>hosts</code>.</li>
+<li>Restart StreamTV or call
+<code>POST /api/builder/sources/reload</code>.</li>
+<li>Open <code>/builder</code> — your source appears under <strong>Your
+sources</strong>.</li>
+</ol>
+<h2 id="manifest-fields">Manifest fields</h2>
+<p>Validated by <a
+href="../../schemas/builder_source.schema.json"><code>schemas/builder_source.schema.json</code></a>.</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 33%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>yes</td>
+<td>Lowercase key (<code>my_streaming_site</code>)</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>yes</td>
+<td>Display name in Source Picker</td>
+</tr>
+<tr>
+<td><code>hosts</code></td>
+<td>yes</td>
+<td>Hostnames for URL validation</td>
+</tr>
+<tr>
+<td><code>auth.method</code></td>
+<td>no</td>
+<td><code>cookies</code>, <code>playwright</code>,
+<code>password</code>, <code>token</code>, or <code>none</code></td>
+</tr>
+<tr>
+<td><code>auth.login_url</code></td>
+<td>for Playwright</td>
+<td>Sign-in page URL</td>
+</tr>
+<tr>
+<td><code>auth.cookies_domain</code></td>
+<td>recommended</td>
+<td>Cookie domain filter after Playwright login</td>
+</tr>
+<tr>
+<td><code>url_patterns</code></td>
+<td>no</td>
+<td>Hint paths shown in the URL paste step</td>
+</tr>
+<tr>
+<td><code>supports_expand</code></td>
+<td>no</td>
+<td>Show/collection expansion (custom module)</td>
+</tr>
+<tr>
+<td><code>playout_ready</code></td>
+<td>no</td>
+<td>Default <code>false</code> — must be <code>true</code> to build a
+channel</td>
+</tr>
+<tr>
+<td><code>channel_source</code></td>
+<td>when playout enabled</td>
+<td><code>source</code> value in unified YAML</td>
+</tr>
+<tr>
+<td><code>module</code></td>
+<td>advanced</td>
+<td>Python import path for custom resolver hooks</td>
+</tr>
+</tbody>
+</table>
+<h2 id="authentication">Authentication</h2>
+<p>Passwords are <strong>never</strong> persisted. Playwright sign-in
+writes Netscape <code>cookies.txt</code> files only.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Builder UI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cookies</code></td>
+<td>Upload <code>cookies.txt</code></td>
+</tr>
+<tr>
+<td><code>playwright</code></td>
+<td>Email + password (automated browser)</td>
+</tr>
+<tr>
+<td><code>password</code> / <code>token</code></td>
+<td>Source-specific forms (Plex uses token today)</td>
+</tr>
+</tbody>
+</table>
+<p>2FA and CAPTCHA may block Playwright — use cookie upload as
+fallback.</p>
+<h2 id="resolver-hooks">Resolver hooks</h2>
+<p>For metadata beyond URL slug titles, implement an optional Python
+module and set <code>module</code> in the manifest. PBS show expansion
+(<code>streamtv/builder/pbs_show.py</code>) is the reference pattern for
+harvest + dedupe.</p>
+<h2 id="enable-playout-bedrock">Enable playout (bedrock)</h2>
+<p>When the streaming adapter exists and bedrock changes are
+<strong>owner-approved</strong>:</p>
+<ol type="1">
+<li>Add <code>channel_source</code> to <a
+href="../../schemas/channel.schema.json"><code>schemas/channel.schema.json</code></a>
+<code>source</code> enum.</li>
+<li>Implement <code>StreamSource</code> adapter under
+<code>streamtv/streaming/</code>.</li>
+<li>Wire importer mapping in channel import path.</li>
+<li>Set <code>playout_ready: true</code> in the community manifest.</li>
+<li>Add tests; run golden FFmpeg tests if the adapter uses FFmpeg.</li>
+<li>Update <code>CHANGELOG.md</code> and sync distributions.</li>
+</ol>
+<h2 id="vimeo-roadmap">Vimeo roadmap</h2>
+<p>Vimeo is registered as <code>coming_soon</code> in the built-in
+registry. When a bedrock adapter is approved, flip
+<code>streamtv/builder/sources/builtins/vimeo.py</code> to
+<code>active</code> and complete the playout checklist above.</p>
+<h2 id="publishing">Publishing</h2>
+<ul>
+<li>Wiki: <a
+href="https://github.com/roto31/StreamTV/wiki/Channel-Builder-Custom-Sources">Channel
+Builder Custom Sources</a></li>
+<li>Regenerate PDF:
+<code>bash scripts/generate_builder_custom_sources_pdf.sh</code></li>
+<li>Public sync:
+<code>bash scripts/sync_public_docs.sh --apply --wiki</code></li>
+</ul>
