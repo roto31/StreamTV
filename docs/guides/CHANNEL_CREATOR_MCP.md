@@ -31,23 +31,23 @@ Add to Cursor MCP settings (project or user):
 {
   "mcpServers": {
     "streamtv": {
-      "command": "/Volumes/SSD Storage/XCode Projects/StreamTV/venv/bin/python",
+      "command": "python3",
       "args": ["-m", "mcp_streamtv.main"],
-      "cwd": "/Volumes/SSD Storage/XCode Projects/StreamTV",
+      "cwd": "/path/to/StreamTV",
       "env": {
         "STREAMTV_BASE_URL": "http://127.0.0.1:8410"
       }
     },
     "archive-org": {
-      "command": "/Volumes/SSD Storage/XCode Projects/StreamTV/venv/bin/python",
+      "command": "python3",
       "args": ["-m", "mcp_archive_org.main"],
-      "cwd": "/Volumes/SSD Storage/XCode Projects/StreamTV"
+      "cwd": "/path/to/StreamTV"
     }
   }
 }
 ```
 
-Adjust paths to your checkout / venv. Enable the **streamtv-channel-creator** skill when creating channels.
+Use your checkout path and venv/`python3` as appropriate. Enable the **streamtv-channel-creator** skill when creating channels.
 
 ## Claude Desktop
 
