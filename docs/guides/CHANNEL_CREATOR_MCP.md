@@ -223,8 +223,15 @@ export STREAMTV_BASE_URL=http://127.0.0.1:8410
 python3 -m mcp_streamtv.main
 ```
 
+**Preferred optional installer (interactive platform + apply/dry-run menus):**
+
+```bash
+bash scripts/setup_channel_creator_mcp.sh
+```
+
 **Full per-host wiring (Cursor, VS Code, Claude Desktop, ChatGPT deferred, local models)
 with diagrams:** [CHANNEL_CREATOR_MCP_HOST_WIRING.md](CHANNEL_CREATOR_MCP_HOST_WIRING.md)
+(see **Setup script (all-in-one, optional)**).
 
 ```mermaid
 flowchart LR

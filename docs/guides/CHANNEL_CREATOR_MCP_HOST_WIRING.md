@@ -12,6 +12,71 @@ Wiki: [Channel-Creator-MCP](https://github.com/roto31/StreamTV/wiki/Channel-Crea
 
 Every host uses the **same** stdio MCP process. Only the client config changes.
 
+### Setup script (all-in-one, optional)
+
+Preferred optional installer — no flags required:
+
+```bash
+bash scripts/setup_channel_creator_mcp.sh
+```
+
+```mermaid
+flowchart TD
+  Start["bash scripts/setup_channel_creator_mcp.sh"] --> Menu{"Which platform?"}
+  Menu --> Mode{"Mode?"}
+  Mode -->|Apply| ApplyMode["Will merge live configs"]
+  Mode -->|Dry-run| DryMode["Print actions only"]
+  Mode -->|Emit only| EmitMode["Write generated/ snippets"]
+  ApplyMode --> Shared["Prompt shared entries"]
+  DryMode --> Shared
+  EmitMode --> Shared
+  Shared --> RunPath["Run selected platform path"]
+  RunPath --> Done["Done / next steps"]
+```
+
+```mermaid
+flowchart LR
+  subgraph ApplySupported["Apply merges"]
+    Cursor
+    Claude["Claude Desktop macOS"]
+  end
+  subgraph EmitPaste["Emit + paste steps"]
+    Continue
+    Cline
+    Local["Local Ollama client"]
+  end
+  subgraph Deferred["Checklist only"]
+    ChatGPT
+  end
+```
+
+| Prompt | Default |
+|--------|---------|
+| Platform | Menu 1–6 |
+| Mode | Apply / Dry-run / Emit only |
+| StreamTV repo root | Detected from script |
+| Python binary | `venv/bin/python` if present |
+| `STREAMTV_BASE_URL` | `http://127.0.0.1:8410` |
+| Include Archive.org MCP? | No |
+| Install MCP pip deps? | No (streamtv + archive reqs only; skipped in dry-run) |
+| Optional API key | Blank; never written to git-tracked files |
+
+| Mode | Behavior |
+|------|----------|
+| **Apply** | Cursor / Claude Desktop: merge with `.bak.<timestamp>`. Continue / Cline / Local: emit fragments + paste steps (global paths vary). ChatGPT: checklist only. |
+| **Dry-run** | Print actions; write nothing |
+| **Emit only** | Write under `scripts/channel-creator-mcp/generated/` |
+
+Automation overrides (optional):
+
+```bash
+bash scripts/setup_channel_creator_mcp.sh --platform cursor --apply
+bash scripts/setup_channel_creator_mcp.sh --platform vscode-continue --emit-only --with-archive
+bash scripts/setup_channel_creator_mcp.sh --platform chatgpt --dry-run
+```
+
+Helpers live in [`scripts/channel-creator-mcp/`](../../scripts/channel-creator-mcp/README.md).
+
 | Requirement | Detail |
 |-------------|--------|
 | StreamTV API | Listening on `http://127.0.0.1:8410` (or set `STREAMTV_BASE_URL`) |

@@ -17,6 +17,7 @@ Window **2026-11-17 → 2026-11-21** (also shipped **v1.4.1** / **v1.4.2** on 20
 ### Added
 - **Channel Creator MCP** — Optional stdio MCP (`mcp_streamtv` + optional `mcp_archive_org`) for natural-language channel creation via Builder + soft-deploy tools. Full signal-path diagrams (create → import → HDHomeRun tune), intake UX, and tool catalog — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md) and wiki [Channel-Creator-MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP).
 - **MCP host wiring guide** — Step-by-step configs and diagrams for **Cursor**, **VS Code** (Continue/Cline), **Claude Desktop**, **local models** (Qwen3 32B / Llama 3.3 70B / Qwen3 8B), and **ChatGPT** (deferred HTTPS bridge) — see [Host wiring](docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
+- **Channel Creator MCP setup script** — Optional interactive installer (`scripts/setup_channel_creator_mcp.sh`) prompts for platform and apply/dry-run/emit mode, then wires that host only.
 - **Archive.org URL guard for MCP** — `builder_add_links` rejects `*.ia.mp4` derivative URLs; agents must use canonical `…/download/<id>/<file>.mp4`.
 - **Vintage holiday lineup (in v1.4.1)** — New Year's, Valentine's, Easter, Fourth of July, Halloween, Thanksgiving, and Kids Christmas channels with matching guide icons.
 - **`/player` browser preview (in v1.4.1)** — Watch channels in the browser with a remuxed live feed and optional VLC handoff.

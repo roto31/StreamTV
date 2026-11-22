@@ -167,6 +167,27 @@ python3 scripts/create_channel.py --number "99" --name "Test Channel" --disabled
 - `install_macos.sh` - macOS installation
 - `start_server.sh` - Start StreamTV server
 - `verify-installation.sh` - Verify installation
+- `setup_channel_creator_mcp.sh` - All-in-one Channel Creator MCP host wiring (interactive platform + apply/dry-run menus)
+
+### Channel Creator MCP setup
+
+All-in-one interactive installer for wiring `mcp_streamtv` (and optional
+`mcp_archive_org`) into Cursor, VS Code (Continue/Cline), Claude Desktop, local
+Ollama clients, or printing the ChatGPT deferred checklist.
+
+```bash
+bash scripts/setup_channel_creator_mcp.sh
+```
+
+1. Choose platform (Cursor / Continue / Cline / Claude / Local / ChatGPT)
+2. Choose mode (Apply / Dry-run / Emit only)
+3. Enter shared values (repo, Python, `STREAMTV_BASE_URL`, Archive MCP, deps)
+
+Optional flags: `--platform`, `--apply`, `--dry-run`, `--emit-only`,
+`--with-archive`, `--install-deps`, `--base-url`, `--python`, `--repo-root`.
+
+Templates and emit output: `scripts/channel-creator-mcp/`  
+Guide: [CHANNEL_CREATOR_MCP_HOST_WIRING.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md)
 
 #### Channel Management
 - `create_channel.sh` - Create channels via API

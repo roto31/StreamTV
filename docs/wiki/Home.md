@@ -42,7 +42,7 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 - [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md)
 - [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) (Archive.org + YouTube)
 - [Channel Creator MCP](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) — NL create via MCP (signal-path diagrams)
-- [Channel Creator MCP host wiring](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) — Cursor, VS Code, Claude, local models, ChatGPT deferred
+- [Channel Creator MCP host wiring](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) — Cursor, VS Code, Claude, local models, ChatGPT deferred; optional `scripts/setup_channel_creator_mcp.sh`
 - [Schedules (YAML authority)](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) — web UI is read-only
 - [Core operator quickstart](https://github.com/roto31/StreamTV/blob/main/docs/guides/CORE_OPERATOR_QUICKSTART.md)
 
