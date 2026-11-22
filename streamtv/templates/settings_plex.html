@@ -9,15 +9,15 @@
             <p class="page-subtitle">Configure Plex Media Server API integration. For unified StreamTV + Tunarr EPG in Plex DVR, use <code>/tuners/guide.xml</code> (see <a href="/docs/guides/STREAMTV_TUNARR_HYBRID.md">Tunarr hybrid guide</a>). <code>use_for_epg</code> applies at the merge layer when merged guide is enabled.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" id="testPlexConnectionButton">
+            <button class="btn btn-outlined" type="button" id="testPlexConnectionButton" data-action="testConnection">
                 <span class="material-icons">network_check</span>
                 Test Connection
             </button>
-            <button class="btn btn-outlined" type="button" id="refreshPlexSettingsButton">
+            <button class="btn btn-outlined" type="button" id="refreshPlexSettingsButton" data-action="loadSettings" data-args="[true]">
                 <span class="material-icons">refresh</span>
                 Reload
             </button>
-            <button class="btn btn-primary" type="button" id="savePlexSettingsButton">
+            <button class="btn btn-primary" type="button" id="savePlexSettingsButton" data-action="saveSettings">
                 <span class="material-icons">save</span>
                 Save Changes
             </button>
@@ -389,7 +389,7 @@
 
 {% block extra_scripts %}
 <script nonce="{{ request.state.csp_nonce }}">
-    document.addEventListener('DOMContentLoaded', () => {
+    whenDomReady(() => {
         const testButton = document.getElementById('testPlexConnectionButton');
         if (testButton) {
             testButton.addEventListener('click', testConnection);
@@ -539,6 +539,8 @@
             card.style.display = 'none';
         }, 5000);
     }
+
+window.registerActions({ testConnection, loadSettings, saveSettings });
 </script>
 {% endblock %}
 

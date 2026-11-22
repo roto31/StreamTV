@@ -13,19 +13,15 @@ from streamtv.builder.sources.registry import detect_source_for_url
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
-def test_builtin_sources_include_vimeo_resolve_only() -> None:
-    """Vimeo is active for Builder resolve; playout remains bedrock-gated."""
+def test_retired_builtins_not_registered() -> None:
     reload_sources()
-    vimeo = get_source("vimeo")
-    assert vimeo is not None
-    assert vimeo.status == "active"
-    assert vimeo.playout_ready is False
-    assert vimeo.docs_anchor == "vimeo-bedrock-pending"
+    for source_id in ("pbs", "plex", "vimeo"):
+        assert get_source(source_id) is None
 
 
 def test_builtin_sources_playable() -> None:
     reload_sources()
-    for source_id in ("archive_org", "youtube", "pbs", "plex"):
+    for source_id in ("archive_org", "youtube"):
         spec = get_source(source_id)
         assert spec is not None
         assert spec.status == "active"
@@ -36,7 +32,10 @@ def test_list_sources_includes_builtins() -> None:
     specs = list_sources()
     ids = {spec.id for spec in specs}
     assert "youtube" in ids
-    assert "vimeo" in ids
+    assert "archive_org" in ids
+    assert "vimeo" not in ids
+    assert "pbs" not in ids
+    assert "plex" not in ids
 
 
 def test_parse_valid_community_manifest() -> None:
@@ -73,9 +72,6 @@ def test_detect_source_for_url_youtube() -> None:
     assert spec.id == "youtube"
 
 
-def test_detect_source_finds_vimeo_resolve_only() -> None:
+def test_detect_source_vimeo_unregistered() -> None:
     reload_sources()
-    spec = detect_source_for_url("https://vimeo.com/123456")
-    assert spec is not None
-    assert spec.id == "vimeo"
-    assert spec.playout_ready is False
+    assert detect_source_for_url("https://vimeo.com/123456") is None

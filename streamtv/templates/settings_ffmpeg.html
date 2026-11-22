@@ -9,11 +9,11 @@
             <p class="page-subtitle">Configure transcoding paths, hardware acceleration, and runtime flags.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" id="refreshFfmpegSettingsButton">
+            <button class="btn btn-outlined" type="button" id="refreshFfmpegSettingsButton" data-action="loadSettings" data-args="[true]">
                 <span class="material-icons">refresh</span>
                 Reload
             </button>
-            <button class="btn btn-primary" type="button" id="saveFfmpegSettingsButton">
+            <button class="btn btn-primary" type="button" id="saveFfmpegSettingsButton" data-action="saveSettings">
                 <span class="material-icons">save</span>
                 Save Changes
             </button>
@@ -196,7 +196,7 @@
 
 {% block extra_scripts %}
 <script nonce="{{ request.state.csp_nonce }}">
-    document.addEventListener('DOMContentLoaded', () => {
+    whenDomReady(() => {
         const refreshButton = document.getElementById('refreshFfmpegSettingsButton');
         if (refreshButton) {
             refreshButton.addEventListener('click', () => loadSettings(true));
@@ -294,6 +294,8 @@
             card.style.display = 'none';
         }, 4000);
     }
+
+window.registerActions({ loadSettings, saveSettings });
 </script>
 {% endblock %}
 

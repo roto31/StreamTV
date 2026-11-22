@@ -207,7 +207,6 @@ DOCS_FILES = {
     "ffmpeg_hwaccel_fix": "docs/implementation/FFMPEG_HWACCEL_FIX.md",
     
     # Features
-    "auto_healer": "docs/AUTO_HEALER.md",
     "comparison": "docs/COMPARISON.md",
     "metadata_enrichment": "docs/guides/METADATA_ENRICHMENT.md",
     

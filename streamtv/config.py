@@ -189,19 +189,6 @@ class MetadataConfig(BaseSettings):
         case_sensitive = False
 
 
-class AutoHealerConfig(BaseSettings):
-    enabled: bool = False  # Enable auto-healing system
-    enable_ai: bool = True  # Use AI for analysis (FM bridge and/or Ollama)
-    # auto | foundation_models | ollama | none
-    ai_backend: str = "auto"
-    foundation_models_url: str = "http://127.0.0.1:11435"
-    ollama_url: str = "http://localhost:11434"  # Ollama API URL (optional / legacy OS)
-    ollama_model: str = "llama3.2:latest"  # Ollama model to use
-    collect_training_samples: bool = True
-    check_interval: int = 30  # Minutes between health checks
-    apply_fixes: bool = False  # Auto-apply fixes (False = dry-run only)
-    max_fix_attempts: int = 3  # Max attempts to fix same error
-
 
 class DownloadStrategyConfig(BaseSettings):
     """Controls how and when content is downloaded to local cache."""
@@ -373,7 +360,6 @@ class Config:
             "playout": PlayoutConfig,
             "plex": PlexConfig,
             "metadata": MetadataConfig,
-            "auto_healer": AutoHealerConfig,
             "cache": CacheConfig,
             "tuner_manager": TunerManagerConfig,
             "backup": BackupConfig,
@@ -398,7 +384,6 @@ class Config:
         self.playout = PlayoutConfig(**config_data.get("playout", {}))
         self.plex = PlexConfig(**config_data.get("plex", {}))
         self.metadata = MetadataConfig(**config_data.get("metadata", {}))
-        self.auto_healer = AutoHealerConfig(**config_data.get("auto_healer", {}))
         self.backup = BackupConfig(**config_data.get("backup", {}))
         self.tunarr_library = TunarrLibraryConfig(
             **(config_data.get("tunarr_library", {}) or {})
@@ -599,7 +584,6 @@ class Config:
         self.playout = PlayoutConfig(**config_data.get("playout", {}))
         self.plex = PlexConfig(**config_data.get("plex", {}))
         self.metadata = MetadataConfig(**config_data.get("metadata", {}))
-        self.auto_healer = AutoHealerConfig(**config_data.get("auto_healer", {}))
         self.backup = BackupConfig(**config_data.get("backup", {}))
         cache_data = dict(config_data.get("cache", {}) or {})
         ds_data = cache_data.pop("download_strategy", {}) or {}

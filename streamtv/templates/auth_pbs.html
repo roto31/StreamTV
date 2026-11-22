@@ -361,7 +361,7 @@ async function logout() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+whenDomReady(() => {
     const form = document.getElementById('cookiesForm');
     if (form) {
         form.addEventListener('submit', uploadCookies);

@@ -17,116 +17,124 @@
     .playouts-table-wrapper {
         background: var(--surface);
         border-radius: 12px; /* Apple HIG standard */
-        overflow: hidden;
+        overflow: auto;
         border: 0.5px solid var(--divider);
     }
     
-    .table {
+    /* Fixed columns so header and body stay aligned across browsers */
+    #playoutsTable {
         width: 100%;
+        table-layout: fixed;
         border-collapse: collapse;
         border-spacing: 0;
         margin: 0;
     }
     
-    .table th {
+    #playoutsTable col.col-channel { width: 28%; }
+    #playoutsTable col.col-schedule { width: 22%; }
+    #playoutsTable col.col-file { width: 18%; }
+    #playoutsTable col.col-status { width: 16%; }
+    #playoutsTable col.col-actions { width: 16%; }
+    
+    #playoutsTable th,
+    #playoutsTable td {
         text-align: left;
-        padding: 16px;
-        font-weight: 500;
+        padding: 14px 16px;
+        border-bottom: 0.5px solid var(--divider);
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        margin: 0;
+        vertical-align: middle;
+        /* Never put display:flex on td — breaks column alignment */
+        display: table-cell;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    #playoutsTable th {
+        font-weight: 600;
         color: var(--text-secondary);
         font-size: 12px;
         text-transform: uppercase;
-        border-bottom: 0.5px solid var(--divider);
-        border-top: none;
-        border-left: none;
-        border-right: none;
+        letter-spacing: 0.08px;
         background: var(--surface-light);
-        margin: 0;
+        height: 44px;
     }
     
-    .table th:first-child {
-        padding-left: 16px;
+    #playoutsTable th.col-actions,
+    #playoutsTable td.col-actions {
+        text-align: right;
     }
     
-    .table th:last-child {
-        padding-right: 16px;
-    }
-    
-    .table td {
-        padding: 16px;
-        border-bottom: 0.5px solid var(--divider);
-        border-top: none;
-        border-left: none;
-        border-right: none;
+    #playoutsTable td {
         color: var(--text-primary);
-        margin: 0;
-        vertical-align: middle;
+        font-size: 15px;
+        line-height: 1.35;
     }
     
-    .table td:first-child {
-        padding-left: 16px;
-    }
-    
-    .table td:last-child {
-        padding-right: 16px;
-    }
-    
-    .table tr {
+    #playoutsTable tr {
         margin: 0;
     }
     
-    .table tr:hover {
+    #playoutsTable tbody tr:hover {
         background: var(--hover);
         cursor: pointer;
     }
     
-        .table tr.selected {
-            background: var(--apple-fill-secondary);
-        }
+    #playoutsTable tbody tr.selected {
+        background: var(--apple-fill-secondary);
+    }
     
-    .table tr:last-child td {
+    #playoutsTable tr:last-child td {
         border-bottom: none;
-    }
-    
-    .table thead {
-        border-collapse: collapse;
-    }
-    
-    .table tbody {
-        border-collapse: collapse;
     }
     
     .channel-info {
         display: flex;
         align-items: center;
         gap: 12px;
+        min-width: 0;
     }
     
     .channel-number {
         font-weight: 500;
         color: var(--primary);
         font-size: 16px;
-        min-width: 60px;
+        min-width: 52px;
+        flex-shrink: 0;
     }
     
     .channel-name {
         font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .schedule-info {
         display: flex;
         flex-direction: column;
         gap: 4px;
+        min-width: 0;
     }
     
     .schedule-name {
         font-weight: 500;
         color: var(--text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .schedule-file {
         font-size: 12px;
         color: var(--text-secondary);
-        font-family: monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .schedule-kind {
@@ -155,12 +163,19 @@
         color: var(--secondary);
     }
     
+    .status-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+    
     .status-indicator {
         display: inline-block;
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        margin-right: 8px;
+        flex-shrink: 0;
     }
     
     .status-indicator.active {
@@ -317,13 +332,20 @@
     <div class="playouts-table-wrapper">
         <div id="loading" class="loading">Loading playouts...</div>
         <table class="table" id="playoutsTable" style="display: none;">
+            <colgroup>
+                <col class="col-channel">
+                <col class="col-schedule">
+                <col class="col-file">
+                <col class="col-status">
+                <col class="col-actions">
+            </colgroup>
             <thead>
                 <tr>
                     <th>Channel</th>
                     <th>Schedule</th>
                     <th>Schedule File</th>
                     <th>Status</th>
-                    <th style="text-align: right;">Actions</th>
+                    <th class="col-actions">Actions</th>
                 </tr>
             </thead>
             <tbody id="playoutsTableBody">
@@ -351,7 +373,7 @@
         let selectedChannelNumber = null;
         const scheduleCache = new Map();
         
-        document.addEventListener('DOMContentLoaded', () => {
+        whenDomReady(() => {
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', filterPlayouts);
@@ -409,25 +431,29 @@
                     <td>
                         <div class="channel-info">
                             <div class="channel-number">${playout.channelNumber}</div>
-                            <div>
+                            <div style="min-width: 0;">
                                 <div class="channel-name">${playout.channelName}</div>
                                 ${!playout.channelEnabled ? '<span class="badge badge-error" style="font-size: 10px;">Disabled</span>' : ''}
                             </div>
                         </div>
                     </td>
-                    <td id="schedule-${playout.channelNumber}" class="schedule-info">
-                        <div class="schedule-name" style="color: var(--text-disabled);">Loading…</div>
+                    <td id="schedule-${playout.channelNumber}">
+                        <div class="schedule-info">
+                            <div class="schedule-name" style="color: var(--text-disabled);">Loading…</div>
+                        </div>
                     </td>
-                    <td id="file-${playout.channelNumber}" class="schedule-file" style="color: var(--text-disabled);">-</td>
+                    <td id="file-${playout.channelNumber}">
+                        <div class="schedule-file" style="color: var(--text-disabled);">-</div>
+                    </td>
                     <td>
-                        <div style="display: flex; align-items: center;">
+                        <div class="status-cell">
                             <span class="status-indicator ${playout.channelEnabled ? 'active' : 'inactive'}"></span>
                             <span class="schedule-kind" id="kind-${playout.channelNumber}">
                                 Loading…
                             </span>
                         </div>
                     </td>
-                    <td>
+                    <td class="col-actions">
                         <div class="action-buttons">
                             <button class="btn-icon view" data-action="viewSchedule" data-args='${JSON.stringify([playout.channelNumber])}' title="View Schedule">
                                 <span class="material-icons">visibility</span>
@@ -552,10 +578,9 @@
                 if (!summaryCell) return;
                 
                 if (data.schedule) {
-                    summaryCell.innerHTML = `<div class="schedule-name">${escapeHtml(data.schedule.name || 'Schedule')}</div>`;
+                    summaryCell.innerHTML = `<div class="schedule-info"><div class="schedule-name">${escapeHtml(data.schedule.name || 'Schedule')}</div></div>`;
                     if (fileCell) {
-                        fileCell.textContent = data.schedule.file || '-';
-                        fileCell.style.color = 'var(--text-secondary)';
+                        fileCell.innerHTML = `<div class="schedule-file">${escapeHtml(data.schedule.file || '-')}</div>`;
                     }
                     if (kindCell) {
                         // Show schedule type with status
@@ -568,10 +593,9 @@
                         }
                     }
                 } else {
-                    summaryCell.innerHTML = '<div class="schedule-name" style="color: var(--text-disabled);">No schedule</div>';
+                    summaryCell.innerHTML = '<div class="schedule-info"><div class="schedule-name" style="color: var(--text-disabled);">No schedule</div></div>';
                     if (fileCell) {
-                        fileCell.textContent = '-';
-                        fileCell.style.color = 'var(--text-disabled)';
+                        fileCell.innerHTML = '<div class="schedule-file" style="color: var(--text-disabled);">-</div>';
                     }
                     if (kindCell) {
                         kindCell.textContent = 'No Schedule';
@@ -581,7 +605,7 @@
             } catch (error) {
                 const summaryCell = document.getElementById(`schedule-${channelNumber}`);
                 if (summaryCell) {
-                    summaryCell.innerHTML = '<div class="schedule-name" style="color: var(--error);">Error loading schedule</div>';
+                    summaryCell.innerHTML = '<div class="schedule-info"><div class="schedule-name" style="color: var(--error);">Error loading schedule</div></div>';
                 }
             }
         }
@@ -730,6 +754,8 @@
             }
             localStorage.setItem('autoPlayChannel', channelNumber);
         }
-    </script>
+    
+window.registerActions({ refreshPlayout, setAutoPlayChannel, viewSchedule });
+</script>
 {% endblock %}
 

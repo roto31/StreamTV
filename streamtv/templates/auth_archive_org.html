@@ -245,7 +245,7 @@ async function logout() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+whenDomReady(() => {
     const form = document.getElementById('loginForm');
     if (form) {
         form.addEventListener('submit', login);

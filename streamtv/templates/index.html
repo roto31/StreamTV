@@ -225,15 +225,6 @@
             </p>
         </div>
 
-        <div class="info-banner" role="status">
-            <h2>Plex integration — coming soon</h2>
-            <p>
-                HDHomeRun tuning and basic Plex API settings are available today.
-                Library browsing, bulk show/movie import, and Collections/Schedules Plex pickers are not yet available.
-                For Plex-sourced channels, use <a href="/builder">Channel Builder</a> with <code>plex://</code> URLs.
-            </p>
-        </div>
-
         <!-- Authentication Status Frame -->
         <div class="status-frame">
             <div class="status-frame-title">Authentication & Services Status</div>
@@ -493,8 +484,8 @@
                 // Plex API
                 const plexApiStatus = status.plex_api || {};
                 const plexApiDetails = plexApiStatus.enabled
-                    ? `${plexApiStatus.configured ? 'Server connection configured (library features coming soon).' : 'Enabled but not fully configured.'}`
-                    : 'Not enabled. Configure in Settings > Plex API.';
+                    ? `${plexApiStatus.configured ? 'Server connection configured (EPG / Live TV guide).' : 'Enabled but not fully configured.'}`
+                    : 'Not enabled. Configure in Settings > Plex API for EPG.';
                 const plexApiTroubleshooting = getTroubleshootingSteps('plex_api', plexApiStatus.status);
                 apiHtml += renderStatusItem(
                     'Plex API',
@@ -580,7 +571,7 @@
         }
         
         // Load on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        whenDomReady(function() {
             loadDashboardStatus();
             
             // Refresh status every 30 seconds

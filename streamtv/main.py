@@ -18,8 +18,6 @@ from slowapi.errors import RateLimitExceeded
 from .config import config
 from .database import init_db, get_db
 from .api import api_router, iptv_router_instance, docs_router, logs_router
-from .api.ollama import router as ollama_router
-from .api.foundation_models import router as foundation_models_router
 from .api.tuner_manager import tuner_router
 from .hdhomerun import (
     hdhomerun_router,
@@ -253,54 +251,6 @@ async def lifespan(app: FastAPI):
         app.state.download_queue = None
         app.state.download_scheduler = None
 
-    # Optional background auto-healer (CLI still works when disabled here)
-    auto_healer_task = None
-    app.state.auto_healer = None
-    if getattr(config.auto_healer, "enabled", False):
-        try:
-            import asyncio
-            from pathlib import Path as _Path
-            from streamtv.utils.auto_healer import AutoHealer
-
-            workspace = _Path(__file__).resolve().parent.parent
-            healer = AutoHealer(
-                workspace_root=workspace,
-                ollama_url=config.auto_healer.ollama_url,
-                ollama_model=config.auto_healer.ollama_model,
-                foundation_models_url=getattr(
-                    config.auto_healer,
-                    "foundation_models_url",
-                    "http://127.0.0.1:11435",
-                ),
-                ai_backend=getattr(config.auto_healer, "ai_backend", "auto"),
-                dry_run=not bool(config.auto_healer.apply_fixes),
-                enable_ai=bool(config.auto_healer.enable_ai),
-                max_fix_attempts=int(
-                    getattr(config.auto_healer, "max_fix_attempts", 3)
-                ),
-            )
-            await healer.__aenter__()
-            app.state.auto_healer = healer
-
-            async def _auto_heal_loop() -> None:
-                interval = max(1, int(config.auto_healer.check_interval))
-                while True:
-                    try:
-                        await healer.run_health_check()
-                    except Exception as heal_exc:
-                        logger.warning("Auto-healer cycle failed: %s", heal_exc)
-                    await asyncio.sleep(interval * 60)
-
-            auto_healer_task = asyncio.create_task(_auto_heal_loop())
-            logger.info(
-                "Auto-healer background loop started (interval=%smin, apply=%s)",
-                config.auto_healer.check_interval,
-                config.auto_healer.apply_fixes,
-            )
-        except Exception as exc:
-            logger.warning("Failed to start auto-healer: %s", exc, exc_info=True)
-            app.state.auto_healer = None
-
     logger.info(f"StreamTV started on {config.server.host}:{config.server.port}")
     yield
     
@@ -312,22 +262,11 @@ async def lifespan(app: FastAPI):
         stop_scheduler()
     except Exception:
         pass
-    if auto_healer_task is not None:
-        auto_healer_task.cancel()
-        try:
-            await auto_healer_task
-        except Exception:
-            pass
     cache_retry = getattr(app.state, "cache_retry_task", None) or cache_retry_task
     if cache_retry is not None:
         cache_retry.cancel()
         try:
             await cache_retry
-        except Exception:
-            pass
-    if getattr(app.state, "auto_healer", None) is not None:
-        try:
-            await app.state.auto_healer.__aexit__(None, None, None)
         except Exception:
             pass
     if hasattr(app.state, 'channel_manager') and app.state.channel_manager:
@@ -448,8 +387,6 @@ async def root_xmltv(
 
 app.include_router(docs_router)
 app.include_router(logs_router)
-app.include_router(ollama_router)  # Ollama routes (optional / legacy OS)
-app.include_router(foundation_models_router)  # Apple FM bridge status/query
 
 # Tuner manager: proxy Tunarr (etc.) for Plex GUI Add Device
 if config.tuner_manager.enabled:
@@ -636,12 +573,11 @@ async def media_page(request: Request):
 
 
 @app.get("/collections", response_class=HTMLResponse)
-async def collections_page(request: Request):
-    """Collections management page"""
-    if templates:
-        return templates.TemplateResponse(request, "collections.html")
-    else:
-        return HTMLResponse("<h1>Collections</h1><p>Templates not available. Use API at /api/collections</p>")
+async def collections_page_retired(request: Request):
+    """Collections UI retired (ErsatzTV/Tunarr parity). Sources in parked/collections-ui/."""
+    from fastapi.responses import RedirectResponse
+
+    return RedirectResponse(url="/media", status_code=302)
 
 
 @app.get("/playlists", response_class=HTMLResponse)

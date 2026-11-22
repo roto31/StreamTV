@@ -22,7 +22,7 @@
             Loading…
         </div>
         <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px;">
-            <button class="btn btn-primary" id="btnBackupNow" type="button">Backup now</button>
+            <button class="btn btn-primary" id="btnBackupNow" type="button" data-action="runBackupNow">Backup now</button>
             <a class="btn btn-secondary" id="btnDownload" href="/api/backup/latest">Download latest</a>
             <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
                 Restore from zip…
@@ -51,7 +51,10 @@
     </div>
 </div>
 
-<script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
 (function () {
     const statusEl = document.getElementById('backupStatus');
     const resultEl = document.getElementById('backupResult');
@@ -79,7 +82,7 @@
         }
     }
 
-    document.getElementById('btnBackupNow').addEventListener('click', async () => {
+    async function runBackupNow() {
         try {
             const r = await authenticatedFetch('/api/backup/now', { method: 'POST' });
             const data = await r.json();
@@ -89,7 +92,8 @@
         } catch (e) {
             showResult('Backup failed: ' + e.message);
         }
-    });
+    }
+    window.runBackupNow = runBackupNow;
 
     document.getElementById('restoreFile').addEventListener('change', async (ev) => {
         const file = ev.target.files && ev.target.files[0];
@@ -115,6 +119,8 @@
     });
 
     refreshStatus();
+    window.registerActions({ runBackupNow });
 })();
 </script>
 {% endblock %}
+

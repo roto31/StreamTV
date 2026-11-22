@@ -135,7 +135,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        whenDomReady(() => {
             const loadButton = document.getElementById('loadStreamButton');
             if (loadButton) {
                 loadButton.addEventListener('click', loadStream);
@@ -147,5 +147,7 @@
         window.addEventListener('load', () => {
             loadStream();
         });
-    </script>
+    
+window.registerActions({ loadStreamById });
+</script>
 {% endblock %}

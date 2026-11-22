@@ -397,6 +397,8 @@ function escapeHtml(text) {
 window.addEventListener('DOMContentLoaded', () => {
     runQuickHealthCheck();
 });
+
+window.registerActions({ runComponentCheck, runDetailedHealthCheck, runQuickHealthCheck });
 </script>
 {% endblock %}
 

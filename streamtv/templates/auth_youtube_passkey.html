@@ -315,7 +315,7 @@ async function authenticatePasskey(event) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+whenDomReady(() => {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', registerPasskey);

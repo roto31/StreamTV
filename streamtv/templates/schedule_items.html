@@ -300,7 +300,7 @@
                             <option value="playlist">Playlist</option>
                         </select>
                         <p class="help-text" style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
-                            Plex TV show/season pickers: use <a href="/collections">Collections → Plex Library Import</a> or <a href="/builder">Channel Builder</a>. See <a href="/docs/guides/STREAMTV_TUNARR_HYBRID.md">Tunarr hybrid guide</a>.
+                            Prefer <strong>Playlist</strong> for new schedule items. The Collections UI is retired — use <a href="/playlists">Playlists</a> or <a href="/builder">Channel Builder</a> (Archive.org / YouTube).
                         </p>
                     </div>
                     
@@ -310,7 +310,7 @@
                             <option value="">Select a manual collection...</option>
                         </select>
                         <p class="help-text" style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
-                            Select a manually created collection from your collections.
+                            Legacy manual collections (DB) if any remain; new work should use Playlists.
                         </p>
                     </div>
                     
@@ -524,7 +524,7 @@
         let mediaItems = [];
         let playlists = [];
         
-        document.addEventListener('DOMContentLoaded', () => {
+        whenDomReady(() => {
             loadSchedule();
             loadCollections();
             loadMediaItems();
@@ -604,10 +604,13 @@
         async function loadCollections() {
             try {
                 const res = await authenticatedFetch('/api/collections');
-                if (!res.ok) throw new Error('Failed to load collections');
+                if (!res.ok) {
+                    // Collections API retired — leave dropdowns empty; use Playlists.
+                    collections = [];
+                    return;
+                }
                 collections = await res.json();
-                const manualCollections = collections.filter(c => !c.collection_type || c.collection_type === 'manual');
-                const select = document.getElementById('collectionId');
+                const manualCollections = collections.filter(c => !c.collection_type || c.collection_type === 'manual');                const select = document.getElementById('collectionId');
                 select.innerHTML = '<option value="">Select a collection...</option>' +
                     manualCollections.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                 
@@ -825,12 +828,13 @@
         async function loadMultiCollections() {
             try {
                 const response = await authenticatedFetch('/api/collections');
-                if (!response.ok) throw new Error('Failed to load collections');
-                const allCollections = await response.json();
-                const multiCollections = allCollections.filter(c => c.collection_type === 'multi');
-                
                 const select = document.getElementById('multiCollectionId');
                 select.innerHTML = '<option value="">Select a multi collection...</option>';
+                if (!response.ok) {
+                    return; // Collections API retired
+                }
+                const allCollections = await response.json();
+                const multiCollections = allCollections.filter(c => c.collection_type === 'multi');
                 multiCollections.forEach(collection => {
                     const option = document.createElement('option');
                     option.value = collection.id;
@@ -1064,6 +1068,8 @@
             document.body.appendChild(alertDiv);
             setTimeout(() => alertDiv.remove(), 3000);
         }
-    </script>
+    
+window.registerActions({ deleteItem, editItem, moveItem });
+</script>
 {% endblock %}
 

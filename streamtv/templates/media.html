@@ -9,7 +9,7 @@
             <p class="page-subtitle">Browse all ingested assets, filter by source, and inspect full metadata.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" id="addMediaBtn">
+            <button class="btn btn-outlined" type="button" id="addMediaBtn" data-action="addMediaItem">
                 <span class="material-icons">add_link</span>
                 Add from URL
             </button>
@@ -370,31 +370,32 @@
     let selectedMediaId = null;
     let sourceFilter = 'all';
     
-    document.addEventListener('DOMContentLoaded', () => {
+    async function addMediaItem() {
+        const url = prompt('Media URL (YouTube or Archive.org):');
+        if (!url) return;
+        try {
+            const resp = await authenticatedFetch('/api/media', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url }),
+            });
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({}));
+                throw new Error(err.detail || `HTTP ${resp.status}`);
+            }
+            await loadMedia();
+        } catch (err) {
+            console.error(err);
+            alert(`Failed to add media: ${err.message || err}`);
+        }
+    }
+
+    whenDomReady(() => {
         const params = new URLSearchParams(window.location.search);
         const q = params.get('q');
         if (q) {
             document.getElementById('searchInput').value = q;
         }
-        document.getElementById('addMediaBtn')?.addEventListener('click', async () => {
-            const url = prompt('Media URL (YouTube, Archive.org, or PBS):');
-            if (!url) return;
-            try {
-                const resp = await authenticatedFetch('/api/media', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url }),
-                });
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    throw new Error(err.detail || `HTTP ${resp.status}`);
-                }
-                await loadMedia();
-            } catch (err) {
-                console.error(err);
-                alert(`Failed to add media: ${err.message || err}`);
-            }
-        });
         loadMedia();
     });
     
@@ -662,6 +663,8 @@
             return meta;
         }
     }
+
+window.registerActions({ addMediaItem, filterMedia, setSourceFilter, refreshMedia, openWindow: window.openWindow });
 </script>
 {% endblock %}
 

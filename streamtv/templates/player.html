@@ -250,7 +250,7 @@
         const videoPlayer = document.getElementById('videoPlayer');
         const channelCards = new Map();
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        whenDomReady(async () => {
             const handoffRoot = document.getElementById('handoff');
             if (handoffRoot && window.bindActionHandlers) {
                 bindActionHandlers(handoffRoot);
@@ -659,5 +659,7 @@
         // Expose for data-action handlers
         window.loadChannel = loadChannel;
         window.downloadChannelM3u = downloadChannelM3u;
-    </script>
+    
+window.registerActions({ downloadChannelM3u, loadChannel });
+</script>
 {% endblock %}

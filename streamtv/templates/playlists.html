@@ -9,11 +9,11 @@
             <p class="page-subtitle">Browse, filter, and inspect channel playlists with Apple HIG-aligned controls.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" id="playlistsApiButton">
+            <button class="btn btn-outlined" type="button" id="playlistsApiButton" type="button" data-action="openPlaylistsApi">
                 <span class="material-icons">code</span>
                 API Response
             </button>
-            <button class="btn btn-primary" type="button" id="refreshPlaylistsButton">
+            <button class="btn btn-primary" type="button" id="refreshPlaylistsButton" type="button" data-action="refreshPlaylists">
                 <span class="material-icons">refresh</span>
                 Refresh
             </button>
@@ -399,7 +399,7 @@
     let channelMap = {};
     let assignmentFilter = 'all';
     
-    document.addEventListener('DOMContentLoaded', () => {
+    whenDomReady(() => {
         const apiButton = document.getElementById('playlistsApiButton');
         if (apiButton) {
             apiButton.addEventListener('click', openPlaylistsApi);
@@ -703,6 +703,8 @@
         const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
         return `${mins}:${secs}`;
     }
+
+window.registerActions({ refreshPlaylists, openPlaylistsApi, openPlaylistApi });
 </script>
 {% endblock %}
 

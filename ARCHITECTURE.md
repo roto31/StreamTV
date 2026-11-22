@@ -1,9 +1,14 @@
 # StreamTV — Architecture
 
 StreamTV is a cross-platform IPTV platform (FastAPI + Python) that turns online
-video sources (Archive.org, YouTube, PBS, Plex) into live TV channels and exposes
-them as a spoofed HDHomeRun tuner plus IPTV M3U/XMLTV for Plex, Emby, Jellyfin,
-Kodi, and VLC.
+video sources into live TV channels and exposes them as a spoofed HDHomeRun tuner
+plus IPTV M3U/XMLTV for Plex, Emby, Jellyfin, Kodi, and VLC.
+
+**First-party Channel Builder sources:** Archive.org and YouTube.  
+**Playback adapters** may still resolve Archive.org, YouTube, PBS, and Plex URLs
+already present in inventory. PBS/Plex/Vimeo Builder builtins are parked.  
+**Schedules:** on-disk `schedules/{n}.yml` (web create/edit removed).  
+**Collections UI / `/api/collections`:** retired. **AI Recovery / AutoHealer UI:** retired (script heals only).
 
 > Diagrams are Mermaid. GitHub renders them automatically. Keep them in sync when
 > the streaming, import, or source-resolution paths change (see
@@ -24,13 +29,13 @@ flowchart TD
         subgraph Routers
             HDHR["HDHomeRun: discover / lineup / auto + optional video hold"]
             IPTV["IPTV: M3U, XMLTV, channel TS"]
-            API["REST: channels, import, backup, builder, cache, settings, AI"]
+            API["REST: channels, import, backup, builder, cache, settings"]
             WEB["Web UI + GET /player"]
             PLAYER["Player remux: GET /player/live/{n}.ts"]
         end
         SSDP["SSDP server (UDP 1900 discovery)"]
         CM["ChannelManager -> ChannelStream (continuous playout)"]
-        SCHED["Scheduling: ScheduleParser + ScheduleEngine"]
+        SCHED["Scheduling: ScheduleParser + ScheduleEngine (YAML)"]
         STREAMER["MPEGTSStreamer (FFmpeg -> MPEG-TS)"]
         SM["StreamManager (source detection + URL resolution)"]
         CACHE["Optional cache: TunarrRAM youtube_full_cache"]
@@ -38,14 +43,14 @@ flowchart TD
         subgraph Adapters
             YT["YouTubeAdapter (yt-dlp)"]
             AO["ArchiveOrgAdapter"]
-            PBS["PBSAdapter"]
-            PX["PlexAdapter"]
+            PBS["PBSAdapter (inventory)"]
+            PX["PlexAdapter (inventory)"]
         end
         IMP["ChannelImporter (YAML -> channels/media/playlists)"]
         DB[("SQLite via SQLAlchemy")]
     end
 
-    EXT["Source origins: archive.org, youtube.com, pbs.org, Plex server"]
+    EXT["Source origins: archive.org, youtube.com (+ PBS/Plex if in inventory)"]
     FFMPEG["FFmpeg / FFprobe"]
     HEAL["LaunchAgents: TunarrRAM heal, yt-dlp upgrade; soft deploy stream-restart"]
 

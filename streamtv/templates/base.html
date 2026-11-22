@@ -1462,7 +1462,7 @@
             <a href="/iptv/channels.m3u" class="action-link" target="_blank">M3U</a>
             <a href="/iptv/xmltv.xml" class="action-link" target="_blank">XMLTV</a>
             <a href="/docs" class="action-link" target="_blank" style="font-weight: 500;">API</a>
-            <button class="action-button" id="themeToggleButton" title="Toggle theme" aria-label="Toggle theme">
+            <button class="action-button" id="themeToggleButton" type="button" title="Toggle theme" aria-label="Toggle theme" data-action="toggleTheme">
                 <span class="material-icons" id="themeIcon">dark_mode</span>
             </button>
             <div style="display: flex; align-items: center; margin-left: 8px;">
@@ -1521,10 +1521,6 @@
                     <a href="/playlists" class="nav-link {% if '/playlists' in request.url.path %}active{% endif %}" aria-label="Playlists">
                         <span class="material-icons">playlist_play</span>
                         <span>Playlists</span>
-                    </a>
-                    <a href="/collections" class="nav-link {% if '/collections' in request.url.path %}active{% endif %}" aria-label="Collections">
-                        <span class="material-icons">collections</span>
-                        <span>Collections</span>
                     </a>
                 </div>
             </div>
@@ -1681,11 +1677,7 @@
                         <span class="material-icons">dvr</span>
                         <span>Plex Server Logs</span>
                     </a>
-                    <a href="/ollama" class="nav-link {% if '/ollama' in request.url.path or '/foundation-models' in request.url.path %}active{% endif %}" aria-label="AI Recovery">
-                        <span class="material-icons">psychology</span>
-                        <span>AI Recovery</span>
-                    </a>
-                    <a href="/test-stream" class="nav-link {% if '/test-stream' in request.url.path %}active{% endif %}" aria-label="Test Stream">
+<a href="/test-stream" class="nav-link {% if '/test-stream' in request.url.path %}active{% endif %}" aria-label="Test Stream">
                         <span class="material-icons">bug_report</span>
                         <span>Test Stream</span>
                     </a>
@@ -1735,6 +1727,7 @@
             localStorage.setItem('theme', newTheme);
             updateThemeIcon();
         }
+        window.toggleTheme = toggleTheme;
         
         function updateThemeIcon() {
             const theme = document.body.getAttribute('data-theme');
@@ -1816,9 +1809,21 @@
         window.setApiKey = setApiKey;
         window.getCsrfToken = getCsrfToken;
 
+        // Page scripts register handlers here (and/or on window.*) for data-action buttons.
+        window.StreamTVActions = window.StreamTVActions || {};
+        window.registerActions = function registerActions(actions) {
+            Object.assign(window.StreamTVActions, actions || {});
+        };
+        window.openWindow = function openWindow(url, target) {
+            window.open(url, target || '_blank');
+        };
+
         function resolveAction(actionName) {
             if (!actionName) {
                 return null;
+            }
+            if (typeof window.StreamTVActions[actionName] === 'function') {
+                return window.StreamTVActions[actionName];
             }
             const parts = actionName.split('.');
             let context = window;
@@ -1841,42 +1846,56 @@
             }
         }
 
-        function bindActionHandlers(root = document) {
-            root.querySelectorAll('[data-action]').forEach(element => {
-                if (element.dataset.actionBound === 'true') {
-                    return;
-                }
+        function dispatchDataAction(event) {
+            const element = event.target.closest?.('[data-action]');
+            if (!element || !element.dataset.action) {
+                return;
+            }
+            const expected = element.dataset.actionEvent || 'click';
+            if (event.type !== expected) {
+                return;
+            }
+            if (element.dataset.selfOnly === 'true' && event.target !== element) {
+                return;
+            }
+            if (element.disabled || element.classList.contains('disabled')) {
+                return;
+            }
+            // Only block default when asked, or for placeholder href="#" links.
+            // Real navigation links (e.g. Preview → /player) must keep their href.
+            const href = element.tagName === 'A' ? (element.getAttribute('href') || '') : '';
+            if (
+                element.dataset.preventDefault === 'true'
+                || href === '#'
+                || href.startsWith('javascript:')
+            ) {
+                event.preventDefault();
+            }
+            if (element.dataset.stopPropagation === 'true') {
+                event.stopPropagation();
+            }
 
-                const eventType = element.dataset.actionEvent || 'click';
-                const handler = (event) => {
-                    if (element.dataset.selfOnly === 'true' && event.target !== element) {
-                        return;
-                    }
-                    if (element.dataset.preventDefault === 'true') {
-                        event.preventDefault();
-                    }
-                    if (element.dataset.stopPropagation === 'true') {
-                        event.stopPropagation();
-                    }
+            const actionFn = resolveAction(element.dataset.action);
+            if (!actionFn) {
+                console.warn(`Action handler "${element.dataset.action}" not found for`, element);
+                return;
+            }
 
-                    const actionFn = resolveAction(element.dataset.action);
-                    if (!actionFn) {
-                        console.warn(`Action handler "${element.dataset.action}" not found for`, element);
-                        return;
-                    }
-
-                    const args = parseActionArgs(element);
-                    const callArgs = element.dataset.passEvent === 'true'
-                        ? [...args, event]
-                        : args;
-                    actionFn.apply(element, callArgs);
-                };
-
-                element.addEventListener(eventType, handler);
-                element.dataset.actionBound = 'true';
-            });
+            const args = parseActionArgs(element);
+            const callArgs = element.dataset.passEvent === 'true'
+                ? [...args, event]
+                : args;
+            actionFn.apply(element, callArgs);
         }
 
+        // Event delegation (capture): works for static + dynamically inserted buttons; resolves
+        // at event time so page scripts in extra_scripts can define handlers after this file runs.
+        ['click', 'change', 'input'].forEach((type) => {
+            document.addEventListener(type, dispatchDataAction, true);
+        });
+
+        // Back-compat no-op (pages/MutationObserver may still call this)
+        function bindActionHandlers(_root) { /* delegated */ }
         window.bindActionHandlers = bindActionHandlers;
         
         // Drawer Management
@@ -2136,8 +2155,7 @@
             }
         });
 
-        // Initialize declarative handlers after DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
+        function initChromeControls() {
             const drawerToggleButton = document.getElementById('drawerToggleButton');
             if (drawerToggleButton) {
                 drawerToggleButton.addEventListener('click', toggleDrawer);
@@ -2146,6 +2164,10 @@
             if (drawerOverlay) {
                 drawerOverlay.addEventListener('click', closeDrawer);
             }
+            const themeToggleButton = document.getElementById('themeToggleButton');
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', toggleTheme);
+            }
 
             document.querySelectorAll('[data-dropdown-target]').forEach(link => {
                 const target = link.getAttribute('data-dropdown-target');
@@ -2153,7 +2175,23 @@
             });
 
             bindActionHandlers();
-        });
+        }
+
+        // Initialize declarative handlers after DOM is ready (or immediately if already ready)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChromeControls);
+        } else {
+            initChromeControls();
+        }
+
+        // Helper for page scripts in extra_scripts (may run after DOMContentLoaded)
+        window.whenDomReady = function whenDomReady(fn) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', fn);
+            } else {
+                fn();
+            }
+        };
 
         const actionObserver = new MutationObserver(mutations => {
             mutations.forEach(mutation => {

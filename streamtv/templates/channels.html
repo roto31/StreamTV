@@ -272,7 +272,7 @@
     
     <!-- Toolbar -->
     <div class="channels-toolbar">
-        <button class="btn btn-primary" id="addChannelButton">
+        <button class="btn btn-primary" id="addChannelButton" type="button" data-action="openCreateModal">
             <span class="material-icons" style="font-size: 18px;">add</span>
             Add Channel
         </button>
@@ -307,7 +307,7 @@
             <div class="empty-state-icon">📺</div>
             <h3 style="margin-bottom: 8px;">No channels found</h3>
             <p style="margin-bottom: 16px;">Create your first channel to get started</p>
-            <button class="btn btn-primary" id="emptyStateCreateButton">Create Channel</button>
+            <button class="btn btn-primary" id="emptyStateCreateButton" type="button" data-action="openCreateModal">Create Channel</button>
         </div>
     </div>
     
@@ -316,7 +316,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Create Channel</h2>
-                <button class="modal-close" id="channelModalCloseButton">
+                <button class="modal-close" id="channelModalCloseButton" type="button" data-action="closeModal">
                     <span class="material-icons">close</span>
                 </button>
             </div>
@@ -402,7 +402,7 @@
                 
                 <div style="display: flex; gap: 12px; margin-top: 24px;">
                     <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
-                    <button type="button" class="btn btn-outlined" id="channelModalCancelButton" style="flex: 1;">Cancel</button>
+                    <button type="button" class="btn btn-outlined" id="channelModalCancelButton" type="button" data-action="closeModal" style="flex: 1;">Cancel</button>
                 </div>
             </form>
         </div>
@@ -441,7 +441,7 @@
         let uploadingIconChannelId = null;
         
         // Load channels and wire events on page load
-        document.addEventListener('DOMContentLoaded', () => {
+        whenDomReady(() => {
             loadChannels();
             loadProfilesAndWatermarks();
 
@@ -903,5 +903,7 @@
                 showAlert('Export failed: ' + error.message, 'error');
             }
         }
-    </script>
+    
+window.registerActions({ openCreateModal, closeModal,  deleteChannel, deleteChannelIcon, editChannel, exportChannelYaml, openUploadIconModal, storeChannelPreview, toggleChannel });
+</script>
 {% endblock %}

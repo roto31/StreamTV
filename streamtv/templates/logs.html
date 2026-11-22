@@ -392,6 +392,8 @@
     document.getElementById('autoScrollIndicator').addEventListener('click', () => {
         toggleAutoScroll();
     });
+
+window.registerActions({ clearLogs, loadLogs, toggleAutoScroll });
 </script>
 {% endblock %}
 

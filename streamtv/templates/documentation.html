@@ -237,7 +237,7 @@
 
 <script nonce="{{ request.state.csp_nonce }}">
     // Move scriptResults div to right after Quick Diagnostics section or script buttons
-    document.addEventListener('DOMContentLoaded', function() {
+    whenDomReady(function() {
         const docContent = document.querySelector('.doc-content');
         const scriptResults = document.getElementById('scriptResults');
         

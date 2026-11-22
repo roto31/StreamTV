@@ -12,8 +12,6 @@ from sqlalchemy.orm import Session
 
 from streamtv.builder.auth_service import (
     apply_archive_credentials,
-    apply_pbs_cookies,
-    apply_plex_credentials,
     apply_tvdb_api_key,
     apply_tvmaze_credentials,
     apply_youtube_cookies,
@@ -22,12 +20,8 @@ from streamtv.builder.auth_service import (
 from streamtv.builder.compiler import _next_channel_number, build_channel_from_draft
 from streamtv.builder.cookie_io import (
     cookies_path_for_scope,
-    default_pbs_cookies_import_path,
-    ensure_pbs_cookies_for_builder,
-    import_pbs_cookies_from_downloads,
     write_netscape_cookies,
 )
-from streamtv.builder.pbs_defaults import apply_pbs_source_defaults
 from streamtv.builder.jobs import job_store
 from streamtv.builder.models import (
     ArchiveLoginRequest,
@@ -47,13 +41,11 @@ from streamtv.builder.models import (
     LinkStatus,
     LinksBatchRequest,
     PlaywrightLoginRequest,
-    PlexLoginRequest,
     TvdbKeyRequest,
     TvmazeCredentialsRequest,
 )
 from streamtv.builder.playwright_auth import (
     capture_cookies_generic,
-    capture_cookies_pbs,
     capture_cookies_youtube,
 )
 from streamtv.builder.resolver import detect_url_kind, expand_url, resolve_url_async
@@ -67,6 +59,21 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/builder", tags=["Channel Builder"])
 
 draft_store = DraftStore()
+
+_RETIRED_BUILDER_SOURCES = frozenset({"pbs", "plex", "vimeo"})
+
+
+def _assert_source_allowed(source_id: Optional[str]) -> None:
+    if not source_id:
+        return
+    if source_id in _RETIRED_BUILDER_SOURCES:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Source '{source_id}' is retired from Channel Builder. "
+                "Choose archive.org or youtube."
+            ),
+        )
 filler_store = FillerStore()
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -118,11 +125,6 @@ async def _resolve_draft_links(job: BuilderJob) -> None:
         job.errors.append("Draft not found")
         job_store.save(job)
         return
-
-    if draft.selected_source == "pbs":
-        imported = ensure_pbs_cookies_for_builder(auto_import_downloads=True)
-        if imported:
-            logger.info("PBS cookies ready for resolve: %s", imported)
 
     pending = [link for link in draft.links if link.status in (LinkStatus.PENDING, LinkStatus.ERROR)]
     job.total = len(pending)
@@ -179,9 +181,6 @@ async def _run_playwright_login(job: BuilderJob, scope: str, email: str, passwor
         if scope == "youtube":
             path = await capture_cookies_youtube(email, password)
             apply_youtube_cookies(path)
-        elif scope == "pbs":
-            path = await capture_cookies_pbs(email, password)
-            apply_pbs_cookies(path)
         else:
             spec = get_source(scope)
             if not spec or not spec.auth.login_url:
@@ -263,10 +262,6 @@ async def builder_auth_pbs(body: PlaywrightLoginRequest) -> BuilderJob:
     return job
 
 
-@router.post("/auth/plex")
-async def builder_auth_plex(body: PlexLoginRequest) -> dict:
-    return apply_plex_credentials(body.base_url, body.token)
-
 
 @router.post("/auth/tvdb")
 async def builder_auth_tvdb(body: TvdbKeyRequest) -> dict:
@@ -284,21 +279,6 @@ async def builder_auth_tvmaze(body: TvmazeCredentialsRequest) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
-@router.post("/auth/pbs/cookies/import")
-async def builder_auth_pbs_import_downloads() -> dict:
-    """Import PBS cookies from ~/Downloads/cookies.txt (or pbs.cookies_import_path)."""
-    try:
-        path = import_pbs_cookies_from_downloads()
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-    apply_pbs_cookies(path)
-    return {
-        "status": "success",
-        "scope": "pbs",
-        "cookies_file": str(path),
-        "import_source": str(default_pbs_cookies_import_path()),
-    }
-
 
 @router.post("/auth/{scope}/cookies")
 async def builder_auth_cookies(scope: str, file: UploadFile = File(...)) -> dict:
@@ -309,8 +289,6 @@ async def builder_auth_cookies(scope: str, file: UploadFile = File(...)) -> dict
     path.write_bytes(content)
     if scope == "youtube":
         apply_youtube_cookies(path)
-    elif scope == "pbs":
-        apply_pbs_cookies(path)
     return {"status": "success", "scope": scope, "cookies_file": str(path)}
 
 
@@ -356,14 +334,13 @@ async def patch_draft(draft_id: str, body: DraftPatchRequest) -> BuilderDraft:
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
     if body.selected_source is not None:
+        _assert_source_allowed(body.selected_source)
         spec = get_source(body.selected_source)
         if not spec:
             raise HTTPException(status_code=400, detail=f"Unknown source: {body.selected_source}")
         if spec.status == "coming_soon":
             raise HTTPException(status_code=400, detail=f"{spec.label} is not available yet")
         draft.selected_source = body.selected_source
-        if body.selected_source == "pbs":
-            draft = apply_pbs_source_defaults(draft)
     if body.ordering is not None:
         draft.ordering = body.ordering
     if body.channel is not None:
@@ -566,6 +543,7 @@ async def build_draft(
     draft = draft_store.get(draft_id)
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
+    _assert_source_allowed(draft.selected_source)
 
     job = BuilderJob(draft_id=draft_id, job_type="build", total=1)
 

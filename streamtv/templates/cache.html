@@ -9,7 +9,7 @@
             <p class="page-subtitle">Operator view of download cache and scheduler activity.</p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-outlined" type="button" id="refreshCacheStatsButton">
+            <button class="btn btn-outlined" type="button" id="refreshCacheStatsButton" type="button" data-action="loadCacheStats">
                 <span class="material-icons">refresh</span>
                 Refresh
             </button>
@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
     async function loadCacheStats() {
         const output = document.getElementById('cacheStatsOutput');
         try {
@@ -38,5 +38,7 @@
 
     document.getElementById('refreshCacheStatsButton').addEventListener('click', loadCacheStats);
     loadCacheStats();
+
+window.registerActions({ loadCacheStats });
 </script>
 {% endblock %}
