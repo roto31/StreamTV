@@ -193,45 +193,59 @@ flowchart LR
 
 ---
 
-## 7. Tool catalog (`mcp_streamtv`)
+## 7. Profiles and tool catalog (`mcp_streamtv`)
 
-| Tool | Maps to |
-|------|---------|
-| `streamtv_suggest_channel_number` | Next free number from lineup |
-| `streamtv_list_channels` / `get_channel` | `GET /api/channels` |
-| `builder_list_sources` | `GET /api/builder/sources` |
-| `builder_auth_status` / `builder_auth_check` | Auth status / preflight |
-| `builder_create_draft` / `get` / `list` / `update` | Draft CRUD |
-| `builder_add_links` | `POST …/links` (rejects `.ia.mp4`) |
-| `builder_resolve` / `builder_job_status` / `builder_wait_job` | Resolve + poll |
-| `builder_build` | Compile + import + playout reset |
-| `builder_list_fillers` | Filler collections |
-| `streamtv_playout_reset` / `streamtv_stream_restart` | Soft deploy |
+| Profile | Tools | Use |
+|---------|-------|-----|
+| `guided` (default) | 11 `channel_*` | Plain-language create |
+| `planner` | guided without `channel_build` | Read / plan only |
+| `builder` | guided + detail | Power users |
+| `full` | + legacy Builder names | May hit Cursor ~40 tool cap |
 
-Resources include schema, Channel Builder docs, intake prompt, and URL/id rules.
+### Guided tools
+
+| Tool | Role |
+|------|------|
+| `channel_guide` | Intake + tool list (call first) |
+| `channel_list` | Channels + open drafts |
+| `channel_start` | New-channel draft |
+| `channel_set_requirements` | Audience, theme, era, … |
+| `channel_find` / `channel_job` | Discover + poll |
+| `channel_shortlist` / `channel_choose` | Present / keep candidates |
+| `channel_plan` / `channel_answer` | Preview + questions (`plan_token`) |
+| `channel_build` | Gates + write; needs `plan_token` + `confirm="build"` |
+
+### New-channel only + gates
+
+- Never edit/merge an existing channel (G5: number free in DB, `data/`, `schedules/`, `unified/`).
+- Auto-rollback of only this build’s files/rows on post-write failure.
+- Mutating tools return `summary_table` — show it verbatim; stop on FAIL.
+- Templates `kids_specials` / `holiday_family` / `prime_time_station_ids` — never rebuild example channels 101–1225.
+
+Legacy detail tools (`builder_*`, soft `streamtv_playout_reset` / `streamtv_stream_restart`) remain under `builder`/`full`.
 
 ---
 
 ## 8. Prerequisites and host wiring
 
-- StreamTV listening on `http://127.0.0.1:8410` (production LaunchAgent `com.streamtv`)
-- `pip install -r requirements-mcp-streamtv.txt` (and archive MCP if used)
-- Optional: `STREAMTV_API_KEY` when API key is required
+- StreamTV on `http://127.0.0.1:8410` (`com.streamtv`, repo cwd)
+- `pip install -r requirements-mcp-streamtv.txt`
+- Optional: `STREAMTV_API_KEY` when API key middleware is on
 
 ```bash
 export STREAMTV_BASE_URL=http://127.0.0.1:8410
-python3 -m mcp_streamtv.main
+./venv/bin/python -m mcp_streamtv.main --profile guided
 ```
 
-**Preferred optional installer (interactive platform + apply/dry-run menus):**
+**Host configs (§7B):**
 
 ```bash
-bash scripts/setup_channel_creator_mcp.sh
+zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
 ```
 
-**Full per-host wiring (Cursor, VS Code, Claude Desktop, ChatGPT deferred, local models)
-with diagrams:** [CHANNEL_CREATOR_MCP_HOST_WIRING.md](CHANNEL_CREATOR_MCP_HOST_WIRING.md)
-(see **Setup script (all-in-one, optional)**).
+Full per-host steps: [CHANNEL_CREATOR_MCP_HOST_WIRING.md](CHANNEL_CREATOR_MCP_HOST_WIRING.md) ·
+Remote auth: [CHANNEL_CREATOR_MCP_AUTH.md](CHANNEL_CREATOR_MCP_AUTH.md) ·
+E2E: `zsh scripts/channel_creator_e2e_rehearsal.zsh`
 
 ```mermaid
 flowchart LR
@@ -239,18 +253,18 @@ flowchart LR
   VSCode["VS Code"] --> MCP
   Claude["Claude Desktop"] --> MCP
   Local["Local Qwen3 / Llama"] --> MCP
-  ChatGPT["ChatGPT deferred"] -.-> Bridge["Future HTTPS bridge"]
+  Remote["ChatGPT / Claude web"] --> HTTP["MCP HTTP :8411"]
   MCP --> API["StreamTV :8410"]
-  Bridge -.-> API
+  HTTP --> API
 ```
 
 | Host | Fit | Start here |
 |------|-----|------------|
-| Cursor | Best | MCP settings + `streamtv-channel-creator` skill |
-| VS Code (Continue / Cline) | Good | Same stdio MCP + intake system rule |
-| Claude Desktop | Good | `claude_desktop_config.json` + prompt `channel_intake` |
-| Local (Ollama) | Good @ Qwen3 32B+ | Same MCP; see model table in host-wiring guide |
-| ChatGPT | Deferred | Needs authenticated remote Actions/MCP — not LAN stdio |
+| Cursor | Best | hosts.zsh apply + `streamtv-channel-creator` skill |
+| VS Code (Continue / Cline) | Good | emit + intake system rule |
+| Claude Desktop / Code | Good | emit / `claude mcp add` |
+| Local (Ollama) | Good @ Qwen3 32B+ | compact intake |
+| ChatGPT / Claude web | Remote | Tunnel `:8411` + `oauth` or `dual` |
 
 **Local model picks:** Qwen3 32B (default) · Llama 3.3 70B (40+ GB) · Qwen3 8B (tight RAM).
 
@@ -274,6 +288,7 @@ flowchart LR
 - Prefer `127.0.0.1` in sandboxed clients
 - Never paste Netscape cookies into cloud chats
 - Do not publish private channel packs or schedules to public docs
+- HTTP MCP auth (`none`|`bearer`|`oauth`|`dual`): [CHANNEL_CREATOR_MCP_AUTH.md](CHANNEL_CREATOR_MCP_AUTH.md) — never tunnel `:8410`
 
 ## Troubleshooting
 

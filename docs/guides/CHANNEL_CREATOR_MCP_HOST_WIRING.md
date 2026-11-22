@@ -1,377 +1,290 @@
-# Channel Creator MCP — host wiring
+# Channel Creator MCP — host wiring (v2)
 
-How to connect the StreamTV Channel Creator MCP to **Cursor**, **VS Code**,
-**Claude Desktop**, **ChatGPT** (deferred), and **local models**.
+Connect StreamTV Channel Creator MCP to editors, local models, and remote
+ChatGPT / Claude web. Platform guide: [CHANNEL_CREATOR_MCP.md](CHANNEL_CREATOR_MCP.md) ·
+Auth: [CHANNEL_CREATOR_MCP_AUTH.md](CHANNEL_CREATOR_MCP_AUTH.md)
 
-Canonical platform guide (create/tune signal paths): [CHANNEL_CREATOR_MCP.md](CHANNEL_CREATOR_MCP.md)  
-Wiki: [Channel-Creator-MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP)
+```mermaid
+flowchart TD
+  Start["Want NL channel create"] --> Where{"Where do you work?"}
+  Where -->|IDE| LocalIDE["Cursor / VS Code / Continue / Cline"]
+  Where -->|Desktop chat| Claude["Claude Desktop / Claude Code"]
+  Where -->|Local GPU| LocalLLM["LM Studio / Goose / Ollama client"]
+  Where -->|Browser loopback| OpenWebUI["Open WebUI"]
+  Where -->|Phone / ChatGPT / Claude web| Remote["Cloudflare tunnel"]
+  LocalIDE --> Stdio["stdio MCP · profile guided"]
+  Claude --> Stdio
+  LocalLLM --> Stdio
+  OpenWebUI --> LoopHTTP["HTTP :8411 auth=none · loopback only"]
+  Remote --> PubHTTP["HTTP :8411 · bearer / oauth / dual"]
+  Stdio --> API["StreamTV :8410 loopback"]
+  LoopHTTP --> API
+  PubHTTP --> API
+```
+
+**Preferred generator (§7B):**
+
+```bash
+zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
+# Apply Cursor project config (backs up first):
+zsh scripts/channel_creator_mcp_hosts.zsh --host cursor --mode apply --profile guided
+```
+
+```mermaid
+flowchart TD
+  Gen["channel_creator_mcp_hosts.zsh"] --> Mode{"mode"}
+  Mode -->|emit| Out["scripts/channel-creator-mcp/generated/*.json"]
+  Mode -->|apply| Bak["Backup .bak.stamp"]
+  Bak --> Merge["Merge live host config"]
+  Mode -->|dry-run| Print["Print actions only"]
+  Out --> Smoke["mcp_smoke.py stdio"]
+  Merge --> Smoke
+```
+
+Legacy interactive installer: `bash scripts/setup_channel_creator_mcp.sh`
+(prints a pointer to the zsh generator).
 
 ---
 
 ## 1. Shared prerequisites
 
-Every host uses the **same** stdio MCP process. Only the client config changes.
-
-### Setup script (all-in-one, optional)
-
-Preferred optional installer — no flags required:
-
-```bash
-bash scripts/setup_channel_creator_mcp.sh
-```
-
-```mermaid
-flowchart TD
-  Start["bash scripts/setup_channel_creator_mcp.sh"] --> Menu{"Which platform?"}
-  Menu --> Mode{"Mode?"}
-  Mode -->|Apply| ApplyMode["Will merge live configs"]
-  Mode -->|Dry-run| DryMode["Print actions only"]
-  Mode -->|Emit only| EmitMode["Write generated/ snippets"]
-  ApplyMode --> Shared["Prompt shared entries"]
-  DryMode --> Shared
-  EmitMode --> Shared
-  Shared --> RunPath["Run selected platform path"]
-  RunPath --> Done["Done / next steps"]
-```
-
-```mermaid
-flowchart LR
-  subgraph ApplySupported["Apply merges"]
-    Cursor
-    Claude["Claude Desktop macOS"]
-  end
-  subgraph EmitPaste["Emit + paste steps"]
-    Continue
-    Cline
-    Local["Local Ollama client"]
-  end
-  subgraph Deferred["Checklist only"]
-    ChatGPT
-  end
-```
-
-| Prompt | Default |
-|--------|---------|
-| Platform | Menu 1–6 |
-| Mode | Apply / Dry-run / Emit only |
-| StreamTV repo root | Detected from script |
-| Python binary | `venv/bin/python` if present |
-| `STREAMTV_BASE_URL` | `http://127.0.0.1:8410` |
-| Include Archive.org MCP? | No |
-| Install MCP pip deps? | No (streamtv + archive reqs only; skipped in dry-run) |
-| Optional API key | Blank; never written to git-tracked files |
-
-| Mode | Behavior |
-|------|----------|
-| **Apply** | Cursor / Claude Desktop: merge with `.bak.<timestamp>`. Continue / Cline / Local: emit fragments + paste steps (global paths vary). ChatGPT: checklist only. |
-| **Dry-run** | Print actions; write nothing |
-| **Emit only** | Write under `scripts/channel-creator-mcp/generated/` |
-
-Automation overrides (optional):
-
-```bash
-bash scripts/setup_channel_creator_mcp.sh --platform cursor --apply
-bash scripts/setup_channel_creator_mcp.sh --platform vscode-continue --emit-only --with-archive
-bash scripts/setup_channel_creator_mcp.sh --platform chatgpt --dry-run
-```
-
-Helpers live in [`scripts/channel-creator-mcp/`](../../scripts/channel-creator-mcp/README.md).
-
 | Requirement | Detail |
 |-------------|--------|
-| StreamTV API | Listening on `http://127.0.0.1:8410` (or set `STREAMTV_BASE_URL`) |
-| Python deps | `pip install -r requirements-mcp-streamtv.txt` |
-| Optional Archive discovery | `pip install -r requirements-mcp-archive-org.txt` |
-| Optional auth | `STREAMTV_API_KEY` if API key middleware is on |
-| Intake | Prompt `channel_intake` / resource `streamtv://prompts/channel-intake` |
+| StreamTV API | `http://127.0.0.1:8410` — production `com.streamtv` (repo cwd) |
+| MCP package | `pip install -r requirements-mcp-streamtv.txt` |
+| Default profile | `guided` (11 tools) |
+| Default transport | **stdio** (local hosts) |
+| Remote transport | Streamable HTTP `:8411` + `bearer` / `oauth` / `dual` |
 
 ```bash
 export STREAMTV_BASE_URL=http://127.0.0.1:8410
-# optional: export STREAMTV_API_KEY=...
-cd /path/to/StreamTV
-python3 -m mcp_streamtv.main          # primary
-python3 -m mcp_archive_org.main       # optional second server
+export STREAMTV_MCP_PROFILE=guided
+./venv/bin/python -m mcp_streamtv.main --profile guided --transport stdio
 ```
+
+Smoke:
+
+```bash
+./venv/bin/python scripts/mcp_smoke.py --transport stdio --profile guided
+```
+
+Verify: tool count = 11 for `guided`; `channel_guide` returns intake text.
 
 ```mermaid
 flowchart LR
-  subgraph Hosts
-    Cursor
-    VSCode["VS Code Continue or Cline"]
-    Claude["Claude Desktop"]
-    Local["Local LLM Ollama plus client"]
-    ChatGPT["ChatGPT deferred"]
-  end
-  subgraph MCP["stdio MCP on operator machine"]
-    ST["mcp_streamtv"]
-    AO["mcp_archive_org"]
-  end
-  API["StreamTV HTTP 127.0.0.1:8410"]
-  Cursor --> ST
-  VSCode --> ST
-  Claude --> ST
-  Local --> ST
-  Cursor -.-> AO
-  VSCode -.-> AO
-  Claude -.-> AO
-  Local -.-> AO
-  ST --> API
-  ChatGPT -.->|"HTTPS bridge not shipped"| API
+  Host["AI host"] -->|"stdio or HTTP /mcp"| MCP["mcp_streamtv"]
+  MCP -->|"STREAMTV_BASE_URL"| API[":8410 Builder API"]
+  API --> Draft["draft → plan → newchannel-build"]
+  Draft --> YAML["data/ + schedules/"]
+  YAML --> Soft["soft playout-reset / stream-restart"]
 ```
 
 ---
 
-## 2. Host fit matrix
+## 2. Cursor
 
-| Host | Fit | Transport | Notes |
-|------|-----|-----------|--------|
-| **Cursor** | Best | stdio MCP + skill | Repo on disk; enable `streamtv-channel-creator` |
-| **Claude Desktop** | Good | stdio MCP + prompt | Use `channel_intake` prompt |
-| **VS Code** (Continue / Cline) | Good | stdio MCP + rules | Same Python entrypoints |
-| **Local** (Ollama + Continue/Cline/Goose) | Good with Qwen3 32B+ | stdio MCP | Stricter intake; one tool at a time on small models |
-| **ChatGPT** | Deferred | Needs HTTPS Actions / remote MCP | Do not expose LAN `:8410` publicly without auth |
-
----
-
-## 3. Cursor
-
-### Where to configure
-
-Cursor **Settings → MCP** (user or project). Prefer project config when the StreamTV
-checkout path is fixed.
-
-### Config example
-
-```json
-{
-  "mcpServers": {
-    "streamtv": {
-      "command": "python3",
-      "args": ["-m", "mcp_streamtv.main"],
-      "cwd": "/path/to/StreamTV",
-      "env": {
-        "STREAMTV_BASE_URL": "http://127.0.0.1:8410"
-      }
-    },
-    "archive-org": {
-      "command": "python3",
-      "args": ["-m", "mcp_archive_org.main"],
-      "cwd": "/path/to/StreamTV"
-    }
-  }
-}
+```bash
+zsh scripts/channel_creator_mcp_hosts.zsh --host cursor --mode apply --profile guided
 ```
 
-Use a venv interpreter if needed: `"/path/to/StreamTV/venv/bin/python"` instead of `python3`.
+Writes `.cursor/mcp.json` (backup `.bak.<stamp>`). Enable the
+`streamtv-channel-creator` skill. First message: ask for a Christmas / holiday
+channel in plain language.
 
-### Skill
-
-Enable **streamtv-channel-creator** (`.cursor/skills/streamtv-channel-creator/SKILL.md`)
-so agents always ask Search vs Paste and refuse `.ia.mp4` URLs.
+**Verify:** guided tools visible; `channel_guide` works.
 
 ```mermaid
 sequenceDiagram
   participant U as Operator
-  participant C as Cursor Agent
-  participant S as streamtv-channel-creator skill
-  participant M as mcp_streamtv
-  participant A as StreamTV API
-
+  participant C as Cursor
+  participant M as mcp_streamtv stdio
+  participant S as StreamTV :8410
   U->>C: Create a Christmas channel
-  C->>S: Apply intake rules
-  S-->>C: Ask Search or Paste
-  U->>C: Search Archive.org
-  C->>M: archive tools + builder_* 
-  M->>A: /api/builder...
-  A-->>M: draft / job / build
-  M-->>C: JSON result
-  C->>U: Channel N live — soft restart if needed
+  C->>M: channel_guide / channel_start
+  M->>S: /api/builder/...
+  S-->>M: draft + candidates
+  M-->>C: shortlist / plan_token
+  U->>C: build
+  C->>M: channel_build confirm=build
 ```
-
-### Verify
-
-1. MCP panel shows `streamtv` tools (`builder_create_draft`, `builder_build`, …).
-2. Ask: “List StreamTV channels” → `streamtv_list_channels`.
-3. Create flow: Search vs Paste → shortlist → **build**.
 
 ---
 
-## 4. VS Code (Continue or Cline)
-
-Both clients speak MCP stdio. Point them at the same modules as Cursor.
-
-### Continue
-
-In Continue config (`config.json` / YAML, version-dependent), register an MCP server:
-
-```json
-{
-  "mcpServers": [
-    {
-      "name": "streamtv",
-      "command": "python3",
-      "args": ["-m", "mcp_streamtv.main"],
-      "cwd": "/path/to/StreamTV",
-      "env": {
-        "STREAMTV_BASE_URL": "http://127.0.0.1:8410"
-      }
-    }
-  ]
-}
-```
-
-Add a **custom instruction / system message** with the intake text from
-`mcp_streamtv/prompts/channel_intake.md` (or paste the Search vs Paste first question).
-
-### Cline
-
-Register the MCP server in Cline’s MCP settings with the same `command` / `args` /
-`cwd` / `env`. Cline validates tool schemas strictly — prefer **Qwen3 32B+** or a
-cloud model with solid tool calling.
-
-```mermaid
-flowchart TD
-  VS["VS Code"] --> Client{"Continue or Cline"}
-  Client --> MCP["python -m mcp_streamtv.main"]
-  MCP --> API["STREAMTV_BASE_URL"]
-  Rules["System rule: channel_intake.md"] --> Client
-```
-
-### Verify
-
-Same as Cursor: tools visible, list channels, then a dry draft create (delete draft if unused).
-
----
-
-## 5. Claude Desktop
-
-### Config file
-
-Edit `claude_desktop_config.json` (macOS:
-`~/Library/Application Support/Claude/claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "streamtv": {
-      "command": "python3",
-      "args": ["-m", "mcp_streamtv.main"],
-      "cwd": "/path/to/StreamTV",
-      "env": {
-        "STREAMTV_BASE_URL": "http://127.0.0.1:8410"
-      }
-    },
-    "archive-org": {
-      "command": "python3",
-      "args": ["-m", "mcp_archive_org.main"],
-      "cwd": "/path/to/StreamTV"
-    }
-  }
-}
-```
-
-Restart Claude Desktop after saving.
-
-### Prompts / resources
-
-- Prefer MCP prompt **`channel_intake`** at the start of a create-channel chat.
-- Or ask Claude to read resource `streamtv://prompts/channel-intake`.
-
-```mermaid
-flowchart LR
-  CD["Claude Desktop"] --> Stdio["stdio MCP"]
-  Stdio --> Tools["builder_* tools"]
-  Stdio --> Prompt["prompt channel_intake"]
-  Stdio --> Res["resources schema + docs"]
-  Tools --> API["127.0.0.1:8410"]
-```
-
-### Verify
-
-Hammer icon / MCP tools list includes StreamTV Builder tools; run `builder_list_sources`.
-
----
-
-## 6. Local models (Ollama / LM Studio)
-
-MCP is **model-agnostic**. Success depends on **tool-calling** quality, not on knowing
-StreamTV source.
-
-### Recommended models (from platform plan)
-
-| Hardware (unified / VRAM) | Model | Why |
-|---------------------------|--------|-----|
-| ~20–24 GB | **Qwen3 32B** (`ollama pull qwen3:32b`) | Best balance for multi-step Builder |
-| ~40+ GB (e.g. Mac Studio 64 GB) | **Llama 3.3 70B** Q4 | Highest chained-tool reliability; slower |
-| ~8–16 GB | **Qwen3 8B** | Usable with strict confirm gates |
-| Avoid | Tiny Llama 3.2 3B-class | Weak multi-step tool scores |
-
-Prefer general tool-call models over code-specialists for this workflow.
-
-### Wiring pattern
-
-```mermaid
-flowchart TD
-  Runtime["Ollama or LM Studio tools-capable model"] --> Client["Continue / Cline / Goose / Cursor custom model"]
-  Client --> MCP["mcp_streamtv stdio"]
-  MCP --> API["StreamTV :8410"]
-  Intake["Forced Search vs Paste intake"] --> Client
-```
-
-Example Ollama pull:
+## 3. VS Code (Copilot agent / Continue / Cline)
 
 ```bash
-ollama pull qwen3:32b
-# or: ollama pull llama3.3:70b
+zsh scripts/channel_creator_mcp_hosts.zsh --host vscode --mode emit --profile guided
+zsh scripts/channel_creator_mcp_hosts.zsh --host continue --mode emit --profile guided
+zsh scripts/channel_creator_mcp_hosts.zsh --host cline --mode emit --profile guided
 ```
 
-Then attach the **same** MCP server block as Cursor/Continue, and paste the intake
-prompt into the client’s system instructions.
+VS Code uses `"servers"` + `"type": "stdio"`. Paste generated JSON into the host’s
+MCP settings. Add intake as a system rule: resource `streamtv://prompts/channel-intake`.
 
-### Local-model UX rules
-
-- Cap shortlists to 5–10 candidates before confirm  
-- Explicit “say **build** to proceed”  
-- One tool call at a time for ≤8B models  
-- On malformed tool args: re-ask the user — never invent channel numbers or URLs  
-
----
-
-## 7. ChatGPT (deferred)
-
-**Not supported** as a direct MCP host against a home LAN StreamTV in this release.
+**Verify:** `/streamtv.channel_intake` (or pasted intake) + tools work.
 
 ```mermaid
 flowchart LR
-  GPT["ChatGPT Custom GPT"] -.->|"needs auth HTTPS"| Bridge["Future Actions or remote MCP bridge"]
-  Bridge -.-> API["StreamTV API"]
-  note1["Do not port-forward :8410 without TLS + API key"]
+  subgraph VSCode
+    Copilot["Copilot agent"]
+    Cont["Continue"]
+    Cline["Cline"]
+  end
+  Copilot --> Stdio["mcp_streamtv stdio"]
+  Cont --> Stdio
+  Cline --> Stdio
+  Stdio --> API[":8410"]
 ```
 
-To support ChatGPT later you would need:
+---
 
-1. An authenticated HTTPS endpoint (tunnel or reverse proxy) to StreamTV  
-2. OpenAPI Actions or remote MCP that wraps Builder tools  
-3. Strict refusal to expose cookies, channel packs, or lab IPs  
+## 4. Claude Desktop
 
-Until then, use **Cursor**, **Claude Desktop**, **VS Code**, or **local Ollama** clients.
+```bash
+zsh scripts/channel_creator_mcp_hosts.zsh --host claude-desktop --mode emit --profile guided
+```
+
+Merge into `claude_desktop_config.json` `mcpServers`. Use prompt `channel_intake`.
+
+**Verify:** prompt + tools work.
 
 ---
 
-## 8. Smoke test (any host)
+## 5. Claude Code
 
-After wiring:
+```bash
+zsh scripts/channel_creator_mcp_hosts.zsh --host claude-code --mode emit --profile guided
+```
 
-1. `streamtv_list_channels` or `builder_list_sources` succeeds.  
-2. Intake asks Search vs Paste when you say “create a channel about …”.  
-3. `builder_add_links` rejects a deliberate `….ia.mp4` URL (Issue 24).  
-4. Optional: create a draft, resolve one known-good Archive `.mp4`, cancel before build if this is only a wiring test.
+Or: `claude mcp add streamtv-channel-creator -- ./venv/bin/python -m mcp_streamtv.main --profile guided`
+
+**Verify:** `claude mcp list` shows the server; `channel_guide` runs.
 
 ---
 
-## 9. Security checklist
+## 6. LM Studio / Goose / local models
 
-- [ ] `STREAMTV_BASE_URL` points at loopback (or trusted LAN), not a public URL  
-- [ ] API key set when required; never committed  
-- [ ] Cookies stay on the operator machine  
-- [ ] ChatGPT / cloud hosts do not receive Netscape cookie files or private YAML packs  
+```bash
+zsh scripts/channel_creator_mcp_hosts.zsh --host lmstudio --mode emit --profile guided
+zsh scripts/channel_creator_mcp_hosts.zsh --host goose --mode emit --profile guided
+```
+
+Use **compact** intake (`channel_intake_compact` / resource) for small context.
+Recommended local models: Qwen3 32B · Llama 3.3 70B · Qwen3 8B (tight RAM).
+
+**Verify:** flow up to plan preview (`channel_plan`).
+
+```mermaid
+flowchart TD
+  Model{"Local model"} -->|Qwen3 32B| Good["Full guided flow"]
+  Model -->|Llama 3.3 70B| Good
+  Model -->|Qwen3 8B| Compact["channel_intake_compact"]
+  Compact --> Plan["Stop at channel_plan if context tight"]
+  Good --> Build["channel_build after confirm"]
+```
+
+---
+
+## 7. Open WebUI (loopback HTTP)
+
+```bash
+./venv/bin/python -m mcp_streamtv.main --transport http --host 127.0.0.1 --port 8411 \
+  --auth none --profile guided
+```
+
+```bash
+zsh scripts/channel_creator_mcp_hosts.zsh --host open-webui --mode emit --profile guided
+```
+
+**Verify:** `channel_guide` and `channel_list` over `http://127.0.0.1:8411/mcp`.
+
+```mermaid
+flowchart LR
+  UI["Open WebUI"] -->|"HTTP /mcp auth=none"| MCP["127.0.0.1:8411"]
+  MCP --> API["127.0.0.1:8410"]
+```
+
+---
+
+## 8. ChatGPT Developer mode + Claude web (remote)
+
+Never expose `:8410`. Tunnel only MCP `:8411`.
+
+```bash
+export STREAMTV_MCP_AUTH=dual
+export STREAMTV_MCP_TOKEN="$(openssl rand -hex 32)"
+export STREAMTV_MCP_ACCESS_TEAM=myteam
+export STREAMTV_MCP_ACCESS_AUDIENCE="<AUD>"
+
+./venv/bin/python -m mcp_streamtv.main --transport http --host 127.0.0.1 --port 8411 \
+  --auth dual --profile guided
+
+zsh scripts/channel_creator_mcp_remote.zsh
+# optional: --public-url https://YOUR_HOST/mcp
+```
+
+| App | Values |
+|-----|--------|
+| ChatGPT | MCP URL `https://YOUR_HOST/mcp`; Bearer token (dual Lock 2) or OAuth Sign-in |
+| Claude web | Settings → Connectors → custom connector → same URL + auth |
+
+**Verify (owner):** `channel_guide`, `channel_list`, plan preview; build only if profile is `guided` and plan allows write.
+
+```mermaid
+flowchart TD
+  App["ChatGPT / Claude web"] -->|"HTTPS /mcp"| CF["Cloudflare Tunnel"]
+  CF --> Access{"Access policy Lock 1"}
+  Access -->|email / IdP OK| Edge["Cf-Access-Jwt-Assertion"]
+  Edge --> MCP["Mac :8411 dual"]
+  App -->|"Authorization Bearer MCP token Lock 2"| MCP
+  MCP --> API[":8410 never tunneled"]
+```
+
+```mermaid
+flowchart LR
+  subgraph AuthModes
+    B["bearer — shared secret"]
+    O["oauth — Sign in with Auth0/Access"]
+    D["dual — Access + secret"]
+  end
+  B --> Mac["JWKS / token check on Mac"]
+  O --> Mac
+  D --> Mac
+```
+
+---
+
+## 9. Profiles quick reference
+
+| Profile | Tools | Notes |
+|---------|-------|-------|
+| `guided` | 11 `channel_*` | Default; includes `channel_build` |
+| `planner` | guided minus build | Read / plan only |
+| `builder` | guided + detail | Power users |
+| `full` | + legacy names | May hit Cursor ~40 tool cap |
+
+```mermaid
+flowchart LR
+  guided["guided 11"] --> planner["planner − build"]
+  guided --> builder["builder + detail"]
+  builder --> full["full + legacy"]
+```
+
+---
+
+## 10. E2E rehearsal (throwaway)
+
+```bash
+zsh scripts/channel_creator_e2e_rehearsal.zsh
+```
+
+Uses isolated `STREAMTV_REPO_ROOT`; does not write production `data/`.
+
+```mermaid
+flowchart TD
+  E2E["e2e_rehearsal.zsh"] --> Tmp["Temp STREAMTV_REPO_ROOT"]
+  Tmp --> Install["Install 1225 fixture only"]
+  Install --> Build["Build 9224 from 1224 inputs"]
+  Build --> Gates["G5/G6/G9 + D16 shared ids"]
+  Gates --> Isol["Assert production data/ untouched"]
+```

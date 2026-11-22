@@ -1,14 +1,17 @@
 # Channel Creator MCP
 
-Natural-language channel creation for StreamTV via a stdio **MCP** that drives the
-Channel Builder HTTP API. The AI host never needs the streaming/FFmpeg source tree.
+Natural-language **new-channel** creation for StreamTV via MCP (`guided` profile)
+that drives the Channel Builder HTTP API. Local hosts use **stdio**; remote
+ChatGPT / Claude web use Streamable HTTP on **`:8411`** (`oauth` / `dual` — never
+tunnel `:8410`). The AI host never needs the streaming/FFmpeg source tree.
 
 ## Canonical docs
 
 | Doc | Contents |
 |-----|----------|
 | [Channel Creator MCP](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) | Platform overview, create → tune signal paths, tools, Archive `.ia.mp4` ban |
-| [Host wiring](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) | **Cursor, VS Code, Claude Desktop, ChatGPT (deferred), local models** — configs + diagrams + all-in-one setup script |
+| [Host wiring](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) | Cursor, VS Code, Claude Desktop/Code, local models, ChatGPT/Claude web via tunnel |
+| [MCP auth](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_AUTH.md) | `bearer` / `oauth` / `dual` for Streamable HTTP `:8411` |
 | [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) | Web/API Builder |
 | [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) | §8 Channel Creator MCP |
 | [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) | Stream restart without uvicorn kickstart |
@@ -34,28 +37,31 @@ flowchart TD
   Q -->|IDE| CursorOrVS["Cursor or VS Code"]
   Q -->|Desktop chat| Claude["Claude Desktop"]
   Q -->|Offline GPU| Local["Ollama + Continue or Cline"]
-  Q -->|ChatGPT| Defer["Deferred — needs HTTPS bridge"]
+  Q -->|ChatGPT or Claude web| Remote["Tunnel :8411 + oauth/dual"]
   CursorOrVS --> Wire["Wire mcp_streamtv stdio"]
   Claude --> Wire
   Local --> Model["Qwen3 32B recommended"]
   Model --> Wire
   Wire --> API["StreamTV on 127.0.0.1:8410"]
+  Remote --> HTTP["MCP HTTP never :8410"]
+  HTTP --> API
 ```
 
 | Host | Recommended | Config sketch |
 |------|-------------|-----------------|
-| **Cursor** | Best | MCP servers + skill `streamtv-channel-creator` |
+| **Cursor** | Best | `channel_creator_mcp_hosts.zsh` + skill `streamtv-channel-creator` |
 | **VS Code** | Continue or Cline + same MCP | System rule = intake prompt |
 | **Claude Desktop** | `claude_desktop_config.json` | Prompt `channel_intake` |
-| **Local** | **Qwen3 32B**; Llama 3.3 70B if 40+ GB; Qwen3 8B if tight | Same MCP; stricter “say **build**” |
-| **ChatGPT** | Not in this release | Future Actions / remote MCP only |
+| **Local** | **Qwen3 32B**; Llama 3.3 70B if 40+ GB; Qwen3 8B if tight | Compact intake |
+| **ChatGPT / Claude web** | Tunnel `:8411` | Auth guide — `oauth` or `dual` |
 
 Full JSON examples and verify steps: [Host wiring guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
 
-## Optional all-in-one setup script
+## Host config generator
 
 ```bash
-bash scripts/setup_channel_creator_mcp.sh
+zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
+bash scripts/setup_channel_creator_mcp.sh   # legacy interactive installer
 ```
 
 ```mermaid
@@ -71,10 +77,10 @@ Prompts for platform and mode (no flags required). See [Host wiring — Setup sc
 ## Quick start (any host)
 
 1. Run StreamTV on `http://127.0.0.1:8410`
-2. Prefer: `bash scripts/setup_channel_creator_mcp.sh` — or manually `pip install -r requirements-mcp-streamtv.txt`
-3. Register `python3 -m mcp_streamtv.main` (cwd = StreamTV checkout, env `STREAMTV_BASE_URL`)
-4. Optional: `mcp_archive_org` for Archive discovery
-5. Ask to create a channel → answer **Search vs Paste** → confirm shortlist → **build**
+2. `pip install -r requirements-mcp-streamtv.txt`
+3. Prefer: `zsh scripts/channel_creator_mcp_hosts.zsh --host cursor --mode apply --profile guided`
+4. Register `./venv/bin/python -m mcp_streamtv.main --profile guided` (cwd = checkout, `STREAMTV_BASE_URL`)
+5. Ask to create a channel → **audience** → Search vs Paste → shortlist → plan → say **build**
 
 ## Hard rules
 

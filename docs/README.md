@@ -68,9 +68,11 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Lessons Learned (Issues 1–61) | [../LESSONS_LEARNED.md](../LESSONS_LEARNED.md) |
 | Channel Builder (Archive.org + YouTube) | [channel-builder.md](channel-builder.md) |
 | Schedules (YAML authority; UI read-only) | [SCHEDULES.md](SCHEDULES.md) |
-| Channel Creator MCP (NL + signal paths) | [guides/CHANNEL_CREATOR_MCP.md](guides/CHANNEL_CREATOR_MCP.md) |
-| Channel Creator MCP host wiring (Cursor / VS Code / Claude / local / ChatGPT) | [guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) |
-| Channel Creator MCP all-in-one setup script | [`scripts/setup_channel_creator_mcp.sh`](../scripts/setup_channel_creator_mcp.sh) · [helpers README](../scripts/channel-creator-mcp/README.md) |
+| Channel Creator MCP v2 (guided tools + signal paths) | [guides/CHANNEL_CREATOR_MCP.md](guides/CHANNEL_CREATOR_MCP.md) |
+| Channel Creator MCP host wiring (Cursor / VS Code / Claude / local / ChatGPT+Claude web) | [guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) |
+| Channel Creator MCP HTTP auth (`bearer` / `oauth` / `dual`) | [guides/CHANNEL_CREATOR_MCP_AUTH.md](guides/CHANNEL_CREATOR_MCP_AUTH.md) |
+| Channel Creator MCP host generator + remote/e2e scripts | [`scripts/channel_creator_mcp_hosts.zsh`](../scripts/channel_creator_mcp_hosts.zsh) · [`channel_creator_mcp_remote.zsh`](../scripts/channel_creator_mcp_remote.zsh) · [`channel_creator_e2e_rehearsal.zsh`](../scripts/channel_creator_e2e_rehearsal.zsh) |
+| Channel Creator MCP legacy installer | [`scripts/setup_channel_creator_mcp.sh`](../scripts/setup_channel_creator_mcp.sh) · [helpers README](../scripts/channel-creator-mcp/README.md) |
 | Application icon (macOS + favicon) | [`branding/app-icon/`](../branding/app-icon/README.md) · `scripts/install_app_icon.sh` |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |
