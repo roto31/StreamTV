@@ -1,20 +1,38 @@
-# ChatGPT — Channel Creator MCP (deferred)
+# ChatGPT / Claude web — Channel Creator MCP (remote)
 
-ChatGPT cannot use LAN stdio MCP against StreamTV in this release.
+Remote hosts use Streamable HTTP on **:8411** (`oauth` / `dual` / `bearer`).
+**Never** tunnel StreamTV **:8410**.
 
-## Why deferred
+## Start on the Mac
 
-- Custom GPTs need authenticated **HTTPS** Actions or remote MCP
-- Do **not** port-forward `:8410` without TLS + API key
-- Never send cookies, channel packs, or lab IPs to a cloud host
+```bash
+export STREAMTV_MCP_AUTH=dual
+export STREAMTV_MCP_TOKEN="$(openssl rand -hex 32)"
+export STREAMTV_MCP_ACCESS_TEAM=myteam
+export STREAMTV_MCP_ACCESS_AUDIENCE="<AUD tag>"
 
-## Later checklist
+__PYTHON__ -m mcp_streamtv.main \
+  --transport http --host 127.0.0.1 --port 8411 \
+  --auth dual --profile guided
+```
 
-1. Authenticated HTTPS endpoint (tunnel or reverse proxy) to StreamTV
-2. OpenAPI Actions or remote MCP wrapping Builder tools
-3. Same intake rules (Search vs Paste; ban `*.ia.mp4`)
+## Tunnel checklist
 
-Until then use **Cursor**, **Claude Desktop**, **VS Code** (Continue/Cline), or **local Ollama**.
+```bash
+zsh scripts/channel_creator_mcp_remote.zsh
+# optional: --public-url https://YOUR_HOST/mcp
+```
 
-Repo (for operators who still want local MCP): `__REPO_ROOT__`
-API (local only): `__BASE_URL__`
+## Values to type in ChatGPT / Claude web
+
+| Field | Value |
+|-------|-------|
+| MCP URL | `https://YOUR_HOST/mcp` |
+| Auth (oauth) | Sign in with Auth0 / Cloudflare Access |
+| Auth (dual Lock 1) | Cloudflare Access on the hostname |
+| Auth (dual Lock 2) | Bearer token = `STREAMTV_MCP_TOKEN` |
+
+Repo: `__REPO_ROOT__`  
+Local API (not tunneled): `__BASE_URL__`
+
+Wiki: https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Auth

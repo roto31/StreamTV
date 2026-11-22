@@ -1,11 +1,12 @@
 {
   "mcpServers": {
-    "streamtv": {
+    "streamtv-channel-creator": {
       "command": "__PYTHON__",
-      "args": ["-m", "mcp_streamtv.main"],
+      "args": ["-m", "mcp_streamtv.main", "--profile", "guided", "--transport", "stdio"],
       "cwd": "__REPO_ROOT__",
       "env": {
-        "STREAMTV_BASE_URL": "__BASE_URL__"
+        "STREAMTV_BASE_URL": "__BASE_URL__",
+        "STREAMTV_MCP_PROFILE": "guided"
       }
     }__ARCHIVE_BLOCK__
   }
