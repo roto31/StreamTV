@@ -13,7 +13,7 @@ Canonical copy of the [StreamTV GitHub Wiki](https://github.com/roto31/StreamTV/
 | [Expert-Guide.md](Expert-Guide.md) | Engineers |
 | [Installation-Guide.md](Installation-Guide.md) | Install overview |
 | [macOS.md](macOS.md) | macOS distribution |
-| [Linux.md](Linux.md) | Linux distribution |
+| [Linux.md](Linux.md) | Not offered (macOS-only product) |
 | [API-Reference.md](API-Reference.md) | REST API |
 | [Schedules.md](Schedules.md) | YAML schedules |
 | [Authentication.md](Authentication.md) | Auth overview |
@@ -27,7 +27,7 @@ Canonical copy of the [StreamTV GitHub Wiki](https://github.com/roto31/StreamTV/
 | [Troubleshooting.md](Troubleshooting.md) | Common issues |
 | [Implementation.md](Implementation.md) | Technical notes |
 
-Legacy non-Linux packaging targets were removed from the project; MIT license allows community ports.
+StreamTV ships **macOS only**. The former Linux packaging overlay and StreamTV-linux fork were removed.
 
 ## Sync to public wiki
 

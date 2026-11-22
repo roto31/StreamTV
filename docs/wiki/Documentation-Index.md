@@ -77,7 +77,7 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 
 ## Wiki pages (this wiki)
 
-- [Home](Home) · [macOS](macOS) · [Linux](Linux)
+- [Home](Home) · [macOS](macOS)
 - [Beginner-Guide](Beginner-Guide) · [Intermediate-Guide](Intermediate-Guide) · [Expert-Guide](Expert-Guide)
 - [Installation-Guide](Installation-Guide) · [Schedules](Schedules) · [Logging](Logging)
 - [Authentication](Authentication) · [Authentication-System](Authentication-System)

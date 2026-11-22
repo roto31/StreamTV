@@ -40,7 +40,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 
 - [Wiki home](wiki/Home.md)
 - [Documentation index](wiki/Documentation-Index.md)
-- [Platform: macOS](wiki/macOS.md) · [Linux](wiki/Linux.md)
+- [Platform: macOS](wiki/macOS.md) (Linux not offered)
 
 ## Operator guides
 

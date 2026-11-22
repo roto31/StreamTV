@@ -18,7 +18,7 @@
 - Plex Live TV video hold (H.264+AAC placeholder; YouTube wait-phase opt-in)
 - Portable backup / restore (Settings + `/api/backup`)
 - Ops healing via scripts (stalled FFmpeg, TunarrRAM, soft deploy); LoudNorm defaults **off**; AI Recovery retired
-- Cross-platform: macOS (signed DMG) and Linux (community ports welcome)
+- Platform: **macOS** (signed DMG) — Linux not offered
 - Passkey and OAuth support for YouTube
 
 ## Quick start
@@ -50,8 +50,7 @@
 
 ### Platform guides (wiki)
 
-- [macOS](https://github.com/roto31/StreamTV/wiki/macOS)
-- [Linux](https://github.com/roto31/StreamTV/wiki/Linux)
+- [macOS](https://github.com/roto31/StreamTV/wiki/macOS) (Linux not offered)
 
 ## Releases
 

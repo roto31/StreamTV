@@ -6,16 +6,14 @@ Welcome to the StreamTV platform documentation wiki.
 
 Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree/main/docs) in the public repo. This wiki is the curated entry layer.
 
-## Platform distributions
+## Platform
 
-### Desktop
-
-- **[macOS](macOS)** — Native app, installer, and menu bar app
-- **[Linux](Linux)** — Install scripts and systemd integration
+- **[macOS](macOS)** — Native app, signed DMG, and LaunchAgent production path
+- **Linux** — Not offered ([details](Linux))
 
 ## Quick start
 
-1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (or choose **macOS** / **Linux** above)
+1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases)
 2. Follow the [Installation Guide](Installation-Guide)
 3. Configure StreamTV and create your first channel
 

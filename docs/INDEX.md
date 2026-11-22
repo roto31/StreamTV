@@ -10,7 +10,7 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 
 - [Wiki Home](wiki/Home.md)
 - [Documentation Index](wiki/Documentation-Index.md)
-- [macOS](wiki/macOS.md) · [Linux](wiki/Linux.md)
+- [macOS](wiki/macOS.md)
 - [Beginner](wiki/Beginner-Guide.md) · [Intermediate](wiki/Intermediate-Guide.md) · [Expert](wiki/Expert-Guide.md)
 - [Installation](wiki/Installation-Guide.md) · [Schedules](wiki/Schedules.md) · [Logging](wiki/Logging.md)
 - [Authentication](wiki/Authentication.md) · [Authentication System](wiki/Authentication-System.md)

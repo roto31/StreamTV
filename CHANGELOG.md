@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **Linux packaging** — StreamTV is macOS-only; Linux installer overlay and Linux fork documentation removed.
+
 ### Added
 - (none yet)
 
