@@ -1,90 +1,306 @@
 # Channel Creator MCP
 
-Natural-language **new-channel** creation for StreamTV via MCP (`guided` profile)
-that drives the Channel Builder HTTP API. Local hosts use **stdio**; remote
-ChatGPT / Claude web use Streamable HTTP on **`:8411`** (`oauth` / `dual` — never
-tunnel `:8410`). The AI host never needs the streaming/FFmpeg source tree.
+Natural-language channel creation for StreamTV. An AI host (Cursor, Claude Desktop,
+VS Code/Continue/Cline, or a local tool-calling model) talks to StreamTV over **stdio
+MCP**. Tools call the live Channel Builder HTTP API. The model does **not** need the
+streaming/FFmpeg codebase.
 
-## Canonical docs
+| Piece | Detail |
+|-------|--------|
+| Packages | `mcp_streamtv/` (Builder + soft-deploy) · optional `mcp_archive_org/` |
+| Deps | `requirements-mcp-streamtv.txt` · `requirements-mcp-archive-org.txt` |
+| Intake | MCP resource `streamtv://prompts/channel-intake` · prompt `channel_intake` |
+| Cursor skill | `.cursor/skills/streamtv-channel-creator/SKILL.md` |
 
-| Doc | Contents |
-|-----|----------|
-| [Channel Creator MCP](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) | Platform overview, create → tune signal paths, tools, Archive `.ia.mp4` ban |
-| [Host wiring](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) | Cursor, VS Code, Claude Desktop/Code, local models, ChatGPT/Claude web via tunnel |
-| [MCP auth](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_AUTH.md) | `bearer` / `oauth` / `dual` for Streamable HTTP `:8411` |
-| [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) | Web/API Builder |
-| [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) | §8 Channel Creator MCP |
-| [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) | Stream restart without uvicorn kickstart |
+**Also on this wiki:** [Host wiring](Channel-Creator-MCP-Host-Wiring) · [HTTP auth](Channel-Creator-MCP-Auth)
 
-## Create → tune signal path
+Repo deep-links (same content mirrored here for wiki-first readers):
+[CHANNEL_CREATOR_MCP.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) ·
+[Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) ·
+[Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) ·
+[ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md)
+
+---
+
+## 1. What this platform is
+
+| Piece | Role |
+|-------|------|
+| MCP host (LLM) | Understands NL; asks Search vs Paste; calls tools |
+| `mcp_streamtv` | stdio MCP → `STREAMTV_BASE_URL` (default `http://127.0.0.1:8410`) |
+| `mcp_archive_org` | Search / file list / stream URL helpers for Archive.org |
+| Channel Builder API | Draft → links → resolve → build (compile + import + playout reset) |
+| StreamTV runtime | Continuous playout → HDHomeRun / IPTV → Plex |
+
+Bedrock modules (`streamtv/streaming/**`, `ffmpeg/**`, `scheduling/**`) stay frozen and
+untouched by channel-create agents.
+
+---
+
+## 2. End-to-end signal path (create → tune)
+
+```mermaid
+flowchart TD
+  User["Operator NL request"]
+  Host["AI host Cursor / Claude / local LLM"]
+  MCP["mcp_streamtv stdio MCP"]
+  ArchMCP["mcp_archive_org optional"]
+  API["StreamTV HTTP :8410"]
+  Builder["/api/builder drafts resolve build"]
+  Disk["Unified YAML + inventory + schedule"]
+  Imp["ChannelImporter"]
+  DB[("SQLite")]
+  Soft["playout-reset / stream-restart"]
+  CM["ChannelManager continuous playout"]
+  STR["MPEGTSStreamer + FFmpeg"]
+  Src["Archive.org / YouTube CDN"]
+  HDHR["HDHomeRun /auto/vN"]
+  IPTV["M3U + XMLTV"]
+  Plex["Plex / Emby / Jellyfin"]
+
+  User --> Host
+  Host --> MCP
+  Host -.-> ArchMCP
+  ArchMCP -.-> Host
+  MCP --> API
+  API --> Builder
+  Builder --> Disk
+  Builder --> Imp
+  Imp --> DB
+  Builder --> Soft
+  Soft --> CM
+  CM --> STR
+  STR --> Src
+  CM --> HDHR
+  CM --> IPTV
+  HDHR --> Plex
+  IPTV --> Plex
+```
+
+---
+
+## 3. Create-path sequence (Builder)
+
+```mermaid
+sequenceDiagram
+  participant U as Operator
+  participant H as AI host
+  participant M as mcp_streamtv
+  participant B as Builder API
+  participant J as Builder job store
+  participant I as ChannelImporter
+  participant C as ChannelManager
+
+  U->>H: Create a channel about topic X
+  H->>U: Search Archive/YouTube or paste links?
+  U->>H: Choice + topic or URLs
+  opt Archive discovery
+    H->>H: archive_org search / files shortlist
+    H->>U: Confirm shortlist
+  end
+  H->>M: streamtv_suggest_channel_number
+  H->>M: builder_create_draft + update_draft
+  Note over H,M: Archive URLs must be canonical .mp4 not .ia.mp4
+  H->>M: builder_add_links
+  H->>M: builder_resolve
+  M->>B: POST /drafts/{id}/resolve
+  B->>J: async job
+  H->>M: builder_wait_job
+  H->>U: OK/error counts — say build?
+  U->>H: build
+  H->>M: builder_build
+  M->>B: POST /drafts/{id}/build
+  B->>I: compile + import_channels_from_yaml
+  B->>C: playout reset for channel N
+  H->>M: streamtv_stream_restart optional
+  H->>U: Channel N live in lineup
+```
+
+Guided profile uses the `channel_*` tools (see §7) instead of the legacy `builder_*`
+names; the Builder API steps are the same.
+
+---
+
+## 4. Intake UX (Search vs Paste)
+
+Agents must ask (unless URLs are already pasted):
+
+> Search Archive.org and/or YouTube, or paste links you already have?
+
+```mermaid
+flowchart TD
+  Start["NL: create a channel"] --> Ask{"Search or paste links?"}
+  Ask -->|Paste| Meta["Number + name propose free number"]
+  Ask -->|Search| Src{"Archive YouTube or both?"}
+  Src --> Discover["Discover + shortlist 5 to 10"]
+  Discover --> Confirm["User confirms shortlist"]
+  Confirm --> Meta
+  Meta --> Draft["channel_start / builder_create_draft"]
+  Draft --> Links["Canonical URLs → add links"]
+  Links --> Resolve["resolve → wait"]
+  Resolve --> BuildGate{"User says build?"}
+  BuildGate -->|yes| Build["channel_build"]
+  BuildGate -->|no| Stop["Stop or revise links"]
+  Build --> Live["Lineup + soft restart"]
+```
+
+**Defaults (do not re-ask):** derive name/group from topic; chronological for Archive;
+as_added for pasted YouTube; one channel at a time; no fleet soft-restart-all.
+
+---
+
+## 5. After create — tune signal path
+
+```mermaid
+sequenceDiagram
+  participant Plex
+  participant HDHR as HDHomeRun /auto/vN
+  participant CM as ChannelManager
+  participant Eng as ScheduleEngine
+  participant STR as MPEGTSStreamer
+  participant AO as Archive / YouTube adapter
+
+  Plex->>HDHR: Tune channel N
+  HDHR->>CM: Get continuous stream
+  CM->>Eng: Current item from schedule + playout_start_time
+  Eng-->>CM: Media URL + title
+  CM->>STR: Stream item from file start 0:00
+  STR->>AO: Resolve / open source
+  AO-->>STR: Bytes
+  STR-->>HDHR: MPEG-TS chunks
+  HDHR-->>Plex: HTTP 200 body
+```
+
+Soft deploy after MCP create: Builder already resets playout. Use
+`streamtv_stream_restart` only if needed. Do **not** full process kickstart for
+channel-data-only changes — [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md).
+
+---
+
+## 6. Archive.org URL rules
+
+| Forbidden | Required |
+|-----------|----------|
+| `*.ia.mp4` derivative URLs | Canonical `…/download/<id>/<file>.mp4` from metadata |
+| Bare `/details/` or collection-only paths | Filename path after identifier |
+
+`builder_add_links` **raises** if any URL contains `.ia.mp4`. Compile-time
+playout guards also reject them.
 
 ```mermaid
 flowchart LR
-  NL["Natural language"] --> Host["AI host + MCP"]
-  Host --> Builder["Builder API"]
-  Builder --> YAML["Unified + schedule"]
-  YAML --> DB["Import DB"]
-  DB --> Playout["ChannelManager"]
-  Playout --> Tune["HDHomeRun / IPTV"]
-  Tune --> Client["Plex / Emby / Jellyfin"]
+  Meta["archive.org/metadata"] --> Files["List files"]
+  Files --> Pick{"Name ends with .ia.mp4?"}
+  Pick -->|yes| Reject["Skip / refuse"]
+  Pick -->|no| Canon["https://archive.org/download/id/file.mp4"]
+  Canon --> Add["builder_add_links"]
 ```
 
-## Which host to use
+---
 
-```mermaid
-flowchart TD
-  Start["Want NL channel create"] --> Q{"Where do you work?"}
-  Q -->|IDE| CursorOrVS["Cursor or VS Code"]
-  Q -->|Desktop chat| Claude["Claude Desktop"]
-  Q -->|Offline GPU| Local["Ollama + Continue or Cline"]
-  Q -->|ChatGPT or Claude web| Remote["Tunnel :8411 + oauth/dual"]
-  CursorOrVS --> Wire["Wire mcp_streamtv stdio"]
-  Claude --> Wire
-  Local --> Model["Qwen3 32B recommended"]
-  Model --> Wire
-  Wire --> API["StreamTV on 127.0.0.1:8410"]
-  Remote --> HTTP["MCP HTTP never :8410"]
-  HTTP --> API
+## 7. Profiles and tool catalog (`mcp_streamtv`)
+
+| Profile | Tools | Use |
+|---------|-------|-----|
+| `guided` (default) | 11 `channel_*` | Plain-language create |
+| `planner` | guided without `channel_build` | Read / plan only |
+| `builder` | guided + detail | Power users |
+| `full` | + legacy Builder names | May hit Cursor ~40 tool cap |
+
+### Guided tools
+
+| Tool | Role |
+|------|------|
+| `channel_guide` | Intake + tool list (call first) |
+| `channel_list` | Channels + open drafts |
+| `channel_start` | New-channel draft |
+| `channel_set_requirements` | Audience, theme, era, … |
+| `channel_find` / `channel_job` | Discover + poll |
+| `channel_shortlist` / `channel_choose` | Present / keep candidates |
+| `channel_plan` / `channel_answer` | Preview + questions (`plan_token`) |
+| `channel_build` | Gates + write; needs `plan_token` + `confirm="build"` |
+
+### New-channel only + gates
+
+- Never edit/merge an existing channel (number must be free in DB, `data/`, `schedules/`, `unified/`).
+- Auto-rollback of only this build’s files/rows on post-write failure.
+- Mutating tools return `summary_table` — show it verbatim; stop on FAIL.
+- Templates such as `kids_specials` / `holiday_family` — never rebuild example demo channels.
+
+Legacy detail tools (`builder_*`, soft `streamtv_playout_reset` / `streamtv_stream_restart`) remain under `builder`/`full`.
+
+---
+
+## 8. Prerequisites and host wiring
+
+- StreamTV on `http://127.0.0.1:8410` (LaunchAgent production cwd = checkout)
+- `pip install -r requirements-mcp-streamtv.txt`
+- Optional: `STREAMTV_API_KEY` when API key middleware is on
+
+```bash
+export STREAMTV_BASE_URL=http://127.0.0.1:8410
+./venv/bin/python -m mcp_streamtv.main --profile guided
 ```
 
-| Host | Recommended | Config sketch |
-|------|-------------|-----------------|
-| **Cursor** | Best | `channel_creator_mcp_hosts.zsh` + skill `streamtv-channel-creator` |
-| **VS Code** | Continue or Cline + same MCP | System rule = intake prompt |
-| **Claude Desktop** | `claude_desktop_config.json` | Prompt `channel_intake` |
-| **Local** | **Qwen3 32B**; Llama 3.3 70B if 40+ GB; Qwen3 8B if tight | Compact intake |
-| **ChatGPT / Claude web** | Tunnel `:8411` | Auth guide — `oauth` or `dual` |
-
-Full JSON examples and verify steps: [Host wiring guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
-
-## Host config generator
+**Host configs:**
 
 ```bash
 zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
-bash scripts/setup_channel_creator_mcp.sh   # legacy interactive installer
 ```
+
+Full per-host steps: [Host wiring](Channel-Creator-MCP-Host-Wiring) ·
+Remote auth: [HTTP auth](Channel-Creator-MCP-Auth) ·
+E2E: `zsh scripts/channel_creator_e2e_rehearsal.zsh`
 
 ```mermaid
-flowchart TD
-  Start["setup_channel_creator_mcp.sh"] --> Platform{"Platform menu"}
-  Platform --> Mode{"Apply / Dry-run / Emit"}
-  Mode --> Shared["Shared entries"]
-  Shared --> Path["That platform only"]
+flowchart LR
+  Cursor --> MCP["mcp_streamtv"]
+  VSCode["VS Code"] --> MCP
+  Claude["Claude Desktop"] --> MCP
+  Local["Local Qwen3 / Llama"] --> MCP
+  Remote["ChatGPT / Claude web"] --> HTTP["MCP HTTP :8411"]
+  MCP --> API["StreamTV :8410"]
+  HTTP --> API
 ```
 
-Prompts for platform and mode (no flags required). See [Host wiring — Setup script](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
+| Host | Fit | Start here |
+|------|-----|------------|
+| Cursor | Best | hosts.zsh apply + `streamtv-channel-creator` skill |
+| VS Code (Continue / Cline) | Good | emit + intake system rule |
+| Claude Desktop / Code | Good | emit / `claude mcp add` |
+| Local (Ollama) | Good @ Qwen3 32B+ | compact intake |
+| ChatGPT / Claude web | Remote | Tunnel `:8411` + `oauth` or `dual` |
 
-## Quick start (any host)
+**Local model picks:** Qwen3 32B (default) · Llama 3.3 70B (40+ GB) · Qwen3 8B (tight RAM).
 
-1. Run StreamTV on `http://127.0.0.1:8410`
-2. `pip install -r requirements-mcp-streamtv.txt`
-3. Prefer: `zsh scripts/channel_creator_mcp_hosts.zsh --host cursor --mode apply --profile guided`
-4. Register `./venv/bin/python -m mcp_streamtv.main --profile guided` (cwd = checkout, `STREAMTV_BASE_URL`)
-5. Ask to create a channel → **audience** → Search vs Paste → shortlist → plan → say **build**
+---
 
-## Hard rules
+## 9. Artifacts produced by a successful build
 
-- Prefer Builder over hand-written YAML for new URL-based channels
-- **Never** use Archive.org `*.ia.mp4` derivative URLs — canonical
-  `…/download/<id>/<file>.mp4` only
-- Soft deploy / stream-restart after create — not a full process kickstart for data-only changes
+| Artifact | Purpose |
+|----------|---------|
+| `data/unified/{N}.channel.yaml` | Authoritative unified channel doc |
+| `data/channels_generated_{N}.yaml` | Compiled inventory for import |
+| `schedules/{N}.yml` | Playout + XMLTV authority |
+| DB channel + media rows | Runtime lineup |
+| Optional `data/channel_icons/channel_{N}.png` | Guide logo (`logo_path`) |
+
+---
+
+## 10. Security
+
+- Keep API keys and YouTube/Archive cookies on the operator machine
+- Prefer `127.0.0.1` in sandboxed clients
+- Never paste Netscape cookies into cloud chats
+- Do not publish private channel packs or schedules to public docs
+- HTTP MCP auth (`none`|`bearer`|`oauth`|`dual`): [HTTP auth](Channel-Creator-MCP-Auth) — never tunnel `:8410`
+
+## Troubleshooting
+
+| Symptom | Check |
+|---------|--------|
+| `.ia.mp4` refused | Use canonical `.mp4` from metadata |
+| Resolve job failed | Auth cookies; URL kind; poll job errors |
+| Build failed | Guards (URL path, stream ids); fix draft links and rebuild |
+| In lineup but no video | Soft stream-restart; soak HDHomeRun; confirm production cwd on `:8410` |
+| Wrong instance | Listener cwd must be the StreamTV checkout, not Application Support |

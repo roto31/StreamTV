@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Channel Creator MCP v2** — Guided 11-tool profile, Streamable HTTP on port 8411 with bearer/OAuth/dual (Cloudflare Access) auth, host and remote setup scripts, and end-to-end rehearsal. See [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md), [host wiring](docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md), and [auth](docs/guides/CHANNEL_CREATOR_MCP_AUTH.md).
+- **Channel Creator MCP v2** — Guided 11-tool profile, Streamable HTTP on port 8411 with bearer/OAuth/dual (Cloudflare Access) auth, host and remote setup scripts, and end-to-end rehearsal. Wiki-first: [Channel Creator MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP), [host wiring](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Host-Wiring), [auth](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Auth) (same content also under `docs/guides/`).
 
 ### Changed
 - **Docs / Wiki** — ChatGPT remote access is no longer “deferred”; indexes and diagrams cover stdio local hosts and tunneled `:8411` for ChatGPT / Claude web.

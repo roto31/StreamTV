@@ -39,9 +39,9 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 - [Metadata enrichment](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md)
 - [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md)
 - [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) (Archive.org + YouTube)
-- [Channel Creator MCP](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) — NL create via guided MCP (signal-path diagrams)
-- [Channel Creator MCP host wiring](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) — Cursor, VS Code, Claude, local models, ChatGPT/Claude web via `:8411`
-- [Channel Creator MCP auth](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_AUTH.md) — `bearer` / `oauth` / `dual`
+- [Channel Creator MCP](Channel-Creator-MCP) — NL create via guided MCP (signal paths, tools, Archive rules)
+- [Channel Creator MCP host wiring](Channel-Creator-MCP-Host-Wiring) — Cursor, VS Code, Claude, local models, ChatGPT/Claude web via `:8411`
+- [Channel Creator MCP auth](Channel-Creator-MCP-Auth) — `bearer` / `oauth` / `dual`
 - [Schedules (YAML authority)](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) — web UI is read-only
 - [Core operator quickstart](https://github.com/roto31/StreamTV/blob/main/docs/guides/CORE_OPERATOR_QUICKSTART.md)
 
@@ -57,7 +57,7 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 
 - [Documentation Index](Documentation-Index)
 - [Implementation & Integrations](Implementation)
-- [Channel Creator MCP](Channel-Creator-MCP)
+- [Channel Creator MCP](Channel-Creator-MCP) · [Host wiring](Channel-Creator-MCP-Host-Wiring) · [HTTP auth](Channel-Creator-MCP-Auth)
 - [API Reference](API-Reference)
 - [Plex Integration](Plex-Integration)
 - [Troubleshooting](Troubleshooting)
