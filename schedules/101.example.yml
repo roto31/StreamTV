@@ -1,0 +1,12 @@
+# Demo schedule for channel 101 — copy to schedules/101.yml after import.
+# Playout + XMLTV authority is this file (web schedule create/edit is retired).
+
+name: 101 StreamTV Demo
+description: Loop Big Buck Bunny for first-run onboarding.
+media:
+  preferred_extension: mp4
+  mp4_only: true
+content:
+  - key: demo_101_big_buck_bunny
+    collection: StreamTV Demo - Big Buck Bunny
+    order: sequential

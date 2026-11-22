@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://streamtv.local/schemas/builder_source.schema.json",
+  "title": "Channel Builder community source manifest",
+  "type": "object",
+  "required": ["id", "label", "hosts"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Stable source key (becomes community:<id> in the registry)"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["community"]
+    },
+    "hosts": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["playwright", "password", "token", "cookies", "none"]
+        },
+        "login_url": { "type": "string", "format": "uri" },
+        "cookies_domain": { "type": "string" }
+      }
+    },
+    "url_patterns": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "supports_expand": { "type": "boolean" },
+    "playout_ready": { "type": "boolean" },
+    "channel_source": {
+      "type": "string",
+      "description": "Value written to unified YAML stream source field when playout is enabled"
+    },
+    "module": {
+      "type": ["string", "null"],
+      "description": "Optional Python import path for custom resolver hooks"
+    }
+  }
+}

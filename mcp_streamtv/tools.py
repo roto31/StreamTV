@@ -509,25 +509,9 @@ async def streamtv_get_epg(access_token: Optional[str] = None, plain: bool = Tru
 
 
 async def streamtv_tunarr_status() -> Dict[str, Any]:
-    """Proxy Tunarr integration status from StreamTV."""
+    """Proxy Tunarr integration status from StreamTV (reachability only)."""
     client = await get_client()
     return await client.request("GET", f"{config.base_url}/api/integrations/tunarr/status")
-
-
-async def streamtv_tunarr_search(query: str, limit: int = 25) -> Dict[str, Any]:
-    """Search Tunarr media via StreamTV integration proxy."""
-    client = await get_client()
-    return await client.request(
-        "GET",
-        f"{config.base_url}/api/integrations/tunarr/search",
-        params={"q": query, "limit": limit},
-    )
-
-
-async def streamtv_tunarr_custom_shows() -> Dict[str, Any]:
-    """List Tunarr custom shows via StreamTV integration proxy."""
-    client = await get_client()
-    return await client.request("GET", f"{config.base_url}/api/integrations/tunarr/custom-shows")
 
 
 # --- Channel Builder + soft-deploy ops (NL channel creator) ---

@@ -1,14 +1,15 @@
 # StreamTV — Architecture
 
-StreamTV is a cross-platform IPTV platform (FastAPI + Python) that turns online
-video sources into live TV channels and exposes them as a spoofed HDHomeRun tuner
-plus IPTV M3U/XMLTV for Plex, Emby, Jellyfin, Kodi, and VLC.
+StreamTV is a **macOS** IPTV platform (FastAPI + Python) that turns **Archive.org**
+and **YouTube** into live TV channels and exposes them as a spoofed HDHomeRun tuner
+plus IPTV M3U/XMLTV for Plex, Emby, Jellyfin, Kodi, and VLC. Remux keeps **source
+resolution**; clients scale for display.
 
-**First-party Channel Builder sources:** Archive.org and YouTube.  
-**Playback adapters** may still resolve Archive.org, YouTube, PBS, and Plex URLs
-already present in inventory. PBS/Plex/Vimeo Builder builtins are parked.  
+**Product scope:** [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md).  
+**First-party Channel Builder sources:** Archive.org and YouTube only.  
 **Schedules:** on-disk `schedules/{n}.yml` (web create/edit removed).  
-**Collections UI / `/api/collections`:** retired. **AI Recovery / AutoHealer UI:** retired (script heals only).
+**Out of scope:** Collections UI, in-app AI heal, Linux product, PBS/Plex Builder,
+watermarks UI, resolutions UI, PBS auth UI (see `parked/`).
 
 > Diagrams are Mermaid. GitHub renders them automatically. Keep them in sync when
 > the streaming, import, or source-resolution paths change (see

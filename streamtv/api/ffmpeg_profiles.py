@@ -32,6 +32,17 @@ def get_ffmpeg_profile(profile_id: int, db: Session = Depends(get_db)):
     return profile
 
 
+def _default_resolution_id(db: Session) -> int:
+    """Seeded 1080p row when present; otherwise first resolution. Scale UI retired."""
+    row = db.query(Resolution).filter(Resolution.name == "1080p").first()
+    if row:
+        return int(row.id)
+    row = db.query(Resolution).order_by(Resolution.id).first()
+    if not row:
+        raise HTTPException(status_code=400, detail="No resolution seed rows in database")
+    return int(row.id)
+
+
 @router.post("", response_model=FFmpegProfileResponse, status_code=status.HTTP_201_CREATED)
 def create_ffmpeg_profile(profile: FFmpegProfileCreate, db: Session = Depends(get_db)):
     """Create a new FFmpeg profile"""
@@ -39,13 +50,13 @@ def create_ffmpeg_profile(profile: FFmpegProfileCreate, db: Session = Depends(ge
     existing = db.query(FFmpegProfile).filter(FFmpegProfile.name == profile.name).first()
     if existing:
         raise HTTPException(status_code=400, detail="FFmpeg profile with this name already exists")
-    
-    # Verify resolution exists
-    resolution = db.query(Resolution).filter(Resolution.id == profile.resolution_id).first()
+
+    data = profile.dict()
+    resolution = db.query(Resolution).filter(Resolution.id == data.get("resolution_id")).first()
     if not resolution:
-        raise HTTPException(status_code=400, detail="Resolution not found")
-    
-    db_profile = FFmpegProfile(**profile.dict())
+        data["resolution_id"] = _default_resolution_id(db)
+
+    db_profile = FFmpegProfile(**data)
     db.add(db_profile)
     db.commit()
     db.refresh(db_profile)

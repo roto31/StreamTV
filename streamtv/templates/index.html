@@ -444,21 +444,6 @@
                     archiveTroubleshooting
                 );
 
-                const pbsStatus = status.pbs || {};
-                const pbsDetails = pbsStatus.authenticated
-                    ? `Cookies configured. ${pbsStatus.connection_ok ? 'pbs.org reachable.' : 'pbs.org connection issues.'}`
-                    : `Not authenticated. ${pbsStatus.connection_ok ? 'pbs.org reachable.' : 'pbs.org connection failed.'}`;
-                const pbsTroubleshooting = getTroubleshootingSteps('pbs', pbsStatus.status);
-                authHtml += renderStatusItem(
-                    'PBS',
-                    pbsStatus.status || 'red',
-                    pbsDetails,
-                    pbsStatus.errors || [],
-                    !pbsStatus.authenticated ? 'Sign In' : null,
-                    !pbsStatus.authenticated ? '/api/auth/pbs' : null,
-                    pbsTroubleshooting
-                );
-                
                 // FFmpeg
                 const ffmpegStatus = status.ffmpeg || {};
                 const ffmpegDetails = ffmpegStatus.installed

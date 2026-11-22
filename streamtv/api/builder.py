@@ -252,14 +252,14 @@ async def builder_auth_youtube(body: PlaywrightLoginRequest) -> BuilderJob:
 
 
 @router.post("/auth/pbs/login", response_model=BuilderJob)
-async def builder_auth_pbs(body: PlaywrightLoginRequest) -> BuilderJob:
-    job = BuilderJob(draft_id="__auth__", job_type="auth_login", total=1)
-
-    async def _run(j: BuilderJob) -> None:
-        await _run_playwright_login(j, "pbs", body.email, body.password)
-
-    job_store.start_background(job, _run)
-    return job
+async def builder_auth_pbs_retired(body: PlaywrightLoginRequest) -> BuilderJob:
+    raise HTTPException(
+        status_code=410,
+        detail=(
+            "PBS Builder auth is retired. First-party Builder sources are "
+            "Archive.org and YouTube only."
+        ),
+    )
 
 
 

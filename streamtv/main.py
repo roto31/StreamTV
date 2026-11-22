@@ -284,10 +284,17 @@ async def lifespan(app: FastAPI):
 
 
 # Create FastAPI app
+def _app_version() -> str:
+    try:
+        return Path(__file__).resolve().parent.parent.joinpath("VERSION").read_text(encoding="utf-8").strip()
+    except OSError:
+        return "0.0.0"
+
+
 app = FastAPI(
     title="StreamTV",
-    description="Efficient Online Media Streamer - Stream from YouTube and Archive.org",
-    version="1.0.0",
+    description="macOS IPTV — Archive.org and YouTube to HDHomeRun / IPTV",
+    version=_app_version(),
     lifespan=lifespan
 )
 
@@ -677,30 +684,38 @@ async def settings_plex_page(request: Request):
 
 
 @app.get("/settings/resolutions", response_class=HTMLResponse)
-async def settings_resolutions_page(request: Request):
-    """Resolutions management page"""
-    if templates:
-        return templates.TemplateResponse(request, "settings_resolutions.html")
-    else:
-        return HTMLResponse("<h1>Resolutions</h1><p>Templates not available. Use API at /api/resolutions</p>")
+async def settings_resolutions_page_retired(request: Request):
+    """Resolutions UI retired — remux at source resolution (see parked/resolutions/)."""
+    from fastapi.responses import RedirectResponse
+
+    return RedirectResponse(url="/settings/ffmpeg", status_code=302)
 
 
 @app.get("/settings/ffmpeg-profiles", response_class=HTMLResponse)
 async def settings_ffmpeg_profiles_page(request: Request):
-    """FFmpeg profiles management page"""
+    """FFmpeg profiles (Transcoding hub)."""
     if templates:
         return templates.TemplateResponse(request, "settings_ffmpeg_profiles.html")
     else:
         return HTMLResponse("<h1>FFmpeg Profiles</h1><p>Templates not available. Use API at /api/ffmpeg-profiles</p>")
 
 
-@app.get("/settings/watermarks", response_class=HTMLResponse)
-async def settings_watermarks_page(request: Request):
-    """Watermarks management page"""
+@app.get("/settings/transcoding", response_class=HTMLResponse)
+async def settings_transcoding_hub(request: Request):
+    """Transcoding hub: global FFmpeg + channel profiles."""
     if templates:
-        return templates.TemplateResponse(request, "settings_watermarks.html")
-    else:
-        return HTMLResponse("<h1>Watermarks</h1><p>Templates not available. Use API at /api/watermarks</p>")
+        return templates.TemplateResponse(request, "settings_transcoding.html")
+    from fastapi.responses import RedirectResponse
+
+    return RedirectResponse(url="/settings/ffmpeg", status_code=302)
+
+
+@app.get("/settings/watermarks", response_class=HTMLResponse)
+async def settings_watermarks_page_retired(request: Request):
+    """Watermarks UI retired (see parked/watermarks/)."""
+    from fastapi.responses import RedirectResponse
+
+    return RedirectResponse(url="/settings", status_code=302)
 
 
 @app.get("/import", response_class=HTMLResponse)
@@ -739,14 +754,11 @@ async def schedules_page(request: Request):
 
 
 @app.get("/schedules/{schedule_id}/items", response_class=HTMLResponse)
-async def schedule_items_page(request: Request, schedule_id: int):
-    """Schedule items editor page"""
-    if templates:
-        return templates.TemplateResponse(request, "schedule_items.html", {
-            "schedule_id": schedule_id,
-        })
-    else:
-        return HTMLResponse(f"<h1>Schedule Items</h1><p>Schedule ID: {schedule_id}</p><p>Templates not available.</p>")
+async def schedule_items_page_retired(request: Request, schedule_id: int):
+    """Schedule-items editor retired — YAML schedules are authority."""
+    from fastapi.responses import RedirectResponse
+
+    return RedirectResponse(url="/schedules", status_code=302)
 
 
 @app.get("/playouts", response_class=HTMLResponse)

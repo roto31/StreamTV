@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Transcoding - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Transcoding</div>
+            <p class="page-subtitle">
+                Global FFmpeg runtime and optional per-channel profiles.
+                Live TV remuxes at <strong>source resolution</strong>; Plex and other clients scale for display.
+                LoudNorm and profile scale filters stay off unless you bind a profile.
+            </p>
+        </div>
+        <div class="page-actions">
+            <a href="/settings" class="btn btn-outlined">← Settings Overview</a>
+        </div>
+    </div>
+
+    <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;">
+        <a class="card" href="/settings/ffmpeg" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Global FFmpeg</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Binary paths, hardware acceleration, threads</div>
+        </a>
+        <a class="card" href="/settings/ffmpeg-profiles" style="text-decoration: none; color: inherit; padding: 20px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Channel profiles</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Optional encode templates (rarely needed)</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

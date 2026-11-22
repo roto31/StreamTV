@@ -560,7 +560,8 @@ class FFmpegProfileBase(BaseModel):
     vaapi_driver: Optional[str] = None
     vaapi_device: Optional[str] = None
     qsv_extra_hardware_frames: Optional[int] = None
-    resolution_id: int
+    # Reserved FK for DB; scale path deprecated — remux keeps source resolution.
+    resolution_id: int = 3
     scaling_behavior: ScalingBehavior = ScalingBehavior.SCALE_AND_PAD
     video_format: VideoFormat = VideoFormat.H264
     video_profile: Optional[str] = None

@@ -1,4 +1,4 @@
-"""Tests for Tunarr integration API."""
+"""Tests for Tunarr integration API (status only)."""
 
 from __future__ import annotations
 
@@ -36,7 +36,6 @@ def test_tunarr_status_reachable(client: TestClient) -> None:
     assert body["web_url"] == "http://127.0.0.1:8000/web"
 
 
-def test_tunarr_media_sources_503_when_unconfigured(client: TestClient) -> None:
-    with patch("streamtv.api.integrations_tunarr.get_tunarr_base_url", return_value=None):
-        resp = client.get("/api/integrations/tunarr/media-sources")
-    assert resp.status_code == 503
+def test_tunarr_library_routes_removed(client: TestClient) -> None:
+    resp = client.get("/api/integrations/tunarr/media-sources")
+    assert resp.status_code == 404

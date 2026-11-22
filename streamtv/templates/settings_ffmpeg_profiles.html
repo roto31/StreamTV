@@ -5,11 +5,15 @@
 <div class="page">
     <div class="page-header">
         <div>
-            <div class="page-title">FFmpeg Profiles</div>
-            <p class="page-subtitle">Manage transcoding profiles with hardware acceleration support.</p>
+            <div class="page-title">Channel profiles</div>
+            <p class="page-subtitle">
+                Optional encode templates. Default Live TV remuxes at source resolution (no scale).
+                <a href="/settings/transcoding">Transcoding hub</a> · <a href="/settings/ffmpeg">Global FFmpeg</a>
+            </p>
         </div>
         <div class="page-actions">
-            <button class="btn btn-primary" type="button" id="addProfileButton" type="button" data-action="openModal">
+            <a href="/settings/transcoding" class="btn btn-outlined">← Transcoding</a>
+            <button class="btn btn-primary" type="button" id="addProfileButton" data-action="openModal">
                 <span class="material-icons">add</span>
                 Add Profile
             </button>
@@ -28,13 +32,12 @@
                     <th>Hardware</th>
                     <th>Video</th>
                     <th>Audio</th>
-                    <th>Resolution</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="profilesTableBody">
                 <tr>
-                    <td colspan="6" class="empty-state">
+                    <td colspan="5" class="empty-state">
                         <div class="empty-state-icon">⚙️</div>
                         <div>Loading profiles...</div>
                     </td>
@@ -86,22 +89,6 @@
                 <div class="form-group" id="qsvFramesGroup" style="display: none;">
                     <label for="profileQsvFrames">QSV Extra Hardware Frames</label>
                     <input type="number" id="profileQsvFrames" min="0">
-                </div>
-            </div>
-            
-            <div class="form-section">
-                <h3>Resolution & Scaling</h3>
-                <div class="form-group">
-                    <label for="profileResolution">Resolution *</label>
-                    <select id="profileResolution" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="profileScalingBehavior">Scaling Behavior *</label>
-                    <select id="profileScalingBehavior" required>
-                        <option value="scale_and_pad">Scale and Pad</option>
-                        <option value="stretch">Stretch</option>
-                        <option value="crop">Crop</option>
-                    </select>
                 </div>
             </div>
             
@@ -225,30 +212,26 @@
 {% block extra_scripts %}
 <script nonce="{{ request.state.csp_nonce }}">
 const API_BASE = '/api';
+const DEFAULT_RESOLUTION_ID = 3; // seeded 1080p FK; scale UI retired
 let profiles = [];
-let resolutions = [];
 let availableHardware = [];
 
 async function loadData() {
     try {
-        const [profilesRes, resolutionsRes, hardwareRes] = await Promise.all([
+        const [profilesRes, hardwareRes] = await Promise.all([
             authenticatedFetch(`${API_BASE}/ffmpeg-profiles`),
-            authenticatedFetch(`${API_BASE}/resolutions`),
             authenticatedFetch(`${API_BASE}/ffmpeg-profiles/hardware-acceleration/available`)
         ]);
         
         if (!profilesRes.ok) throw new Error('Failed to load profiles');
-        if (!resolutionsRes.ok) throw new Error('Failed to load resolutions');
         if (!hardwareRes.ok) throw new Error('Failed to load hardware acceleration');
         
         profiles = await profilesRes.json();
-        resolutions = await resolutionsRes.json();
         const hardwareData = await hardwareRes.json();
         availableHardware = hardwareData.available || [];
         
         renderProfiles();
         populateHardwareSelect();
-        populateResolutionSelect();
     } catch (error) {
         showStatus('error', `Failed to load data: ${error.message}`);
     }
@@ -275,13 +258,6 @@ function populateHardwareSelect() {
     updateHardwareFields();
 }
 
-function populateResolutionSelect() {
-    const select = document.getElementById('profileResolution');
-    select.innerHTML = resolutions.map(r => 
-        `<option value="${r.id}">${r.name} (${r.width}×${r.height})</option>`
-    ).join('');
-}
-
 function updateHardwareFields() {
     const hwaccel = document.getElementById('profileHardwareAccel').value;
     document.getElementById('vaapiDriverGroup').style.display = hwaccel === 'vaapi' ? 'block' : 'none';
@@ -304,14 +280,12 @@ function renderProfiles() {
     }
     
     tbody.innerHTML = profiles.map(p => {
-        const resolution = resolutions.find(r => r.id === p.resolution_id);
         return `
             <tr>
                 <td class="channel-name">${escapeHtml(p.name)}</td>
                 <td>${p.hardware_acceleration === 'none' ? 'Software' : p.hardware_acceleration.toUpperCase()}</td>
                 <td>${p.video_format.toUpperCase()} @ ${p.video_bitrate}k</td>
                 <td>${p.audio_format.toUpperCase()} @ ${p.audio_bitrate}k</td>
-                <td>${resolution ? resolution.name : 'N/A'}</td>
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-outlined" type="button" data-action="editProfile" data-args="[${p.id}]">
                         <span class="material-icons">edit</span>
@@ -356,8 +330,6 @@ function openModal(profile = null) {
         document.getElementById('profileVaapiDriver').value = profile.vaapi_driver || '';
         document.getElementById('profileVaapiDevice').value = profile.vaapi_device || '';
         document.getElementById('profileQsvFrames').value = profile.qsv_extra_hardware_frames || '';
-        document.getElementById('profileResolution').value = profile.resolution_id;
-        document.getElementById('profileScalingBehavior').value = profile.scaling_behavior || 'scale_and_pad';
         document.getElementById('profileVideoFormat').value = profile.video_format || 'h264';
         document.getElementById('profileVideoProfile').value = profile.video_profile || '';
         document.getElementById('profileVideoPreset').value = profile.video_preset || '';
@@ -398,8 +370,8 @@ async function saveProfile(e) {
         vaapi_driver: document.getElementById('profileVaapiDriver').value || null,
         vaapi_device: document.getElementById('profileVaapiDevice').value || null,
         qsv_extra_hardware_frames: parseInt(document.getElementById('profileQsvFrames').value) || null,
-        resolution_id: parseInt(document.getElementById('profileResolution').value),
-        scaling_behavior: document.getElementById('profileScalingBehavior').value,
+        resolution_id: DEFAULT_RESOLUTION_ID,
+        scaling_behavior: 'scale_and_pad',
         video_format: document.getElementById('profileVideoFormat').value,
         video_profile: document.getElementById('profileVideoProfile').value || null,
         video_preset: document.getElementById('profileVideoPreset').value || null,

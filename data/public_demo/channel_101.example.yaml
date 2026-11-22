@@ -1,0 +1,23 @@
+# Public demo channel — safe for open-source distribution (no fleet inventory).
+# Import via UI Import page or POST /api/import/channels/yaml
+# Pair with schedules/101.example.yml → copy to schedules/101.yml
+
+channels:
+  - number: "101"
+    name: StreamTV Demo (Big Buck Bunny)
+    group: Demo
+    description: >-
+      Public-domain demo channel for first-run onboarding. Archive.org remux at
+      source resolution; pair with schedules/101.yml for continuous playout.
+    enabled: true
+    playout_mode: continuous
+    streams:
+      - id: demo_101_big_buck_bunny
+        collection: StreamTV Demo - Big Buck Bunny
+        type: movie
+        year: 2008
+        runtime: PT9M56S
+        source: archive_org
+        url: https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+        title: Big Buck Bunny
+        notes: Blender Foundation CC BY — public demo asset.

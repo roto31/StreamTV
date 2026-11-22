@@ -1,6 +1,6 @@
 """Authentication API endpoints for Archive.org and YouTube"""
 
-from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -359,118 +359,27 @@ async def archive_logout(request: Request):
         raise HTTPException(status_code=500, detail=error_detail)
 
 
-# PBS Authentication Endpoints
+# PBS Authentication — retired (DRM / unsupported). See parked/pbs-auth/.
+
+_PBS_AUTH_GONE = (
+    "PBS authentication UI is retired. PBS is out of scope for new channels "
+    "(DRM). Sources parked under parked/pbs-auth/ and parked/builder-sources/."
+)
+
 
 @router.get("/pbs", response_class=HTMLResponse)
-async def pbs_login_page(request: Request):
-    """PBS authentication page"""
-    return templates.TemplateResponse(request, "auth_pbs.html", {
-"authenticated": bool(config.pbs.cookies_file),
-        "cookies_file": config.pbs.cookies_file or ""
-})
+async def pbs_login_page_retired(request: Request):
+    raise HTTPException(status_code=status.HTTP_410_GONE, detail=_PBS_AUTH_GONE)
 
 
 @router.post("/pbs/cookies")
-@rate_limit("10/hour")
-async def pbs_set_cookies(request: Request, file: UploadFile = File(...)):
-    """Upload and set PBS cookies file - Rate limited to 10 requests per hour"""
-    from pathlib import Path
-    
-    # Create cookies directory if it doesn't exist
-    cookies_dir = Path("data/cookies")
-    cookies_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Save uploaded file
-    cookies_path = cookies_dir / "pbs_cookies.txt"
-    
-    try:
-        with open(cookies_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        
-        # Validate it's a valid cookies file (basic check)
-        with open(cookies_path, "r") as f:
-            content = f.read()
-            if "pbs.org" not in content.lower() and "# Netscape" not in content:
-                cookies_path.unlink()  # Delete invalid file
-                raise HTTPException(status_code=400, detail="Invalid cookies file format. Must contain PBS cookies (pbs.org, etc.).")
-        
-        # Update config and persist to file
-        config.update_section("pbs", {
-            "cookies_file": str(cookies_path.absolute()),
-            "use_authentication": True
-        })
-        
-        # Update StreamManager - reload PBS adapter with new cookies
-        stream_manager = StreamManager()
-        if stream_manager.pbs_adapter:
-            stream_manager.pbs_adapter.cookies_file = str(cookies_path.absolute())
-            stream_manager.pbs_adapter._load_cookies_from_file()
-        
-        return {"status": "success", "message": f"PBS cookies file uploaded and configured"}
-        
-    except Exception as e:
-        logger.error(f"Error uploading PBS cookies file: {e}")
-        if cookies_path.exists():
-            cookies_path.unlink()
-        raise HTTPException(status_code=500, detail=str(e))
+async def pbs_set_cookies_retired(request: Request):
+    raise HTTPException(status_code=status.HTTP_410_GONE, detail=_PBS_AUTH_GONE)
 
 
 @router.delete("/pbs")
-@rate_limit("10/hour")
-async def pbs_logout(request: Request):
-    """Remove PBS authentication - Rate limited to 10 requests per hour"""
-    from pathlib import Path
-    
-    try:
-        import yaml
-        
-        # Remove cookies file if it exists
-        cookies_file_path = None
-        if config.pbs.cookies_file:
-            cookies_file_path = Path(config.pbs.cookies_file)
-            if cookies_file_path.exists():
-                cookies_file_path.unlink()
-                logger.info(f"Deleted PBS cookies file: {cookies_file_path}")
-        
-        # Directly manipulate YAML file to avoid validation issues
-        config_path = Path(config._config_path)
-        with open(config_path, 'r') as f:
-            yaml_data = yaml.safe_load(f) or {}
-        
-        # Update pbs section
-        if "pbs" not in yaml_data:
-            yaml_data["pbs"] = {}
-        
-        # Remove cookies_file key entirely
-        yaml_data["pbs"].pop("cookies_file", None)
-        yaml_data["pbs"]["use_authentication"] = False
-        
-        # Write back to file
-        with open(config_path, 'w') as f:
-            yaml.safe_dump(yaml_data, f, sort_keys=False, default_flow_style=False, allow_unicode=True)
-        
-        # Reload config
-        config._config_data = yaml_data
-        config.pbs = config._section_classes["pbs"](**yaml_data.get("pbs", {}))
-        
-        # Update StreamManager - create new instance which will read updated config
-        stream_manager = StreamManager()
-        if stream_manager.pbs_adapter:
-            stream_manager.pbs_adapter.cookies_file = None
-            stream_manager.pbs_adapter._session_cookies = None
-            stream_manager.pbs_adapter._authenticated = False
-            stream_manager.pbs_adapter.use_authentication = False
-            logger.info("Cleared PBS authentication from StreamManager")
-        
-        logger.info("PBS authentication successfully removed")
-        return {"status": "success", "message": "PBS authentication removed"}
-        
-    except Exception as e:
-        logger.error(f"Error removing PBS authentication: {e}", exc_info=True)
-        error_detail = str(e)
-        if "pattern" in error_detail.lower() or "validation" in error_detail.lower():
-            error_detail = "Configuration validation error. Please check the config.yaml file manually."
-        raise HTTPException(status_code=500, detail=error_detail)
+async def pbs_logout_retired(request: Request):
+    raise HTTPException(status_code=status.HTTP_410_GONE, detail=_PBS_AUTH_GONE)
 
 
 @router.get("/youtube/oauth")

@@ -105,18 +105,25 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         else:
             response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
         
-        # Tightened CSP - removed 'unsafe-inline' from script-src for better XSS protection
-        # Using nonces for inline scripts instead
-        # Note: Some legacy inline scripts may need to be refactored to use nonces
+        # Tightened CSP: nonces for app templates. Swagger/ReDoc at exact /docs and
+        # /redoc inject inline bootstrap scripts without a nonce — allow unsafe-inline
+        # only on those two paths (operator markdown is /docs/{slug}, not /docs).
+        path = request.url.path.rstrip("/") or "/"
+        swagger_docs = path in ("/docs", "/redoc")
+        script_src = (
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; "
+            if swagger_docs
+            else f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net https://unpkg.com; "
+        )
         csp_policy = (
             "default-src 'self'; "
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; "  # Keep unsafe-inline for styles (needed for dynamic styling)
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; "
             "font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com; "
-            f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net https://unpkg.com; "  # Use nonce instead of unsafe-inline
+            f"{script_src}"
             "img-src 'self' data: blob: https:; "
             "media-src 'self' blob:; "
             "connect-src 'self'; "
-            "worker-src 'self' blob:; "  # HLS.js / mpegts.js workers (Issue 4 /player preview)
+            "worker-src 'self' blob:; "
             "frame-src 'self'; "
             "frame-ancestors 'none'; "
             "object-src 'none'; "

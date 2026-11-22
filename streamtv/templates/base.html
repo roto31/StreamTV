@@ -1546,9 +1546,9 @@
                         <span class="material-icons">tune</span>
                         <span>Settings Overview</span>
                     </a>
-                    <a href="/settings/ffmpeg" class="nav-link {% if '/settings/ffmpeg' in request.url.path %}active{% endif %}" aria-label="FFmpeg Settings">
+                    <a href="/settings/transcoding" class="nav-link {% if '/settings/transcoding' in request.url.path or '/settings/ffmpeg' in request.url.path %}active{% endif %}" aria-label="Transcoding">
                         <span class="material-icons">settings_applications</span>
-                        <span>FFmpeg</span>
+                        <span>Transcoding</span>
                     </a>
                     <a href="/settings/hdhr" class="nav-link {% if '/settings/hdhr' in request.url.path %}active{% endif %}" aria-label="HDHomeRun Settings">
                         <span class="material-icons">tv</span>
@@ -1561,18 +1561,6 @@
                     <a href="/settings/plex" class="nav-link {% if '/settings/plex' in request.url.path %}active{% endif %}" aria-label="Plex API Integration">
                         <span class="material-icons">integration_instructions</span>
                         <span>Plex API</span>
-                    </a>
-                    <a href="/settings/resolutions" class="nav-link {% if '/settings/resolutions' in request.url.path %}active{% endif %}" aria-label="Resolutions">
-                        <span class="material-icons">aspect_ratio</span>
-                        <span>Resolutions</span>
-                    </a>
-                    <a href="/settings/ffmpeg-profiles" class="nav-link {% if '/settings/ffmpeg-profiles' in request.url.path %}active{% endif %}" aria-label="FFmpeg Profiles">
-                        <span class="material-icons">movie_filter</span>
-                        <span>FFmpeg Profiles</span>
-                    </a>
-                    <a href="/settings/watermarks" class="nav-link {% if '/settings/watermarks' in request.url.path %}active{% endif %}" aria-label="Watermarks">
-                        <span class="material-icons">branding_watermark</span>
-                        <span>Watermarks</span>
                     </a>
                     <a href="/settings/auth" class="nav-link {% if '/settings/auth' in request.url.path %}active{% endif %}" aria-label="Source Authentication">
                         <span class="material-icons">vpn_key</span>
