@@ -2,7 +2,7 @@
 
 Complete documentation for StreamTV on macOS.
 
-> **Canonical guides (prefer these):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) · [Player preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Backup](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) · [Auto-Healer](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (production **defaults off**). This page is a large historical amalgam — if it conflicts, trust the linked guides.
+> **Canonical guides (prefer these):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) · [Player preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Backup](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) · [Schedules](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) · [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (**retired** — script heals only). This page is a large historical amalgam — if it conflicts, trust the linked guides.
 
 ## Quick Links
 
@@ -10,15 +10,9 @@ Complete documentation for StreamTV on macOS.
 
 StreamTV is an efficient online media streaming platform that emulates HDHomeRun tuners for integration with Plex, Emby, and Jellyfin.
 
-### AI Self-Recovery (StreamTVMac)
+### Ops healing (scripts only)
 
-On first launch after Python setup (or in **Settings → AI Self-Recovery**), choose:
-
-- **Apple Foundation Models** (macOS 26+ / Apple Intelligence) — on-device bridge on port `11435`
-- **Ollama** (optional on any supported macOS)
-- **No AI** — deterministic heal scripts only
-
-**Production:** `auto_healer.enabled` and `apply_fixes` default **false** (advise-only until an operator change window). See [Foundation Models recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/FOUNDATION_MODELS_RECOVERY.md) and [Auto-Healer](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md).
+AI Recovery / Apple Foundation Models / Ollama operator surfaces were **retired** from the live platform. Use heal scripts (stalled FFmpeg, TunarrRAM, soft deploy). See [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (retired stub) and [FFmpeg stall](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md).
 
 ### Backup and restore
 

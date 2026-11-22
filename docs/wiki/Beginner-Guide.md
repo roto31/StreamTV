@@ -21,10 +21,10 @@ StreamTV is a platform that creates TV channels from online video sources like Y
 
 ### What Can You Do With StreamTV?
 
-- **Create TV Channels**: Turn YouTube playlists or Archive.org collections into continuous TV channels
+- **Create TV Channels**: Turn YouTube playlists or Archive.org collections into continuous TV channels (Channel Builder or Import)
 - **Watch in Plex**: Add StreamTV as a "tuner" in Plex and watch channels like regular TV
-- **Schedule Content**: Set up schedules so different shows play at different times
-- **No Downloads Required**: Everything streams directly from the internet
+- **Guide from YAML**: Each channel’s order and guide come from `schedules/{number}.yml` on disk
+- **No Downloads Required**: Streams come from the internet (optional local YouTube cache on supported setups)
 
 ### Simple Analogy
 
@@ -46,14 +46,11 @@ A **media item** is a single video. It could be a YouTube video or an Archive.or
 ### Playlist
 A **playlist** is a list of media items in a specific order. When a channel plays, it goes through the playlist from start to finish, then starts over.
 
-### Schedule
-A **schedule** is a more advanced way to organize content. It can include:
-- Main content (the shows)
-- Commercials (filler content)
-- Specific times for things to play
+### Schedule (YAML file)
+A **schedule** is the on-disk file `schedules/{channel_number}.yml`. It defines play order, optional commercials/fillers, and feeds the Plex guide. The **Schedules** web page only *lists* these files — you do not create schedules in the browser.
 
-### Collection
-A **collection** is a group of related media items. For example, "1980 Olympics Opening Ceremony" might be a collection with multiple videos.
+### Collection (inventory group)
+A **collection** is a named group of related media items in the database (for example, "1980 Olympics Opening Ceremony"). Schedule YAML refers to collections by name. The old Collections management UI is retired — use Builder, Import, Playlists, and Media instead.
 
 ---
 
@@ -123,12 +120,12 @@ The sidebar on the left has these options:
 
 - **Dashboard**: Overview of your system
 - **Channels**: Manage TV channels
+- **Channel Builder**: Create channels from Archive.org / YouTube URLs
 - **Player**: Watch channels in your browser
 - **Import**: Add new channels from YAML files
-- **Schedules**: View schedule files
+- **Schedules**: Read-only list of on-disk schedule YAML files
 - **Playouts**: See what's currently playing
 - **Playlists**: Manage playlists
-- **Collections**: Manage collections
 - **Media Items**: View all videos
 - **Settings**: Configure StreamTV
 

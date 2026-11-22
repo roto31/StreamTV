@@ -6,9 +6,9 @@ Add operator-local streaming sites to Channel Builder using YAML manifests. This
 
 Channel Builder v2 uses a **source registry**:
 
-- **Built-in sources:** Archive.org, YouTube, PBS, Plex (playout-ready today)
-- **Coming soon:** Vimeo (metadata stub only)
+- **Built-in sources:** Archive.org and YouTube only
 - **Community sources:** YAML files in `data/builder_sources/`
+- **Parked (not in live Builder):** PBS, Plex, Vimeo builtins
 
 Community sources can prepare channel metadata while playout adapters are developed separately.
 

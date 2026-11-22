@@ -26,7 +26,7 @@ Run these diagnostic scripts directly from this page to check your installation:
 | Plex spinner / YouTube cold cache | [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) |
 | Soft restart (no kickstart) | [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) |
 | Loudness / loudnorm CPU | [LoudNorm fleet audio](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
-| AI recovery / Ollama | [Foundation Models recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/FOUNDATION_MODELS_RECOVERY.md) |
+| AI recovery / Ollama (retired) | Use heal scripts — [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) · [FFmpeg stall](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
 | Streaming detail | [STREAMING_ISSUES](https://github.com/roto31/StreamTV/blob/main/docs/troubleshooting/STREAMING_ISSUES.md) |
 
 ## Using the Web Interface for Troubleshooting

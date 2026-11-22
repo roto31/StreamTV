@@ -30,7 +30,7 @@ FastAPI: API (channels, import, backup, builder, cache, AI…)
          IPTV · HDHomeRun · /player live TS remux
     │
 PlayOut: ChannelManager → MPEGTSStreamer → StreamManager
-         adapters (YouTube / Archive.org / PBS / Plex)
+         adapters (YouTube / Archive.org; PBS / Plex if in inventory)
          optional cache (TunarrRAM youtube_full_cache) · video hold (Plex)
     │
 Data: SQLite · YAML schedules · config · heal LaunchAgents
@@ -400,30 +400,27 @@ python3 scripts/create_channel.py --number 1980 --name "1980 Olympics"
 
 ### Schedule File Location
 
-Schedule files are in the `schedules/` directory:
-- Format: `mn-olympics-{year}.yml`
-- Or: `{channel-name}.yml`
+Canonical path: `schedules/{channel_number}.yml` (example: channel `1980` → `schedules/1980.yml`).
+
+The **Schedules** web page is a **read-only** inventory. Create/reorder via Channel Builder, Import, or editing YAML on disk — not via Add/Save Schedule in the UI (`POST`/`PUT /api/schedules` return **410**).
+
+Deep reference: [SCHEDULES.md](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md).
 
 ### Schedule Engine
 
-The Schedule Engine:
+The Schedule Engine (frozen bedrock):
 - Parses schedule YAML files
 - Generates playlists from sequences
 - Handles repeats and loops
-- Calculates timeline positions
+- Calculates timeline positions for continuous playout + XMLTV
 
 ### Timeline System
 
-**Midnight Start**: All channels start at midnight (00:00:00) of their creation day
-**System Time Sync**: Uses server system time to calculate current position
-**Continuous Playback**: Streams continuously, clients join at current position
+**Playout anchor**: `playout_start_time` + schedule item durations pick the current item (EPG-aligned). Clients join in progress; playback starts at **0:00 of the current file** (no mid-program FFmpeg seek for Archive.org / YouTube).
 
 ### Schedule Validation
 
-Schedule files are validated against JSON schema:
-- Location: `schemas/schedule.schema.json`
-- Validates structure and data types
-- Web interface shows validation errors
+Schedule files can be checked against `schemas/schedule.schema.json` when present. The web UI does not offer a schedule editor.
 
 ---
 

@@ -1238,26 +1238,23 @@ Should show no new warnings after restart.
 
 # Schedule File Naming Convention
 
+> **Current rule (2026-11):** Canonical schedule path is `schedules/{channel_number}.yml`.
+> Legacy `mn-olympics-*` / `magnum-pi-schedule.yml` aliases are optional leftovers only.
+> Web schedule create/edit is removed — see [Schedules](Schedules) and
+> [SCHEDULES.md](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md).
+> The section below is a historical Magnum P.I. naming incident.
+
 ## Issue
 
 Channel 80 (Magnum P.I.) showed "No schedule" in the Playout page.
 
 ## Root Cause
 
-The schedule parser looks for **specific filename patterns** based on channel number:
+The schedule parser looks for **specific filename patterns** based on channel number.
+Canonical name is `{channel_number}.yml` (e.g. `80.yml`). A descriptive alias such as
+`magnum-pi-schedule.yml` alone was not enough unless also registered as a legacy alias.
 
-```python
-# From streamtv/scheduling/parser.py
-possible_names = [
-    f"mn-olympics-{channel_number}.yml",   # e.g., mn-olympics-80.yml
-    f"mn-olympics-{channel_number}.yaml",  # e.g., mn-olympics-80.yaml
-    f"{channel_number}.yml",               # e.g., 80.yml ✅
-    f"{channel_number}.yaml"               # e.g., 80.yaml
-]
-```
-
-**Problem**: We named the file `magnum-pi-schedule.yml`
-**Solution**: Must be named `80.yml` to match the channel number
+**Solution**: Keep `schedules/80.yml` as the channel schedule file.
 
 ---
 

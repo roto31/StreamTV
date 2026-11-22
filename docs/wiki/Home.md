@@ -34,14 +34,21 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 - [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md)
 - [TunarrRAM playout recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md)
 - [Backup and restore](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md)
-- [Foundation Models recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/FOUNDATION_MODELS_RECOVERY.md) · [Auto-Healer](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (defaults **off**)
+- Ops healing: [FFmpeg stall](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) (AI Recovery retired)
 - [LoudNorm fleet audio](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) (default **off**)
 - [FFmpeg stall / keepalive](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md)
 - [Fleet probe protocol](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md)
 - [Metadata enrichment](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md)
 - [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md)
-- [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md)
+- [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) (Archive.org + YouTube)
+- [Schedules (YAML authority)](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) — web UI is read-only
 - [Core operator quickstart](https://github.com/roto31/StreamTV/blob/main/docs/guides/CORE_OPERATOR_QUICKSTART.md)
+
+## Platform surface (current)
+
+- **Builder first-party sources:** Archive.org, YouTube  
+- **Schedules:** `schedules/{n}.yml` on disk; Schedules page inventory only (no create/edit UI)  
+- **Retired:** Collections UI / `/api/collections`, AI Recovery / Foundation Models / Ollama operator UI  
 
 ## Wiki pages
 

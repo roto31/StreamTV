@@ -48,7 +48,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 |-------|------|
 | Core operator quickstart | [guides/CORE_OPERATOR_QUICKSTART.md](guides/CORE_OPERATOR_QUICKSTART.md) |
 | Backup and restore | [guides/BACKUP_RESTORE.md](guides/BACKUP_RESTORE.md) |
-| Foundation Models recovery | [guides/FOUNDATION_MODELS_RECOVERY.md](guides/FOUNDATION_MODELS_RECOVERY.md) · [AUTO_HEALER.md](AUTO_HEALER.md) |
+| Ops healing (scripts only) | [FFMPEG_STALL_KEEPALIVE](guides/FFMPEG_STALL_KEEPALIVE.md) · [TUNARRRAM](guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [SOFT_DEPLOY](guides/SOFT_DEPLOY.md) |
 | LoudNorm fleet audio | [guides/LOUDNORM_FLEET_AUDIO.md](guides/LOUDNORM_FLEET_AUDIO.md) |
 | FFmpeg stall / keepalive | [guides/FFMPEG_STALL_KEEPALIVE.md](guides/FFMPEG_STALL_KEEPALIVE.md) |
 | Plex video hold | [guides/PLEX_VIDEO_HOLD.md](guides/PLEX_VIDEO_HOLD.md) |
@@ -61,11 +61,13 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | YouTube geo-blocks | [guides/YOUTUBE_GEO_BLOCKS.md](guides/YOUTUBE_GEO_BLOCKS.md) |
 | Vimeo bedrock gate | [guides/VIMEO_BEDROCK_GATE.md](guides/VIMEO_BEDROCK_GATE.md) |
 | Lessons Learned (Issues 1–61) | [../LESSONS_LEARNED.md](../LESSONS_LEARNED.md) |
-| Channel Builder | [channel-builder.md](channel-builder.md) |
+| Channel Builder (Archive.org + YouTube) | [channel-builder.md](channel-builder.md) |
+| Schedules (YAML authority; UI read-only) | [SCHEDULES.md](SCHEDULES.md) |
+| Channel Creator MCP (NL / Cursor / local models) | [guides/CHANNEL_CREATOR_MCP.md](guides/CHANNEL_CREATOR_MCP.md) |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md) |
-| PBS + Playwright | [guides/PBS_PLAYWRIGHT.md](guides/PBS_PLAYWRIGHT.md) |
+| PBS (retired from Builder) | [guides/PBS_PLAYWRIGHT.md](guides/PBS_PLAYWRIGHT.md) |
 | Archive.org operator | [guides/ARCHIVE_ORG_OPERATOR.md](guides/ARCHIVE_ORG_OPERATOR.md) |
 | StreamTV + Tunarr hybrid | [guides/STREAMTV_TUNARR_HYBRID.md](guides/STREAMTV_TUNARR_HYBRID.md) |
 | Sanitization policy (public sync) | [SANITIZATION_POLICY.md](SANITIZATION_POLICY.md) |

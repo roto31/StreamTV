@@ -1,12 +1,14 @@
 # Channel Builder
 
-Assemble custom StreamTV channels from Archive.org, YouTube, PBS, and Plex through a guided web wizard or REST API.
+Assemble custom StreamTV channels from **Archive.org** and **YouTube** through a guided web wizard or REST API.
+
+First-party Builder sources are **Archive.org** and **YouTube** only. PBS, Plex, and Vimeo Builder builtins are parked under `parked/builder-sources/` (playback adapters for existing inventory may still resolve those URLs).
 
 ## When to use Channel Builder vs Import Channels
 
 | Task | Use |
 |------|-----|
-| Create a **new** channel from URLs (YouTube, Archive.org, PBS, Plex `plex://`) | **Channel Builder** (`/builder`) |
+| Create a **new** channel from URLs (YouTube, Archive.org) | **Channel Builder** (`/builder`) |
 | **Migrate** channel YAML from another StreamTV server | **Import Channels** (`/import`) |
 | **Bulk import** hand-edited channel packs (`channels:` list YAML) | **Import Channels** (`/import`) |
 | Re-import after editing `data/channels*.yaml` on disk | **Import Channels** (`/import`) |
@@ -16,12 +18,14 @@ Both paths end at `import_channels_from_yaml()`; Builder also writes `data/unifi
 ## Quick start
 
 1. Open **Channel Builder** from the sidebar (`/builder`) or visit `http://localhost:8410/builder`.
-2. **Source** — Pick Archive.org, YouTube, PBS, or Plex (Vimeo appears as *Coming soon*).
-3. **Sign In** — Inline authentication on the Builder page (Playwright for YouTube/PBS, forms for Archive.org/Plex).
-4. **URLs** — Paste or drop links; playlists, collections, and PBS show pages expand on resolve.
+2. **Source** — Pick Archive.org or YouTube (optional community YAML sources under `data/builder_sources/`).
+3. **Sign In** — Inline authentication (Playwright for YouTube; form for Archive.org).
+4. **URLs** — Paste or drop links; playlists and Archive collections expand on resolve.
 5. **Order & Fillers** — Choose playback order; attach reusable filler libraries.
 6. **Channel Info** — Set channel number, name, collection name, and optional **metadata enrichment** fields (series name / year; defaults on).
-7. **Review & Build** — Compiles unified YAML, imports inventory, writes schedule, resets playout, then **enriches** media via TVDB/TVMaze/TMDB when enabled.
+7. **Review & Build** — Compiles unified YAML, imports inventory, writes `schedules/{n}.yml`, resets playout, then **enriches** media via TVDB/TVMaze/TMDB when enabled.
+
+Schedules are **YAML authority** for playout + XMLTV. There is no web “create schedule” UI — Builder/Import write the file; afterwards edit `schedules/{n}.yml` on disk if needed. See [SCHEDULES.md](SCHEDULES.md).
 
 ### Metadata enrichment (post-build)
 
@@ -70,9 +74,6 @@ npm run build
 | `/auth/status` | GET | Per-source auth configured state |
 | `/auth/archive` | POST | Archive.org username/password |
 | `/auth/youtube/login` | POST | Playwright YouTube sign-in (async job) |
-| `/auth/pbs/login` | POST | Playwright PBS sign-in (async job) |
-| `/auth/pbs/cookies/import` | POST | Copy `~/Downloads/cookies.txt` → `data/cookies/pbs_cookies.txt` |
-| `/auth/plex` | POST | Plex server URL + token |
 | `/auth/{scope}/cookies` | POST | Upload Netscape cookies.txt |
 | `/docs/custom-sources.pdf` | GET | Download custom-sources guide |
 | `/drafts` | POST | Create draft |
@@ -86,6 +87,8 @@ npm run build
 
 OpenAPI docs: `/docs#/Channel%20Builder`
 
+Retired Builder auth (PBS / Plex) lives under `parked/builder-sources/` and is **not** part of the live catalog. See [PBS Playwright](guides/PBS_PLAYWRIGHT.md) and [Vimeo gate](guides/VIMEO_BEDROCK_GATE.md).
+
 ## Ordering modes
 
 | UI mode | Schedule output |
@@ -98,40 +101,16 @@ OpenAPI docs: `/docs#/Channel%20Builder`
 
 Filler libraries are stored in `data/filler_collections/*.json` and referenced at build time. The compiler inserts commercial-break sequences between primary items (Olympics-style pattern).
 
-## PBS sources
-
-PBS is supported in Channel Builder with `source: pbs` in generated channel YAML. Long-form show builds (e.g. Nature) use the same defaults as the operator rebuild script.
-
-| Feature | Builder behavior |
-|---------|------------------|
-| Full-episode filter | On by default — skips trailer/preview titles; drops items under 300s when duration is known |
-| `epg_sync_class` | Auto **C** for continuous PBS / PBS show-expanded channels (override on Channel Info step) |
-| Show catalog cap | **5000** videos (`pbs.show_max_videos` / `STREAMTV_PBS_SHOW_MAX_VIDEOS`) |
-| PBS cookies | Playwright sign-in, cookie upload, or **Import from Downloads** (`~/Downloads/cookies.txt`) — auto-import on resolve when local cookies are missing |
-
-| URL type | Example | Supported? |
-|----------|---------|------------|
-| Episode / video page | `https://www.pbs.org/video/...` | Yes |
-| Show landing page | `https://www.pbs.org/show/nature/` | Yes — expands to `/video/` catalog on resolve |
-| Live stream page | `https://www.pbs.org/watch-live/...` | Yes |
-| Direct HLS | `https://...lls.pbs.org/....m3u8` | Yes |
-
-Show pages harvest episode links from HTML; full season catalogs use Playwright season iteration when PBS cookies are configured.
-
-Member-only or geo-restricted PBS content requires PBS sign-in on the Builder **Sign In** step, cookie upload, or importing `cookies.txt` from Downloads.
-
-Configure a custom import path with `pbs.cookies_import_path` in `config.yaml` (default `~/Downloads/cookies.txt`).
-
 ## macOS client
 
 `StreamTVMac` → **Manage Channels** uses `BuilderService` to build from a single URL, or links to the full web builder.
 
 ## Architecture
 
-- **Source registry:** `streamtv/builder/sources/`
+- **Source registry:** `streamtv/builder/sources/` (builtins: `archive_org`, `youtube`)
 - **Drafts:** `data/builder_drafts/{id}.json`
 - **Community manifests:** `data/builder_sources/*.yaml` (gitignored; example in docs)
 - **Built channels:** `data/unified/{N}.channel.yaml`, `data/channels_generated_{N}.yaml`, `schedules/{N}.yml`
 - **Scheduling engine:** Unchanged (frozen bedrock) — Builder emits Schedule v1 YAML only.
 
-See also: [Two-layer channel model](channel-two-layer-model.md) · [Custom sources guide](builder/custom-sources-guide.md)
+See also: [Two-layer channel model](channel-two-layer-model.md) · [Custom sources guide](builder/custom-sources-guide.md) · [Schedules](SCHEDULES.md)

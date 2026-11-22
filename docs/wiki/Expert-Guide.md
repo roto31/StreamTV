@@ -37,13 +37,13 @@
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
 │ Playout: ChannelManager · ScheduleParser/Engine · MPEGTSStreamer│
-│ StreamManager + adapters (YT/Archive/PBS/Plex) · optional cache │
+│ StreamManager + adapters (YT/Archive; PBS/Plex if inventory) · cache │
 │ (TunarrRAM) · optional Plex video hold · soft stream-restart    │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
 │ Data: SQLite · YAML schedules · config · heal LaunchAgents      │
-│ External: YouTube · Archive.org · PBS · Plex · FFmpeg           │
+│ External: YouTube · Archive.org · FFmpeg (+ PBS/Plex if present) │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -380,7 +380,7 @@ FFmpeg flag literals live only in `streamtv/ffmpeg/constants.py` (golden-tested)
 StreamManager
 ├── detect_source(url)
 ├── get_stream_url(url) → str | (video_url, audio_url)
-└── adapters: YouTube · Archive.org · PBS · Plex
+└── adapters: YouTube · Archive.org · PBS · Plex (Builder first-party: YT + Archive only)
 Optional: TunarrRAM youtube_full_cache (local .mp4) before CDN
 ```
 

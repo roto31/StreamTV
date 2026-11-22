@@ -12,8 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Channel Builder** — First-party sources are **Archive.org** and **YouTube** only.
+- **Schedules** — Web create/edit removed; Schedules page is a read-only inventory of on-disk `schedules/{n}.yml` (playout + guide authority). Create/update schedule API returns 410.
+- **Collections UI** — Manual/Smart/Multi Collections page and `/api/collections` retired; use Playlists + Builder + Import.
+- **AI Recovery** — Foundation Models / Ollama / AutoHealer operator surface retired; ops healing remains scripts only.
+
 ### Docs
-- Public docs and GitHub wiki refreshed to tip **1.4.2** (player/backup/FM/soft-restart API, hold/TunarrRAM/LoudNorm/AutoHealer defaults, ARCHITECTURE Mermaid + wiki absolute guide links).
+- Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces) on tip **1.4.2**.
 
 ## [1.4.2] - 2026-11-19
 

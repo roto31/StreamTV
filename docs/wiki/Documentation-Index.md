@@ -2,8 +2,10 @@
 
 Complete guide to StreamTV documentation, organized by topic.
 
-**Version:** 1.4.2 · **Updated:** 2026-11-19  
+**Version:** 1.4.2 · **Updated:** 2026-11-22  
 Sync this wiki with `bash scripts/sync_public_docs.sh --apply --wiki` from StreamTV-source.
+
+**Platform notes:** Builder = Archive.org + YouTube; Schedules UI read-only (`schedules/{n}.yml`); Collections UI and AI Recovery retired.
 
 > Deep docs live in the public repo tree. Prefer **absolute links** below (GitHub Wiki cannot resolve `../guides/`).
 
@@ -50,8 +52,7 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | TunarrRAM recovery | [TUNARRRAM_PLAYOUT_RECOVERY.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | Fleet probe protocol | [FLEET_PROBE_PROTOCOL.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md) |
 | Backup and restore | [BACKUP_RESTORE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) |
-| Foundation Models | [FOUNDATION_MODELS_RECOVERY.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FOUNDATION_MODELS_RECOVERY.md) |
-| Auto-Healer (defaults **off**) | [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) |
+| Ops healing (scripts only) | [FFMPEG_STALL](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | LoudNorm (default **off**) | [LOUDNORM_FLEET_AUDIO.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
 | FFmpeg stall / keepalive | [FFMPEG_STALL_KEEPALIVE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
 | Channel Builder | [channel-builder.md](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) |
@@ -62,9 +63,9 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | StreamTV + Tunarr hybrid | [STREAMTV_TUNARR_HYBRID.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md) |
 | Add Tunarr in Plex | [ADD_TUNARR_IN_PLEX.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md) |
 | FFmpeg profiles | [FFMPEG_PROFILES.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_PROFILES.md) |
-| PBS + Playwright | [PBS_PLAYWRIGHT.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/PBS_PLAYWRIGHT.md) |
+| PBS (retired from Builder) | [PBS_PLAYWRIGHT.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/PBS_PLAYWRIGHT.md) |
 | YouTube geo-blocks | [YOUTUBE_GEO_BLOCKS.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/YOUTUBE_GEO_BLOCKS.md) |
-| Vimeo bedrock gate | [VIMEO_BEDROCK_GATE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/VIMEO_BEDROCK_GATE.md) |
+| Vimeo (retired from Builder) | [VIMEO_BEDROCK_GATE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/VIMEO_BEDROCK_GATE.md) |
 | HDHomeRun | [HDHOMERUN.md](https://github.com/roto31/StreamTV/blob/main/docs/HDHOMERUN.md) |
 | Schedules | [SCHEDULES.md](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) |
 | Sanitization policy | [SANITIZATION_POLICY.md](https://github.com/roto31/StreamTV/blob/main/docs/SANITIZATION_POLICY.md) |
@@ -98,4 +99,4 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 
 ---
 
-**Status:** Wiki mirror current with tip **1.4.2**; publish via `scripts/sync_public_docs.sh --apply --wiki`.
+**Status:** Wiki mirror current with tip **1.4.2** + post-1.4.2 core trim (schedules/collections/AI/Builder); publish via `scripts/sync_public_docs.sh --apply --wiki`.

@@ -118,43 +118,11 @@ The system will automatically detect the source and fetch metadata if the URL is
 DELETE /api/media/{media_id}
 ```
 
-### Collections
+### Collections (retired)
 
-#### Get All Collections
-```
-GET /api/collections
-```
-
-#### Get Collection by ID
-```
-GET /api/collections/{collection_id}
-```
-
-#### Create Collection
-```
-POST /api/collections
-Content-Type: application/json
-
-{
-  "name": "My Collection",
-  "description": "Collection description"
-}
-```
-
-#### Add Item to Collection
-```
-POST /api/collections/{collection_id}/items/{media_id}
-```
-
-#### Remove Item from Collection
-```
-DELETE /api/collections/{collection_id}/items/{media_id}
-```
-
-#### Delete Collection
-```
-DELETE /api/collections/{collection_id}
-```
+The Collections web UI and `/api/collections` router are **retired** (parked).  
+`GET /collections` redirects to `/media`. Prefer **Playlists**, **Channel Builder**, and **Import**.  
+Schedule YAML still references SQLite collection *names* via `collection:` keys — that inventory is managed by import/Builder, not the retired Collections API.
 
 ### Playlists
 
@@ -197,7 +165,16 @@ DELETE /api/playlists/{playlist_id}
 
 ### Schedules
 
-#### Get All Schedules
+Continuous playout + XMLTV use on-disk `schedules/{channel_number}.yml`. See [SCHEDULES.md](SCHEDULES.md).
+
+#### YAML inventory (preferred)
+```
+GET /api/schedules/yaml-inventory
+```
+
+Read-only list of schedule files under `schedules/` (channel name/enabled when a matching channel exists).
+
+#### Legacy DB list
 ```
 GET /api/schedules?channel_id=1
 ```
@@ -205,29 +182,27 @@ GET /api/schedules?channel_id=1
 Query parameters:
 - `channel_id`: Filter by channel ID
 
+Legacy SQLite schedule rows only — **not** Live TV authority when YAML exists.
+
 #### Get Schedule by ID
 ```
 GET /api/schedules/{schedule_id}
 ```
 
-#### Create Schedule
+#### Create / update (disabled)
 ```
 POST /api/schedules
-Content-Type: application/json
-
-{
-  "channel_id": 1,
-  "playlist_id": 1,
-  "start_time": "2024-01-01T00:00:00",
-  "end_time": "2024-01-01T23:59:59",
-  "repeat": false
-}
+PUT  /api/schedules/{schedule_id}
 ```
 
-#### Delete Schedule
+Returns **410 Gone**. Edit `schedules/{n}.yml` on disk (or rebuild via Channel Builder / Import).
+
+#### Delete Schedule (legacy DB row)
 ```
 DELETE /api/schedules/{schedule_id}
 ```
+
+Deletes a DB row only. Returns **409 Conflict** if a YAML file still exists for that channel.
 
 ## IPTV Endpoints
 
@@ -317,19 +292,9 @@ POST /api/backup/restore
 Portable zip backups (config, SQLite, channel YAML, schedules, icons, cookies).
 UI: `GET /settings/backup`. See [Backup and restore](guides/BACKUP_RESTORE.md).
 
-## Foundation Models / AI status
+## AI Recovery / Foundation Models (retired)
 
-```
-GET  /foundation-models
-GET  /foundation-models/status
-POST /foundation-models/query
-POST /foundation-models/recover
-GET  /api/ai/status
-POST /api/ai/query
-```
-
-Optional Apple Foundation Models bridge / Ollama. **Production default: Auto-Healer off**
-(`auto_healer.enabled: false`). See [Auto-Healer](AUTO_HEALER.md).
+AI Recovery, Foundation Models, and Ollama operator APIs were **removed** from the live platform (parked under `parked/ai-recovery/`). Ops healing uses heal scripts only (stalled FFmpeg, TunarrRAM, soft deploy). See [AUTO_HEALER.md](AUTO_HEALER.md).
 
 ## HDHomeRun / tune (not under `/api`)
 

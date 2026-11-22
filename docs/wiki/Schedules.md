@@ -1,199 +1,70 @@
 # Schedules
 
-# Schedule YAML File Support
+Continuous playout and the Plex/XMLTV guide for each channel come from an on-disk YAML file:
 
-StreamTV now supports schedule YAML files that define complex playback sequences with pre-roll, mid-roll, post-roll commercials, custom titles, and duration-based fillers.
+```text
+schedules/{channel_number}.yml
+```
 
-## Overview
+Examples: `80` → `schedules/80.yml`, `1980` → `schedules/1980.yml`, `1954.1` → `schedules/1954.1.yml`.
 
-Schedule files are located in the `schedules/` directory and follow a specific YAML format. When a channel has a matching schedule file (e.g., `mn-olympics-1980.yml` for channel "1980"), StreamTV will automatically use it to generate the playback sequence instead of simple playlists.
+Canonical deep doc: [docs/SCHEDULES.md](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md).
 
-## Schedule File Format
+## Web UI
 
-Schedule files contain three main sections:
+| Page | Behavior |
+|------|----------|
+| **Schedules** (`/schedules`) | **Read-only** inventory of on-disk YAML files |
+| **Playouts** (`/playouts`) | Live “what’s on now” |
 
-### 1. Content Definitions
+There is **no** web Add / Edit / Save Schedule flow. Creating or reordering schedules in the browser is disabled.
 
-Maps content keys to collections and their playback order:
+## API (high level)
+
+| Method | Path | Behavior |
+|--------|------|----------|
+| `GET` | `/api/schedules/yaml-inventory` | Read-only on-disk inventory |
+| `GET` | `/api/schedules` | Legacy DB rows (not used for Live TV when YAML exists) |
+| `POST` / `PUT` | `/api/schedules`… | **410 Gone** |
+| `DELETE` | `/api/schedules/{id}` | Legacy DB only; **409** if YAML still exists for the channel |
+
+## YAML shape
+
+Three sections: **content** (keys → collection names), **sequence** (order, fillers, pre/mid/post-roll), **playout** (`sequence` + usually `repeat: true`).
 
 ```yaml
+name: Example Channel
 content:
-  - key: 1980_opening
-    collection: Retro Olympics - 1980 Opening Ceremony (ABC)
+  - key: main
+    collection: Example Collection
     order: chronological
-  - key: mn80_pre_roll
-    collection: MN 1980 Pre-Roll IDs (TC Media Now)
-    order: shuffle
-```
-
-- `key`: Unique identifier for this content
-- `collection`: Name of the collection/playlist in the database
-- `order`: `chronological` or `shuffle`
-
-### 2. Sequences
-
-Defines reusable sequences of content:
-
-```yaml
 sequence:
-  - key: mn80-pre-roll
+  - key: loop
     items:
-      - duration: "00:01:00"
-        content: mn80_pre_roll
-        filler_kind: Commercial
-        trim: true
-        discard_attempts: 2
-  - key: mn80-channel
-    items:
-      - pre_roll: true
-        sequence: mn80-pre-roll
-      - all: 1980_opening
-        custom_title: "Lake Placid Opening Ceremony (ABC)"
-      - pre_roll: false
-```
-
-Sequence items can be:
-- **Duration-based fillers**: `duration` + `content` key
-- **Content blocks**: `all` + content key (plays all items from collection)
-- **Sequence references**: `sequence` key (references another sequence)
-- **Pre-roll/Mid-roll/Post-roll flags**: Control when commercial sequences are inserted
-
-### 3. Playout Instructions
-
-Defines which sequence to play and whether to repeat:
-
-```yaml
+      - all: main
 playout:
-  - sequence: mn80-channel
+  - sequence: loop
   - repeat: true
 ```
 
-## Setup Steps
+Collection names refer to SQLite inventory groups filled by **Import** or **Channel Builder**. The Collections web UI and `/api/collections` are **retired**.
 
-### 1. Import Media and Collections
+## Canonical file names
 
-First, import media items and create collections:
+Prefer `schedules/{channel_number}.yml` only. Orphan YAML (no matching enabled channel) shows on the Schedules page but **does not** appear in Plex until a channel exists and is enabled.
 
-```bash
-# Import media items from data/retro_olympics_streams.yaml
-python3 scripts/import_olympics_data.py
+## How to change order
 
-# Import collections (groups media items by collection name)
-python3 scripts/import_collections.py
-```
+| Goal | Path |
+|------|------|
+| New Archive.org / YouTube channel | [Channel Builder](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) |
+| Bulk / migrate packs | [Import vs Builder](https://github.com/roto31/StreamTV/blob/main/docs/guides/IMPORT_VS_BUILDER.md) |
+| Edit fillers / order | Edit `schedules/{n}.yml` on disk, then soft-restart the channel |
 
-### 2. Schedule File Location
+See also: [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md)
 
-Place schedule YAML files in the `schedules/` directory. The file name should match the channel number:
-
-- Channel "1980" → `schedules/mn-olympics-1980.yml`
-- Channel "1984" → `schedules/mn-olympics-1984.yml`
-- Channel "1988" → `schedules/mn-olympics-1988.yml`
-
-### 3. Automatic Detection
-
-StreamTV automatically detects and loads schedule files when generating HLS streams or EPG data. No additional configuration is needed.
-
-## Features
-
-### Pre-Roll, Mid-Roll, Post-Roll
-
-Schedule files support inserting commercial sequences before, during, and after content:
-
-```yaml
-- pre_roll: true
-  sequence: mn80-pre-roll
-- all: 1980_opening
-  custom_title: "Lake Placid Opening Ceremony (ABC)"
-- pre_roll: false
-```
-
-When `pre_roll: true` is set, items from the referenced sequence are inserted before the next content block. When `pre_roll: false`, pre-roll insertion stops.
-
-### Custom Titles
-
-Override media item titles in EPG and playlists:
-
-```yaml
-- all: 1980_opening
-  custom_title: "Lake Placid Opening Ceremony (ABC)"
-```
-
-### Duration-Based Fillers
-
-Fill a specific duration with items from a collection:
-
-```yaml
-- duration: "00:08:00"
-  content: ads_1980_wjcl
-  filler_kind: Commercial
-  trim: true
-  discard_attempts: 6
-```
-
-The system will select items from the collection to fill approximately 8 minutes, with up to 6 discard attempts if items don't fit.
-
-### Repeat
-
-Enable infinite looping:
-
-```yaml
-playout:
-  - sequence: mn80-channel
-  - repeat: true
-```
-
-When `repeat: true`, the sequence will loop indefinitely.
-
-## How It Works
-
-1. **HLS Stream Generation** (`/iptv/channel/{channel_number}.m3u8`):
-   - Checks for schedule file matching channel number
-   - Parses YAML and generates playlist from sequence
-   - Falls back to database playlists if no schedule file found
-
-2. **EPG Generation** (`/iptv/xmltv.xml`):
-   - Uses schedule to generate program listings
-   - Applies custom titles
-   - Calculates start/end times for each program
-
-3. **Collection Mapping**:
-   - Schedule files reference collections by name
-   - Collections are created from `data/retro_olympics_streams.yaml`
-   - Media items are grouped by the `collection` field
-
-## Troubleshooting
-
-### Schedule Not Loading
-
-- Check that the schedule file exists in `schedules/` directory
-- Verify the file name matches the channel number pattern
-- Check server logs for parsing errors
-
-### Collections Not Found
-
-- Run `python3 scripts/import_collections.py` to create collections
-- Verify collection names in schedule file match database collection names
-- Check that media items have been imported first
-
-### Empty Playlist
-
-- Ensure collections contain media items
-- Verify content keys in schedule file match keys in `content` section
-- Check that sequence references are correct
-
-## Example Schedule File
-
-See `schedules/mn-olympics-1980.yml` for a complete example with:
-- Multiple content definitions
-- Pre-roll, mid-roll, post-roll sequences
-- Custom titles
-- Duration-based fillers
-- Repeat logic
-
----
-
-## Related Pages
+## Related
 
 - [Documentation Index](Documentation-Index)
 - [Home](Home)
+- [API Reference](API-Reference)

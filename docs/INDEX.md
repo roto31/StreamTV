@@ -57,9 +57,8 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 - [Core operator quickstart](guides/CORE_OPERATOR_QUICKSTART.md)
 - [Browser `/player` preview](guides/PLAYER_PREVIEW.md) — mpegts.js live TS; Plex path unchanged
 - [Backup and restore](guides/BACKUP_RESTORE.md) — automatic portable zip; new-machine restore
-- [Foundation Models recovery](guides/FOUNDATION_MODELS_RECOVERY.md) — StreamTVMac AI picker + bridge
-- [Auto-healer](AUTO_HEALER.md) — dual-backend FM/Ollama + approved heal scripts
-- [Offline FM adapter training](FOUNDATION_MODELS_ADAPTER.md)
+- Ops healing (scripts only): [FFmpeg stall](guides/FFMPEG_STALL_KEEPALIVE.md), [TunarrRAM](guides/TUNARRRAM_PLAYOUT_RECOVERY.md), [Soft deploy](guides/SOFT_DEPLOY.md)
+- AI Recovery retired — sources parked at `parked/ai-recovery/`
 - [LoudNorm fleet audio](guides/LOUDNORM_FLEET_AUDIO.md)
 - [FFmpeg stall / keepalive](guides/FFMPEG_STALL_KEEPALIVE.md) — Lessons 41, 44, 59
 - [Plex video hold](guides/PLEX_VIDEO_HOLD.md) — h264+aac hold for Apple TV tune / mid-show gaps
@@ -68,7 +67,8 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 - [Import vs Channel Builder](guides/IMPORT_VS_BUILDER.md)
 - [Metadata enrichment](guides/METADATA_ENRICHMENT.md) — TVDB/TVMaze/TMDB, SxxExx retitle, guide audits
 - [EPG sync classes A/B/C](guides/EPG_SYNC_CLASSES.md) — Plex guide vs continuous playout; playout-lag heal
-- [PBS + Playwright](guides/PBS_PLAYWRIGHT.md)
+- [PBS (retired from Builder)](guides/PBS_PLAYWRIGHT.md)
+- [Schedules (YAML; UI read-only)](SCHEDULES.md)
 - [Archive.org operator](guides/ARCHIVE_ORG_OPERATOR.md)
 - [FFmpeg profiles](guides/FFMPEG_PROFILES.md)
 - [YouTube geo-blocks](guides/YOUTUBE_GEO_BLOCKS.md)
@@ -263,7 +263,7 @@ docs/
 - **Create a channel from Archive.org** → [archive-parser/QUICK_REFERENCE_ARCHIVE_PARSER.md](archive-parser/QUICK_REFERENCE_ARCHIVE_PARSER.md)
 - **Build a channel in the UI** → [channel-builder.md](channel-builder.md)
 - **Back up / restore operator data** → [guides/BACKUP_RESTORE.md](guides/BACKUP_RESTORE.md)
-- **Set up Foundation Models / Auto-Healer** → [guides/FOUNDATION_MODELS_RECOVERY.md](guides/FOUNDATION_MODELS_RECOVERY.md)
+- **Heal stalled FFmpeg / TunarrRAM** → [guides/FFMPEG_STALL_KEEPALIVE.md](guides/FFMPEG_STALL_KEEPALIVE.md), [guides/TUNARRRAM_PLAYOUT_RECOVERY.md](guides/TUNARRRAM_PLAYOUT_RECOVERY.md)
 - **Enrich guide metadata (TVDB)** → [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md)
 - **Align Plex guide with playout** → [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md)
 - **Recover TunarrRAM / YouTube cache disk** → [guides/TUNARRRAM_PLAYOUT_RECOVERY.md](guides/TUNARRRAM_PLAYOUT_RECOVERY.md)
