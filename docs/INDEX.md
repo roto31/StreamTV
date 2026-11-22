@@ -322,5 +322,5 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
 ---
 
 **Last Updated**: 2026-11-19
-**Version**: 1.4.2
+**Version**: 1.4.3
 **Status**: Complete — guides/, wiki/, and architecture Mermaid indexed (player / soft deploy / hold / backup / FM / LoudNorm / stall / TunarrRAM)

@@ -23,7 +23,7 @@
 
 ## Quick start
 
-1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (current tip: **v1.4.2**)
+1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (current tip: **v1.4.3**)
 2. Read the [Installation Guide](docs/wiki/Installation-Guide.md)
 3. Follow the [Quick Start](docs/installation/QUICK_START.md) in docs
 

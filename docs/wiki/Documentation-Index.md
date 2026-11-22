@@ -2,7 +2,7 @@
 
 Complete guide to StreamTV documentation, organized by topic.
 
-**Version:** 1.4.2 · **Updated:** 2026-11-22  
+**Version:** 1.4.3 · **Updated:** 2026-11-21  
 Sync this wiki with `bash scripts/sync_public_docs.sh --apply --wiki` from StreamTV-source.
 
 **Platform notes:** Builder = Archive.org + YouTube; Schedules UI read-only (`schedules/{n}.yml`); Collections UI and AI Recovery retired.
@@ -102,4 +102,4 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 
 ---
 
-**Status:** Wiki mirror current with tip **1.4.2** + post-1.4.2 core trim (schedules/collections/AI/Builder); publish via `scripts/sync_public_docs.sh --apply --wiki`.
+**Status:** Wiki mirror current with tip **1.4.3** (Channel Creator MCP + core trim); publish via `scripts/sync_public_docs.sh --apply --wiki`.

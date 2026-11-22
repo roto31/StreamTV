@@ -12,15 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Window **2026-11-17 → 2026-11-21** (also shipped **v1.4.1** / **v1.4.2** on 2026-11-19 — see those sections).
+### Added
+- (none yet)
+
+## [1.4.3] - 2026-11-21
 
 ### Added
 - **Channel Creator MCP** — Optional stdio MCP (`mcp_streamtv` + optional `mcp_archive_org`) for natural-language channel creation via Builder + soft-deploy tools. Full signal-path diagrams (create → import → HDHomeRun tune), intake UX, and tool catalog — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md) and wiki [Channel-Creator-MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP).
 - **MCP host wiring guide** — Step-by-step configs and diagrams for **Cursor**, **VS Code** (Continue/Cline), **Claude Desktop**, **local models** (Qwen3 32B / Llama 3.3 70B / Qwen3 8B), and **ChatGPT** (deferred HTTPS bridge) — see [Host wiring](docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
 - **Channel Creator MCP setup script** — Optional interactive installer (`scripts/setup_channel_creator_mcp.sh`) prompts for platform and apply/dry-run/emit mode, then wires that host only.
 - **Archive.org URL guard for MCP** — `builder_add_links` rejects `*.ia.mp4` derivative URLs; agents must use canonical `…/download/<id>/<file>.mp4`.
-- **Vintage holiday lineup (in v1.4.1)** — New Year's, Valentine's, Easter, Fourth of July, Halloween, Thanksgiving, and Kids Christmas channels with matching guide icons.
-- **`/player` browser preview (in v1.4.1)** — Watch channels in the browser with a remuxed live feed and optional VLC handoff.
 
 ### Changed
 - **Channel Builder** — First-party sources are **Archive.org** and **YouTube** only.
@@ -32,11 +33,8 @@ Window **2026-11-17 → 2026-11-21** (also shipped **v1.4.1** / **v1.4.2** on 20
 ### Removed
 - **Disabled / orphan inventory** — Retired unused channel packs and schedule YAML that had no matching enabled channel so Schedules inventory matches the live lineup.
 
-### Fixed
-- **v1.4.2** — Signed DMG publish tolerates a transient Apple notary error after the app is already notarized.
-
 ### Docs
-- Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces), Channel Creator MCP guide with Mermaid signal-path diagrams, and `ARCHITECTURE.md` §8 on tip **1.4.2**.
+- Public docs and GitHub wiki refreshed for the core trim, Channel Creator MCP guides, and tip **1.4.3**.
 
 ## [1.4.2] - 2026-11-19
 
