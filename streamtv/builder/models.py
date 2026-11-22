@@ -13,46 +13,7 @@ from pydantic import BaseModel, Field
 class OrderingMode(str, Enum):
     AS_ADDED = "as_added"
     CHRONOLOGICAL = "chronological"
-    AIR_DATE = "air_date"
     SHUFFLE = "shuffle"
-
-
-class EraRange(BaseModel):
-    from_year: Optional[int] = Field(default=None, alias="from")
-    to_year: Optional[int] = Field(default=None, alias="to")
-
-    model_config = {"populate_by_name": True}
-
-
-class ChannelTarget(BaseModel):
-    channel_number: Optional[str] = None
-    name: Optional[str] = None
-
-
-class ChannelRequirements(BaseModel):
-    """Intake requirement model (§6.2)."""
-
-    content_type: str = "movies_and_specials"
-    theme: str = ""
-    theme_terms: list[str] = Field(default_factory=list)
-    networks: list[str] = Field(default_factory=list)
-    stations_for_breaks: list[str] = Field(default_factory=list)
-    daypart: Literal["any", "daytime", "evening", "late_night"] = "any"
-    era: dict[str, int] = Field(default_factory=dict)
-    sources: list[str] = Field(default_factory=lambda: ["archive", "youtube"])
-    commercials: Literal["required", "preferred", "none", "dont_care"] = "preferred"
-    breaks_between_programs: bool = True
-    target: ChannelTarget = Field(default_factory=ChannelTarget)
-    no_repeat_scope: Literal["channel", "channel_and_others", "off"] = "channel"
-    no_repeat_against: list[str] = Field(default_factory=list)
-    loop_length_hint_hours: Optional[float] = None
-    exclude: list[str] = Field(default_factory=list)
-    explain_level: Literal["beginner", "intermediate", "expert"] = "beginner"
-    template: Literal[
-        "kids_specials", "holiday_family", "prime_time_station_ids", "custom"
-    ] = "custom"
-    known_titles: list[str] = Field(default_factory=list)
-    theme_month: Optional[str] = None
 
 
 class LinkStatus(str, Enum):
@@ -76,15 +37,10 @@ class LinkItem(BaseModel):
     title: Optional[str] = None
     duration: Optional[int] = None
     upload_date: Optional[str] = None
-    air_date: Optional[str] = None
-    air_date_quality: Literal[
-        "exact", "month", "year", "placeholder", "unknown"
-    ] = "unknown"
     thumbnail: Optional[str] = None
     stream_id: Optional[str] = None
     error: Optional[str] = None
     expanded_from: Optional[str] = None
-    existing_id: Optional[str] = None
 
 
 class FillerAttachment(BaseModel):
@@ -110,12 +66,6 @@ class ChannelInfo(BaseModel):
     enrichment_year: Optional[int] = None
 
 
-class ExcludedItem(BaseModel):
-    url: Optional[str] = None
-    title: Optional[str] = None
-    reason: str = ""
-
-
 class BuilderDraft(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex)
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
@@ -129,22 +79,6 @@ class BuilderDraft(BaseModel):
     pbs_min_episode_seconds: int = 300
     built: bool = False
     built_channel_number: Optional[str] = None
-    requirements: ChannelRequirements = Field(default_factory=ChannelRequirements)
-    template: Literal[
-        "kids_specials", "holiday_family", "prime_time_station_ids", "custom"
-    ] = "custom"
-    guide_title_style: Literal["clean", "slot"] = "clean"
-    no_repeat_scope: Literal["channel", "channel_and_others", "off"] = "channel"
-    no_repeat_against: list[str] = Field(default_factory=list)
-    excluded: list[ExcludedItem] = Field(default_factory=list)
-    explain_level: Literal["beginner", "intermediate", "expert"] = "beginner"
-    # Channel Creator v2 working state (discovery → plan → build)
-    candidates: list[dict[str, Any]] = Field(default_factory=list)
-    kept_candidate_indexes: list[int] = Field(default_factory=list)
-    plan_token: Optional[str] = None
-    plan_preview: Optional[dict[str, Any]] = None
-    plan_questions: list[dict[str, Any]] = Field(default_factory=list)
-    find_job_id: Optional[str] = None
 
 
 class BuilderJob(BaseModel):
