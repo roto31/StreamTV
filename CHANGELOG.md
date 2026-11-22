@@ -33,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - **Disabled / orphan inventory** — Retired unused channel packs and schedule YAML that had no matching enabled channel so Schedules inventory matches the live lineup.
 
+### Fixed
+- **Release gate** — Builder sources API test matches Archive.org + YouTube only.
+
 ### Docs
 - Public docs and GitHub wiki refreshed for the core trim, Channel Creator MCP guides, and tip **1.4.3**.
 
