@@ -33,6 +33,8 @@ channel still appear in inventory until removed from disk.
 | `POST` | `/api/schedules` | **410 Gone** — creation disabled |
 | `PUT` | `/api/schedules/{id}` | **410 Gone** — update disabled |
 | `DELETE` | `/api/schedules/{id}` | Deletes a legacy DB row only; **refused (409)** while a YAML file exists for that channel |
+| `GET` | `/api/schedule-items`… | Legacy DB item list/detail only |
+| `POST` / `PUT` / `DELETE` / `…/move` | `/api/schedule-items`… | **410 Gone** — edit YAML on disk |
 
 Prefer editing `schedules/{n}.yml` on disk. After YAML changes that should take
 effect without a full process restart, use soft deploy / stream-restart for the

@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- **Documentation / Wiki** — Implementation page rewritten for current integrations (Tunarr proxy, YAML schedules); schedule create/edit docs match read-only UI and API 410; ErsatzTV described as inspired schedule patterns (not a fork); Tunarr described as optional external peer.
+- **Schedules API** — Creating or editing schedule *items* via `/api/schedule-items` returns **410**; edit `schedules/{n}.yml` on disk instead.
+- **NOTICE** — Acknowledgments for ErsatzTV Legacy and Tunarr (zlib); StreamTV does not vendor their source.
+- **Documentation / Wiki** — Implementation page rewritten for current integrations; schedule create/edit docs match read-only UI and API 410.
 
 ### Fixed
 - **Channel Builder guide titles** — Archive.org percent-encoded filename stems are decoded before YAML/XMLTV so Plex guide cells show human-readable titles.

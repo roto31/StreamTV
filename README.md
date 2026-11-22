@@ -63,4 +63,5 @@ Signed macOS builds are published on the [Releases](https://github.com/roto31/St
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).  
+Third-party acknowledgments (ErsatzTV Legacy / Tunarr): [NOTICE](NOTICE).

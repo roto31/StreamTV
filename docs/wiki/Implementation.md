@@ -96,12 +96,10 @@ Primary Live TV path for Plex is HDHomeRun `/auto/v*` + MPEG-TS, not “create s
 
 | Project | What StreamTV has | What StreamTV is not |
 |---------|-------------------|----------------------|
-| [ErsatzTV](https://github.com/ErsatzTV/ErsatzTV) | Compatible/inspired schedule YAML patterns and the five directives above, reimplemented in Python under `streamtv/scheduling/` | Not a fork; not vendored ErsatzTV C#/.NET; no product NOTICE beyond MIT StreamTV license |
-| [Tunarr](https://github.com/chrisbenincasa/tunarr) | Optional external peer via HTTP client + tuner proxy + library export helpers; “Tunarr-style” comments for some cache/buffer behaviors | Not vendored Tunarr source; Collections “Tunarr-first” UI is retired |
+| [ErsatzTV Legacy](https://github.com/ErsatzTV/legacy) (zlib; archived/deprecated line) | Inspired schedule YAML patterns and the five directives above, reimplemented in Python under `streamtv/scheduling/` | Not a fork; not vendored ErsatzTV source |
+| [Tunarr](https://github.com/chrisbenincasa/tunarr) (zlib) | Optional external peer via HTTP client + tuner proxy + library export helpers | Not vendored Tunarr source; Collections “Tunarr-first” UI is retired; TunarrRAM is a local volume name only |
 
-A local `ersatztv-reference/` tree may exist on operator machines for reading upstream docs; it is **gitignored** and not part of the public product tree.
-
-StreamTV itself is MIT — see [LICENSE](https://github.com/roto31/StreamTV/blob/main/LICENSE).
+Canonical acknowledgments: root [NOTICE](https://github.com/roto31/StreamTV/blob/main/NOTICE). StreamTV itself is MIT — [LICENSE](https://github.com/roto31/StreamTV/blob/main/LICENSE).
 
 ## Related wiki pages
 

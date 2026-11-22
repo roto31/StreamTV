@@ -2,7 +2,8 @@
 
 StreamTV and [Tunarr](https://github.com/chrisbenincasa/tunarr) complement each other. Use this guide to choose the right tool for each workflow.
 
-**Attribution:** StreamTV does **not** vendor Tunarr source. It uses an HTTP client
+**Attribution:** Tunarr is [zlib](https://github.com/chrisbenincasa/tunarr?tab=Zlib-1-ov-file)-licensed.
+StreamTV does **not** vendor Tunarr source — see root [NOTICE](../../NOTICE). It uses an HTTP client
 (`streamtv/integrations/tunarr_client.py`), optional `/api/integrations/tunarr/*`
 proxy routes, and `tuner_manager` HDHomeRun-style proxying. **TunarrRAM** is a
 local RAM-disk volume name for StreamTV cache — not Tunarr software.

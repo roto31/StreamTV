@@ -4,9 +4,10 @@ This document describes schedule YAML patterns inspired by [ErsatzTV](https://gi
 
 ## Attribution
 
-StreamTV is **not** a fork of ErsatzTV and does **not** vendor ErsatzTV C#/.NET source.
+Inspiration source: [ErsatzTV Legacy](https://github.com/ErsatzTV/legacy) (zlib; archived/deprecated line).
+StreamTV is **not** a fork and does **not** vendor ErsatzTV source. See root [NOTICE](../../NOTICE).
 Handlers such as `padToNext` / `waitUntil` live in `streamtv/scheduling/engine.py`.
-Schedules are authored as `schedules/{n}.yml` on disk (web create/edit removed; API create/update returns **410**).
+Schedules are authored as `schedules/{n}.yml` on disk (web create/edit removed; schedule and schedule-item mutations return **410**).
 
 ## Overview
 

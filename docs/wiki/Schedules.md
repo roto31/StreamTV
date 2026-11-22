@@ -27,6 +27,8 @@ There is **no** web Add / Edit / Save Schedule flow. Creating or reordering sche
 | `GET` | `/api/schedules` | Legacy DB rows (not used for Live TV when YAML exists) |
 | `POST` / `PUT` | `/api/schedules`… | **410 Gone** |
 | `DELETE` | `/api/schedules/{id}` | Legacy DB only; **409** if YAML still exists for the channel |
+| `GET` | `/api/schedule-items`… | Legacy DB inspection only |
+| `POST` / `PUT` / `DELETE` / `…/move` | `/api/schedule-items`… | **410 Gone** |
 
 ## YAML shape
 

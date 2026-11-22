@@ -197,6 +197,17 @@ DELETE /api/schedules/{schedule_id}
 
 Deletes a DB row only. Returns **409 Conflict** if YAML still exists for that channel.
 
+#### Schedule items (legacy DB; mutations disabled)
+```
+GET  /api/schedule-items?schedule_id=1
+POST /api/schedule-items
+PUT  /api/schedule-items/{item_id}
+DELETE /api/schedule-items/{item_id}
+POST /api/schedule-items/{item_id}/move?direction=up
+```
+
+GET remains. POST / PUT / DELETE / move return **410 Gone** — edit `schedules/{n}.yml` instead.
+
 ## IPTV Endpoints
 
 ### Channel Playlist (M3U)
