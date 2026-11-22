@@ -30,6 +30,11 @@ Welcome to the complete StreamTV documentation. This documentation is organized 
 - Customization and extension
 - Deep troubleshooting
 
+## Start here
+
+- **[Product scope](PRODUCT_SCOPE.md)** — what is in / out of the core product
+- **[First channel in 15 minutes](guides/FIRST_CHANNEL_15_MIN.md)** — public demo pack
+
 ## Full index
 
 See **[INDEX.md](INDEX.md)** for the complete topic map (guides, wiki, plex, installation).

@@ -12,10 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- (none yet)
+
+## [1.4.5] - 2026-11-22
+
+### Added
+- **Product scope** — Documented macOS-only core: Archive.org + YouTube Builder, YAML schedules, remux at source resolution, optional Channel Creator MCP.
+- **Public demo pack** — Example channel 101 (Big Buck Bunny) + schedule template and a 15-minute first-channel guide.
+- **Transcoding hub** — Settings groups global FFmpeg and optional channel profiles.
+
 ### Changed
 - **Schedules API** — Creating or editing schedule *items* via `/api/schedule-items` returns **410**; edit `schedules/{n}.yml` on disk instead.
 - **NOTICE** — Acknowledgments for ErsatzTV Legacy and Tunarr (zlib); StreamTV does not vendor their source.
 - **Documentation / Wiki** — Implementation page rewritten for current integrations; schedule create/edit docs match read-only UI and API 410.
+- **Tunarr proxy** — Status endpoint only; library browse routes removed.
+- **Swagger `/docs`** — Works with Content-Security-Policy (exact `/docs` and `/redoc`).
+- **Browser preview** — `/player` uses mpegts.js (MPEG-TS), not HLS-primary.
 
 ### Fixed
 - **Channel Builder guide titles** — Archive.org percent-encoded filename stems are decoded before YAML/XMLTV so Plex guide cells show human-readable titles.
@@ -23,9 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - **Linux packaging** — StreamTV is macOS-only; Linux installer overlay and Linux fork documentation removed.
-
-### Added
-- (none yet)
+- **Watermarks and Resolutions settings** — Retired; remux keeps source resolution; clients scale.
+- **PBS authentication UI** — Retired (DRM / unsupported for new channels).
 
 ## [1.4.4] - 2026-11-22
 

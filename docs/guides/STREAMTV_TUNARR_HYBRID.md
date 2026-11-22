@@ -95,12 +95,10 @@ Burned files are also suitable for a **Plex Movies** library (Direct Play). Neve
 | Need | StreamTV endpoint |
 |------|-------------------|
 | Tunarr health | `GET /api/integrations/tunarr/status` |
-| Media sources | `GET /api/integrations/tunarr/media-sources` |
-| Search | `GET /api/integrations/tunarr/search?q=...` |
-| Custom shows | `GET /api/integrations/tunarr/custom-shows` |
-| Smart collections | `GET /api/integrations/tunarr/smart-collections` |
-| Native Plex libraries | `GET /api/plex/libraries` |
+| Native Plex libraries | `GET /api/plex/libraries` (API / MCP; not Collections UI) |
 | Merged EPG | `GET /tuners/guide.xml` |
+
+Library browse proxies (`/media-sources`, `/search`, `/custom-shows`, …) are **parked** under `parked/tunarr-library-proxy/`.
 
 ## EPG note
 

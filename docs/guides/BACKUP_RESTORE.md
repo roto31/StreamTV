@@ -90,5 +90,5 @@ Swift only copies the zip and writes `.streamtv-restore-pending` + `streamtv-res
 
 - [Import vs Channel Builder](IMPORT_VS_BUILDER.md)
 - [Core operator quickstart](CORE_OPERATOR_QUICKSTART.md)
-- [Foundation Models recovery](FOUNDATION_MODELS_RECOVERY.md) (optional AI; does not replace backups)
+- [Product scope](../PRODUCT_SCOPE.md) (AI heal is out of scope; backups remain the recovery path)
 - Per-channel YAML export remains at `GET /api/export/channels/{id}/yaml` (not a full install backup)
