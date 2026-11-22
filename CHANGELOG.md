@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Channel Builder guide titles** — Archive.org percent-encoded filename stems are decoded before YAML/XMLTV so Plex guide cells show human-readable titles.
+- **Channel Builder Archive runtimes** — Download URLs resolve real durations into schedule/XMLTV so the guide matches what is on air; build refuses Archive items without a runtime.
 
 ### Removed
 - **Linux packaging** — StreamTV is macOS-only; Linux installer overlay and Linux fork documentation removed.
