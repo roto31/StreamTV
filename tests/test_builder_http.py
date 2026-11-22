@@ -28,9 +28,11 @@ def test_builder_sources_list() -> None:
     assert resp.status_code == 200
     sources = resp.json()
     ids = {s["id"] for s in sources}
-    assert "youtube" in ids
-    assert "archive_org" in ids
-    assert "pbs" in ids
+    assert ids == {"youtube", "archive_org"}
+    # Parked first-party sources must not reappear on the live Builder list.
+    assert "pbs" not in ids
+    assert "plex" not in ids
+    assert "vimeo" not in ids
 
 
 def test_builder_auth_status_includes_metadata_scopes() -> None:
