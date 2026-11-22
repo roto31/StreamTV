@@ -243,22 +243,38 @@ flowchart TD
 
 ## 8. Channel Creator MCP (NL → Builder → live tune)
 
-Optional stdio MCP (`mcp_streamtv/`, companion `mcp_archive_org/`) lets an AI host
-create channels via the Builder API without loading streaming bedrock into context.
-Full diagrams: [docs/guides/CHANNEL_CREATOR_MCP.md](docs/guides/CHANNEL_CREATOR_MCP.md).  
-Host wiring (Cursor / VS Code / Claude / local / ChatGPT): [docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md).
+Optional MCP (`mcp_streamtv/`, companion `mcp_archive_org/`) lets an AI host
+create **new** channels via the Builder API without loading streaming bedrock
+into context. Default profile **`guided`** (11 `channel_*` tools). Transports:
+**stdio** (local hosts) or **Streamable HTTP** on `:8411` (`none` loopback-only;
+`bearer` / `oauth` / `dual` for remote). Never tunnel StreamTV `:8410`.
+
+Guides: [CHANNEL_CREATOR_MCP.md](docs/guides/CHANNEL_CREATOR_MCP.md) ·
+[host wiring](docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) ·
+[auth](docs/guides/CHANNEL_CREATOR_MCP_AUTH.md).
 
 ```mermaid
 flowchart TD
-  NL["Natural language"] --> Host["AI host + MCP tools"]
-  Host --> Builder["POST /api/builder drafts resolve build"]
+  NL["Natural language"] --> Host["AI host"]
+  Host -->|stdio| MCP["mcp_streamtv guided"]
+  Host -->|HTTP :8411| MCP
+  MCP --> Builder["POST /api/builder … plan / newchannel-build"]
   Builder --> Artifacts["unified YAML + schedule + import"]
   Artifacts --> CM["ChannelManager"]
   CM --> Clients["HDHomeRun / IPTV / Plex"]
 ```
 
+```mermaid
+flowchart LR
+  Local["Cursor / VS Code / Claude / local LLM"] -->|stdio| MCP
+  Remote["ChatGPT / Claude web"] -->|"tunnel + oauth/dual"| HTTP[":8411"]
+  HTTP --> MCP["mcp_streamtv"]
+  MCP --> API[":8410 loopback only"]
+```
+
 **Invariant:** Archive.org URLs must be canonical `…/download/<id>/<file>.mp4` —
-never `*.ia.mp4` derivatives (`builder_add_links` + playout guards).
+never `*.ia.mp4` derivatives (`builder_add_links` + playout guards). New-channel
+only (G5); `channel_build` needs `plan_token` + `confirm="build"`.
 
 ## Distributions
 

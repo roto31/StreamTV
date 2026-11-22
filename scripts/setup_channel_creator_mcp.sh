@@ -25,6 +25,9 @@ usage() {
   cat <<'EOF'
 Usage: setup_channel_creator_mcp.sh [options]
 
+Prefer the gated Phase-6 script for new wiring:
+  zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
+
 All-in-one Channel Creator MCP wiring. With no flags, prompts for:
   1) Platform  2) Mode (apply / dry-run / emit-only)  3) Shared entries
 

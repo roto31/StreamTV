@@ -1,0 +1,59 @@
+{
+  "query": "CBS Christmas special with original commercials",
+  "search_sample": [
+    {
+      "video_id": "VK7zZz0N4NU",
+      "title": "CBS Christmas Special Commercials 1984 & 1985",
+      "duration": 2496,
+      "channel": "rubysuncle",
+      "channel_id": "UCZiMYMc3BicPnld6EsJFkLw",
+      "url": "https://www.youtube.com/watch?v=VK7zZz0N4NU"
+    },
+    {
+      "video_id": "gpPPKtaayhM",
+      "title": "A Nate Bargatze Nativity Scene | Nate Bargatze\u2019s Nashville Christmas",
+      "duration": 392,
+      "channel": "CBS",
+      "channel_id": "UClzCn8DxRSCuMFv_WfzkcrQ",
+      "url": "https://www.youtube.com/watch?v=gpPPKtaayhM"
+    },
+    {
+      "video_id": "MUWMjUjit_U",
+      "title": "R.O. Blechman CBS Christmas Message (1966)",
+      "duration": 63,
+      "channel": "InklingStudio",
+      "channel_id": "UCJydwADotq2omOQhHKUT1vg",
+      "url": "https://www.youtube.com/watch?v=MUWMjUjit_U"
+    }
+  ],
+  "inspect": {
+    "video_id": "VK7zZz0N4NU",
+    "url": "https://www.youtube.com/watch?v=VK7zZz0N4NU",
+    "title": "CBS Christmas Special Commercials 1984 & 1985",
+    "description": "In 1984 & 1985, my father recorded 6 Christmas specials that aired on CBS 2 in New York. At the time he had no idea you could press pause on a VCR during the commercial breaks so the full broadcasts were recorded. This is something I'm grateful for all these years later. Every Christmas season I watch these old recordings and it fuels my childhood nostalgia.\nI compiled the commercials for the pleasure of my fellow nostalgia buffs (recently I never thought about when the specials aired, but I realized they are from two different Christmases so they\u2019re not in chronological order).\nAs seen from most of the bumpers the Christmas specials aired were:\n-Rudolph the Red Nosed Reindeer\n-Frosty the Snowman\n-\u2018Twas the Night Before Christmas\n-A Charlie Brown Christmas\n-How The Grinch Stole Christmas\n-The Life & Adventures of Santa Claus",
+    "channel": "rubysuncle",
+    "channel_id": "UCZiMYMc3BicPnld6EsJFkLw",
+    "uploader_id": "@rubysuncle",
+    "upload_date": "20141224",
+    "duration": 2496,
+    "duration_exact": 2496.0,
+    "availability": "public",
+    "tags": [
+      "CBS (TV Network)",
+      "Christmas specials",
+      "Nostalgia",
+      "1980's commercials",
+      "Rudolph The Red-Nosed Reindeer (Fictional Character)",
+      "Frosty The Snowman (TV Program)",
+      "A Charlie Brown Christmas (TV Program)",
+      "How the grinch stole Christmas",
+      "'Twas the night before christmas"
+    ],
+    "categories": [
+      "Comedy"
+    ],
+    "thumbnail_source": "https://i.ytimg.com/vi/VK7zZz0N4NU/hqdefault.jpg",
+    "playable": true,
+    "playable_reason": null
+  }
+}

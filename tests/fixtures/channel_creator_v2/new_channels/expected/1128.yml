@@ -1,0 +1,642 @@
+name: 1128 Vintage Kids Thanksgiving
+description: Chronological run (1939 -> 2025) of off-air Kids Thanksgiving broadcasts; one vintage station-break reel (alternating Minnesota and network reels) between programs, then long commercial reels
+  and mixed tapes. Loops.
+media:
+  preferred_extension: mp4
+  mp4_only: true
+content:
+- key: berenstain_bigpaw_nbc_1980
+  collection: Vintage Kids Thanksgiving - The Berenstain Bears Meet Bigpaw (NBC 1980) [berenstain_bigpaw_nbc_1980]
+  order: chronological
+- key: turkey_caper_1985
+  collection: Vintage Kids Thanksgiving - The Turkey Caper (Syndicated 1985) [turkey_caper_1985]
+  order: chronological
+- key: garfield_thanksgiving_cbs_1989
+  collection: Vintage Kids Thanksgiving - Garfield's Thanksgiving (premiere) + Bugs Bunny's Thanksgiving Diet (CBS 1989) [garfield_thanksgiving_cbs_1989]
+  order: chronological
+- key: thanksgiving_almost_wasnt_cn_1998
+  collection: Vintage Kids Thanksgiving - The Thanksgiving That Almost Wasn't (Cartoon Network 1998) [thanksgiving_almost_wasnt_cn_1998]
+  order: chronological
+- key: marathon_1984_tape
+  collection: 'Vintage Kids Thanksgiving - Nov-Dec 1984 tape: A Charlie Brown Thanksgiving (partial), Rudolph, Rainbow Brite & more (Not stated 1984) [marathon_1984_tape]'
+  order: chronological
+- key: macys_parade_1939
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1939 (Home movie 1939) [macys_parade_1939]
+  order: chronological
+- key: macys_parade_1959
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1959 (NBC 1959) [macys_parade_1959]
+  order: chronological
+- key: macys_parade_1965-69
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1965-69 (NBC 1965) [macys_parade_1965-69]
+  order: chronological
+- key: macys_parade_1968
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1968 (NBC 1968) [macys_parade_1968]
+  order: chronological
+- key: macys_parade_1972
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1972 (NBC 1972) [macys_parade_1972]
+  order: chronological
+- key: macys_parade_1976
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1976 (NBC 1976) [macys_parade_1976]
+  order: chronological
+- key: macys_parade_1977
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1977 (NBC 1977) [macys_parade_1977]
+  order: chronological
+- key: macys_parade_1978
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1978 (CBS 1978) [macys_parade_1978]
+  order: chronological
+- key: macys_parade_1979
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1979 (NBC 1979) [macys_parade_1979]
+  order: chronological
+- key: macys_parade_1980
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1980 (NBC 1980) [macys_parade_1980]
+  order: chronological
+- key: macys_parade_1981
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1981 (NBC 1981) [macys_parade_1981]
+  order: chronological
+- key: macys_parade_1982
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1982 (NBC 1982) [macys_parade_1982]
+  order: chronological
+- key: macys_parade_1983 (Part 1)
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1983 (Part 1) (NBC 1983) [macys_parade_1983 (Part 1)]
+  order: chronological
+- key: macys_parade_1983 (Part 2)
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1983 (Part 2) (NBC 1983) [macys_parade_1983 (Part 2)]
+  order: chronological
+- key: macys_parade_1984
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1984 (NBC 1984) [macys_parade_1984]
+  order: chronological
+- key: macys_parade_1985
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1985 (NBC 1985) [macys_parade_1985]
+  order: chronological
+- key: macys_parade_1986
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1986 (NBC 1986) [macys_parade_1986]
+  order: chronological
+- key: macys_parade_1987
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1987 (NBC 1987) [macys_parade_1987]
+  order: chronological
+- key: macys_parade_1988
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1988 (NBC 1988) [macys_parade_1988]
+  order: chronological
+- key: macys_parade_1989
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1989 (NBC 1989) [macys_parade_1989]
+  order: chronological
+- key: macys_parade_1990
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1990 (NBC 1990) [macys_parade_1990]
+  order: chronological
+- key: macys_parade_1991
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1991 (NBC 1991) [macys_parade_1991]
+  order: chronological
+- key: macys_parade_1992
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1992 (NBC 1992) [macys_parade_1992]
+  order: chronological
+- key: macys_parade_1993
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1993 (NBC 1993) [macys_parade_1993]
+  order: chronological
+- key: macys_parade_1994
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1994 (NBC 1994) [macys_parade_1994]
+  order: chronological
+- key: macys_parade_1995
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1995 (NBC 1995) [macys_parade_1995]
+  order: chronological
+- key: macys_parade_1996
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1996 (NBC 1996) [macys_parade_1996]
+  order: chronological
+- key: macys_parade_1997
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1997 (NBC 1997) [macys_parade_1997]
+  order: chronological
+- key: macys_parade_1998
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1998 (NBC 1998) [macys_parade_1998]
+  order: chronological
+- key: macys_parade_1999
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 1999 (NBC 1999) [macys_parade_1999]
+  order: chronological
+- key: macys_parade_2000
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2000 (NBC 2000) [macys_parade_2000]
+  order: chronological
+- key: macys_parade_2001
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2001 (NBC 2001) [macys_parade_2001]
+  order: chronological
+- key: macys_parade_2002
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2002 (NBC 2002) [macys_parade_2002]
+  order: chronological
+- key: macys_parade_2003
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2003 (NBC 2003) [macys_parade_2003]
+  order: chronological
+- key: macys_parade_2004
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2004 (NBC 2004) [macys_parade_2004]
+  order: chronological
+- key: macys_parade_2005
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2005 (NBC 2005) [macys_parade_2005]
+  order: chronological
+- key: macys_parade_2006
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2006 (NBC 2006) [macys_parade_2006]
+  order: chronological
+- key: macys_parade_2007
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2007 (NBC 2007) [macys_parade_2007]
+  order: chronological
+- key: macys_parade_2008
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2008 (NBC 2008) [macys_parade_2008]
+  order: chronological
+- key: macys_parade_2009
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2009 (NBC 2009) [macys_parade_2009]
+  order: chronological
+- key: macys_parade_2010
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2010 (NBC 2010) [macys_parade_2010]
+  order: chronological
+- key: macys_parade_2011
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2011 (NBC 2011) [macys_parade_2011]
+  order: chronological
+- key: macys_parade_2012
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2012 (NBC 2012) [macys_parade_2012]
+  order: chronological
+- key: macys_parade_2013
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2013 (NBC 2013) [macys_parade_2013]
+  order: chronological
+- key: macys_parade_2014
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2014 (NBC 2014) [macys_parade_2014]
+  order: chronological
+- key: macys_parade_2015
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2015 (NBC 2015) [macys_parade_2015]
+  order: chronological
+- key: macys_parade_2015 (CBS)
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2015 (CBS) (CBS 2015) [macys_parade_2015 (CBS)]
+  order: chronological
+- key: macys_parade_2016
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2016 (NBC 2016) [macys_parade_2016]
+  order: chronological
+- key: macys_parade_2017
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2017 (NBC 2017) [macys_parade_2017]
+  order: chronological
+- key: macys_parade_2018
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2018 (NBC 2018) [macys_parade_2018]
+  order: chronological
+- key: macys_parade_2019
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2019 (NBC 2019) [macys_parade_2019]
+  order: chronological
+- key: macys_parade_2020
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2020 (NBC 2020) [macys_parade_2020]
+  order: chronological
+- key: macys_parade_2021
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2021 (NBC 2021) [macys_parade_2021]
+  order: chronological
+- key: macys_parade_2022
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2022 (NBC 2022) [macys_parade_2022]
+  order: chronological
+- key: macys_parade_2023
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2023 (NBC 2023) [macys_parade_2023]
+  order: chronological
+- key: macys_parade_2024
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2024 (NBC 2024) [macys_parade_2024]
+  order: chronological
+- key: macys_parade_2025
+  collection: Vintage Kids Thanksgiving - Macy's Thanksgiving Day Parade 2025 (NBC 2025) [macys_parade_2025]
+  order: chronological
+- key: cbs_all_american_parade_1982
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Day Parade 1982 (excerpts & breaks) (CBS 1982) [cbs_all_american_parade_1982]
+  order: chronological
+- key: cbs_all_american_parade_1984
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Day Parade 1984 (partial) (CBS 1984) [cbs_all_american_parade_1984]
+  order: chronological
+- key: cbs_all_american_parade_1985
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Day Parade 1985 (CBS 1985) [cbs_all_american_parade_1985]
+  order: chronological
+- key: cbs_all_american_parade_1986
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Day Parade 1986 (CBS 1986) [cbs_all_american_parade_1986]
+  order: chronological
+- key: cbs_all_american_parade_1992
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Parade 1992 (most) (CBS 1992) [cbs_all_american_parade_1992]
+  order: chronological
+- key: cbs_all_american_parade_1997
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Parade 1997 (CBS 1997) [cbs_all_american_parade_1997]
+  order: chronological
+- key: cbs_all_american_parade_1998
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Parade 1998 (CBS 1998) [cbs_all_american_parade_1998]
+  order: chronological
+- key: cbs_all_american_parade_2001
+  collection: Vintage Kids Thanksgiving - CBS All-American Thanksgiving Parade 2001 (CBS 2001) [cbs_all_american_parade_2001]
+  order: chronological
+- key: wcco_nov22_1989
+  collection: Vintage Kids Thanksgiving - Break - WCCO breaks during Garfield's Thanksgiving & Bugs Bunny's Thanksgiving Diet (Nov 22, 1989) [wcco_nov22_1989]
+  order: chronological
+- key: wcco_thanksgiving_1994_p1
+  collection: Vintage Kids Thanksgiving - Break - WCCO/CBS commercials, Thanksgiving 1994 (part 1) [wcco_thanksgiving_1994_p1]
+  order: chronological
+- key: wcco_thanksgiving_1994_p2
+  collection: Vintage Kids Thanksgiving - Break - WCCO/CBS commercials, Thanksgiving 1994 (part 2) [wcco_thanksgiving_1994_p2]
+  order: chronological
+- key: knbc_kabc_1972_macys
+  collection: Vintage Kids Thanksgiving - Break - KNBC-4 / KABC-7 commercials & Macy's parade (1972) [knbc_kabc_1972_macys]
+  order: chronological
+- key: wkbt_cb_thanksgiving_1987
+  collection: 'Vintage Kids Thanksgiving - Break - WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987) [wkbt_cb_thanksgiving_1987]'
+  order: chronological
+- key: cbs_nov26_1987
+  collection: Vintage Kids Thanksgiving - Break - CBS commercials, Thanksgiving 1987 (KWTV) [cbs_nov26_1987]
+  order: chronological
+- key: kcra_macys_1988
+  collection: Vintage Kids Thanksgiving - Break - KCRA/NBC commercials during the Macy's Parade (1988) [kcra_macys_1988]
+  order: chronological
+- key: kjeo_cbs_parade_1988
+  collection: Vintage Kids Thanksgiving - Break - KJEO/CBS commercials during the All-American Parade (1988) [kjeo_cbs_parade_1988]
+  order: chronological
+- key: cbs_mayflower_voyagers_1988
+  collection: 'Vintage Kids Thanksgiving - Break - CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988) [cbs_mayflower_voyagers_1988]'
+  order: chronological
+- key: cbs_nov22_1989
+  collection: Vintage Kids Thanksgiving - Break - CBS Thanksgiving specials commercials (Nov 22, 1989, WTKR) [cbs_nov22_1989]
+  order: chronological
+- key: wood_thanksgiving_1993
+  collection: Vintage Kids Thanksgiving - Break - WOOD/NBC commercial breaks, Thanksgiving 1993 [wood_thanksgiving_1993]
+  order: chronological
+- key: wthr_thanksgiving_2002
+  collection: Vintage Kids Thanksgiving - Break - WTHR/NBC commercial breaks, Thanksgiving 2002 [wthr_thanksgiving_2002]
+  order: chronological
+- key: kare_nov19_1990
+  collection: Vintage Kids Thanksgiving - Break - KARE-11/NBC commercials (Nov 19, 1990) [kare_nov19_1990]
+  order: chronological
+- key: kare_macys_1991
+  collection: Vintage Kids Thanksgiving - Break - KARE commercials during the 65th Macy's Parade (Nov 28, 1991) [kare_macys_1991]
+  order: chronological
+- key: wcco_thanksgiving_1996
+  collection: Vintage Kids Thanksgiving - Break - WCCO/CBS commercials, Thanksgiving 1996 [wcco_thanksgiving_1996]
+  order: chronological
+- key: whio_thanksgiving_1991
+  collection: Vintage Kids Thanksgiving - Break - WHIO/CBS commercial breaks, Thanksgiving 1991 [whio_thanksgiving_1991]
+  order: chronological
+- key: whbf_thanksgiving_1992
+  collection: Vintage Kids Thanksgiving - Break - WHBF/CBS breaks during Daffy Duck, Charlie Brown & Garfield Thanksgiving specials (1992) [whbf_thanksgiving_1992]
+  order: chronological
+- key: parade_commercials_1990s
+  collection: Vintage Kids Thanksgiving - Break - 1990s commercials aired during the Thanksgiving parade (compilation) [parade_commercials_1990s]
+  order: chronological
+sequence:
+- key: vintage-kids-thanksgiving-channel
+  items:
+  - all: macys_parade_1939
+    custom_title: Macy's Thanksgiving Day Parade 1939 (Home movie (no network), 1939-11-23)
+  - all: wcco_nov22_1989
+    custom_title: 'Station Break: WCCO breaks during Garfield''s Thanksgiving & Bugs Bunny''s Thanksgiving Diet (Nov 22, 1989)'
+    filler_kind: Commercial
+  - all: macys_parade_1959
+    custom_title: Macy's Thanksgiving Day Parade 1959 (NBC, 1959-11-26)
+  - all: knbc_kabc_1972_macys
+    custom_title: 'Station Break: KNBC-4 / KABC-7 commercials & Macy''s parade (1972)'
+    filler_kind: Commercial
+  - all: macys_parade_1965-69
+    custom_title: Macy's Thanksgiving Day Parade 1965-69 (NBC, 1966-11-24)
+  - all: wcco_thanksgiving_1994_p1
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 1)'
+    filler_kind: Commercial
+  - all: macys_parade_1968
+    custom_title: Macy's Thanksgiving Day Parade 1968 (NBC, 1968-11-28)
+  - all: wkbt_cb_thanksgiving_1987
+    custom_title: 'Station Break: WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987)'
+    filler_kind: Commercial
+  - all: macys_parade_1972
+    custom_title: Macy's Thanksgiving Day Parade 1972 (NBC, 1972-11-23)
+  - all: wcco_thanksgiving_1994_p2
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 2)'
+    filler_kind: Commercial
+  - all: macys_parade_1976
+    custom_title: Macy's Thanksgiving Day Parade 1976 (NBC, 1976-11-25)
+  - all: cbs_nov26_1987
+    custom_title: 'Station Break: CBS commercials, Thanksgiving 1987 (KWTV)'
+    filler_kind: Commercial
+  - all: macys_parade_1977
+    custom_title: Macy's Thanksgiving Day Parade 1977 (NBC, 1977-11-24)
+  - all: kcra_macys_1988
+    custom_title: 'Station Break: KCRA/NBC commercials during the Macy''s Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1978
+    custom_title: Macy's Thanksgiving Day Parade 1978 (CBS, 1978-11-23)
+  - all: kjeo_cbs_parade_1988
+    custom_title: 'Station Break: KJEO/CBS commercials during the All-American Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1979
+    custom_title: Macy's Thanksgiving Day Parade 1979 (NBC, 1979-11-22)
+  - all: cbs_mayflower_voyagers_1988
+    custom_title: 'Station Break: CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988)'
+    filler_kind: Commercial
+  - all: berenstain_bigpaw_nbc_1980
+    custom_title: The Berenstain Bears Meet Bigpaw (NBC, 1980-11-20)
+  - all: cbs_nov22_1989
+    custom_title: 'Station Break: CBS Thanksgiving specials commercials (Nov 22, 1989, WTKR)'
+    filler_kind: Commercial
+  - all: macys_parade_1980
+    custom_title: Macy's Thanksgiving Day Parade 1980 (NBC, 1980-11-27)
+  - all: wood_thanksgiving_1993
+    custom_title: 'Station Break: WOOD/NBC commercial breaks, Thanksgiving 1993'
+    filler_kind: Commercial
+  - all: macys_parade_1981
+    custom_title: Macy's Thanksgiving Day Parade 1981 (NBC, 1981-11-26)
+  - all: wthr_thanksgiving_2002
+    custom_title: 'Station Break: WTHR/NBC commercial breaks, Thanksgiving 2002'
+    filler_kind: Commercial
+  - all: macys_parade_1982
+    custom_title: Macy's Thanksgiving Day Parade 1982 (NBC, 1982-11-25)
+  - all: wcco_nov22_1989
+    custom_title: 'Station Break: WCCO breaks during Garfield''s Thanksgiving & Bugs Bunny''s Thanksgiving Diet (Nov 22, 1989)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1982
+    custom_title: CBS All-American Thanksgiving Day Parade 1982 (excerpts & breaks) (CBS / WBBM-TV 2 Chicago, 1982-11-25)
+  - all: knbc_kabc_1972_macys
+    custom_title: 'Station Break: KNBC-4 / KABC-7 commercials & Macy''s parade (1972)'
+    filler_kind: Commercial
+  - all: macys_parade_1983 (Part 1)
+    custom_title: Macy's Thanksgiving Day Parade 1983 (Part 1) (NBC, 1983-11-24)
+  - all: wcco_thanksgiving_1994_p1
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 1)'
+    filler_kind: Commercial
+  - all: macys_parade_1983 (Part 2)
+    custom_title: Macy's Thanksgiving Day Parade 1983 (Part 2) (NBC, 1983-11-24)
+  - all: wkbt_cb_thanksgiving_1987
+    custom_title: 'Station Break: WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987)'
+    filler_kind: Commercial
+  - all: macys_parade_1984
+    custom_title: Macy's Thanksgiving Day Parade 1984 (NBC, 1984-11-22)
+  - all: wcco_thanksgiving_1994_p2
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 2)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1984
+    custom_title: CBS All-American Thanksgiving Day Parade 1984 (partial) (CBS / WSAW-TV 7 Wausau, 1984-11-22)
+  - all: cbs_nov26_1987
+    custom_title: 'Station Break: CBS commercials, Thanksgiving 1987 (KWTV)'
+    filler_kind: Commercial
+  - all: turkey_caper_1985
+    custom_title: The Turkey Caper (Syndicated (original airing), 1985-11-09)
+  - all: kcra_macys_1988
+    custom_title: 'Station Break: KCRA/NBC commercials during the Macy''s Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1985
+    custom_title: Macy's Thanksgiving Day Parade 1985 (NBC, 1985-11-28)
+  - all: kjeo_cbs_parade_1988
+    custom_title: 'Station Break: KJEO/CBS commercials during the All-American Parade (1988)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1985
+    custom_title: CBS All-American Thanksgiving Day Parade 1985 (CBS / WBAY-TV 2 Green Bay, 1985-11-28)
+  - all: cbs_mayflower_voyagers_1988
+    custom_title: 'Station Break: CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1986
+    custom_title: Macy's Thanksgiving Day Parade 1986 (NBC, 1986-11-27)
+  - all: cbs_nov22_1989
+    custom_title: 'Station Break: CBS Thanksgiving specials commercials (Nov 22, 1989, WTKR)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1986
+    custom_title: CBS All-American Thanksgiving Day Parade 1986 (CBS / WBAY-TV 2 Green Bay, 1986-11-27)
+  - all: wood_thanksgiving_1993
+    custom_title: 'Station Break: WOOD/NBC commercial breaks, Thanksgiving 1993'
+    filler_kind: Commercial
+  - all: macys_parade_1987
+    custom_title: Macy's Thanksgiving Day Parade 1987 (NBC, 1987-11-26)
+  - all: wthr_thanksgiving_2002
+    custom_title: 'Station Break: WTHR/NBC commercial breaks, Thanksgiving 2002'
+    filler_kind: Commercial
+  - all: macys_parade_1988
+    custom_title: Macy's Thanksgiving Day Parade 1988 (NBC / WNBC-TV 4 New York, 1988-11-24)
+  - all: wcco_nov22_1989
+    custom_title: 'Station Break: WCCO breaks during Garfield''s Thanksgiving & Bugs Bunny''s Thanksgiving Diet (Nov 22, 1989)'
+    filler_kind: Commercial
+  - all: garfield_thanksgiving_cbs_1989
+    custom_title: Garfield's Thanksgiving (premiere) + Bugs Bunny's Thanksgiving Diet (CBS, 1989-11-22)
+  - all: knbc_kabc_1972_macys
+    custom_title: 'Station Break: KNBC-4 / KABC-7 commercials & Macy''s parade (1972)'
+    filler_kind: Commercial
+  - all: macys_parade_1989
+    custom_title: Macy's Thanksgiving Day Parade 1989 (NBC, 1989-11-23)
+  - all: wcco_thanksgiving_1994_p1
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 1)'
+    filler_kind: Commercial
+  - all: macys_parade_1990
+    custom_title: Macy's Thanksgiving Day Parade 1990 (NBC / WLUK-TV 11 Green Bay, 1990-11-22)
+  - all: wkbt_cb_thanksgiving_1987
+    custom_title: 'Station Break: WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987)'
+    filler_kind: Commercial
+  - all: macys_parade_1991
+    custom_title: Macy's Thanksgiving Day Parade 1991 (NBC, 1991-11-28)
+  - all: wcco_thanksgiving_1994_p2
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 2)'
+    filler_kind: Commercial
+  - all: macys_parade_1992
+    custom_title: Macy's Thanksgiving Day Parade 1992 (NBC, 1992-11-26)
+  - all: cbs_nov26_1987
+    custom_title: 'Station Break: CBS commercials, Thanksgiving 1987 (KWTV)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1992
+    custom_title: CBS All-American Thanksgiving Parade 1992 (most) (CBS, 1992-11-26)
+  - all: kcra_macys_1988
+    custom_title: 'Station Break: KCRA/NBC commercials during the Macy''s Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1993
+    custom_title: Macy's Thanksgiving Day Parade 1993 (NBC, 1993-11-25)
+  - all: kjeo_cbs_parade_1988
+    custom_title: 'Station Break: KJEO/CBS commercials during the All-American Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1994
+    custom_title: Macy's Thanksgiving Day Parade 1994 (NBC, 1994-11-24)
+  - all: cbs_mayflower_voyagers_1988
+    custom_title: 'Station Break: CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_1995
+    custom_title: Macy's Thanksgiving Day Parade 1995 (NBC, 1995-11-23)
+  - all: cbs_nov22_1989
+    custom_title: 'Station Break: CBS Thanksgiving specials commercials (Nov 22, 1989, WTKR)'
+    filler_kind: Commercial
+  - all: macys_parade_1996
+    custom_title: Macy's Thanksgiving Day Parade 1996 (NBC / WBIR-TV 10 Knoxville, 1996-11-28)
+  - all: wood_thanksgiving_1993
+    custom_title: 'Station Break: WOOD/NBC commercial breaks, Thanksgiving 1993'
+    filler_kind: Commercial
+  - all: macys_parade_1997
+    custom_title: Macy's Thanksgiving Day Parade 1997 (NBC, 1997-11-27)
+  - all: wthr_thanksgiving_2002
+    custom_title: 'Station Break: WTHR/NBC commercial breaks, Thanksgiving 2002'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1997
+    custom_title: CBS All-American Thanksgiving Parade 1997 (CBS, 1997-11-27)
+  - all: wcco_nov22_1989
+    custom_title: 'Station Break: WCCO breaks during Garfield''s Thanksgiving & Bugs Bunny''s Thanksgiving Diet (Nov 22, 1989)'
+    filler_kind: Commercial
+  - all: thanksgiving_almost_wasnt_cn_1998
+    custom_title: The Thanksgiving That Almost Wasn't (Cartoon Network, 1998-11-26)
+  - all: knbc_kabc_1972_macys
+    custom_title: 'Station Break: KNBC-4 / KABC-7 commercials & Macy''s parade (1972)'
+    filler_kind: Commercial
+  - all: macys_parade_1998
+    custom_title: Macy's Thanksgiving Day Parade 1998 (NBC, 1998-11-26)
+  - all: wcco_thanksgiving_1994_p1
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 1)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_1998
+    custom_title: CBS All-American Thanksgiving Parade 1998 (CBS / WWL-TV 4 New Orleans, 1998-11-26)
+  - all: wkbt_cb_thanksgiving_1987
+    custom_title: 'Station Break: WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987)'
+    filler_kind: Commercial
+  - all: macys_parade_1999
+    custom_title: Macy's Thanksgiving Day Parade 1999 (NBC, 1999-11-25)
+  - all: wcco_thanksgiving_1994_p2
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 2)'
+    filler_kind: Commercial
+  - all: macys_parade_2000
+    custom_title: Macy's Thanksgiving Day Parade 2000 (NBC, 2000-11-23)
+  - all: cbs_nov26_1987
+    custom_title: 'Station Break: CBS commercials, Thanksgiving 1987 (KWTV)'
+    filler_kind: Commercial
+  - all: macys_parade_2001
+    custom_title: Macy's Thanksgiving Day Parade 2001 (NBC, 2001-11-22)
+  - all: kcra_macys_1988
+    custom_title: 'Station Break: KCRA/NBC commercials during the Macy''s Parade (1988)'
+    filler_kind: Commercial
+  - all: cbs_all_american_parade_2001
+    custom_title: CBS All-American Thanksgiving Parade 2001 (CBS / WWL-TV 4 New Orleans, 2001-11-22)
+  - all: kjeo_cbs_parade_1988
+    custom_title: 'Station Break: KJEO/CBS commercials during the All-American Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2002
+    custom_title: Macy's Thanksgiving Day Parade 2002 (NBC, 2002-11-28)
+  - all: cbs_mayflower_voyagers_1988
+    custom_title: 'Station Break: CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2003
+    custom_title: Macy's Thanksgiving Day Parade 2003 (NBC, 2003-11-27)
+  - all: cbs_nov22_1989
+    custom_title: 'Station Break: CBS Thanksgiving specials commercials (Nov 22, 1989, WTKR)'
+    filler_kind: Commercial
+  - all: macys_parade_2004
+    custom_title: Macy's Thanksgiving Day Parade 2004 (NBC, 2004-11-25)
+  - all: wood_thanksgiving_1993
+    custom_title: 'Station Break: WOOD/NBC commercial breaks, Thanksgiving 1993'
+    filler_kind: Commercial
+  - all: macys_parade_2005
+    custom_title: Macy's Thanksgiving Day Parade 2005 (NBC, 2005-11-24)
+  - all: wthr_thanksgiving_2002
+    custom_title: 'Station Break: WTHR/NBC commercial breaks, Thanksgiving 2002'
+    filler_kind: Commercial
+  - all: macys_parade_2006
+    custom_title: Macy's Thanksgiving Day Parade 2006 (NBC, 2006-11-23)
+  - all: wcco_nov22_1989
+    custom_title: 'Station Break: WCCO breaks during Garfield''s Thanksgiving & Bugs Bunny''s Thanksgiving Diet (Nov 22, 1989)'
+    filler_kind: Commercial
+  - all: macys_parade_2007
+    custom_title: Macy's Thanksgiving Day Parade 2007 (NBC, 2007-11-22)
+  - all: knbc_kabc_1972_macys
+    custom_title: 'Station Break: KNBC-4 / KABC-7 commercials & Macy''s parade (1972)'
+    filler_kind: Commercial
+  - all: macys_parade_2008
+    custom_title: Macy's Thanksgiving Day Parade 2008 (NBC, 2008-11-27)
+  - all: wcco_thanksgiving_1994_p1
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 1)'
+    filler_kind: Commercial
+  - all: macys_parade_2009
+    custom_title: Macy's Thanksgiving Day Parade 2009 (NBC, 2009-11-26)
+  - all: wkbt_cb_thanksgiving_1987
+    custom_title: 'Station Break: WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987)'
+    filler_kind: Commercial
+  - all: macys_parade_2010
+    custom_title: Macy's Thanksgiving Day Parade 2010 (NBC, 2010-11-25)
+  - all: wcco_thanksgiving_1994_p2
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 2)'
+    filler_kind: Commercial
+  - all: macys_parade_2011
+    custom_title: Macy's Thanksgiving Day Parade 2011 (NBC, 2011-11-24)
+  - all: cbs_nov26_1987
+    custom_title: 'Station Break: CBS commercials, Thanksgiving 1987 (KWTV)'
+    filler_kind: Commercial
+  - all: macys_parade_2012
+    custom_title: Macy's Thanksgiving Day Parade 2012 (NBC, 2012-11-22)
+  - all: kcra_macys_1988
+    custom_title: 'Station Break: KCRA/NBC commercials during the Macy''s Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2013
+    custom_title: Macy's Thanksgiving Day Parade 2013 (NBC, 2013-11-28)
+  - all: kjeo_cbs_parade_1988
+    custom_title: 'Station Break: KJEO/CBS commercials during the All-American Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2014
+    custom_title: Macy's Thanksgiving Day Parade 2014 (NBC, 2014-11-27)
+  - all: cbs_mayflower_voyagers_1988
+    custom_title: 'Station Break: CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2015
+    custom_title: Macy's Thanksgiving Day Parade 2015 (NBC, 2015-11-26)
+  - all: cbs_nov22_1989
+    custom_title: 'Station Break: CBS Thanksgiving specials commercials (Nov 22, 1989, WTKR)'
+    filler_kind: Commercial
+  - all: macys_parade_2015 (CBS)
+    custom_title: Macy's Thanksgiving Day Parade 2015 (CBS) (CBS, 2015-11-26)
+  - all: wood_thanksgiving_1993
+    custom_title: 'Station Break: WOOD/NBC commercial breaks, Thanksgiving 1993'
+    filler_kind: Commercial
+  - all: macys_parade_2016
+    custom_title: Macy's Thanksgiving Day Parade 2016 (NBC, 2016-11-24)
+  - all: wthr_thanksgiving_2002
+    custom_title: 'Station Break: WTHR/NBC commercial breaks, Thanksgiving 2002'
+    filler_kind: Commercial
+  - all: macys_parade_2017
+    custom_title: Macy's Thanksgiving Day Parade 2017 (NBC, 2017-11-23)
+  - all: wcco_nov22_1989
+    custom_title: 'Station Break: WCCO breaks during Garfield''s Thanksgiving & Bugs Bunny''s Thanksgiving Diet (Nov 22, 1989)'
+    filler_kind: Commercial
+  - all: macys_parade_2018
+    custom_title: Macy's Thanksgiving Day Parade 2018 (NBC, 2018-11-22)
+  - all: knbc_kabc_1972_macys
+    custom_title: 'Station Break: KNBC-4 / KABC-7 commercials & Macy''s parade (1972)'
+    filler_kind: Commercial
+  - all: macys_parade_2019
+    custom_title: Macy's Thanksgiving Day Parade 2019 (NBC, 2019-11-28)
+  - all: wcco_thanksgiving_1994_p1
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 1)'
+    filler_kind: Commercial
+  - all: macys_parade_2020
+    custom_title: Macy's Thanksgiving Day Parade 2020 (NBC, 2020-11-26)
+  - all: wkbt_cb_thanksgiving_1987
+    custom_title: 'Station Break: WKBT/CBS breaks: A Charlie Brown Thanksgiving (Nov 1987)'
+    filler_kind: Commercial
+  - all: macys_parade_2021
+    custom_title: Macy's Thanksgiving Day Parade 2021 (NBC, 2021-11-25)
+  - all: wcco_thanksgiving_1994_p2
+    custom_title: 'Station Break: WCCO/CBS commercials, Thanksgiving 1994 (part 2)'
+    filler_kind: Commercial
+  - all: macys_parade_2022
+    custom_title: Macy's Thanksgiving Day Parade 2022 (NBC, 2022-11-24)
+  - all: cbs_nov26_1987
+    custom_title: 'Station Break: CBS commercials, Thanksgiving 1987 (KWTV)'
+    filler_kind: Commercial
+  - all: macys_parade_2023
+    custom_title: Macy's Thanksgiving Day Parade 2023 (NBC, 2023-11-23)
+  - all: kcra_macys_1988
+    custom_title: 'Station Break: KCRA/NBC commercials during the Macy''s Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2024
+    custom_title: Macy's Thanksgiving Day Parade 2024 (NBC / KGW-TV 8 Portland, 2024-11-28)
+  - all: kjeo_cbs_parade_1988
+    custom_title: 'Station Break: KJEO/CBS commercials during the All-American Parade (1988)'
+    filler_kind: Commercial
+  - all: macys_parade_2025
+    custom_title: Macy's Thanksgiving Day Parade 2025 (NBC, 2025-11-27)
+  - all: cbs_mayflower_voyagers_1988
+    custom_title: 'Station Break: CBS breaks: This Is America, Charlie Brown - The Mayflower Voyagers (1988)'
+    filler_kind: Commercial
+  - all: kare_nov19_1990
+    custom_title: 'Commercial Break Marathon: KARE-11/NBC commercials (Nov 19, 1990)'
+    filler_kind: Commercial
+  - all: kare_macys_1991
+    custom_title: 'Commercial Break Marathon: KARE commercials during the 65th Macy''s Parade (Nov 28, 1991)'
+    filler_kind: Commercial
+  - all: wcco_thanksgiving_1996
+    custom_title: 'Commercial Break Marathon: WCCO/CBS commercials, Thanksgiving 1996'
+    filler_kind: Commercial
+  - all: whio_thanksgiving_1991
+    custom_title: 'Commercial Break Marathon: WHIO/CBS commercial breaks, Thanksgiving 1991'
+    filler_kind: Commercial
+  - all: whbf_thanksgiving_1992
+    custom_title: 'Commercial Break Marathon: WHBF/CBS breaks during Daffy Duck, Charlie Brown & Garfield Thanksgiving specials (1992)'
+    filler_kind: Commercial
+  - all: parade_commercials_1990s
+    custom_title: 'Commercial Break Marathon: 1990s commercials aired during the Thanksgiving parade (compilation)'
+    filler_kind: Commercial
+  - all: marathon_1984_tape
+    custom_title: 'Nov-Dec 1984 tape: A Charlie Brown Thanksgiving (partial), Rudolph, Rainbow Brite & more (Not stated, 1984-11-21)'
+playout:
+- sequence: vintage-kids-thanksgiving-channel
+- repeat: true

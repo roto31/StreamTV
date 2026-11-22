@@ -7,21 +7,37 @@ from pathlib import Path
 from typing import Optional
 
 from .models import BuilderDraft, FillerCollection
+from .paths import data_dir
 
 ROOT = Path(__file__).resolve().parents[2]
-DRAFTS_DIR = ROOT / "data" / "builder_drafts"
+
+
+def _drafts_dir() -> Path:
+    return data_dir() / "builder_drafts"
+
+
+def _filler_dir() -> Path:
+    return data_dir() / "filler_collections"
+
+
+DRAFTS_DIR = ROOT / "data" / "builder_drafts"  # fallback for static imports
 FILLER_DIR = ROOT / "data" / "filler_collections"
 
 
 def _ensure_dirs() -> None:
-    DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
-    FILLER_DIR.mkdir(parents=True, exist_ok=True)
+    _drafts_dir().mkdir(parents=True, exist_ok=True)
+    _filler_dir().mkdir(parents=True, exist_ok=True)
 
 
 class DraftStore:
     def __init__(self, base_dir: Path | None = None) -> None:
-        self.base_dir = base_dir or DRAFTS_DIR
-        self.base_dir.mkdir(parents=True, exist_ok=True)
+        self._base_dir_override = base_dir
+
+    @property
+    def base_dir(self) -> Path:
+        path = self._base_dir_override or _drafts_dir()
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     def _path(self, draft_id: str) -> Path:
         return self.base_dir / f"{draft_id}.json"
@@ -56,8 +72,13 @@ class DraftStore:
 
 class FillerStore:
     def __init__(self, base_dir: Path | None = None) -> None:
-        self.base_dir = base_dir or FILLER_DIR
-        self.base_dir.mkdir(parents=True, exist_ok=True)
+        self._base_dir_override = base_dir
+
+    @property
+    def base_dir(self) -> Path:
+        path = self._base_dir_override or _filler_dir()
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     def _path(self, filler_id: str) -> Path:
         return self.base_dir / f"{filler_id}.json"

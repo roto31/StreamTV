@@ -137,6 +137,33 @@ def _intake_prompt_text() -> str:
 
 CHANNEL_INTAKE_PROMPT = _intake_prompt_text()
 
+# Compact / expert variants derived from the same intake (must not drift on hard rules)
+_HARD_RULES = (
+    ".ia.mp4",
+    "runtime",
+    "confirm",
+    "NEW",
+    "build",
+)
+
+CHANNEL_INTAKE_EXPERT = (
+    "# StreamTV Channel Creator — expert intake\n\n"
+    "NEW channels only. Never edit existing. Never use Archive *.ia.mp4. "
+    "Never treat upload date as air date. Every stream needs exact runtime. "
+    "Confirm with the user before channel_build (confirm=build + plan_token).\n\n"
+    "Flow: channel_start → channel_set_requirements (audience first) → "
+    "channel_find → channel_shortlist → channel_choose → channel_plan → "
+    "channel_answer* → channel_build.\n"
+)
+
+CHANNEL_INTAKE_COMPACT = (
+    "# Channel Creator (compact)\n\n"
+    "Create NEW channels only. Ban *.ia.mp4. Require runtime. Confirm before build.\n"
+    "Ask audience first, then theme/template. Tools: channel_guide, channel_start, "
+    "channel_set_requirements, channel_find, channel_job, channel_shortlist, "
+    "channel_choose, channel_plan, channel_answer, channel_build.\n"
+)
+
 
 async def get_streamtv_api_docs() -> Dict[str, Any]:
     content = load_resource("docs/API.md")

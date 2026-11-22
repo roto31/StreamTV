@@ -1,0 +1,835 @@
+channels:
+- number: '1225'
+  name: Vintage Kids Christmas
+  group: Holiday
+  description: Children's Christmas specials as broadcast on CBS, ABC and NBC (plus WCCO/KSTP/KARE breaks), 1981-2005, from off-air VHS/Beta captures with original commercials, bumpers and station IDs.
+  enabled: true
+  streams:
+  - id: disney_magical_xmas_1981
+    collection: Vintage Kids Xmas - A Magical Disney Christmas (CBS 1981) [disney_magical_xmas_1981]
+    type: event
+    year: 1981
+    slot: A Magical Disney Christmas (CBS (Walt Disney anthology), 1981-12-05)
+    network: CBS (Walt Disney anthology)
+    runtime: PT56M38S
+    source: archive
+    url: https://archive.org/download/a-magical-disney-christmas-1981-cbs-version/A%20Magical%20Disney%20Christmas%20-%201981%20CBS%20Version.mp4
+    notes: 'Tier 1; commercials: yes. Description: includes the original commercials as aired Dec 5, 1981. Page: https://archive.org/details/a-magical-disney-christmas-1981-cbs-version'
+    broadcast_date: '1981-12-05'
+  - id: santa_comin_wls_1981
+    collection: Vintage Kids Xmas - Santa Claus Is Comin' to Town (ABC 1981) [santa_comin_wls_1981]
+    type: event
+    year: 1981
+    slot: Santa Claus Is Comin' to Town (ABC / WLS-TV 7 Chicago, 1981-12-19)
+    network: ABC / WLS-TV 7 Chicago
+    runtime: PT1H1M44S
+    source: archive
+    url: https://archive.org/download/youtube-nJbsHscd3U8/nJbsHscd3U8.mp4
+    notes: 'Tier 1; commercials: yes. Complete broadcast with ABC/WLS bumpers, IDs and commercials (Museum of Classic Chicago TV mirror). YouTube original is no longer playable. Page: https://archive.org/details/youtube-nJbsHscd3U8'
+    broadcast_date: '1981-12-19'
+  - id: disney_xmas_gift_1982
+    collection: Vintage Kids Xmas - A Disney Christmas Gift (CBS 1982) [disney_xmas_gift_1982]
+    type: event
+    year: 1982
+    slot: A Disney Christmas Gift (CBS / WISH-TV 8 Indianapolis, 1982-12-04)
+    network: CBS / WISH-TV 8 Indianapolis
+    runtime: PT53M57S
+    source: archive
+    url: https://archive.org/download/a-disney-christmas-gift-12-04-1982-walt-disney-cbs/A%20Disney%20Christmas%20Gift%20%2812-04-1982%2C%20Walt%20Disney%2C%20CBS%29.mp4
+    notes: 'Tier 2; commercials: unverified. Betamax off-air capture; description does not say whether commercials are included. Page: https://archive.org/details/a-disney-christmas-gift-12-04-1982-walt-disney-cbs'
+    broadcast_date: '1982-12-04'
+  - id: smurfs_xmas_nbc_1984
+    collection: Vintage Kids Xmas - The Smurfs Christmas Special (NBC 1984) [smurfs_xmas_nbc_1984]
+    type: event
+    year: 1984
+    slot: The Smurfs Christmas Special (NBC (affiliate not stated), 1984-12-01)
+    network: NBC (affiliate not stated)
+    runtime: PT28M40S
+    source: youtube
+    url: https://www.youtube.com/watch?v=zVpIKt7wYuU
+    notes: 'Tier 1; commercials: yes. YouTube: NBC Special Presentation with all original commercial breaks. Exact 1984 air date not stated; date set to 1984-12-01 as placeholder. Page: https://www.youtube.com/watch?v=zVpIKt7wYuU'
+    broadcast_date: '1984-12-01'
+  - id: mickey_carol_wesh_1984
+    collection: Vintage Kids Xmas - Mickey's Christmas Carol (NBC Special) (NBC 1984) [mickey_carol_wesh_1984]
+    type: event
+    year: 1984
+    slot: Mickey's Christmas Carol (NBC Special) (NBC / WESH-TV Orlando, 1984-12-10)
+    network: NBC / WESH-TV Orlando
+    runtime: PT21M3S
+    source: archive
+    url: https://archive.org/download/nbc-special-mickeys-christmas-carol-1984/NBC%20Special-%20Mickeys%20Christmas%20Carol%201984.mp4
+    notes: 'Tier 2; commercials: yes. Partial: first 7 minutes missing; includes original commercials. Page: https://archive.org/details/nbc-special-mickeys-christmas-carol-1984'
+    broadcast_date: '1984-12-10'
+  - id: cabbage_patch_abc_1984
+    collection: Vintage Kids Xmas - Cabbage Patch Kids' First Christmas (ABC 1984) [cabbage_patch_abc_1984]
+    type: event
+    year: 1984
+    slot: Cabbage Patch Kids' First Christmas (ABC (affiliate not stated), 1984-12-07)
+    network: ABC (affiliate not stated)
+    runtime: PT32M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=LRcVZi-x3bw
+    notes: 'Tier 1; commercials: yes. YouTube: original ABC broadcast with all commercial breaks (Kmart). Page: https://www.youtube.com/watch?v=LRcVZi-x3bw'
+    broadcast_date: '1984-12-07'
+  - id: christmas_raccoons_wcjb_1984
+    collection: Vintage Kids Xmas - The Christmas Raccoons (ABC 1984) [christmas_raccoons_wcjb_1984]
+    type: event
+    year: 1984
+    slot: The Christmas Raccoons (ABC / WCJB-TV Gainesville, 1984-12-14)
+    network: ABC / WCJB-TV Gainesville
+    runtime: PT18M12S
+    source: archive
+    url: https://archive.org/download/abc-the-christmas-raccoons/ABC-%20The%20Christmas%20Raccoons.mp4
+    notes: 'Tier 2; commercials: yes. First 5 minutes missing; air date estimated by uploader. Page: https://archive.org/details/abc-the-christmas-raccoons'
+    broadcast_date: '1984-12-14'
+  - id: nbc_christmas_dream_1984
+    collection: Vintage Kids Xmas - A Christmas Dream (NBC 1984 Christmas Special) (NBC 1984) [nbc_christmas_dream_1984]
+    type: event
+    year: 1984
+    slot: A Christmas Dream (NBC 1984 Christmas Special) (NBC)
+    network: NBC
+    runtime: PT30M5S
+    source: archive
+    url: https://archive.org/download/NBC_1984_Christmas_Special_A_Christmas_Dream_WOC/VIDEO_TS/VTS_01_1.mp4
+    notes: 'Tier 2; commercials: label-only. Part 1 of 2. "WOC" (with original commercials) appears only in the title; kid focus not verified. Page: https://archive.org/details/NBC_1984_Christmas_Special_A_Christmas_Dream_WOC'
+  - id: nbc_christmas_dream_1984_p2
+    collection: Vintage Kids Xmas - A Christmas Dream (NBC 1984) – Part 2 (NBC 1984) [nbc_christmas_dream_1984_p2]
+    type: event
+    year: 1984
+    slot: A Christmas Dream (NBC 1984) – Part 2 (NBC)
+    network: NBC
+    runtime: PT23M34S
+    source: archive
+    url: https://archive.org/download/NBC_1984_Christmas_Special_A_Christmas_Dream_WOC/VIDEO_TS/VTS_01_2.mp4
+    notes: 'Tier 2; commercials: label-only. Part 2 of 2. Page: https://archive.org/details/NBC_1984_Christmas_Special_A_Christmas_Dream_WOC'
+  - id: rudolph_wcbs_1985
+    collection: Vintage Kids Xmas - Rudolph the Red-Nosed Reindeer (CBS 1985) [rudolph_wcbs_1985]
+    type: event
+    year: 1985
+    slot: Rudolph the Red-Nosed Reindeer (CBS / WCBS-TV 2 New York, 1985-12-01)
+    network: CBS / WCBS-TV 2 New York
+    runtime: PT58M43S
+    source: archive
+    url: https://archive.org/download/dvd-transfer-222/Title%201%20%28Rudolph%20the%20Red-Nosed%20Reindeer%20-%201985%20WCBS%20Recording%29.mp4
+    notes: 'Tier 1; commercials: mostly. DVD Transfer 222: "most of these have the commercials included". Exact date not stated. Page: https://archive.org/details/dvd-transfer-222'
+    broadcast_date: '1985-12-01'
+  - id: cbchristmas_wcbs_1985
+    collection: Vintage Kids Xmas - A Charlie Brown Christmas (CBS 1985) [cbchristmas_wcbs_1985]
+    type: event
+    year: 1985
+    slot: A Charlie Brown Christmas (CBS / WCBS-TV 2 New York, 1985-12-01)
+    network: CBS / WCBS-TV 2 New York
+    runtime: PT30M
+    source: archive
+    url: https://archive.org/download/dvd-transfer-222/Title%202%20%28A%20Charlie%20Brown%20Christmas%20-%201985%20WCBS%20Recording%29.mp4
+    notes: 'Tier 1; commercials: mostly. DVD Transfer 222. Page: https://archive.org/details/dvd-transfer-222'
+    broadcast_date: '1985-12-01'
+  - id: twas_wcbs_1985
+    collection: Vintage Kids Xmas - 'Twas the Night Before Christmas (CBS 1985) [twas_wcbs_1985]
+    type: event
+    year: 1985
+    slot: '''Twas the Night Before Christmas (CBS / WCBS-TV 2 New York, 1985-12-01)'
+    network: CBS / WCBS-TV 2 New York
+    runtime: PT27M34S
+    source: archive
+    url: https://archive.org/download/dvd-transfer-222/Title%203%20%28Twas%20the%20Night%20Before%20Christmas%20-%201985%20WCBS%20Recording%29.mp4
+    notes: 'Tier 1; commercials: mostly. DVD Transfer 222. Page: https://archive.org/details/dvd-transfer-222'
+    broadcast_date: '1985-12-01'
+  - id: grinch_wcbs_1985
+    collection: Vintage Kids Xmas - How the Grinch Stole Christmas! (CBS 1985) [grinch_wcbs_1985]
+    type: event
+    year: 1985
+    slot: How the Grinch Stole Christmas! (CBS / WCBS-TV 2 New York, 1985-12-07)
+    network: CBS / WCBS-TV 2 New York
+    runtime: PT30M19S
+    source: archive
+    url: https://archive.org/download/dvd-transfer-222/Title%205%20%28How%20the%20Grinch%20Stole%20Christmas%20-%201985%20WCBS%20Recording%29.mp4
+    notes: 'Tier 1; commercials: mostly. DVD Transfer 222: dated Dec 7, 1985 from a CBS Sportsbreak. Page: https://archive.org/details/dvd-transfer-222'
+    broadcast_date: '1985-12-07'
+  - id: frosty_wcbs_1985
+    collection: Vintage Kids Xmas - Frosty the Snowman (CBS 1985) [frosty_wcbs_1985]
+    type: event
+    year: 1985
+    slot: Frosty the Snowman (CBS / WCBS-TV 2 New York, 1985-12-07)
+    network: CBS / WCBS-TV 2 New York
+    runtime: PT28M30S
+    source: archive
+    url: https://archive.org/download/dvd-transfer-222/Title%206%20%28Frosty%20the%20Snowman%20-%201985%20WCBS%20Recording%29.mp4
+    notes: 'Tier 1; commercials: mostly. DVD Transfer 222: same date as the Grinch. Page: https://archive.org/details/dvd-transfer-222'
+    broadcast_date: '1985-12-07'
+  - id: heman_shera_xmas_1985
+    collection: 'Vintage Kids Xmas - He-Man & She-Ra: A Christmas Special (Syndicated 1985) [heman_shera_xmas_1985]'
+    type: event
+    year: 1985
+    slot: 'He-Man & She-Ra: A Christmas Special (Syndicated (station not stated), 1985-12-23)'
+    network: Syndicated (station not stated)
+    runtime: PT1H10S
+    source: archive
+    url: https://archive.org/download/he-man-and-she-ra-christmas-specail-woc-12-85/he-man%20and%20she-ra%20christmas%20specail%20WOC%2012-85.mp4
+    notes: 'Tier 2; commercials: label-only. Syndicated, not CBS/ABC/NBC. "WOC" in file name only. Page: https://archive.org/details/he-man-and-she-ra-christmas-specail-woc-12-85'
+    broadcast_date: '1985-12-23'
+  - id: cb_frosty_cbs_1986
+    collection: Vintage Kids Xmas - A Charlie Brown Christmas + Frosty the Snowman (CBS 1986) [cb_frosty_cbs_1986]
+    type: event
+    year: 1986
+    slot: A Charlie Brown Christmas + Frosty the Snowman (CBS (affiliate not stated), 1986-12-12)
+    network: CBS (affiliate not stated)
+    runtime: PT1H12M51S
+    source: archive
+    url: https://archive.org/download/charlie-brown-and-frosty-the-snowman-cbs-woc-incomplete-1986-12-12/charlie-brown-and-frosty-the-snowman-cbs-woc-incomplete-1986-12-12.mp4
+    notes: 'Tier 1; commercials: label-only. Title says CBS, "WOC", incomplete. Same night as TCMediaNow WCCO breaks below. Page: https://archive.org/details/charlie-brown-and-frosty-the-snowman-cbs-woc-incomplete-1986-12-12'
+    broadcast_date: '1986-12-12'
+  - id: christmas_toy_katu_1986
+    collection: Vintage Kids Xmas - The Christmas Toy (ABC 1986) [christmas_toy_katu_1986]
+    type: event
+    year: 1986
+    slot: The Christmas Toy (ABC / KATU 2 Portland, 1986-12-06)
+    network: ABC / KATU 2 Portland
+    runtime: PT1H1M5S
+    source: youtube
+    url: https://www.youtube.com/watch?v=gtQJYbTemfo
+    notes: 'Tier 1; commercials: yes. YouTube: full movie with commercials (title). Page: https://www.youtube.com/watch?v=gtQJYbTemfo'
+    broadcast_date: '1986-12-06'
+  - id: mickey_carol_wavy_1987
+    collection: Vintage Kids Xmas - Mickey's Christmas Carol (NBC hour special) (NBC 1987) [mickey_carol_wavy_1987]
+    type: event
+    year: 1987
+    slot: Mickey's Christmas Carol (NBC hour special) (NBC / WAVY-TV 10 Norfolk, 1987-12-04)
+    network: NBC / WAVY-TV 10 Norfolk
+    runtime: PT57M22S
+    source: archive
+    url: https://archive.org/download/mickeyschristmascarolnbcspecialwavytv10airingfromdecember1987/Mickey%27s%20Christmas%20Carol%20%28NBC%20Special%20-%20WAVY-TV%2010%20airing%20from%20December%201987%29.mp4
+    notes: 'Tier 1; commercials: yes. Description lists the commercials that aired (Children''s Palace, Wendy''s, McDonald''s, NBC promos). Page: https://archive.org/details/mickeyschristmascarolnbcspecialwavytv10airingfromdecember1987'
+    broadcast_date: '1987-12-04'
+  - id: muppet_family_xmas_1987
+    collection: Vintage Kids Xmas - A Muppet Family Christmas (premiere) (ABC 1987) [muppet_family_xmas_1987]
+    type: event
+    year: 1987
+    slot: A Muppet Family Christmas (premiere) (ABC, 1987-12-16)
+    network: ABC
+    runtime: PT55M5S
+    source: archive
+    url: https://archive.org/download/a-muppet-family-christmas-1987-full-broadcast-w-ads-savetube.us/A%20Muppet%20Family%20Christmas%20%281987%29%20%5BFull%20Broadcast%20wAds%5D%20-%20savetube.us.mp4
+    notes: 'Tier 1; commercials: yes. "Full Broadcast w/ Ads" (saved from YouTube). Station not stated. Page: https://archive.org/details/a-muppet-family-christmas-1987-full-broadcast-w-ads-savetube.us'
+    broadcast_date: '1987-12-16'
+  - id: wcco_disney_world_xmas_1987
+    collection: Vintage Kids Xmas - WCCO Walt Disney World Christmas (local special) (CBS 1987) [wcco_disney_world_xmas_1987]
+    type: event
+    year: 1987
+    slot: WCCO Walt Disney World Christmas (local special) (CBS / WCCO-TV 4 Minneapolis, 1987-12-15)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT23M41S
+    source: youtube
+    url: https://www.youtube.com/watch?v=d7xCwN6-Nd4
+    notes: 'Tier 2; commercials: unverified. YouTube (LouTube): local WCCO program hosted by Don Shelby and Colleen Needles; air date not stated (placeholder Dec 15, 1987); commercials not stated. Page:
+      https://www.youtube.com/watch?v=d7xCwN6-Nd4'
+    broadcast_date: '1987-12-15'
+  - id: claymation_cbs_1987
+    collection: Vintage Kids Xmas - A Claymation Christmas Celebration (CBS 1987) [claymation_cbs_1987]
+    type: event
+    year: 1987
+    slot: A Claymation Christmas Celebration (CBS, 1987-12-21)
+    network: CBS
+    runtime: PT29M57S
+    source: archive
+    url: https://archive.org/download/the-california-raisins-christmas-special-cbs-1987/The%20California%20Raisins%20Christmas%20Special%20CBS%201987.mp4
+    notes: 'Tier 1; commercials: yes. Description: aired Dec 21, 1987 "and has the commercials". Page: https://archive.org/details/the-california-raisins-christmas-special-cbs-1987'
+    broadcast_date: '1987-12-21'
+  - id: smurfy_wbz_1988
+    collection: Vintage Kids Xmas - 'Tis the Season to Be Smurfy (NBC 1988) [smurfy_wbz_1988]
+    type: event
+    year: 1988
+    slot: '''Tis the Season to Be Smurfy (NBC (inferred) / WBZ-TV 4 Boston, 1988-12-01)'
+    network: NBC (inferred) / WBZ-TV 4 Boston
+    runtime: PT29M45S
+    source: archive
+    url: https://archive.org/download/tis-the-season-to-be-smurfy/Tis%20The%20Season%20To%20Be%20Smurfy.mp4
+    notes: 'Tier 1; commercials: yes. Description: broadcast on WBZ 4 Boston with original commercials. NBC network inferred (WBZ was the NBC affiliate then). Page: https://archive.org/details/tis-the-season-to-be-smurfy'
+    broadcast_date: '1988-12-01'
+  - id: holiday_specials_cbs_1988
+    collection: Vintage Kids Xmas - Holiday Specials (CBS, Nov 28, 1988) (CBS 1988) [holiday_specials_cbs_1988]
+    type: event
+    year: 1988
+    slot: Holiday Specials (CBS, Nov 28, 1988) (CBS, 1988-11-28)
+    network: CBS
+    runtime: PT58M35S
+    source: archive
+    url: https://archive.org/download/Holiday_Specials_CBS_WOC_1988-11-28/Holiday_Specials_CBS_WOC_1988-11-28.mp4
+    notes: 'Tier 1; commercials: label-only. Contents not described; title says CBS + WOC. Page: https://archive.org/details/Holiday_Specials_CBS_WOC_1988-11-28'
+    broadcast_date: '1988-11-28'
+  - id: muppet_family_xmas_1988
+    collection: Vintage Kids Xmas - A Muppet Family Christmas (repeat) (ABC 1988) [muppet_family_xmas_1988]
+    type: event
+    year: 1988
+    slot: A Muppet Family Christmas (repeat) (ABC, 1988-12-02)
+    network: ABC
+    runtime: PT58M29S
+    source: archive
+    url: https://archive.org/download/Muppet_Family_Christmas_ABC_WOC_1988-12-02/Muppet_Family_Christmas_ABC_WOC_1988-12-02.mp4
+    notes: 'Tier 1; commercials: label-only. Title says ABC + WOC. Page: https://archive.org/details/Muppet_Family_Christmas_ABC_WOC_1988-12-02'
+    broadcast_date: '1988-12-02'
+  - id: mickey_carol_nbc_1988
+    collection: Vintage Kids Xmas - Mickey's Christmas Carol (NBC 1988) [mickey_carol_nbc_1988]
+    type: event
+    year: 1988
+    slot: Mickey's Christmas Carol (NBC, 1988-12-04)
+    network: NBC
+    runtime: PT58M5S
+    source: archive
+    url: https://archive.org/download/Mickey_Christmas_Carol_NBC_WOC_1988-12-04/Mickey_Christmas_Carol_NBC_WOC_1988-12-04.mp4
+    notes: 'Tier 1; commercials: label-only. Title says NBC + WOC. Page: https://archive.org/details/Mickey_Christmas_Carol_NBC_WOC_1988-12-04'
+    broadcast_date: '1988-12-04'
+  - id: peewee_xmas_cbs_1988
+    collection: Vintage Kids Xmas - Christmas at Pee-wee's Playhouse (CBS 1988) [peewee_xmas_cbs_1988]
+    type: event
+    year: 1988
+    slot: Christmas at Pee-wee's Playhouse (CBS, 1988-12-24)
+    network: CBS
+    runtime: PT55M26S
+    source: archive
+    url: https://archive.org/download/pee-wees-playhouse-christmas-cbs-12-24-1988/Pee%20Wee%27s%20Playhouse%20Christmas%2C%20CBS%2C%2012-24-1988.mp4
+    notes: 'Tier 1; commercials: yes. Description: capture includes original commercials. (CBS premiere was Dec 21, 1988; this item is labeled Dec 24.) Page: https://archive.org/details/pee-wees-playhouse-christmas-cbs-12-24-1988'
+    broadcast_date: '1988-12-24'
+  - id: rudolph_cbs_1989
+    collection: Vintage Kids Xmas - Rudolph the Red-Nosed Reindeer (CBS 1989) [rudolph_cbs_1989]
+    type: event
+    year: 1989
+    slot: Rudolph the Red-Nosed Reindeer (CBS, 1989-12-01)
+    network: CBS
+    runtime: PT1H7S
+    source: archive
+    url: https://archive.org/download/rudolph-the-red-nose-reindeer-1989-cbs-woc/Rudolph%20The%20Red%20Nose%20Reindeer%201989%20CBS%20woc.mp4
+    notes: 'Tier 1; commercials: label-only. Title: 1989 CBS WOC; 60-minute file fits a full hour slot. Exact date not stated. Page: https://archive.org/details/rudolph-the-red-nose-reindeer-1989-cbs-woc'
+    broadcast_date: '1989-12-01'
+  - id: rudolph_wtkr_1991
+    collection: Vintage Kids Xmas - Rudolph the Red-Nosed Reindeer (CBS 1991) [rudolph_wtkr_1991]
+    type: event
+    year: 1991
+    slot: Rudolph the Red-Nosed Reindeer (CBS / WTKR-TV 3 Norfolk, 1991-12-01)
+    network: CBS / WTKR-TV 3 Norfolk
+    runtime: PT49M19S
+    source: archive
+    url: https://archive.org/download/december1991cbsbroadcastofrudolphtherednosedreindeerrecordedoffwtkrtv3/December%201991%20CBS%20broadcast%20of%20Rudolph%20the%20Red-Nosed%20Reindeer%20%28recorded%20off%20WTKR-TV%203%29.mp4
+    notes: 'Tier 2; commercials: unverified. December 1991; description does not confirm commercials (49 minutes). Page: https://archive.org/details/december1991cbsbroadcastofrudolphtherednosedreindeerrecordedoffwtkrtv3'
+    broadcast_date: '1991-12-01'
+  - id: wish_for_wings_wcbs_1991
+    collection: Vintage Kids Xmas - A Wish for Wings That Work (CBS 1991) [wish_for_wings_wcbs_1991]
+    type: event
+    year: 1991
+    slot: A Wish for Wings That Work (CBS / WCBS-TV 2 New York, 1991-12-18)
+    network: CBS / WCBS-TV 2 New York
+    runtime: PT30M47S
+    source: youtube
+    url: https://www.youtube.com/watch?v=VXiHH4p51Uc
+    notes: 'Tier 1; commercials: yes. YouTube: original airing with commercials; airdate Dec 18, 1991. Page: https://www.youtube.com/watch?v=VXiHH4p51Uc'
+    broadcast_date: '1991-12-18'
+  - id: xmas92_tape1
+    collection: Vintage Kids Xmas - Christmas Specials Dec 1992 – Tape 1 (Charlie Brown, Garfield, Teddy Bears, Santa Claus) (CBS + ABC + Disney Channel 1992) [xmas92_tape1]
+    type: event
+    year: 1992
+    slot: Christmas Specials Dec 1992 – Tape 1 (Charlie Brown, Garfield, Teddy Bears, Santa Claus) (CBS + ABC + Disney Channel, 1992-12-01)
+    network: CBS + ABC + Disney Channel
+    runtime: PT2H7M38S
+    source: archive
+    url: https://archive.org/download/xmas921/XMAS92_1.mp4
+    notes: 'Tier 1; commercials: some. Description: "Some Ad Breaks Are Included". Page: https://archive.org/details/xmas921'
+    broadcast_date: '1992-12-01'
+  - id: garfield_cbs_1992
+    collection: Vintage Kids Xmas - A Garfield Christmas (CBS 1992) [garfield_cbs_1992]
+    type: event
+    year: 1992
+    slot: A Garfield Christmas (CBS, 1992-12-02)
+    network: CBS
+    runtime: PT28M48S
+    source: archive
+    url: https://archive.org/download/agarfieldchristmas12021992/A%20Garfield%20Christmas%20%2812-02-1992%29.mp4
+    notes: 'Tier 1; commercials: yes. Description: commercials included; glitches at start. Page: https://archive.org/details/agarfieldchristmas12021992'
+    broadcast_date: '1992-12-02'
+  - id: xmas92_tape2
+    collection: Vintage Kids Xmas - Christmas Specials Dec 1992 – Tape 2 (Rudolph, Pooh, Frosty, Grinch) (CBS + ABC + TNT 1992) [xmas92_tape2]
+    type: event
+    year: 1992
+    slot: Christmas Specials Dec 1992 – Tape 2 (Rudolph, Pooh, Frosty, Grinch) (CBS + ABC + TNT, 1992-12-02)
+    network: CBS + ABC + TNT
+    runtime: PT2H8M12S
+    source: archive
+    url: https://archive.org/download/xmas922/XMAS92_2.mp4
+    notes: 'Tier 2; commercials: unverified. Description lists programs only. Page: https://archive.org/details/xmas922'
+    broadcast_date: '1992-12-02'
+  - id: town_santa_forgot_wvit_1993
+    collection: Vintage Kids Xmas - The Town Santa Forgot (NBC 1993) [town_santa_forgot_wvit_1993]
+    type: event
+    year: 1993
+    slot: The Town Santa Forgot (NBC / WVIT Hartford, 1993-12-03)
+    network: NBC / WVIT Hartford
+    runtime: PT26M30S
+    source: archive
+    url: https://archive.org/download/thetownsantaforgot_201912/The%20Town%20Santa%20Forgot.mp4
+    notes: 'Tier 2; commercials: unverified. Blank-tape item; commercials not described. Page: https://archive.org/details/thetownsantaforgot_201912'
+    broadcast_date: '1993-12-03'
+  - id: twelve_days_wvit_1993
+    collection: Vintage Kids Xmas - The Twelve Days of Christmas (NBC 1993) [twelve_days_wvit_1993]
+    type: event
+    year: 1993
+    slot: The Twelve Days of Christmas (NBC / WVIT Hartford, 1993-12-03)
+    network: NBC / WVIT Hartford
+    runtime: PT25M46S
+    source: archive
+    url: https://archive.org/download/thetownsantaforgot_201912/The%20Twelve%20Days%20of%20Christmas.mp4
+    notes: 'Tier 2; commercials: unverified.  Page: https://archive.org/details/thetownsantaforgot_201912'
+    broadcast_date: '1993-12-03'
+  - id: pooh_xmas_wggb_1993
+    collection: Vintage Kids Xmas - Winnie the Pooh & Christmas Too + Making of Aladdin (ABC 1993) [pooh_xmas_wggb_1993]
+    type: event
+    year: 1993
+    slot: Winnie the Pooh & Christmas Too + Making of Aladdin (ABC / WGGB Springfield, 1993-12-10)
+    network: ABC / WGGB Springfield
+    runtime: PT40M43S
+    source: archive
+    url: https://archive.org/download/thetownsantaforgot_201912/Winnie%20The%20Pooh%20%26%20Christmas%20Too%2C%20The%20Making%20of%20Aladdin%20-%20A%20Whole%20New%20World.mp4
+    notes: 'Tier 2; commercials: unverified. Date given only as December 1993. Page: https://archive.org/details/thetownsantaforgot_201912'
+    broadcast_date: '1993-12-10'
+  - id: flintstone_family_wggb_1993
+    collection: Vintage Kids Xmas - A Flintstone Family Christmas (ABC 1993) [flintstone_family_wggb_1993]
+    type: event
+    year: 1993
+    slot: A Flintstone Family Christmas (ABC / WGGB Springfield, 1993-12-18)
+    network: ABC / WGGB Springfield
+    runtime: PT18M53S
+    source: archive
+    url: https://archive.org/download/thetownsantaforgot_201912/A%20Flintstone%20Family%20Christmas.mp4
+    notes: 'Tier 2; commercials: unverified.  Page: https://archive.org/details/thetownsantaforgot_201912'
+    broadcast_date: '1993-12-18'
+  - id: wish_changed_wggb_1993
+    collection: Vintage Kids Xmas - The Wish That Changed Christmas (ABC 1993) [wish_changed_wggb_1993]
+    type: event
+    year: 1993
+    slot: The Wish That Changed Christmas (ABC / WGGB Springfield, 1993-12-18)
+    network: ABC / WGGB Springfield
+    runtime: PT29M46S
+    source: archive
+    url: https://archive.org/download/thetownsantaforgot_201912/The%20Wish%20That%20Changed%20Christmas.mp4
+    notes: 'Tier 2; commercials: unverified.  Page: https://archive.org/details/thetownsantaforgot_201912'
+    broadcast_date: '1993-12-18'
+  - id: garfield_cbs_1994
+    collection: Vintage Kids Xmas - A Garfield Christmas (CBS 1994) [garfield_cbs_1994]
+    type: event
+    year: 1994
+    slot: A Garfield Christmas (CBS, 1994-12-14)
+    network: CBS
+    runtime: PT28M28S
+    source: archive
+    url: https://archive.org/download/garfield-christmas-12-14-1994/Garfield%20Christmas%20%2812-14-1994%29.mp4
+    notes: 'Tier 1; commercials: yes. Description: includes commercial breaks. Page: https://archive.org/details/garfield-christmas-12-14-1994'
+    broadcast_date: '1994-12-14'
+  - id: kidswb_cbs_1995
+    collection: Vintage Kids Xmas - Mickey's Christmas Carol (CBS) + Jingle Bell Rock (ABC), 1995 (CBS + ABC 1995) [kidswb_cbs_1995]
+    type: event
+    year: 1995
+    slot: Mickey's Christmas Carol (CBS) + Jingle Bell Rock (ABC), 1995 (CBS + ABC (+ Kids WB 1999), 1995-12-21)
+    network: CBS + ABC (+ Kids WB 1999)
+    runtime: PT2H2M43S
+    source: archive
+    url: https://archive.org/download/kidswbcbs/KIDSWB_CBS.mp4
+    notes: 'Tier 2; commercials: some. Mixed tape: opens with Kids WB 1999 Pokémon, then the 1995 specials; "Some Ads from 1995 Are Included". Page: https://archive.org/details/kidswbcbs'
+    broadcast_date: '1995-12-21'
+  - id: frosty_returns_cbs_1997
+    collection: Vintage Kids Xmas - Frosty Returns (CBS 1997) [frosty_returns_cbs_1997]
+    type: event
+    year: 1997
+    slot: Frosty Returns (CBS, 1997-12-12)
+    network: CBS
+    runtime: PT29M54S
+    source: archive
+    url: https://archive.org/download/Frosty_Returns_CBS_WOC_1997-12-12/Frosty_Returns_CBS_WOC_1997-12-12.mp4
+    notes: 'Tier 1; commercials: label-only. Title says CBS + WOC. Page: https://archive.org/details/Frosty_Returns_CBS_WOC_1997-12-12'
+    broadcast_date: '1997-12-12'
+  - id: story_santa_cbs_1997
+    collection: Vintage Kids Xmas - The Story of Santa Claus (CBS 1997) [story_santa_cbs_1997]
+    type: event
+    year: 1997
+    slot: The Story of Santa Claus (CBS, 1997-12-12)
+    network: CBS
+    runtime: PT58M30S
+    source: archive
+    url: https://archive.org/download/The_Story_Of_Santa_Claus_CBS_WOC_1997-12-12/The_Story_Of_Santa_Claus_CBS_WOC_1997-12-12.mp4
+    notes: 'Tier 1; commercials: label-only. Title says CBS + WOC. Page: https://archive.org/details/The_Story_Of_Santa_Claus_CBS_WOC_1997-12-12'
+    broadcast_date: '1997-12-12'
+  - id: xmas_classics_1997
+    collection: Vintage Kids Xmas - Christmas TV Classics (VHS) incl. commercials – Vol 2 (Not stated 1997) [xmas_classics_1997]
+    type: event
+    year: 1997
+    slot: Christmas TV Classics (VHS) incl. commercials – Vol 2 (Not stated, 1997-12-15)
+    network: Not stated
+    runtime: PT50M7S
+    source: youtube
+    url: https://www.youtube.com/watch?v=K-ThQtxTGZc
+    notes: 'Tier 2; commercials: yes. YouTube; some segments blocked by copyright per description. Network not stated. Page: https://www.youtube.com/watch?v=K-ThQtxTGZc'
+    broadcast_date: '1997-12-15'
+  - id: garfield_wfmy_2000
+    collection: Vintage Kids Xmas - A Garfield Christmas (last CBS airing) (CBS 2000) [garfield_wfmy_2000]
+    type: event
+    year: 2000
+    slot: A Garfield Christmas (last CBS airing) (CBS / WFMY-TV 2 Greensboro, 2000-12-14)
+    network: CBS / WFMY-TV 2 Greensboro
+    runtime: PT29M17S
+    source: archive
+    url: https://archive.org/download/a-garfield-christmas-1987-wfmy-cbs-2000-airing/A%20Garfield%20Christmas%20%281987%29%20%28WFMY%20CBS%202000%20Airing%29.mp4
+    notes: 'Tier 1; commercials: yes. Description: contains original commercials from 2000. Page: https://archive.org/details/a-garfield-christmas-1987-wfmy-cbs-2000-airing'
+    broadcast_date: '2000-12-14'
+  - id: rudolph_cbs_2003
+    collection: Vintage Kids Xmas - Rudolph the Red-Nosed Reindeer (CBS 2003) [rudolph_cbs_2003]
+    type: event
+    year: 2003
+    slot: Rudolph the Red-Nosed Reindeer (CBS, 2003-12-01)
+    network: CBS
+    runtime: PT1H1M9S
+    source: archive
+    url: https://archive.org/download/c-2a-931a-5-aa-61-449d-a-2e-5-1aef-2e-7adf-7e-1/c2a931a5-aa61-449d-a2e5-1aef2e7adf7e%20%281%29.mp4
+    notes: 'Tier 2; commercials: inferred. Description just "Rudolph 2003"; commercials inferred from 61-minute runtime. Page: https://archive.org/details/c-2a-931a-5-aa-61-449d-a-2e-5-1aef-2e-7adf-7e-1'
+    broadcast_date: '2003-12-01'
+  - id: rudolph_cbs_2004
+    collection: Vintage Kids Xmas - Rudolph the Red-Nosed Reindeer (CBS 2004) [rudolph_cbs_2004]
+    type: event
+    year: 2004
+    slot: Rudolph the Red-Nosed Reindeer (CBS, 2004-12-01)
+    network: CBS
+    runtime: PT1H14M18S
+    source: archive
+    url: https://archive.org/download/rudolph-the-red-nose-reindeer-cbs-2004-woc/Rudolph%20The%20Red%20Nose%20Reindeer%20CBS%202004%20WOC.mp4
+    notes: 'Tier 1; commercials: label-only. Title: CBS 2004 WOC (74 min, likely runs into next program). Page: https://archive.org/details/rudolph-the-red-nose-reindeer-cbs-2004-woc'
+    broadcast_date: '2004-12-01'
+  - id: frosty_wtvf_2004
+    collection: Vintage Kids Xmas - Frosty the Snowman + Frosty Returns (CBS 2004) [frosty_wtvf_2004]
+    type: event
+    year: 2004
+    slot: Frosty the Snowman + Frosty Returns (CBS / WTVF NewsChannel 5 Nashville, 2004-12-01)
+    network: CBS / WTVF NewsChannel 5 Nashville
+    runtime: PT59M29S
+    source: archive
+    url: https://archive.org/download/FrostyAndFrostyReturnsCBS2004Or2005/Frosty%20and%20Frosty%20Returns%20CBS%202004%20or%202005.mp4
+    notes: 'Tier 1; commercials: yes. Description: 2004 or 2005 judging by commercials; notes the commercials. Page: https://archive.org/details/FrostyAndFrostyReturnsCBS2004Or2005'
+    broadcast_date: '2004-12-01'
+  - id: marathon_80s_1
+    collection: Vintage Kids Xmas - 80s Christmas Specials With Commercials (6 hr) (Not stated 1987) [marathon_80s_1]
+    type: event
+    year: 1987
+    slot: 80s Christmas Specials With Commercials (6 hr) (Not stated)
+    network: Not stated
+    runtime: PT6H
+    source: archive
+    url: https://archive.org/download/80s-christmas-specials-with-commercials/80%27s%20Christmas%20Specials%20with%20Commercials.mp4
+    notes: 'Tier 2; commercials: yes. Garfield, Claymation, Sesame Street on Ice, Bugs Bunny, Santa Bear, Disney Gift, He-Man, Casper; last part is a blue screen (description). Page: https://archive.org/details/80s-christmas-specials-with-commercials'
+  - id: marathon_80s_2
+    collection: Vintage Kids Xmas - 80s Christmas Specials With Commercials II (Not stated 1987) [marathon_80s_2]
+    type: event
+    year: 1987
+    slot: 80s Christmas Specials With Commercials II (Not stated)
+    network: Not stated
+    runtime: PT2H32M2S
+    source: archive
+    url: https://archive.org/download/80s-christmas-specials-with-commercials-2/80%27s%20Christmas%20Specials%20with%20Commercials%202.mp4
+    notes: 'Tier 2; commercials: yes.  Page: https://archive.org/details/80s-christmas-specials-with-commercials-2'
+  - id: marathon_80s_3
+    collection: Vintage Kids Xmas - 80s Christmas Specials With Commercials III (Not stated 1987) [marathon_80s_3]
+    type: event
+    year: 1987
+    slot: 80s Christmas Specials With Commercials III (Not stated)
+    network: Not stated
+    runtime: PT2H45M38S
+    source: archive
+    url: https://archive.org/download/80s-christmas-specials-with-commercials-3/80s%20Christmas%20Specials%20with%20Commercials%203.mp4
+    notes: 'Tier 2; commercials: label-only.  Page: https://archive.org/details/80s-christmas-specials-with-commercials-3'
+  - id: wcco_rudolph_1986_breaks
+    collection: Vintage Kids Xmas - Break - WCCO/CBS breaks during Rudolph (Dec 9, 1986) [wcco_rudolph_1986_breaks]
+    type: commercial
+    slot: WCCO/CBS breaks during Rudolph (Dec 9, 1986)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT10M17S
+    source: youtube
+    url: https://www.youtube.com/watch?v=saiodJr6UR8
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=saiodJr6UR8'
+    broadcast_date: '1986-12-09'
+    year: 1986
+  - id: wcco_cbchristmas_1986_breaks
+    collection: Vintage Kids Xmas - Break - WCCO/CBS breaks during A Charlie Brown Christmas (Dec 12, 1986) [wcco_cbchristmas_1986_breaks]
+    type: commercial
+    slot: WCCO/CBS breaks during A Charlie Brown Christmas (Dec 12, 1986)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT6M12S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Z71ahXqgBTM
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Z71ahXqgBTM'
+    broadcast_date: '1986-12-12'
+    year: 1986
+  - id: wcco_frosty_1986_breaks
+    collection: Vintage Kids Xmas - Break - WCCO/CBS breaks during Frosty the Snowman (Dec 12, 1986) [wcco_frosty_1986_breaks]
+    type: commercial
+    slot: WCCO/CBS breaks during Frosty the Snowman (Dec 12, 1986)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT4M34S
+    source: youtube
+    url: https://www.youtube.com/watch?v=oF7foUcyhQs
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=oF7foUcyhQs'
+    broadcast_date: '1986-12-12'
+    year: 1986
+  - id: wcco_grinch_1986_breaks
+    collection: Vintage Kids Xmas - Break - WCCO/CBS breaks during the Grinch (Dec 17, 1986) [wcco_grinch_1986_breaks]
+    type: commercial
+    slot: WCCO/CBS breaks during the Grinch (Dec 17, 1986)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT7M5S
+    source: youtube
+    url: https://www.youtube.com/watch?v=u-j7HxI89aM
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=u-j7HxI89aM'
+    broadcast_date: '1986-12-17'
+    year: 1986
+  - id: wcco_twas_1986_breaks
+    collection: Vintage Kids Xmas - Break - WCCO/CBS breaks during 'Twas the Night Before Christmas (Dec 17, 1986) [wcco_twas_1986_breaks]
+    type: commercial
+    slot: WCCO/CBS breaks during 'Twas the Night Before Christmas (Dec 17, 1986)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT4M32S
+    source: youtube
+    url: https://www.youtube.com/watch?v=KU4BeYgayXk
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=KU4BeYgayXk'
+    broadcast_date: '1986-12-17'
+    year: 1986
+  - id: kstp_night_saved_1984_breaks
+    collection: Vintage Kids Xmas - Break - KSTP/ABC breaks during The Night They Saved Christmas (Dec 13, 1984) [kstp_night_saved_1984_breaks]
+    type: commercial
+    slot: KSTP/ABC breaks during The Night They Saved Christmas (Dec 13, 1984)
+    network: ABC / KSTP-TV 5 Minneapolis
+    runtime: PT14M28S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Nf3l8olHDB4
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Nf3l8olHDB4'
+    broadcast_date: '1984-12-13'
+    year: 1984
+  - id: kstp_xmas_commercial
+    collection: Vintage Kids Xmas - Break - KSTP Christmas commercials (undated) [kstp_xmas_commercial]
+    type: commercial
+    slot: KSTP Christmas commercials (undated)
+    network: ABC / KSTP-TV 5 Minneapolis
+    runtime: PT9M49S
+    source: youtube
+    url: https://www.youtube.com/watch?v=HzxVPmGwWC8
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=HzxVPmGwWC8'
+  - id: wcco_rudolph_1992_breaks
+    collection: Vintage Kids Xmas - Break - WCCO breaks during Rudolph (Dec 11, 1992) [wcco_rudolph_1992_breaks]
+    type: commercial
+    slot: WCCO breaks during Rudolph (Dec 11, 1992)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT3M10S
+    source: youtube
+    url: https://www.youtube.com/watch?v=5ftduLCmk_s
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=5ftduLCmk_s'
+    broadcast_date: '1992-12-11'
+    year: 1992
+  - id: wcco_frosty_1992_breaks
+    collection: Vintage Kids Xmas - Break - WCCO breaks during Frosty the Snowman (Dec 16, 1992) [wcco_frosty_1992_breaks]
+    type: commercial
+    slot: WCCO breaks during Frosty the Snowman (Dec 16, 1992)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT7M10S
+    source: youtube
+    url: https://www.youtube.com/watch?v=u3WC_U-rf5A
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=u3WC_U-rf5A'
+    broadcast_date: '1992-12-16'
+    year: 1992
+  - id: kstp_cartoon_classics_1992
+    collection: Vintage Kids Xmas - Break - KSTP Christmas ads during Christmas Cartoon Classics (Dec 1992) [kstp_cartoon_classics_1992]
+    type: commercial
+    slot: KSTP Christmas ads during Christmas Cartoon Classics (Dec 1992)
+    network: ABC / KSTP-TV 5 Minneapolis
+    runtime: PT2M7S
+    source: youtube
+    url: https://www.youtube.com/watch?v=vuq99UxjpvA
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=vuq99UxjpvA'
+    broadcast_date: '1992-12-14'
+    year: 1992
+  - id: wcco_christmas_day_1995
+    collection: Vintage Kids Xmas - Break - WCCO commercials, Christmas Day 1995 [wcco_christmas_day_1995]
+    type: commercial
+    slot: WCCO commercials, Christmas Day 1995
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT16M27S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Mbzdx70dkMU
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Mbzdx70dkMU'
+    broadcast_date: '1995-12-25'
+    year: 1995
+  - id: kstp_dec5_1991
+    collection: Vintage Kids Xmas - Break - KSTP-TV commercials (Dec 5, 1991) [kstp_dec5_1991]
+    type: commercial
+    slot: KSTP-TV commercials (Dec 5, 1991)
+    network: ABC / KSTP-TV 5 Minneapolis
+    runtime: PT37M25S
+    source: archive
+    url: https://archive.org/download/SmokesVHSTape660/KSTP-TV%20-%20December%205%2C%201991%20Commercials.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/SmokesVHSTape660'
+    broadcast_date: '1991-12-05'
+    year: 1991
+  - id: kare_nov28_1991
+    collection: Vintage Kids Xmas - Break - KARE commercials, Thanksgiving Day 1991 (Macy's Parade) [kare_nov28_1991]
+    type: commercial
+    slot: KARE commercials, Thanksgiving Day 1991 (Macy's Parade)
+    network: NBC / KARE 11 Minneapolis
+    runtime: PT35M1S
+    source: archive
+    url: https://archive.org/download/SmokesVHSTape660/KARE%20-%20November%2028%2C%201991%20Commercials.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/SmokesVHSTape660'
+    broadcast_date: '1991-11-28'
+    year: 1991
+  - id: cbs_xmas_breaks_1984_85
+    collection: Vintage Kids Xmas - Break - CBS 2 New York breaks from 6 Christmas specials (1984–85) [cbs_xmas_breaks_1984_85]
+    type: commercial
+    slot: CBS 2 New York breaks from 6 Christmas specials (1984–85)
+    network: CBS / WCBS-TV 2
+    runtime: PT41M36S
+    source: youtube
+    url: https://www.youtube.com/watch?v=VK7zZz0N4NU
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=VK7zZz0N4NU'
+    broadcast_date: '1985-12-01'
+    year: 1985
+  - id: cbs_frosty_1986_breaks
+    collection: Vintage Kids Xmas - Break - CBS breaks during Frosty the Snowman (1986) [cbs_frosty_1986_breaks]
+    type: commercial
+    slot: CBS breaks during Frosty the Snowman (1986)
+    network: CBS
+    runtime: PT6M11S
+    source: youtube
+    url: https://www.youtube.com/watch?v=pOu70NcoSfw
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=pOu70NcoSfw'
+    broadcast_date: '1986-12-01'
+    year: 1986
+  - id: cbs_frosty_cb_kcci
+    collection: 'Vintage Kids Xmas - Break - CBS breaks: Frosty & Charlie Brown (TV8 Des Moines) [cbs_frosty_cb_kcci]'
+    type: commercial
+    slot: 'CBS breaks: Frosty & Charlie Brown (TV8 Des Moines)'
+    network: CBS / KCCI 8 Des Moines
+    runtime: PT11M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Im1So5GHeSQ
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Im1So5GHeSQ'
+  - id: nbc_smurfs_chipmunks_1987
+    collection: 'Vintage Kids Xmas - Break - NBC breaks: Smurfs & Chipmunks specials (Dec 1987) [nbc_smurfs_chipmunks_1987]'
+    type: commercial
+    slot: 'NBC breaks: Smurfs & Chipmunks specials (Dec 1987)'
+    network: NBC / WMTV 15 Madison
+    runtime: PT11M54S
+    source: youtube
+    url: https://www.youtube.com/watch?v=mvqwGvgcDuU
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=mvqwGvgcDuU'
+    broadcast_date: '1987-12-01'
+    year: 1987
+  - id: peewee_wbns_1988_break
+    collection: Vintage Kids Xmas - Break - CBS break during Pee-wee's Playhouse Christmas (Dec 21, 1988) [peewee_wbns_1988_break]
+    type: commercial
+    slot: CBS break during Pee-wee's Playhouse Christmas (Dec 21, 1988)
+    network: CBS / WBNS-TV 10 Columbus
+    runtime: PT9M47S
+    source: youtube
+    url: https://www.youtube.com/watch?v=noFAmiMg1Kw
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=noFAmiMg1Kw'
+    broadcast_date: '1988-12-21'
+    year: 1988
+  - id: nbc_wndu_1988
+    collection: Vintage Kids Xmas - Break - WNDU/NBC breaks (Dec 12, 1988) [nbc_wndu_1988]
+    type: commercial
+    slot: WNDU/NBC breaks (Dec 12, 1988)
+    network: NBC / WNDU-TV 16 South Bend
+    runtime: PT9M34S
+    source: archive
+    url: https://archive.org/download/wndu-16-nbc-commercial-breaks-12-12-1988-both-partial-and-complete-breaks/WNDU-16%20NBC%20Commercial%20Breaks%2812%2012%201988%29%28Both%20partial%20and%20complete%20breaks%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wndu-16-nbc-commercial-breaks-12-12-1988-both-partial-and-complete-breaks'
+    broadcast_date: '1988-12-12'
+    year: 1988
+  - id: cbs_rudolph_1990_breaks
+    collection: Vintage Kids Xmas - Break - CBS Rudolph complete breaks (1990) [cbs_rudolph_1990_breaks]
+    type: commercial
+    slot: CBS Rudolph complete breaks (1990)
+    network: CBS / KHQA-TV
+    runtime: PT10M23S
+    source: youtube
+    url: https://www.youtube.com/watch?v=OPwTN0zLyC4
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=OPwTN0zLyC4'
+    broadcast_date: '1990-12-01'
+    year: 1990
+  - id: abc_pooh_1991_breaks
+    collection: Vintage Kids Xmas - Break - ABC breaks during Winnie the Pooh and Christmas Too (Dec 14, 1991) [abc_pooh_1991_breaks]
+    type: commercial
+    slot: ABC breaks during Winnie the Pooh and Christmas Too (Dec 14, 1991)
+    network: ABC / KSFY
+    runtime: PT12M33S
+    source: youtube
+    url: https://www.youtube.com/watch?v=4nak92AJATY
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=4nak92AJATY'
+    broadcast_date: '1991-12-14'
+    year: 1991
+  - id: cbs_rudolph_1993_breaks
+    collection: Vintage Kids Xmas - Break - CBS Rudolph breaks (KCTV5, Dec 1993) [cbs_rudolph_1993_breaks]
+    type: commercial
+    slot: CBS Rudolph breaks (KCTV5, Dec 1993)
+    network: CBS / KCTV 5 Kansas City
+    runtime: PT9M32S
+    source: youtube
+    url: https://www.youtube.com/watch?v=fQaRwV3NM1A
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=fQaRwV3NM1A'
+    broadcast_date: '1993-12-01'
+    year: 1993
+  - id: cbs_cb_garfield_1993_breaks
+    collection: 'Vintage Kids Xmas - Break - CBS breaks: Charlie Brown / Garfield (1993) [cbs_cb_garfield_1993_breaks]'
+    type: commercial
+    slot: 'CBS breaks: Charlie Brown / Garfield (1993)'
+    network: CBS
+    runtime: PT8M45S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Ggs_txOqT04
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Ggs_txOqT04'
+    broadcast_date: '1993-12-01'
+    year: 1993
+  - id: cbs_rudolph_1994_breaks
+    collection: Vintage Kids Xmas - Break - CBS Rudolph breaks (1994) [cbs_rudolph_1994_breaks]
+    type: commercial
+    slot: CBS Rudolph breaks (1994)
+    network: CBS
+    runtime: PT12M10S
+    source: youtube
+    url: https://www.youtube.com/watch?v=fev9vp3UcsQ
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=fev9vp3UcsQ'
+    broadcast_date: '1994-12-01'
+    year: 1994
+  - id: cbs_xmas_1998_lasvegas
+    collection: Vintage Kids Xmas - Break - CBS affiliate holiday breaks, Las Vegas (Dec 1998) [cbs_xmas_1998_lasvegas]
+    type: commercial
+    slot: CBS affiliate holiday breaks, Las Vegas (Dec 1998)
+    network: CBS (Las Vegas affiliate)
+    runtime: PT20M56S
+    source: archive
+    url: https://archive.org/download/TheVistaGroup-1998CBSChristmasCommercials/1998%20CBS%20Christmas%20Commercials%20%E2%80%A2%C2%A060%20FPS%201998.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/TheVistaGroup-1998CBSChristmasCommercials'
+    broadcast_date: '1998-12-01'
+    year: 1998
+  - id: cbs_garfield_1999_breaks
+    collection: Vintage Kids Xmas - Break - CBS breaks during A Garfield Christmas (Dec 11, 1999) [cbs_garfield_1999_breaks]
+    type: commercial
+    slot: CBS breaks during A Garfield Christmas (Dec 11, 1999)
+    network: CBS
+    runtime: PT8M37S
+    source: archive
+    url: https://archive.org/download/a-garfield-christmas-commercial-breaks-dec.-1999-cbs/A%20Garfield%20Christmas%20Commercial%20Breaks%20%28Dec.%201999%2C%20CBS%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/a-garfield-christmas-commercial-breaks-dec.-1999-cbs'
+    broadcast_date: '1999-12-11'
+    year: 1999
+  - id: cbs_rudolph_1999_breaks
+    collection: Vintage Kids Xmas - Break - CBS Rudolph complete breaks (1999) [cbs_rudolph_1999_breaks]
+    type: commercial
+    slot: CBS Rudolph complete breaks (1999)
+    network: CBS
+    runtime: PT12M40S
+    source: youtube
+    url: https://www.youtube.com/watch?v=DeMVGEd86Qw
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=DeMVGEd86Qw'
+    broadcast_date: '1999-12-01'
+    year: 1999

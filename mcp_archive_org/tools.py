@@ -183,100 +183,161 @@ async def archive_org_get_item_metadata(identifier: str) -> Dict[str, Any]:
     }
 
 
-async def archive_org_get_item_files(identifier: str, format_filter: Optional[str] = None) -> Dict[str, Any]:
-    """Get file list for an Archive.org item
-    
+def _is_ia_mp4(name: str) -> bool:
+    return str(name or "").lower().endswith(".ia.mp4")
+
+
+def _canonical_download_url(identifier: str, filename: str) -> str:
+    """Always archive.org/download/<id>/<urlencoded name> — never storage-node (D6)."""
+    from urllib.parse import quote
+
+    return (
+        f"https://archive.org/download/{identifier}/"
+        f"{quote(str(filename), safe='/')}"
+    )
+
+
+def _duration_seconds(raw: Any) -> Optional[int]:
+    if raw is None or raw == "":
+        return None
+    try:
+        seconds = int(float(raw))
+    except (TypeError, ValueError):
+        return None
+    return seconds if seconds > 0 else None
+
+
+async def archive_org_get_item_files(
+    identifier: str,
+    format_filter: Optional[str] = None,
+    originals_only: bool = False,
+    exclude_derivatives: bool = True,
+) -> Dict[str, Any]:
+    """Get file list for an Archive.org item.
+
     Args:
         identifier: Item identifier
-        format_filter: Filter by file format (e.g., "h264", "mp4", "mpeg4")
-    
-    Returns:
-        List of files with metadata
+        format_filter: Filter by extension/format token (e.g. ``mp4``). Does **not**
+            match ``*.ia.mp4`` when filtering for ``mp4``.
+        originals_only: Keep only files with ``source == "original"``.
+        exclude_derivatives: Drop ``*.ia.mp4`` and ``source == "derivative"`` (default True).
     """
     metadata = await archive_org_get_item_metadata(identifier)
-    files = metadata.get("files", [])
-    
+    files = list(metadata.get("files", []) or [])
+
+    if exclude_derivatives:
+        files = [
+            f
+            for f in files
+            if not _is_ia_mp4(f.get("name", ""))
+            and str(f.get("source") or "").lower() != "derivative"
+        ]
+    if originals_only:
+        files = [
+            f for f in files if str(f.get("source") or "").lower() == "original"
+        ]
+
     if format_filter:
-        # Filter files by format
+        token = format_filter.lower().lstrip(".")
         filtered_files = []
         for file_info in files:
-            name = file_info.get("name", "").lower()
-            if format_filter.lower() in name:
+            name = str(file_info.get("name", "")).lower()
+            if _is_ia_mp4(name):
+                continue
+            # Prefer extension match: ".mp4" not substring of ".ia.mp4" (already dropped)
+            # and not accidental "mp4" inside unrelated names without a real extension.
+            if name.endswith(f".{token}") or token in str(file_info.get("format") or "").lower():
+                filtered_files.append(file_info)
+            elif token in name and not name.endswith(".ia.mp4"):
+                # Legacy substring match for non-ia names (e.g. "h264").
                 filtered_files.append(file_info)
         files = filtered_files
-    
+
     return {
         "identifier": identifier,
-        "total_files": len(metadata.get("files", [])),
+        "total_files": len(metadata.get("files", []) or []),
         "filtered_files": len(files),
         "format_filter": format_filter,
-        "files": files
+        "originals_only": originals_only,
+        "exclude_derivatives": exclude_derivatives,
+        "files": files,
     }
 
 
-async def archive_org_get_stream_url(identifier: str, filename: Optional[str] = None) -> Dict[str, Any]:
-    """Get streaming URL for an Archive.org video file
-    
-    Args:
-        identifier: Item identifier
-        filename: Specific filename to stream (optional, will auto-detect if not provided)
-    
-    Returns:
-        Streaming URL and file information
+async def archive_org_get_stream_url(
+    identifier: str, filename: Optional[str] = None
+) -> Dict[str, Any]:
+    """Get streaming URL for an Archive.org video file.
+
+    Always returns ``https://archive.org/download/<identifier>/<urlencoded>``.
+    Never returns ``*.ia.mp4`` or storage-server-pinned hosts (D6 / Issues 24, 32).
     """
     metadata = await archive_org_get_item_metadata(identifier)
-    files = metadata.get("files", [])
-    
-    # Find video file
+    files = list(metadata.get("files", []) or [])
+
     video_file = None
     if filename:
-        # Find specific file
         for file_info in files:
-            if file_info.get("name") == filename:
+            if file_info.get("name") == filename and not _is_ia_mp4(filename):
                 video_file = file_info
                 break
     else:
-        # Auto-detect best video file (prefer h264/mp4)
-        preferred_formats = ["h264", "mp4", "mpeg4"]
-        for format_name in preferred_formats:
-            for file_info in files:
-                name = file_info.get("name", "").lower()
-                if format_name in name and file_info.get("format") in ["h.264", "MPEG4", "h264"]:
-                    video_file = file_info
-                    break
-            if video_file:
+        # Prefer original MPEG4/mp4; never auto-pick *.ia.mp4.
+        candidates = [
+            f
+            for f in files
+            if not _is_ia_mp4(f.get("name", ""))
+            and str(f.get("name", "")).lower().endswith((".mp4", ".mpeg4", ".mpg", ".mpeg"))
+        ]
+        originals = [
+            f for f in candidates if str(f.get("source") or "").lower() == "original"
+        ]
+        pool = originals or candidates
+        preferred_formats = {"mpeg4", "h.264", "h264", "mp4"}
+        for file_info in pool:
+            fmt = str(file_info.get("format") or "").lower()
+            if fmt in preferred_formats or str(file_info.get("name", "")).lower().endswith(
+                ".mp4"
+            ):
+                video_file = file_info
                 break
-        
-        # Fallback to first video file
+        if not video_file and pool:
+            video_file = pool[0]
         if not video_file:
             for file_info in files:
+                if _is_ia_mp4(file_info.get("name", "")):
+                    continue
                 if file_info.get("format") in ["h.264", "MPEG4", "h264", "Video"]:
                     video_file = file_info
                     break
-    
+
     if not video_file:
         return {
             "identifier": identifier,
             "error": "No video file found",
-            "available_files": [f.get("name") for f in files[:10]]
+            "available_files": [
+                f.get("name") for f in files[:10] if not _is_ia_mp4(f.get("name", ""))
+            ],
         }
-    
-    # Build streaming URL
-    server = metadata.get("server", "")
-    dir_path = metadata.get("dir", "")
+
     file_name = video_file.get("name", "")
-    
-    if server and dir_path:
-        stream_url = f"https://{server}{dir_path}/{file_name}"
-    else:
-        stream_url = f"{config.base_url}/download/{identifier}/{file_name}"
-    
+    if _is_ia_mp4(file_name):
+        return {
+            "identifier": identifier,
+            "error": "Refusing *.ia.mp4 derivative URL (Issue 24)",
+            "filename": file_name,
+        }
+
+    stream_url = _canonical_download_url(identifier, file_name)
+    duration = _duration_seconds(video_file.get("length"))
+
     return {
         "identifier": identifier,
         "filename": file_name,
         "stream_url": stream_url,
         "file_size": video_file.get("size"),
         "format": video_file.get("format"),
-        "duration": video_file.get("length")
+        "duration": duration if duration is not None else video_file.get("length"),
+        "length_seconds": duration,
     }
 

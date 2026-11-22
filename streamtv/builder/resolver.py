@@ -71,6 +71,7 @@ def _extract_archive_identifier(url: str) -> Optional[str]:
 
 
 def _slugify(text: str, max_len: int = 48) -> str:
+    """Legacy short slug (fillers / non-archive). Archive file ids use ``ids.archive_stream_id``."""
     slug = re.sub(r"[^\w]+", "_", text.lower()).strip("_")
     return slug[:max_len] or "item"
 
@@ -248,7 +249,11 @@ def resolve_single_url(url: str) -> dict[str, Any]:
         if _is_archive_file_url(url):
             filename = unquote(urlparse(url).path.rsplit("/", 1)[-1])
             title = title_from_media_url(url) or humanize_media_title(filename)
-            stream_id = _slugify(f"{identifier}_{filename}" if identifier else filename)
+            from streamtv.builder.ids import archive_stream_id
+
+            stream_id = archive_stream_id(
+                identifier or "", filename, url=url
+            )
             if identifier:
                 try:
                     meta = fetch_archive_metadata(identifier)

@@ -567,8 +567,37 @@ class ChannelImporter:
 
             # Hard invariant: stream ids must be globally unique across the
             # whole data set (cache source_id collisions — Issues 18-21).
+            # D8: uploads land in an isolated mkdtemp; still cross-check data/.
             from streamtv.importers.stream_id_registry import assert_unique_stream_ids
+
             assert_unique_stream_ids(yaml_path.parent)
+            data_dir = Path(__file__).resolve().parents[2] / "data"
+            if (
+                data_dir.is_dir()
+                and yaml_path.parent.resolve() != data_dir.resolve()
+            ):
+                # Merge: registry from data/, then fail if upload ids collide with it.
+                registry = assert_unique_stream_ids(data_dir)
+                from streamtv.importers.stream_id_registry import (
+                    DuplicateStreamIdError,
+                    _iter_stream_ids,
+                )
+
+                collisions: list[str] = []
+                for stream_id, channel_number in _iter_stream_ids(yaml_path):
+                    existing = registry.get(stream_id)
+                    if existing and existing != (yaml_path.name, channel_number):
+                        collisions.append(
+                            f"id '{stream_id}' in {yaml_path.name} (ch {channel_number}) "
+                            f"already used by {existing[0]} (ch {existing[1]})"
+                        )
+                if collisions:
+                    raise DuplicateStreamIdError(
+                        "Duplicate stream ids detected — run "
+                        "scripts/ensure_unique_yaml_stream_ids.py then "
+                        "scripts/sync_media_source_ids_from_yaml.py:\n  "
+                        + "\n  ".join(collisions)
+                    )
         
         with open(yaml_path, 'r') as f:
             data = yaml.safe_load(f)

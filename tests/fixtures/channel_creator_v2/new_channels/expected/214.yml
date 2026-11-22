@@ -1,0 +1,88 @@
+name: 214 Vintage Kids Valentine's Day
+description: Chronological run (1989 -> 2005) of off-air Kids Valentine's Day broadcasts; one vintage station-break reel (alternating Minnesota and network reels) between programs, then long commercial
+  reels and mixed tapes. Loops.
+media:
+  preferred_extension: mp4
+  mp4_only: true
+content:
+- key: cathys_valentine_cbs_1989
+  collection: Vintage Kids Valentine's Day - Cathy's Valentine (CBS 1989) [cathys_valentine_cbs_1989]
+  order: chronological
+- key: mickey_valentine_nbc_1989
+  collection: Vintage Kids Valentine's Day - Mickey's Happy Valentine Special (Magical World of Disney) (NBC 1989) [mickey_valentine_nbc_1989]
+  order: chronological
+- key: pooh_valentine_abc_2005
+  collection: 'Vintage Kids Valentine''s Day - Winnie the Pooh: A Valentine for You (ABC 2005) [pooh_valentine_abc_2005]'
+  order: chronological
+- key: wcco_feb_1995
+  collection: Vintage Kids Valentine's Day - Break - CBS/WCCO commercials (February 1995) [wcco_feb_1995]
+  order: chronological
+- key: kare_feb_1997
+  collection: Vintage Kids Valentine's Day - Break - KARE commercials (Feb 23, 1997) [kare_feb_1997]
+  order: chronological
+- key: wbbm_be_my_valentine_1979
+  collection: 'Vintage Kids Valentine''s Day - Break - WBBM/CBS: Be My Valentine, Charlie Brown - opening & break (1979) [wbbm_be_my_valentine_1979]'
+  order: chronological
+- key: cbs_bugs_valentine_1984
+  collection: Vintage Kids Valentine's Day - Break - CBS Bugs Bunny Valentine special break (Feb 1984) [cbs_bugs_valentine_1984]
+  order: chronological
+- key: wcbs_feb10_1989
+  collection: Vintage Kids Valentine's Day - Break - WCBS breaks during This Is America, Charlie Brown & Cathy's Valentine (Feb 10, 1989) [wcbs_feb10_1989]
+  order: chronological
+- key: nbc_mickey_valentine_bumper_1989
+  collection: 'Vintage Kids Valentine''s Day - Break - NBC bumper: Mickey''s Happy Valentine Special (1989) [nbc_mickey_valentine_bumper_1989]'
+  order: chronological
+- key: nbc_mickey_valentine_break_1989
+  collection: Vintage Kids Valentine's Day - Break - Commercial break during Mickey's Happy Valentine Special (Feb 12, 1989) [nbc_mickey_valentine_break_1989]
+  order: chronological
+- key: abc_pooh_valentine_1999
+  collection: 'Vintage Kids Valentine''s Day - Break - ABC intro & bumpers: Winnie the Pooh - A Valentine for You (1999) [abc_pooh_valentine_1999]'
+  order: chronological
+- key: abc_pooh_valentine_2001
+  collection: 'Vintage Kids Valentine''s Day - Break - ABC breaks: Winnie the Pooh - A Valentine for You (2001) [abc_pooh_valentine_2001]'
+  order: chronological
+- key: nbc_cbs_sat_morning_feb_1985
+  collection: Vintage Kids Valentine's Day - Break - NBC & CBS Saturday morning commercials (Feb 9, 1985) [nbc_cbs_sat_morning_feb_1985]
+  order: chronological
+sequence:
+- key: vintage-kids-valentines-channel
+  items:
+  - all: cathys_valentine_cbs_1989
+    custom_title: Cathy's Valentine (CBS, 1989-02-10)
+  - all: wcco_feb_1995
+    custom_title: 'Station Break: CBS/WCCO commercials (February 1995)'
+    filler_kind: Commercial
+  - all: cbs_bugs_valentine_1984
+    custom_title: 'Station Break: CBS Bugs Bunny Valentine special break (Feb 1984)'
+    filler_kind: Commercial
+  - all: nbc_mickey_valentine_break_1989
+    custom_title: 'Station Break: Commercial break during Mickey''s Happy Valentine Special (Feb 12, 1989)'
+    filler_kind: Commercial
+  - all: mickey_valentine_nbc_1989
+    custom_title: Mickey's Happy Valentine Special (Magical World of Disney) (NBC, 1989-02-12)
+  - all: wbbm_be_my_valentine_1979
+    custom_title: 'Station Break: WBBM/CBS: Be My Valentine, Charlie Brown - opening & break (1979)'
+    filler_kind: Commercial
+  - all: wcbs_feb10_1989
+    custom_title: 'Station Break: WCBS breaks during This Is America, Charlie Brown & Cathy''s Valentine (Feb 10, 1989)'
+    filler_kind: Commercial
+  - all: abc_pooh_valentine_1999
+    custom_title: 'Station Break: ABC intro & bumpers: Winnie the Pooh - A Valentine for You (1999)'
+    filler_kind: Commercial
+  - all: pooh_valentine_abc_2005
+    custom_title: 'Winnie the Pooh: A Valentine for You (ABC, 2005-02-13)'
+  - all: kare_feb_1997
+    custom_title: 'Station Break: KARE commercials (Feb 23, 1997)'
+    filler_kind: Commercial
+  - all: nbc_mickey_valentine_bumper_1989
+    custom_title: 'Station Break: NBC bumper: Mickey''s Happy Valentine Special (1989)'
+    filler_kind: Commercial
+  - all: abc_pooh_valentine_2001
+    custom_title: 'Station Break: ABC breaks: Winnie the Pooh - A Valentine for You (2001)'
+    filler_kind: Commercial
+  - all: nbc_cbs_sat_morning_feb_1985
+    custom_title: 'Commercial Break Marathon: NBC & CBS Saturday morning commercials (Feb 9, 1985)'
+    filler_kind: Commercial
+playout:
+- sequence: vintage-kids-valentines-channel
+- repeat: true

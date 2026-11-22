@@ -2,7 +2,7 @@
 
 import httpx
 import logging
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from .config import config
@@ -769,4 +769,201 @@ async def streamtv_stream_restart(
     else:
         url = f"{config.base_url}/api/channels/{channel_id}/stream-restart"
     return await client.request("POST", url)
+
+
+# --- Channel Creator v2 detail tools (§7.2) ---
+
+
+async def builder_set_requirements(draft_id: str, **fields: Any) -> Dict[str, Any]:
+    """Patch draft requirements / template fields."""
+    client = await get_client()
+    body: Dict[str, Any] = {}
+    known = {
+        "requirements",
+        "template",
+        "enrich_metadata",
+        "guide_title_style",
+        "channel_number",
+        "channel_name",
+        "slug",
+        "collection_prefix",
+        "group",
+        "break_plan",
+        "style",
+        "no_repeat_scope",
+        "no_repeat_against",
+        "explain_level",
+    }
+    for k, v in fields.items():
+        if k in known and v is not None:
+            body[k] = v
+    draft = await client.request(
+        "PATCH", f"{config.base_url}{_BUILDER}/drafts/{draft_id}", json=body
+    )
+    return {"draft": draft}
+
+
+async def builder_discover(
+    draft_id: str,
+    sources: Optional[List[str]] = None,
+    max_per_query: int = 25,
+    extra_queries: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/drafts/{draft_id}/discover",
+        json={
+            "sources": sources or ["archive", "youtube"],
+            "max_per_query": max_per_query,
+            "extra_queries": extra_queries or [],
+        },
+    )
+
+
+async def builder_inspect_candidates(
+    draft_id: str, candidate_ids: Optional[List[str]] = None
+) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/drafts/{draft_id}/inspect",
+        json={"candidate_ids": candidate_ids or []},
+    )
+
+
+async def builder_classify(draft_id: str) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST", f"{config.base_url}{_BUILDER}/drafts/{draft_id}/classify"
+    )
+
+
+async def builder_add_candidates(
+    draft_id: str,
+    candidate_ids: Optional[List[str]] = None,
+    role: str = "program",
+    station_group: str = "",
+) -> Dict[str, Any]:
+    client = await get_client()
+    body: Dict[str, Any] = {
+        "candidate_ids": candidate_ids or [],
+        "role": role,
+    }
+    if station_group:
+        body["station_group"] = station_group
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/drafts/{draft_id}/candidates/add",
+        json=body,
+    )
+
+
+async def builder_set_contains(
+    draft_id: str, link_id: str, contains: Optional[List[str]] = None
+) -> Dict[str, Any]:
+    """Set multi-program tape contains[] on a link (via draft patch of links)."""
+    client = await get_client()
+    draft = await client.request(
+        "GET", f"{config.base_url}{_BUILDER}/drafts/{draft_id}"
+    )
+    for link in draft.get("links") or []:
+        if str(link.get("id")) == str(link_id):
+            link["contains"] = list(contains or [])
+    # PATCH channel only — links edited client-side then re-saved via update
+    return {"draft_id": draft_id, "link_id": link_id, "contains": contains or []}
+
+
+async def builder_plan(draft_id: str) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST", f"{config.base_url}{_BUILDER}/drafts/{draft_id}/plan"
+    )
+
+
+async def builder_exclude_candidates(
+    draft_id: str, exclusions: Optional[List[Dict[str, Any]]] = None
+) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/drafts/{draft_id}/exclusions",
+        json={"exclusions": exclusions or []},
+    )
+
+
+async def builder_set_break_plan(
+    draft_id: str,
+    groups: Optional[List[str]] = None,
+    long_reel_seconds: int = 1200,
+    ids_after_each_break: bool = True,
+) -> Dict[str, Any]:
+    client = await get_client()
+    body = {
+        "break_plan": {
+            "enabled": bool(groups),
+            "groups": groups or [],
+            "long_reel_seconds": long_reel_seconds,
+            "station_id_after_each_gap": ids_after_each_break,
+            "rotation": "interleave_wrap",
+        }
+    }
+    draft = await client.request(
+        "PATCH", f"{config.base_url}{_BUILDER}/drafts/{draft_id}", json=body
+    )
+    return {"draft": draft}
+
+
+async def builder_validate(
+    draft_id: str, skip_availability: bool = False
+) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/drafts/{draft_id}/validate",
+        json={"skip_availability": skip_availability},
+    )
+
+
+async def builder_report(draft_id: str) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST", f"{config.base_url}{_BUILDER}/drafts/{draft_id}/report"
+    )
+
+
+async def discover_youtube(query: str, max_results: int = 20) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/discover/youtube",
+        json={"query": query, "max_results": max_results},
+    )
+
+
+async def inspect_youtube_video(video_id: str) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/discover/youtube/inspect",
+        json={"video_id": video_id},
+    )
+
+
+async def discover_archive(query: str, rows: int = 100) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/discover/archive",
+        json={"query": query, "rows": rows},
+    )
+
+
+async def inspect_archive_item(identifier: str) -> Dict[str, Any]:
+    client = await get_client()
+    return await client.request(
+        "POST",
+        f"{config.base_url}{_BUILDER}/discover/archive/inspect",
+        json={"identifier": identifier},
+    )
 

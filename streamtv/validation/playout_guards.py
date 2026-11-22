@@ -169,6 +169,29 @@ def validate_logo_path(
     return report
 
 
+def validate_duplicate_stream_ids(
+    streams: list[dict[str, Any]],
+    *,
+    channel_label: str = "?",
+) -> GuardReport:
+    """D2: duplicate stream ids inside one channel file are a hard error."""
+    report = GuardReport()
+    seen: dict[str, int] = {}
+    for stream in streams or []:
+        sid = stream.get("id")
+        if not sid:
+            continue
+        key = str(sid)
+        seen[key] = seen.get(key, 0) + 1
+    for sid, count in sorted(seen.items()):
+        if count > 1:
+            report.error(
+                f"Channel {channel_label}: duplicate stream id '{sid}' "
+                f"appears {count} times (D2)"
+            )
+    return report
+
+
 def validate_unified_channel(
     data: dict[str, Any],
     *,
@@ -188,6 +211,7 @@ def validate_unified_channel(
         validate_archive_stream_urls(streams, channel_label=label),
         validate_stream_schedule_ratio(streams, schedule, channel_label=label),
         validate_logo_path(ch, project_root=root, channel_label=label),
+        validate_duplicate_stream_ids(streams, channel_label=label),
     ):
         merged.errors.extend(part.errors)
         merged.warnings.extend(part.warnings)
