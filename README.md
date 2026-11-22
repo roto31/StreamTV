@@ -28,8 +28,8 @@ HDHomeRun-compatible devices. Remux keeps source resolution; clients scale.
 
 ## Quick start
 
-1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases)
-2. Read the [Installation Guide](docs/wiki/Installation-Guide.md)
+1. Download **v1.4.5** from [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.5) (`StreamTV.1.4.5-macos.dmg`, signed + notarized)
+2. Read the [Installation Guide](docs/wiki/Installation-Guide.md) and [Product scope](docs/PRODUCT_SCOPE.md)
 3. Follow [First channel in 15 minutes](docs/guides/FIRST_CHANNEL_15_MIN.md) (public demo pack)
 
 ## Documentation

@@ -23,9 +23,12 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 ## 🚀 Quick Start
 
 **New to StreamTV?** Start here:
+- [Product scope](PRODUCT_SCOPE.md) — what is in / out of the core product (macOS, Archive+YouTube)
+- [First channel in 15 minutes](guides/FIRST_CHANNEL_15_MIN.md) — public demo pack
 - [Quick Start Guide](installation/QUICK_START.md) - Get started in minutes
 - [Beginner Guide](BEGINNER_GUIDE.md) - For novice users
 - [Installation Guide](INSTALLATION.md) - Detailed setup
+- [Releases](https://github.com/roto31/StreamTV/releases) — tip **v1.4.5** signed DMG
 
 ---
 

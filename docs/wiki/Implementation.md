@@ -1,6 +1,6 @@
 # Implementation & Integrations
 
-Technical notes for developers and operators. Tip version: **v1.4.4** ([`VERSION`](https://github.com/roto31/StreamTV/blob/main/VERSION)).
+Technical notes for developers and operators. Tip version: **v1.4.5** ([`VERSION`](https://github.com/roto31/StreamTV/blob/main/VERSION)). Product scope: [PRODUCT_SCOPE.md](https://github.com/roto31/StreamTV/blob/main/docs/PRODUCT_SCOPE.md).
 
 Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree/main/docs). This page is the curated integrations surface — not a dump of historical incident notes.
 

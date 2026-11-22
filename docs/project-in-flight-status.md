@@ -1,17 +1,17 @@
 # StreamTV — project in-flight status
 
-Rolling snapshot: **2026-11-22** (core → 100% trim; tip **`v1.4.5`**).
+Rolling snapshot: **2026-11-22** (signed public DMG **`v1.4.5`**).
 
 | Field | Value |
 |-------|--------|
 | VERSION | 1.4.5 |
-| HEAD | `main` (tag after release CI) |
-| Latest tag | cut `v1.4.5` after public sync + smoke |
-| Public DMG | tag `v1.4.5` on https://github.com/roto31/StreamTV/releases |
+| HEAD | `main` tip tagged `v1.4.5` |
+| Latest tag | `v1.4.5` |
+| Public DMG | https://github.com/roto31/StreamTV/releases/tag/v1.4.5 |
 
-## Shipped in 1.4.5 (this cut)
+## Shipped in 1.4.5
 
-Product surface trim (watermarks / resolutions / PBS auth / schedule-items UI / Tunarr browse), Transcoding hub, Swagger CSP fix, mpegts.js docs, PRODUCT_SCOPE + public demo pack, Linux retire + Builder title/runtime fixes, open-source culled sync.
+Core product trim (watermarks / resolutions / PBS auth / schedule-items UI / Tunarr browse), Transcoding hub, Swagger CSP fix, mpegts.js docs, PRODUCT_SCOPE + public demo pack, open-source cull, **signed + notarized** `StreamTV.1.4.5-macos.dmg` (Developer ID stapled; `spctl` accepted).
 
 ## Do not touch without owner `APPROVED:`
 

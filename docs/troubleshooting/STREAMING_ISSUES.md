@@ -10,7 +10,7 @@ Common issues with video streaming and playback in StreamTV.
 | ~8 KiB keepalives, FFmpeg ~0% CPU mid-Archive item | [FFmpeg stall / keepalive](../guides/FFMPEG_STALL_KEEPALIVE.md) |
 | TunarrRAM full / `Errno 28` / black screens | [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | Uneven loudness / true-peak spikes / loudnorm CPU | [LoudNorm fleet audio](../guides/LOUDNORM_FLEET_AUDIO.md) |
-| Want AI classify + approved heals | [Foundation Models recovery](../guides/FOUNDATION_MODELS_RECOVERY.md), [Auto-healer](../AUTO_HEALER.md) |
+| Want AI classify + approved heals | **Out of scope** — use heal scripts only; see [Product scope](../PRODUCT_SCOPE.md), [AUTO_HEALER.md](../AUTO_HEALER.md) (retired stub) |
 | Plex guide stale after StreamTV OK | [Plex Live TV recovery](../plex/PLEX_LIVE_TV_RECOVERY.md) (DVR **117**) |
 | YouTube mid-song 403 / full-cache tradeoffs | Section below + [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 

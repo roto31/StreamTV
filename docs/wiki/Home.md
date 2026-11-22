@@ -48,7 +48,9 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 
 - **Builder first-party sources:** Archive.org, YouTube  
 - **Schedules:** `schedules/{n}.yml` on disk; Schedules page inventory only (no create/edit UI)  
-- **Retired:** Collections UI / `/api/collections`, AI Recovery / Foundation Models / Ollama operator UI  
+- **Remux:** source resolution (clients scale); Transcoding hub for optional profiles  
+- **Retired:** Collections UI / `/api/collections`, AI Recovery / Foundation Models / Ollama, Watermarks UI, Resolutions UI, PBS auth UI, schedule-items editor, Tunarr library browse proxies  
+
 
 ## Wiki pages
 

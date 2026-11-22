@@ -102,4 +102,4 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 
 ---
 
-**Status:** Wiki mirror current with tip **1.4.4** (app icon + Channel Creator MCP); publish via `scripts/sync_public_docs.sh --apply --wiki`.
+**Status:** Wiki mirror current with tip **1.4.5** (core trim + signed DMG + public demo pack); publish via `scripts/sync_public_docs.sh --apply --wiki`.
