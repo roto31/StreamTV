@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - (none yet)
 
+## [1.4.4] - 2026-11-22
+
+### Added
+- **Application icon** — Official StreamTV macOS / web mark: wood-cabinet CRT with archival film strip + play/stream pane (favicon included).
+
 ## [1.4.3] - 2026-11-21
 
 ### Added

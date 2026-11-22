@@ -21,7 +21,7 @@
 ## System Architecture
 
 **Canonical Mermaid diagrams:** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md)  
-(ASCII below is a tip **1.4.3** summary — trust Mermaid if they diverge.)
+(ASCII below is a tip **1.4.4** summary — trust Mermaid if they diverge.)
 
 ### High-Level Architecture
 

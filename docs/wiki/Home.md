@@ -2,7 +2,7 @@
 
 Welcome to the StreamTV platform documentation wiki.
 
-**Current tip:** **v1.4.3** — signed macOS DMG on [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.3).
+**Current tip:** **v1.4.4** — signed macOS DMG on [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.4).
 
 Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree/main/docs) in the public repo. This wiki is the curated entry layer.
 

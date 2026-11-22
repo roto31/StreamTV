@@ -66,6 +66,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Channel Creator MCP (NL + signal paths) | [guides/CHANNEL_CREATOR_MCP.md](guides/CHANNEL_CREATOR_MCP.md) |
 | Channel Creator MCP host wiring (Cursor / VS Code / Claude / local / ChatGPT) | [guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md](guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) |
 | Channel Creator MCP all-in-one setup script | [`scripts/setup_channel_creator_mcp.sh`](../scripts/setup_channel_creator_mcp.sh) · [helpers README](../scripts/channel-creator-mcp/README.md) |
+| Application icon (macOS + favicon) | [`branding/app-icon/`](../branding/app-icon/README.md) · `scripts/install_app_icon.sh` |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
 | Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md) |

@@ -27,7 +27,7 @@ Automatic portable zips and first-launch restore: [Backup and restore](https://g
 
 ## Quick Installation
 
-**Preferred:** install the signed DMG from [Releases](https://github.com/roto31/StreamTV/releases) (tip **v1.4.3**).
+**Preferred:** install the signed DMG from [Releases](https://github.com/roto31/StreamTV/releases) (tip **v1.4.4**).
 
 From a source checkout:
 
