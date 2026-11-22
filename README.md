@@ -10,7 +10,6 @@
 ## Features
 
 - Direct streaming from YouTube and Archive.org (Channel Builder first-party sources)
-- Playback adapters may also resolve PBS / Plex URLs already in inventory
 - HDHomeRun emulation for Plex, Emby, and Jellyfin
 - YAML schedules (`schedules/{n}.yml`) with commercial breaks; M3U + XMLTV EPG (web schedule create/edit removed)
 - In-browser `/player` preview (mpegts.js live TS) with VLC handoff
