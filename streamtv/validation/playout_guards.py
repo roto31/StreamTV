@@ -95,6 +95,12 @@ def validate_archive_stream_urls(
         path = unquote(urlparse(url).path)
         if path.endswith("/") or path.rstrip("/").endswith("/download"):
             report.error(f"{prefix}{label}: archive url ends at collection, not file")
+        runtime = stream.get("runtime")
+        if not runtime:
+            report.warn(
+                f"{prefix}{label}: archive stream missing runtime — "
+                "XMLTV/guide slots will collapse without MediaItem.duration"
+            )
     return report
 
 

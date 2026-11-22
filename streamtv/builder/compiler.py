@@ -38,6 +38,87 @@ def _iso_duration(seconds: Optional[int]) -> Optional[str]:
     return f"PT{s}S"
 
 
+def _parse_iso_runtime(runtime: Optional[str]) -> Optional[int]:
+    if not runtime:
+        return None
+    text = str(runtime).strip().upper().replace("PT", "")
+    if not text:
+        return None
+    hours = minutes = seconds = 0
+    match_h = re.search(r"(\d+)H", text)
+    match_m = re.search(r"(\d+)M", text)
+    match_s = re.search(r"(\d+)S", text)
+    if match_h:
+        hours = int(match_h.group(1))
+    if match_m:
+        minutes = int(match_m.group(1))
+    if match_s:
+        seconds = int(match_s.group(1))
+    total = hours * 3600 + minutes * 60 + seconds
+    return total if total > 0 else None
+
+
+def enrich_archive_stream_runtimes(streams: list[dict[str, Any]]) -> list[str]:
+    """Fill missing Archive ``runtime`` from metadata API. Returns warning strings."""
+    from streamtv.builder.resolver import (
+        _extract_archive_identifier,
+        _is_archive_file_url,
+        lookup_archive_file_duration,
+    )
+    from urllib.parse import unquote, urlparse
+
+    warnings: list[str] = []
+    for stream in streams:
+        if _parse_iso_runtime(stream.get("runtime")):
+            continue
+        src = (stream.get("source") or "").lower()
+        url = (stream.get("url") or "").replace("\n", " ").strip()
+        if src not in ("archive", "archive_org") and "archive.org" not in url.lower():
+            continue
+        if not url or not _is_archive_file_url(url):
+            warnings.append(
+                f"{stream.get('title') or stream.get('id') or url}: "
+                "Archive stream missing file URL; cannot resolve duration"
+            )
+            continue
+        identifier = _extract_archive_identifier(url)
+        filename = unquote(urlparse(url).path.rsplit("/", 1)[-1])
+        if not identifier:
+            warnings.append(
+                f"{stream.get('title') or filename}: cannot parse Archive identifier"
+            )
+            continue
+        try:
+            seconds = lookup_archive_file_duration(identifier, filename)
+        except Exception as exc:
+            warnings.append(
+                f"{stream.get('title') or filename}: Archive metadata duration "
+                f"lookup failed ({exc})"
+            )
+            continue
+        if not seconds:
+            warnings.append(
+                f"{stream.get('title') or filename}: Archive metadata has no "
+                "file length — EPG slots require a real duration"
+            )
+            continue
+        stream["runtime"] = _iso_duration(seconds)
+    return warnings
+
+
+def archive_streams_missing_runtime(streams: list[dict[str, Any]]) -> list[str]:
+    """Labels of Archive file streams that still lack a usable runtime."""
+    missing: list[str] = []
+    for stream in streams:
+        src = (stream.get("source") or "").lower()
+        url = (stream.get("url") or "").lower()
+        if src not in ("archive", "archive_org") and "archive.org" not in url:
+            continue
+        if not _parse_iso_runtime(stream.get("runtime")):
+            missing.append(str(stream.get("title") or stream.get("id") or stream.get("url")))
+    return missing
+
+
 def _sort_links(draft: BuilderDraft) -> list:
     ok_links = [link for link in draft.links if link.status == LinkStatus.OK]
     if draft.ordering == OrderingMode.CHRONOLOGICAL:
@@ -202,6 +283,7 @@ def compile_draft_to_unified(
     if not number:
         raise ValueError("Channel number is required before build")
 
+    enrich_archive_stream_runtimes(streams)
     unified = {
         "config_revision": 1,
         "channel": {
@@ -241,9 +323,27 @@ async def build_channel_from_draft(
     unified = compile_draft_to_unified(draft, store)
     number = str(draft.channel.number)
 
+    # Second-chance metadata fill (in case resolve left duration unset).
+    runtime_warnings = enrich_archive_stream_runtimes(unified["streams"])
+    missing_runtime = archive_streams_missing_runtime(unified["streams"])
+    if missing_runtime:
+        raise ValueError(
+            "Archive streams missing runtime — cannot build a correct XMLTV/schedule. "
+            "Re-run resolve or fix metadata lengths for: "
+            + "; ".join(missing_runtime[:8])
+            + ("…" if len(missing_runtime) > 8 else "")
+        )
+
     report = validate_unified_channel(unified)
     if not report.ok:
         raise ValueError("; ".join(report.errors))
+
+    schedule = unified.get("schedule") or {}
+    if not schedule.get("content") or not schedule.get("playout"):
+        raise ValueError(
+            "Compiled schedule is incomplete (need content + playout); "
+            "refusing to write channel artifacts"
+        )
 
     unified_path = UNIFIED_DIR / f"{number}.channel.yaml"
     inventory_path = DATA_DIR / f"channels_generated_{number}.yaml"
@@ -260,11 +360,14 @@ async def build_channel_from_draft(
         ]
     }
     _write_yaml(inventory_path, inventory)
-    _write_yaml(schedule_path, unified["schedule"])
+    _write_yaml(schedule_path, schedule)
+
+    if not schedule_path.is_file() or schedule_path.stat().st_size < 32:
+        raise ValueError(f"Schedule file was not written correctly: {schedule_path}")
 
     await import_channels_from_yaml(inventory_path, db_session=db_session)
 
-    warnings = list(report.warnings)
+    warnings = list(report.warnings) + runtime_warnings
     return {
         "channel_number": number,
         "unified_path": str(unified_path),

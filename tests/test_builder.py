@@ -14,17 +14,116 @@ def test_detect_archive_collection() -> None:
     assert kind == "archive_collection"
 
 
-def test_archive_file_url_title_is_humanized() -> None:
+def test_archive_file_url_title_is_humanized(monkeypatch: pytest.MonkeyPatch) -> None:
     url = (
         "https://archive.org/download/winnie-the-pooh-christmas-too-flintstone-"
         "family-christmas-the-wish-that-changed-christmas-1993/"
         "Winnie%20The%20Pooh%20%26%20Christmas%20Too%2C%20Flintstone%20Family%"
         "20Christmas%2C%20The%20Wish%20That%20Changed%20Christmas%201993.mp4"
     )
+    filename = (
+        "Winnie The Pooh & Christmas Too, Flintstone Family Christmas, "
+        "The Wish That Changed Christmas 1993.mp4"
+    )
+
+    def fake_meta(_identifier: str) -> dict:
+        return {
+            "metadata": {"date": "1993"},
+            "files": [{"name": filename, "length": "5385.2"}],
+        }
+
+    monkeypatch.setattr(
+        "streamtv.builder.resolver.fetch_archive_metadata", fake_meta
+    )
     item = resolve_single_url(url)
     assert "%" not in item["title"]
     assert "Winnie The Pooh & Christmas Too" in item["title"]
     assert "Flintstone Family Christmas" in item["title"]
+    assert item["duration"] == 5385
+    assert item["upload_date"] == "1993"
+
+
+def test_lookup_archive_file_duration_matches_basename() -> None:
+    from streamtv.builder.resolver import lookup_archive_file_duration
+
+    meta = {
+        "files": [
+            {"name": "path/WGGB ABC 40 Ernest Saves Xmas 12-11-1993.mp4", "length": "5581"},
+            {"name": "other.mp4", "length": "100"},
+        ]
+    }
+    dur = lookup_archive_file_duration(
+        "wggb-abc-40-ernest-saves-xmas-12-11-1993",
+        "WGGB%20ABC%2040%20Ernest%20Saves%20Xmas%2012-11-1993.mp4",
+        metadata=meta,
+    )
+    assert dur == 5581
+
+
+def test_compile_archive_draft_emits_runtime(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "streamtv.builder.compiler.enrich_archive_stream_runtimes",
+        lambda streams: [],
+    )
+    draft = BuilderDraft(
+        channel=ChannelInfo(number="2011", name="Xmas", primary_collection="Xmas"),
+        ordering=OrderingMode.AS_ADDED,
+        links=[
+            LinkItem(
+                url=(
+                    "https://archive.org/download/example/"
+                    "Winnie%20the%20Pooh.mp4"
+                ),
+                status=LinkStatus.OK,
+                source="archive_org",
+                stream_id="example_winnie",
+                title="Winnie the Pooh",
+                duration=1653,
+            )
+        ],
+    )
+    unified = compile_draft_to_unified(draft)
+    assert unified["streams"][0]["runtime"] == "PT27M33S"
+    assert unified["schedule"]["content"]
+    assert unified["schedule"]["playout"]
+    assert unified["schedule"]["media"]["mp4_only"] is True
+
+
+def test_build_rejects_archive_streams_without_runtime(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import asyncio
+
+    from streamtv.builder.compiler import build_channel_from_draft
+
+    draft = BuilderDraft(
+        channel=ChannelInfo(number="9998", name="Bad", primary_collection="Bad"),
+        ordering=OrderingMode.AS_ADDED,
+        links=[
+            LinkItem(
+                url="https://archive.org/download/x/file.mp4",
+                status=LinkStatus.OK,
+                source="archive_org",
+                stream_id="x_file",
+                title="File",
+                duration=None,
+            )
+        ],
+    )
+    monkeypatch.setattr(
+        "streamtv.builder.compiler.enrich_archive_stream_runtimes",
+        lambda streams: ["File: Archive metadata has no file length"],
+    )
+    monkeypatch.setattr(
+        "streamtv.builder.compiler.validate_unified_channel",
+        lambda unified: type("R", (), {"ok": True, "errors": [], "warnings": []})(),
+    )
+
+    async def _run() -> None:
+        with pytest.raises(ValueError, match="missing runtime"):
+            await build_channel_from_draft(draft, db_session=object())
+
+    asyncio.run(_run())
 
 
 def test_detect_youtube_playlist() -> None:

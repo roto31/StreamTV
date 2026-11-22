@@ -35,6 +35,15 @@ When resolving Archive.org download URLs, programme titles must be **decoded**
 (no `%20` / `%26` / `%2C` in the guide). Prefer Builder resolve (it humanizes
 filename stems). Never leave percent-encoded filename stems as `title` in YAML.
 
+## Runtimes / XMLTV schedule — required
+
+Archive (and other VOD) items need a real **duration** so continuous playout and
+XMLTV slots match on-air video. Builder resolve fills Archive `files[].length`
+into link duration → YAML `runtime` → `MediaItem.duration`. **`builder_build`
+refuses Archive streams that still lack runtime** (prevents collapsed guides).
+After build, confirm `schedules/<number>.yml` exists and soft
+`streamtv_playout_reset` if the guide looks stale.
+
 ## Archive.org URLs — never `.ia.mp4` (Issue 24)
 
 **Hard rule:** Do **not** use Internet Archive **derivative** URLs ending in `.ia.mp4`.

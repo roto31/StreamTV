@@ -96,6 +96,25 @@ class ChannelImporter:
         if bd and not media_item.upload_date:
             media_item.upload_date = str(bd)
 
+    def _archive_org_duration_from_url(self, url: str) -> Optional[int]:
+        """Look up Archive.org metadata file length for a download URL."""
+        try:
+            from urllib.parse import unquote, urlparse
+
+            from streamtv.builder.resolver import (
+                _extract_archive_identifier,
+                lookup_archive_file_duration,
+            )
+
+            identifier = _extract_archive_identifier(url)
+            filename = unquote(urlparse(url).path.rsplit("/", 1)[-1])
+            if not identifier or not filename:
+                return None
+            return lookup_archive_file_duration(identifier, filename)
+        except Exception as e:
+            logger.warning(f"  Could not fetch Archive.org duration for {url}: {e}")
+            return None
+
     async def get_or_create_media_item(
         self, stream_data: Dict[str, Any], *, channel_name: str = ""
     ) -> MediaItem:
@@ -127,6 +146,13 @@ class ChannelImporter:
                     logger.warning(
                         f"  Could not refresh YouTube duration for {url}: {e}"
                     )
+            if (
+                not existing.duration
+                and existing.source == StreamSource.ARCHIVE_ORG
+            ):
+                archive_dur = self._archive_org_duration_from_url(url)
+                if archive_dur:
+                    existing.duration = archive_dur
             self.db.commit()
             self.db.refresh(existing)
             return existing
@@ -225,6 +251,15 @@ class ChannelImporter:
                     logger.debug(f"  Fetched YouTube duration {duration}s for {title[:50]}")
             except Exception as e:
                 logger.warning(f"  Could not fetch YouTube duration for {url}: {e}")
+
+        # Archive.org: metadata file length when YAML has no runtime (EPG needs real slots)
+        if not duration and source == StreamSource.ARCHIVE_ORG:
+            archive_dur = self._archive_org_duration_from_url(url)
+            if archive_dur:
+                duration = archive_dur
+                logger.debug(
+                    f"  Fetched Archive.org duration {duration}s for {title[:50]}"
+                )
         
         # Extract source ID for non-Plex sources
         if source == StreamSource.YOUTUBE:

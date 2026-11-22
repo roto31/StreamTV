@@ -42,7 +42,22 @@ def test_accepts_canonical_mp4_url() -> None:
             "source": "archive_org",
             "url": "https://archive.org/download/foo/bar.mp4",
             "title": "good",
+            "runtime": "PT30M",
         }
     ]
     report = validate_archive_stream_urls(streams)
     assert report.ok
+    assert not report.warnings
+
+
+def test_warns_archive_stream_missing_runtime() -> None:
+    streams = [
+        {
+            "source": "archive_org",
+            "url": "https://archive.org/download/foo/bar.mp4",
+            "title": "no-runtime",
+        }
+    ]
+    report = validate_archive_stream_urls(streams)
+    assert report.ok
+    assert any("missing runtime" in w for w in report.warnings)

@@ -75,15 +75,57 @@ def _slugify(text: str, max_len: int = 48) -> str:
     return slug[:max_len] or "item"
 
 
+def fetch_archive_metadata(identifier: str) -> dict[str, Any]:
+    """Fetch Archive.org item metadata JSON (includes per-file ``length``)."""
+    api_url = f"https://archive.org/metadata/{identifier}"
+    response = requests.get(api_url, timeout=60)
+    response.raise_for_status()
+    data = response.json()
+    if not isinstance(data, dict):
+        raise ValueError(f"Unexpected Archive.org metadata for {identifier}")
+    return data
+
+
+def lookup_archive_file_duration(
+    identifier: str,
+    filename: str,
+    *,
+    metadata: Optional[dict[str, Any]] = None,
+) -> Optional[int]:
+    """Return duration seconds for a file inside an Archive.org item, if known.
+
+    Uses the metadata API ``files[].length`` field (seconds). Missing length
+    returns ``None`` — callers must not invent a default for EPG.
+    """
+    if not identifier or not filename:
+        return None
+    data = metadata if metadata is not None else fetch_archive_metadata(identifier)
+    target = unquote(filename).rsplit("/", 1)[-1].strip().lower()
+    if not target:
+        return None
+    for file_info in data.get("files") or []:
+        if not isinstance(file_info, dict):
+            continue
+        name = unquote(str(file_info.get("name") or "")).rsplit("/", 1)[-1].strip().lower()
+        if name != target:
+            continue
+        length = file_info.get("length")
+        if length is None or length == "":
+            return None
+        try:
+            seconds = int(float(length))
+        except (TypeError, ValueError):
+            return None
+        return seconds if seconds > 0 else None
+    return None
+
+
 def resolve_archive_collection(url: str) -> list[dict[str, Any]]:
     identifier = _extract_archive_identifier(url)
     if not identifier:
         raise ValueError(f"Could not parse Archive.org identifier from: {url}")
 
-    api_url = f"https://archive.org/metadata/{identifier}"
-    response = requests.get(api_url, timeout=60)
-    response.raise_for_status()
-    metadata = response.json()
+    metadata = fetch_archive_metadata(identifier)
 
     results: list[dict[str, Any]] = []
     for file_info in metadata.get("files", []):
@@ -93,8 +135,9 @@ def resolve_archive_collection(url: str) -> list[dict[str, Any]]:
         encoded = quote(filename, safe="")
         file_url = f"https://archive.org/download/{identifier}/{encoded}"
         title = humanize_media_title(filename)
-        length = file_info.get("length")
-        duration = int(float(length)) if length else None
+        duration = lookup_archive_file_duration(
+            identifier, filename, metadata=metadata
+        )
         stream_id = _slugify(f"{identifier}_{filename}")
         results.append(
             {
@@ -200,10 +243,23 @@ def resolve_single_url(url: str) -> dict[str, Any]:
     if kind == "archive":
         identifier = _extract_archive_identifier(url)
         title = humanize_media_title(unquote(identifier or "")) or (identifier or url)
+        duration: Optional[int] = None
+        upload_date: Optional[str] = None
         if _is_archive_file_url(url):
             filename = unquote(urlparse(url).path.rsplit("/", 1)[-1])
             title = title_from_media_url(url) or humanize_media_title(filename)
             stream_id = _slugify(f"{identifier}_{filename}" if identifier else filename)
+            if identifier:
+                try:
+                    meta = fetch_archive_metadata(identifier)
+                    duration = lookup_archive_file_duration(
+                        identifier, filename, metadata=meta
+                    )
+                    upload_date = (meta.get("metadata") or {}).get("date")
+                except Exception:
+                    # Leave duration unset; build/import gates require a real length
+                    # for Archive streams so EPG slots are not invented.
+                    duration = None
         else:
             stream_id = _slugify(identifier or url)
         return {
@@ -211,8 +267,8 @@ def resolve_single_url(url: str) -> dict[str, Any]:
             "title": title,
             "source": "archive_org",
             "stream_id": stream_id,
-            "duration": None,
-            "upload_date": None,
+            "duration": duration,
+            "upload_date": upload_date,
         }
 
     if kind == "pbs":
