@@ -121,12 +121,28 @@ def archive_streams_missing_runtime(streams: list[dict[str, Any]]) -> list[str]:
 
 def _sort_links(draft: BuilderDraft) -> list:
     ok_links = [link for link in draft.links if link.status == LinkStatus.OK]
-    if draft.ordering == OrderingMode.CHRONOLOGICAL:
+    if draft.ordering in (OrderingMode.CHRONOLOGICAL, OrderingMode.AIR_DATE):
+        # D4: air_date first, then upload_date, then insertion order (stable).
         return sorted(
             ok_links,
-            key=lambda link: link.upload_date or "",
+            key=lambda link: (
+                getattr(link, "air_date", None) or "9999-99-99",
+                link.upload_date or "9999-99-99",
+            ),
         )
     return ok_links
+
+
+def _program_collection_name(draft: BuilderDraft, link: Any) -> str:
+    """One collection per program (D1/D3); name includes stream id in [brackets]."""
+    base = _collection_name(draft)
+    title = _humanize_title(link.title) or link.stream_id or "item"
+    sid = link.stream_id or "item"
+    return f"{base} - {title} [{sid}]"
+
+
+def _content_key(stream_id: str) -> str:
+    return re.sub(r"[^\w]+", "_", (stream_id or "item").lower()).strip("_") or "item"
 
 
 def _next_channel_number(existing: set[str]) -> str:
@@ -165,14 +181,13 @@ def _streams_from_draft(
     draft: BuilderDraft,
     filler_store: FillerStore,
 ) -> list[dict[str, Any]]:
-    collection = _collection_name(draft)
     streams: list[dict[str, Any]] = []
     for link in _sort_links(draft):
         if not link.stream_id:
             continue
         stream: dict[str, Any] = {
             "id": link.stream_id,
-            "collection": collection,
+            "collection": _program_collection_name(draft, link),
             "type": "event",
             "source": link.source or "youtube",
             "url": link.url,
@@ -181,8 +196,10 @@ def _streams_from_draft(
         runtime = _iso_duration(link.duration)
         if runtime:
             stream["runtime"] = runtime
-        if link.upload_date:
-            stream["broadcast_date"] = link.upload_date
+        # D4: never write upload_date into broadcast_date.
+        air = getattr(link, "air_date", None)
+        if air:
+            stream["broadcast_date"] = air
         streams.append(stream)
 
     for attachment in draft.filler_attachments:
@@ -191,13 +208,14 @@ def _streams_from_draft(
             continue
         for idx, flink in enumerate(filler.links):
             sid = flink.stream_id or f"filler_{filler.id}_{idx}"
+            title = _humanize_title(flink.title) or sid
             stream = {
                 "id": sid,
-                "collection": filler.name,
+                "collection": f"{filler.name} - {title} [{sid}]",
                 "type": flink.clip_type,
                 "source": flink.source or "youtube",
                 "url": flink.url,
-                "title": _humanize_title(flink.title) or sid,
+                "title": title,
             }
             runtime = _iso_duration(flink.duration)
             if runtime:
@@ -210,52 +228,68 @@ def _schedule_from_draft(
     draft: BuilderDraft,
     filler_store: FillerStore,
 ) -> dict[str, Any]:
-    collection = _collection_name(draft)
+    """Emit one collection per program/break and only ``all:`` sequence items (D1)."""
     channel_name = draft.channel.name or f"Channel {draft.channel.number}"
-    primary_key = re.sub(r"[^\w]+", "_", collection.lower()).strip("_") or "primary"
+    order = "shuffle" if draft.ordering == OrderingMode.SHUFFLE else "chronological"
+    ok_links = [link for link in _sort_links(draft) if link.stream_id]
 
-    content: list[dict[str, Any]] = [
-        {
-            "key": primary_key,
-            "collection": collection,
-            "order": "shuffle" if draft.ordering == OrderingMode.SHUFFLE else "chronological",
-        }
-    ]
+    content: list[dict[str, Any]] = []
+    for link in ok_links:
+        key = _content_key(link.stream_id or "")
+        content.append(
+            {
+                "key": key,
+                "collection": _program_collection_name(draft, link),
+                "order": order,
+            }
+        )
 
-    filler_keys: list[tuple[str, str, int]] = []
+    break_entries: list[tuple[str, str]] = []
     for attachment in draft.filler_attachments:
         filler = filler_store.get(attachment.filler_id)
         if not filler or not filler.links:
             continue
-        fkey = re.sub(r"[^\w]+", "_", filler.name.lower()).strip("_") or f"filler_{filler.id}"
-        content.append(
-            {
-                "key": fkey,
-                "collection": filler.name,
-                "order": "shuffle",
-            }
-        )
-        filler_keys.append((fkey, filler.name, attachment.break_duration_seconds))
+        for idx, flink in enumerate(filler.links):
+            sid = flink.stream_id or f"filler_{filler.id}_{idx}"
+            fkey = _content_key(sid)
+            title = _humanize_title(flink.title) or sid
+            content.append(
+                {
+                    "key": fkey,
+                    "collection": f"{filler.name} - {title} [{sid}]",
+                    "order": "shuffle",
+                }
+            )
+            break_entries.append((fkey, title))
 
     sequence_items: list[dict[str, Any]] = []
-    if filler_keys and draft.filler_attachments:
-        attachment = draft.filler_attachments[0]
-        if attachment.padding_mode == PaddingMode.BETWEEN_ITEMS:
-            for _ in _sort_links(draft):
-                sequence_items.append({"all": primary_key})
-                fkey, _, break_secs = filler_keys[0]
-                sequence_items.append(
-                    {
-                        "duration": break_secs,
-                        "content": fkey,
-                        "custom_title": "Commercial Break",
-                    }
-                )
-        else:
-            sequence_items.append({"all": primary_key})
-    else:
-        sequence_items.append({"all": primary_key})
+    between = False
+    if draft.filler_attachments and break_entries:
+        between = draft.filler_attachments[0].padding_mode == PaddingMode.BETWEEN_ITEMS
 
+    if between and break_entries:
+        # Rotate break reels between programs; never emit duration: (D1).
+        for i, link in enumerate(ok_links):
+            sequence_items.append(
+                {
+                    "all": _content_key(link.stream_id or ""),
+                    "custom_title": _humanize_title(link.title) or link.stream_id,
+                }
+            )
+            fkey, btitle = break_entries[i % len(break_entries)]
+            sequence_items.append(
+                {
+                    "all": fkey,
+                    "custom_title": f"Station Break: {btitle}",
+                    "filler_kind": "Commercial",
+                }
+            )
+    else:
+        for link in ok_links:
+            sequence_items.append({"all": _content_key(link.stream_id or "")})
+
+    base = _collection_name(draft)
+    primary_key = re.sub(r"[^\w]+", "_", base.lower()).strip("_") or "primary"
     seq_key = f"{primary_key}_playlist"
     schedule: dict[str, Any] = {
         "name": channel_name,

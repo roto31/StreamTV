@@ -115,6 +115,9 @@ def build_stream_meta_data(
             meta["broadcast_date"] = str(stream_data["broadcast_date"])
         if stream_data.get("network"):
             meta["network"] = stream_data["network"]
+        cats = stream_data.get("categories")
+        if isinstance(cats, list) and cats:
+            meta["categories"] = [str(c) for c in cats if c][:8]
         return json.dumps(meta) if meta else None
     slot = (stream_data.get("slot") or "").strip()
     if slot:
@@ -129,4 +132,8 @@ def build_stream_meta_data(
         meta["broadcast_date"] = str(stream_data["broadcast_date"])
     if stream_data.get("network"):
         meta["network"] = stream_data["network"]
+    # D18 / §5.9.3: pass YAML categories through for XMLTV <category>
+    cats = stream_data.get("categories")
+    if isinstance(cats, list) and cats:
+        meta["categories"] = [str(c) for c in cats if c][:8]
     return json.dumps(meta) if meta else None

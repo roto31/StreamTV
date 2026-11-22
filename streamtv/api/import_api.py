@@ -122,32 +122,32 @@ async def import_channels_yaml(
     """
     # Validate file upload
     validate_file_upload(yaml_file)
-    
-    # Save uploaded file temporarily
+
+    # D8: isolate each upload in its own temp directory so assert_unique_stream_ids
+    # never scans the OS temp folder for stray colliding *.yaml files.
+    tmp_dir: Optional[str] = None
     tmp_path = None
     try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.yaml') as tmp_file:
-            # Read file in chunks to prevent memory issues
-            chunk_size = 8192
-            total_size = 0
+        tmp_dir = tempfile.mkdtemp(prefix="streamtv_yaml_import_")
+        tmp_path = Path(tmp_dir) / "upload.yaml"
+        chunk_size = 8192
+        total_size = 0
+        with open(tmp_path, "wb") as tmp_file:
             while True:
                 chunk = await yaml_file.read(chunk_size)
                 if not chunk:
                     break
                 total_size += len(chunk)
                 if total_size > MAX_FILE_SIZE:
-                    tmp_file.close()
-                    os.unlink(tmp_file.name)
                     raise HTTPException(
                         status_code=400,
-                        detail=f"File too large (max {MAX_FILE_SIZE} bytes)"
+                        detail=f"File too large (max {MAX_FILE_SIZE} bytes)",
                     )
                 tmp_file.write(chunk)
-        tmp_path = Path(tmp_file.name)
-    
+
         # Validate file content
         validate_file_content(tmp_path)
-    
+
         # Validate if requested
         if validate:
             try:
@@ -171,10 +171,10 @@ async def import_channels_yaml(
                     status_code=400,
                     detail=error_detail
                 )
-        
+
         # Import channels (reuse request session so returned objects stay attached)
         channels = await import_channels_from_yaml(tmp_path, validate=validate, db_session=db)
-        
+
         logger.info(f"Successfully imported {len(channels)} channels from {yaml_file.filename}")
         try:
             from streamtv.backup.scheduler import schedule_backup
@@ -192,15 +192,18 @@ async def import_channels_yaml(
             detail=f"Error importing channels: {str(e)}"
         )
     finally:
-        # Clean up temporary file securely
         if tmp_path and tmp_path.exists():
             try:
-                # Overwrite file before deletion (security best practice)
-                with open(tmp_path, 'wb') as f:
-                    f.write(b'\x00' * min(tmp_path.stat().st_size, 1024))  # Overwrite first KB
+                with open(tmp_path, "wb") as f:
+                    f.write(b"\x00" * min(tmp_path.stat().st_size, 1024))
                 tmp_path.unlink()
             except Exception as e:
                 logger.warning(f"Could not securely delete temporary file {tmp_path}: {e}")
+        if tmp_dir:
+            try:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+            except Exception as e:
+                logger.warning(f"Could not remove temporary import dir {tmp_dir}: {e}")
 
 
 @router.post("/channels/yaml/path", response_model=List[ChannelResponse])

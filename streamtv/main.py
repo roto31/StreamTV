@@ -475,6 +475,11 @@ channel_icons_dir = Path(__file__).parent.parent / "data" / "channel_icons"
 channel_icons_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/static/channel_icons", StaticFiles(directory=str(channel_icons_dir)), name="channel_icons")
 
+# Cached guide thumbnails for Channel Creator (§5.9.3 / D18)
+thumbnails_dir = Path(__file__).parent.parent / "data" / "thumbnails"
+thumbnails_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/static/thumbnails", StaticFiles(directory=str(thumbnails_dir)), name="thumbnails")
+
 # App branding (favicon / touch icon); fallback to repo branding/ if static copy missing
 _branding_static = Path(__file__).parent / "static" / "branding"
 _branding_repo = Path(__file__).parent.parent / "branding" / "app-icon"

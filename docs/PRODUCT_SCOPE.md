@@ -1,7 +1,8 @@
 # StreamTV product scope
 
 **Platform:** macOS only (signed DMG).  
-**Tip version:** see root [`VERSION`](../VERSION).
+**Tip version:** **1.4.5** — see root [`VERSION`](../VERSION) and [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.5).  
+**Bedrock:** streaming / scheduling / FFmpeg constants / HDHomeRun / cache / `api/iptv.py` remain **FROZEN** ([STREAMING_BEDROCK_FROZEN.md](STREAMING_BEDROCK_FROZEN.md)); 1.4.5 trim did not modify those paths.
 
 ## In scope (core)
 
