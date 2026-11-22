@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Docs / Wiki** — ChatGPT remote access is no longer “deferred”; indexes and diagrams cover stdio local hosts and tunneled `:8411` for ChatGPT / Claude web.
 
+## [1.4.6] - 2026-11-22
+
+### Added
+- **WebUI redesign** — Modern design system (self-hosted fonts, Lucide SVG icons, light/dark tokens), rebuilt application shell, and restyled Channel Builder. WCAG 2.2 AA focus and contrast.
+- **WebUI platform polish** — Web app manifest, theme-color metas, View Transitions, safe-area / `dvh` layout, sticky table headers, and page-aware global search with live result announcements.
+- **Installer app** — Notarized DMG embeds the Channel Builder SPA so `/builder` works out of the box.
+
+### Fixed
+- Shell helpers (`authenticatedFetch`, `registerActions`, `whenDomReady`) load before page scripts.
+- Duplicate search field IDs between the header and Media/Playlists/Playouts pages.
+- Dark-mode form and button contrast below WCAG AA.
+
 ## [1.4.5] - 2026-11-22
 
 ### Added
