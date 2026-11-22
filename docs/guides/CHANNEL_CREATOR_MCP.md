@@ -92,18 +92,29 @@ Local-model tips (also in the skill):
 - Explicit “say **build** to proceed”
 - Do not invent URLs or channel numbers on malformed tool args
 
+## Archive.org — never `.ia.mp4` (Issue 24)
+
+Internet Archive **derivative** URLs (`*.ia.mp4`) break compile and Plex tunes
+(`LESSONS_LEARNED.md` Issue 24). The Channel Creator must:
+
+1. List item files / metadata and pick a **canonical** `.mp4` (skip `*.ia.mp4`).
+2. Pass `https://archive.org/download/<id>/<file>.mp4` (filename path required).
+3. Rely on `builder_add_links`, which **raises** if any URL contains `.ia.mp4`.
+
+See Cursor rule `streamtv-channel-creator-mcp.mdc` and skill `streamtv-channel-creator`.
+
 ## Builder tools (high level)
 
 | Tool | Role |
 |------|------|
 | `streamtv_suggest_channel_number` | Next free number |
 | `builder_create_draft` / `builder_update_draft` | Draft + channel info |
-| `builder_add_links` | URLs (playlists expand on resolve) |
+| `builder_add_links` | URLs (rejects `*.ia.mp4`; playlists expand on resolve) |
 | `builder_resolve` / `builder_wait_job` | Metadata resolve |
 | `builder_build` / `builder_wait_job` | Compile + import + playout reset |
 | `streamtv_stream_restart` / `streamtv_playout_reset` | Soft deploy after create |
 
-Resources: `streamtv://schema/unified-channel`, `streamtv://docs/channel-builder`, minimal YAML examples, stream-id rules.
+Resources: `streamtv://schema/unified-channel`, `streamtv://docs/channel-builder`, minimal YAML examples, stream-id / Archive URL rules.
 
 ## Soft deploy
 

@@ -12,14 +12,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Window **2026-11-17 → 2026-11-21** (also shipped **v1.4.1** / **v1.4.2** on 2026-11-19 — see those sections).
+
+### Added
+- **Channel Creator MCP** — Optional stdio MCP for natural-language channel creation via Builder + soft-deploy tools — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md).
+- **Vintage holiday lineup (in v1.4.1)** — New Year's, Valentine's, Easter, Fourth of July, Halloween, Thanksgiving, and Kids Christmas channels with matching guide icons.
+- **`/player` browser preview (in v1.4.1)** — Watch channels in the browser with a remuxed live feed and optional VLC handoff.
+
 ### Changed
 - **Channel Builder** — First-party sources are **Archive.org** and **YouTube** only.
 - **Schedules** — Web create/edit removed; Schedules page is a read-only inventory of on-disk `schedules/{n}.yml` (playout + guide authority). Create/update schedule API returns 410.
 - **Collections UI** — Manual/Smart/Multi Collections page and `/api/collections` retired; use Playlists + Builder + Import.
 - **AI Recovery** — Foundation Models / Ollama / AutoHealer operator surface retired; ops healing remains scripts only.
+- **Web UI** — Restored CSP-safe button actions across operator pages; Playouts table layout fixed.
 
-### Added
-- **Channel Creator MCP** — Optional stdio MCP for natural-language channel creation via Builder + soft-deploy tools — see [Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md).
+### Removed
+- **Disabled / orphan inventory** — Retired unused channel packs and schedule YAML that had no matching enabled channel so Schedules inventory matches the live lineup.
+
+### Fixed
+- **v1.4.2** — Signed DMG publish tolerates a transient Apple notary error after the app is already notarized.
 
 ### Docs
 - Public docs and GitHub wiki refreshed for the core trim (schedules inventory, Builder sources, retired Collections/AI surfaces) and Channel Creator MCP guide on tip **1.4.2**.
