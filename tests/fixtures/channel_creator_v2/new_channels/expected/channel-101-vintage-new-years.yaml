@@ -1,0 +1,282 @@
+channels:
+- number: '101'
+  name: Vintage New Year's
+  group: Holiday
+  description: 'New Year''s broadcasts: Tournament of Roses Parades (CBS, NBC), Dick Clark''s New Year''s Rockin'' Eve (ABC) and Rudolph''s Shiny New Year, 1981-2005, with original commercials and breaks.'
+  enabled: true
+  streams:
+  - id: rockin_eve_1981
+    collection: Vintage New Year's - Dick Clark's New Year's Rockin' Eve '82 (ABC 1981) [rockin_eve_1981]
+    type: event
+    year: 1981
+    slot: Dick Clark's New Year's Rockin' Eve '82 (ABC, 1981-12-31)
+    network: ABC
+    runtime: PT1H30M57S
+    source: archive
+    url: https://archive.org/download/new-years-rockin-eve-82/Dick%20Clark%27s%20New%20Years%20Rockin%27%20Eve%20%2782%20%281981-12-31%29.mp4
+    notes: 'Tier 2; commercials: yes. Description: contains original commercials. Not a kids program. Page: https://archive.org/details/new-years-rockin-eve-82'
+    broadcast_date: '1981-12-31'
+  - id: rose_parade_cbs_1985
+    collection: Vintage New Year's - Tournament of Roses Parade 1985 (CBS 1985) [rose_parade_cbs_1985]
+    type: event
+    year: 1985
+    slot: Tournament of Roses Parade 1985 (CBS / WBAY-TV 2 Green Bay, 1985-01-01)
+    network: CBS / WBAY-TV 2 Green Bay
+    runtime: PT1H10M25S
+    source: youtube
+    url: https://www.youtube.com/watch?v=eQyZyneDtMU
+    notes: 'Tier 1; commercials: yes. With commercials (some tape issues). Page: https://www.youtube.com/watch?v=eQyZyneDtMU'
+    broadcast_date: '1985-01-01'
+  - id: rockin_eve_1985
+    collection: Vintage New Year's - Dick Clark's New Year's Rockin' Eve 1985-86 (ABC 1985) [rockin_eve_1985]
+    type: event
+    year: 1985
+    slot: Dick Clark's New Year's Rockin' Eve 1985-86 (ABC / WGHP 8 Greensboro, 1985-12-31)
+    network: ABC / WGHP 8 Greensboro
+    runtime: PT1H29M47S
+    source: youtube
+    url: https://www.youtube.com/watch?v=1kFJ1XTPnxA
+    notes: 'Tier 2; commercials: inferred. Full broadcast from VHS (90 min). Not a kids program. Page: https://www.youtube.com/watch?v=1kFJ1XTPnxA'
+    broadcast_date: '1985-12-31'
+  - id: rockin_eve_1987
+    collection: Vintage New Year's - Dick Clark's New Year's Rockin' Eve (1987) (ABC 1987) [rockin_eve_1987]
+    type: event
+    year: 1987
+    slot: Dick Clark's New Year's Rockin' Eve (1987) (ABC, 1987-12-31)
+    network: ABC
+    runtime: PT1H6M12S
+    source: youtube
+    url: https://www.youtube.com/watch?v=L-FyPuhAm1I
+    notes: 'Tier 2; commercials: unverified. 66 min; year label only. Not a kids program. Page: https://www.youtube.com/watch?v=L-FyPuhAm1I'
+    broadcast_date: '1987-12-31'
+  - id: rose_parade_nbc_1988
+    collection: Vintage New Year's - Tournament of Roses Parade 1988 (NBC 1988) [rose_parade_nbc_1988]
+    type: event
+    year: 1988
+    slot: Tournament of Roses Parade 1988 (NBC / WLUK-TV 11 Green Bay, 1988-01-01)
+    network: NBC / WLUK-TV 11 Green Bay
+    runtime: PT1H33M21S
+    source: youtube
+    url: https://www.youtube.com/watch?v=lXe0aBmpmc8
+    notes: 'Tier 1; commercials: yes. With commercials (93 min). Page: https://www.youtube.com/watch?v=lXe0aBmpmc8'
+    broadcast_date: '1988-01-01'
+  - id: rose_parade_nbc_1990
+    collection: Vintage New Year's - 101st Tournament of Roses Parade 1990 (NBC 1990) [rose_parade_nbc_1990]
+    type: event
+    year: 1990
+    slot: 101st Tournament of Roses Parade 1990 (NBC, 1990-01-01)
+    network: NBC
+    runtime: PT2H7M2S
+    source: youtube
+    url: https://www.youtube.com/watch?v=f7vPEOoVEWo
+    notes: 'Tier 2; commercials: unverified. NBC coverage plus short bonus CBS and Univision segments (127 min). Page: https://www.youtube.com/watch?v=f7vPEOoVEWo'
+    broadcast_date: '1990-01-01'
+  - id: rose_parade_cbs_1997
+    collection: Vintage New Year's - 108th Tournament of Roses Parade 1997 (CBS 1997) [rose_parade_cbs_1997]
+    type: event
+    year: 1997
+    slot: 108th Tournament of Roses Parade 1997 (CBS, 1997-01-01)
+    network: CBS
+    runtime: PT2H1M58S
+    source: archive
+    url: https://archive.org/download/20250412_20250412_1738/CBS%20The%20108th%20~%201997%20Tournament%20of%20Roses%20Parade%20%28January%202%2C%201997%29%20~%20The%2061st%20Annual%20Cotton%20Bowl%20Kansas%20State%20%40%20BYU%20%20%28first%206.5%20minutes%29%20same%20day.mp4
+    notes: 'Tier 2; commercials: unverified. Full parade, then 6.5 min of the Cotton Bowl. The title says January 2, 1997. Page: https://archive.org/details/20250412_20250412_1738'
+    broadcast_date: '1997-01-01'
+  - id: rose_parade_ktla_2000
+    collection: Vintage New Year's - Rose Parade 2000 (Y2K) (KTLA 5 Los Angeles 2000) [rose_parade_ktla_2000]
+    type: event
+    year: 2000
+    slot: Rose Parade 2000 (Y2K) (KTLA 5 Los Angeles (independent/WB), 2000-01-01)
+    network: KTLA 5 Los Angeles (independent/WB)
+    runtime: PT4H5M1S
+    source: archive
+    url: https://archive.org/download/offairvault-roseparade-ktla-2000-y2k-007/BroadcastTV-RoseParade-KTLA-2000-y2k-007.mp4
+    notes: 'Tier 2; commercials: inferred. Off-air VHS (4 h 5 min). Page: https://archive.org/details/offairvault-roseparade-ktla-2000-y2k-007'
+    broadcast_date: '2000-01-01'
+  - id: rudolph_shiny_abcfamily_2005
+    collection: Vintage New Year's - Rudolph's Shiny New Year (ABC Family 2005) [rudolph_shiny_abcfamily_2005]
+    type: event
+    year: 2005
+    slot: Rudolph's Shiny New Year (ABC Family, 2005-12-28)
+    network: ABC Family
+    runtime: PT59M20S
+    source: archive
+    url: https://archive.org/download/rudolphsshinynewyearrankinbassproductions1976/Rudolph%27s%20Shiny%20New%20Year%20%28Rankin-Bass%20Productions%2C%201976%29.mp4
+    notes: 'Tier 2; commercials: yes. ABC Family airing with commercials, recorded around December 2005 (cable). Page: https://archive.org/details/rudolphsshinynewyearrankinbassproductions1976'
+    broadcast_date: '2005-12-28'
+  - id: wbo_happy_new_year_cb_1986
+    collection: 'Vintage New Year''s - Break - CBS breaks: Happy New Year, Charlie Brown (Jan 1, 1986, WBOC) [wbo_happy_new_year_cb_1986]'
+    type: commercial
+    slot: 'CBS breaks: Happy New Year, Charlie Brown (Jan 1, 1986, WBOC)'
+    network: CBS / WBOC-TV 16 Salisbury
+    runtime: PT4M8S
+    source: youtube
+    url: https://www.youtube.com/watch?v=r3XG_AakfqI
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=r3XG_AakfqI'
+    broadcast_date: '1986-01-01'
+    year: 1986
+  - id: cbs_hnycb_1987_p1
+    collection: 'Vintage New Year''s - Break - CBS breaks: Happy New Year, Charlie Brown (1987) part 1 [cbs_hnycb_1987_p1]'
+    type: commercial
+    slot: 'CBS breaks: Happy New Year, Charlie Brown (1987) part 1'
+    network: CBS
+    runtime: PT47S
+    source: youtube
+    url: https://www.youtube.com/watch?v=xIeBsy0j5J4
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=xIeBsy0j5J4'
+    broadcast_date: '1987-01-01'
+    year: 1987
+  - id: cbs_hnycb_1987_p2
+    collection: 'Vintage New Year''s - Break - CBS breaks: Happy New Year, Charlie Brown (1987) part 2 [cbs_hnycb_1987_p2]'
+    type: commercial
+    slot: 'CBS breaks: Happy New Year, Charlie Brown (1987) part 2'
+    network: CBS
+    runtime: PT1M3S
+    source: youtube
+    url: https://www.youtube.com/watch?v=JevHor29boA
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=JevHor29boA'
+    broadcast_date: '1987-01-01'
+    year: 1987
+  - id: cbs_hnycb_1987_p3
+    collection: 'Vintage New Year''s - Break - CBS breaks: Happy New Year, Charlie Brown (1987) part 3 [cbs_hnycb_1987_p3]'
+    type: commercial
+    slot: 'CBS breaks: Happy New Year, Charlie Brown (1987) part 3'
+    network: CBS
+    runtime: PT1M2S
+    source: youtube
+    url: https://www.youtube.com/watch?v=r1iN_L3LWL4
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=r1iN_L3LWL4'
+    broadcast_date: '1987-01-01'
+    year: 1987
+  - id: cbs_hnycb_1987_p4
+    collection: 'Vintage New Year''s - Break - CBS breaks: Happy New Year, Charlie Brown (1987) part 4 [cbs_hnycb_1987_p4]'
+    type: commercial
+    slot: 'CBS breaks: Happy New Year, Charlie Brown (1987) part 4'
+    network: CBS
+    runtime: PT47S
+    source: youtube
+    url: https://www.youtube.com/watch?v=UY0Uu5ujY-I
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=UY0Uu5ujY-I'
+    broadcast_date: '1987-01-01'
+    year: 1987
+  - id: wsbt_nyd_1986
+    collection: Vintage New Year's - Break - WSBT/CBS commercial breaks, New Year's Day 1986 [wsbt_nyd_1986]
+    type: commercial
+    slot: WSBT/CBS commercial breaks, New Year's Day 1986
+    network: CBS / WSBT-TV 22 South Bend
+    runtime: PT17M36S
+    source: archive
+    url: https://archive.org/download/wsbt-22-cbs-commercial-breaks-new-years-day-1986/WSBT-22%20CBS%20Commercial%20Breaks%28New%20Year%27s%20Day%201986%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wsbt-22-cbs-commercial-breaks-new-years-day-1986'
+    broadcast_date: '1986-01-01'
+    year: 1986
+  - id: wnyw_rudolph_shiny_1986
+    collection: 'Vintage New Year''s - Break - WNYW break: Rudolph''s Shiny New Year (Dec 1986) [wnyw_rudolph_shiny_1986]'
+    type: commercial
+    slot: 'WNYW break: Rudolph''s Shiny New Year (Dec 1986)'
+    network: WNYW 5 New York (Fox)
+    runtime: PT2M11S
+    source: youtube
+    url: https://www.youtube.com/watch?v=eJveOReJtMk
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=eJveOReJtMk'
+    broadcast_date: '1986-12-31'
+    year: 1986
+  - id: kgtv_rockin_eve_1986
+    collection: Vintage New Year's - Break - KGTV/ABC commercials during New Year's Rockin' Eve (Dec 31, 1986) [kgtv_rockin_eve_1986]
+    type: commercial
+    slot: KGTV/ABC commercials during New Year's Rockin' Eve (Dec 31, 1986)
+    network: ABC / KGTV 10 San Diego
+    runtime: PT23M40S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Le_gBeDbqoQ
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Le_gBeDbqoQ'
+    broadcast_date: '1986-12-31'
+    year: 1986
+  - id: kcbs_nyd_1988
+    collection: Vintage New Year's - Break - KCBS/CBS commercials, New Year's Day 1988 (with Happy New Year, Charlie Brown promo) [kcbs_nyd_1988]
+    type: commercial
+    slot: KCBS/CBS commercials, New Year's Day 1988 (with Happy New Year, Charlie Brown promo)
+    network: CBS / KCBS-TV 2 Los Angeles
+    runtime: PT7M28S
+    source: archive
+    url: https://archive.org/download/capture-a-728/CaptureA_728.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-728'
+    broadcast_date: '1988-01-01'
+    year: 1988
+  - id: king_nyd_1989
+    collection: Vintage New Year's - Break - KING/NBC commercials, New Year's Day 1989 [king_nyd_1989]
+    type: commercial
+    slot: KING/NBC commercials, New Year's Day 1989
+    network: NBC / KING-TV 5 Seattle
+    runtime: PT6M48S
+    source: archive
+    url: https://archive.org/download/capture-a-6603/CaptureA_6603.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-6603'
+    broadcast_date: '1989-01-01'
+    year: 1989
+  - id: cbs_rose_parade_1989
+    collection: Vintage New Year's - Break - CBS Tournament of Roses commercials (1989) [cbs_rose_parade_1989]
+    type: commercial
+    slot: CBS Tournament of Roses commercials (1989)
+    network: CBS
+    runtime: PT19M31S
+    source: youtube
+    url: https://www.youtube.com/watch?v=TbRvTQFspzU
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=TbRvTQFspzU'
+    broadcast_date: '1989-01-01'
+    year: 1989
+  - id: wndu_nyd_1989
+    collection: Vintage New Year's - Break - WNDU/NBC commercial breaks, New Year's Day 1989 [wndu_nyd_1989]
+    type: commercial
+    slot: WNDU/NBC commercial breaks, New Year's Day 1989
+    network: NBC / WNDU-TV 16 South Bend
+    runtime: PT27M3S
+    source: archive
+    url: https://archive.org/download/wndu-16-nbc-commercial-breaks-new-years-day-1989/WNDU-16%20NBC%20Commercial%20Breaks%28New%20Year%27s%20Day%201989%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wndu-16-nbc-commercial-breaks-new-years-day-1989'
+    broadcast_date: '1989-01-01'
+    year: 1989
+  - id: wsbt_nyd_1993
+    collection: Vintage New Year's - Break - WSBT/CBS commercial breaks, New Year's Day 1993 [wsbt_nyd_1993]
+    type: commercial
+    slot: WSBT/CBS commercial breaks, New Year's Day 1993
+    network: CBS / WSBT-TV 22 South Bend
+    runtime: PT17M5S
+    source: archive
+    url: https://archive.org/download/wsbt-22-cbs-commercial-breaks-new-years-day-1993/WSBT-22%20CBS%20Commercial%20Breaks%28New%20Year%27s%20Day%201993%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wsbt-22-cbs-commercial-breaks-new-years-day-1993'
+    broadcast_date: '1993-01-01'
+    year: 1993
+  - id: kndo_nye_1994
+    collection: Vintage New Year's - Break - KNDO/NBC commercials, New Year's Eve 1994 [kndo_nye_1994]
+    type: commercial
+    slot: KNDO/NBC commercials, New Year's Eve 1994
+    network: NBC / KNDO 23 Yakima
+    runtime: PT13M42S
+    source: archive
+    url: https://archive.org/download/capture-a-6585/CaptureA_6585.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-6585'
+    broadcast_date: '1994-12-31'
+    year: 1994
+  - id: kima_nyd_1995
+    collection: Vintage New Year's - Break - KIMA/CBS commercials, New Year's Day 1995 [kima_nyd_1995]
+    type: commercial
+    slot: KIMA/CBS commercials, New Year's Day 1995
+    network: CBS / KIMA-TV 29 Yakima
+    runtime: PT11M21S
+    source: archive
+    url: https://archive.org/download/capture-a-963/CaptureA_963.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-963'
+    broadcast_date: '1995-01-01'
+    year: 1995
+  - id: kmgh_nye_1995
+    collection: Vintage New Year's - Break - KMGH/ABC commercials, New Year's Eve 1995 [kmgh_nye_1995]
+    type: commercial
+    slot: KMGH/ABC commercials, New Year's Eve 1995
+    network: ABC / KMGH-TV 7 Denver
+    runtime: PT8M24S
+    source: archive
+    url: https://archive.org/download/capture-a-3674/CaptureA_3674.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-3674'
+    broadcast_date: '1995-12-31'
+    year: 1995

@@ -1,0 +1,315 @@
+channels:
+- number: '1031'
+  name: Vintage Kids Halloween
+  group: Holiday
+  description: Children's Halloween specials as broadcast on CBS, ABC and NBC (plus WCCO/KSTP breaks), 1979-2002, from off-air VHS/Beta captures with original commercials, bumpers and station IDs.
+  enabled: true
+  streams:
+  - id: grinch_night_wls_1979
+    collection: Vintage Kids Halloween - Halloween Is Grinch Night (ABC 1979) [grinch_night_wls_1979]
+    type: event
+    year: 1979
+    slot: Halloween Is Grinch Night (ABC / WLS-TV 7 Chicago, 1979-10-28)
+    network: ABC / WLS-TV 7 Chicago
+    runtime: PT29M20S
+    source: youtube
+    url: https://www.youtube.com/watch?v=xPSDxfSdRb8
+    notes: 'Tier 2; commercials: yes. Complete broadcast with WLS/ABC IDs, bumpers and breaks (Museum of Classic Chicago TV). 1979 is just before the target era. Page: https://www.youtube.com/watch?v=xPSDxfSdRb8'
+    broadcast_date: '1979-10-28'
+  - id: raggedy_pumpkin_cbs_1980
+    collection: Vintage Kids Halloween - Raggedy Ann & Andy in The Pumpkin Who Couldn't Smile (CBS 1980) [raggedy_pumpkin_cbs_1980]
+    type: event
+    year: 1980
+    slot: Raggedy Ann & Andy in The Pumpkin Who Couldn't Smile (CBS, 1980-10-24)
+    network: CBS
+    runtime: PT27M25S
+    source: youtube
+    url: https://www.youtube.com/watch?v=p2bQ2eo2jjE
+    notes: 'Tier 1; commercials: yes. YouTube (Kev The Ripper): 1980 CBS rerun with original commercials. Page: https://www.youtube.com/watch?v=p2bQ2eo2jjE'
+    broadcast_date: '1980-10-24'
+  - id: disney_halloween_cbs_1981
+    collection: Vintage Kids Halloween - A Disney Halloween (CBS 1981) [disney_halloween_cbs_1981]
+    type: event
+    year: 1981
+    slot: A Disney Halloween (CBS (Walt Disney anthology), 1981-10-24)
+    network: CBS (Walt Disney anthology)
+    runtime: PT53M28S
+    source: archive
+    url: https://archive.org/download/1981-a-disney-halloween/1981%20A%20Disney%20Halloween.mp4
+    notes: 'Tier 1; commercials: yes. Description: CBS version with commercials; front and end titles missing. Page: https://archive.org/details/1981-a-disney-halloween'
+    broadcast_date: '1981-10-24'
+  - id: kidding_around_halloween_1982
+    collection: Vintage Kids Halloween - Kidding Around - Halloween '82 (local kids show) (NBC O&O 1982) [kidding_around_halloween_1982]
+    type: event
+    year: 1982
+    slot: Kidding Around - Halloween '82 (local kids show) (NBC O&O / WMAQ-TV 5 Chicago, 1982-10-30)
+    network: NBC O&O / WMAQ-TV 5 Chicago
+    runtime: PT28M46S
+    source: archive
+    url: https://archive.org/download/youtube-LNbQX3Uvpeo/LNbQX3Uvpeo.mp4
+    notes: 'Tier 1; commercials: yes. Complete broadcast with station ID, PSAs and promos (Museum of Classic Chicago TV mirror). Page: https://archive.org/details/youtube-LNbQX3Uvpeo'
+    broadcast_date: '1982-10-30'
+  - id: disney_halloween_treat_cbs_1982
+    collection: Vintage Kids Halloween - Disney's Halloween Treat (premiere) (CBS 1982) [disney_halloween_treat_cbs_1982]
+    type: event
+    year: 1982
+    slot: Disney's Halloween Treat (premiere) (CBS / WISH-TV 8 Indianapolis, 1982-10-30)
+    network: CBS / WISH-TV 8 Indianapolis
+    runtime: PT49M19S
+    source: archive
+    url: https://archive.org/download/disneys-halloween-treat-10-30-1982-walt-disney-cbs/Disney%27s%20Halloween%20Treat%20%2810-30-1982%2C%20Walt%20Disney%2C%20CBS%29.mp4
+    notes: 'Tier 2; commercials: unverified. Betamax off-air recording; description does not say whether commercials are included. Page: https://archive.org/details/disneys-halloween-treat-10-30-1982-walt-disney-cbs'
+    broadcast_date: '1982-10-30'
+  - id: kidding_around_halloween_1983
+    collection: Vintage Kids Halloween - Kidding Around - Halloween '83 (local kids show) (NBC O&O 1983) [kidding_around_halloween_1983]
+    type: event
+    year: 1983
+    slot: Kidding Around - Halloween '83 (local kids show) (NBC O&O / WMAQ-TV 5 Chicago, 1983-10-29)
+    network: NBC O&O / WMAQ-TV 5 Chicago
+    runtime: PT29M23S
+    source: archive
+    url: https://archive.org/download/youtube-iakS-aOAYxw/iakS-aOAYxw.mp4
+    notes: 'Tier 1; commercials: yes. Complete broadcast with PSAs and promos. Page: https://archive.org/details/youtube-iakS-aOAYxw'
+    broadcast_date: '1983-10-29'
+  - id: disney_halloween_treat_cbs_1983
+    collection: Vintage Kids Halloween - Disney's Halloween Treat (repeat) (CBS 1983) [disney_halloween_treat_cbs_1983]
+    type: event
+    year: 1983
+    slot: Disney's Halloween Treat (repeat) (CBS, 1983-10-29)
+    network: CBS
+    runtime: PT49M25S
+    source: archive
+    url: https://archive.org/download/1983-disneys-halloween-treat/1983%20Disney%27s%20Halloween%20Treat.mp4
+    notes: 'Tier 1; commercials: yes. Description: CBS Special airing with the original lead-in and commercials. Page: https://archive.org/details/1983-disneys-halloween-treat'
+    broadcast_date: '1983-10-29'
+  - id: garfield_great_pumpkin_cbs_1985
+    collection: Vintage Kids Halloween - Garfield's Halloween Adventure + It's the Great Pumpkin, Charlie Brown (CBS 1985) [garfield_great_pumpkin_cbs_1985]
+    type: event
+    year: 1985
+    slot: Garfield's Halloween Adventure + It's the Great Pumpkin, Charlie Brown (CBS, 1985-10-30)
+    network: CBS
+    runtime: PT58M59S
+    source: archive
+    url: https://archive.org/download/halloween-cartoons-1985/Halloween%20Cartoons%201985.mp4
+    notes: 'Tier 1; commercials: yes. Description: 1985 CBS broadcast with commercials. Exact date not stated (placeholder Oct 30). Page: https://archive.org/details/halloween-cartoons-1985'
+    broadcast_date: '1985-10-30'
+  - id: disney_scary_tales_kdka_1985
+    collection: Vintage Kids Halloween - Disney's Scary Tales - Halloween night (Wonderful World of Disney) (CBS 1985) [disney_scary_tales_kdka_1985]
+    type: event
+    year: 1985
+    slot: Disney's Scary Tales - Halloween night (Wonderful World of Disney) (CBS / KDKA-TV 2 Pittsburgh, 1985-10-31)
+    network: CBS / KDKA-TV 2 Pittsburgh
+    runtime: PT1H7M7S
+    source: archive
+    url: https://archive.org/download/TheVistaGroup-TVCommercials1985October31DisneyHalloweenPittsburghPAKDKACBS/TV%20Commercials%20%E2%80%A2%201985%20October%2031%20%E2%80%A2%20Disney%20Halloween%20%E2%80%A2%20Pittsburgh%2C%20PA%20%E2%80%A2%20KDKA%20%28CBS%29%20%E2%80%A2%2060%20FPS.mp4
+    notes: 'Tier 1; commercials: yes. The Vista Group: unedited off-air Halloween-night tape with commercials. Page: https://archive.org/details/TheVistaGroup-TVCommercials1985October31DisneyHalloweenPittsburghPAKDKACBS'
+    broadcast_date: '1985-10-31'
+  - id: garfield_halloween_cbs_1986
+    collection: Vintage Kids Halloween - Garfield's Halloween Adventure (CBS 1986) [garfield_halloween_cbs_1986]
+    type: event
+    year: 1986
+    slot: Garfield's Halloween Adventure (CBS, 1986-10-23)
+    network: CBS
+    runtime: PT27M6S
+    source: archive
+    url: https://archive.org/download/img-0279_202209/IMG_0279.mp4
+    notes: 'Tier 1; commercials: yes. Description: as aired Oct 23, 1986 with commercials. Page: https://archive.org/details/img-0279_202209'
+    broadcast_date: '1986-10-23'
+  - id: disney_scary_tales_fox_1987
+    collection: Vintage Kids Halloween - Disney's Scary Tales (Wonderful World of Disney) (Fox 1987) [disney_scary_tales_fox_1987]
+    type: event
+    year: 1987
+    slot: Disney's Scary Tales (Wonderful World of Disney) (Fox, 1987-10-25)
+    network: Fox
+    runtime: PT58M11S
+    source: archive
+    url: https://archive.org/download/disneys-scary-tales-of-halloween-fox/Wwod%20Scary%20Halloween%2010%2025%2087%20On%20Fox%20-%20Copy.mp4
+    notes: 'Tier 2; commercials: label-only. Fox, not CBS/ABC/NBC. "WOC" in the title only. Page: https://archive.org/details/disneys-scary-tales-of-halloween-fox'
+    broadcast_date: '1987-10-25'
+  - id: pooh_boo_cbs_1996
+    collection: Vintage Kids Halloween - Boo to You Too! Winnie the Pooh (premiere) (CBS 1996) [pooh_boo_cbs_1996]
+    type: event
+    year: 1996
+    slot: Boo to You Too! Winnie the Pooh (premiere) (CBS, 1996-10-25)
+    network: CBS
+    runtime: PT30M58S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Q6A-ISuU3sE
+    notes: 'Tier 1; commercials: yes. YouTube: CBS premiere with commercials (same night as the WCCO break reel). Page: https://www.youtube.com/watch?v=Q6A-ISuU3sE'
+    broadcast_date: '1996-10-25'
+  - id: pumpkin_pooh_whtm_2002
+    collection: Vintage Kids Halloween - It's the Great Pumpkin, Charlie Brown + Boo to You Too! Winnie the Pooh (ABC 2002) [pumpkin_pooh_whtm_2002]
+    type: event
+    year: 2002
+    slot: It's the Great Pumpkin, Charlie Brown + Boo to You Too! Winnie the Pooh (ABC / WHTM-TV 27 Harrisburg, 2002-10-25)
+    network: ABC / WHTM-TV 27 Harrisburg
+    runtime: PT1H47S
+    source: archive
+    url: https://archive.org/download/CharlieBrownWinnieThePooh2002/TVREC0008.mp4
+    notes: 'Tier 2; commercials: inferred. Recorded off-air Oct 25, 2002; commercials not stated (61-minute runtime suggests they are in). Page: https://archive.org/details/CharlieBrownWinnieThePooh2002'
+    broadcast_date: '2002-10-25'
+  - id: wcco_halloween_1996
+    collection: Vintage Kids Halloween - Break - WCCO/CBS breaks during Great Pumpkin + Boo to You Too (Oct 25, 1996) [wcco_halloween_1996]
+    type: commercial
+    slot: WCCO/CBS breaks during Great Pumpkin + Boo to You Too (Oct 25, 1996)
+    network: CBS / WCCO-TV 4 Minneapolis
+    runtime: PT14M52S
+    source: youtube
+    url: https://www.youtube.com/watch?v=uhORheS2lgA
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=uhORheS2lgA'
+    broadcast_date: '1996-10-25'
+    year: 1996
+  - id: kstp_oct_1996
+    collection: Vintage Kids Halloween - Break - KSTP-TV commercials (October 1996) [kstp_oct_1996]
+    type: commercial
+    slot: KSTP-TV commercials (October 1996)
+    network: ABC / KSTP-TV 5 Minneapolis
+    runtime: PT7M36S
+    source: archive
+    url: https://archive.org/download/SmokesVHSTape584/October%201996%20Commercials.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/SmokesVHSTape584'
+    broadcast_date: '1996-10-15'
+    year: 1996
+  - id: kstp_halloween_1999
+    collection: Vintage Kids Halloween - Break - KSTP/ABC commercials, Halloween 1999 (during Casper) [kstp_halloween_1999]
+    type: commercial
+    slot: KSTP/ABC commercials, Halloween 1999 (during Casper)
+    network: ABC / KSTP-TV 5 Minneapolis
+    runtime: PT14M21S
+    source: youtube
+    url: https://www.youtube.com/watch?v=NYoPgXm8VyU
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=NYoPgXm8VyU'
+    broadcast_date: '1999-10-31'
+    year: 1999
+  - id: wbbm_great_pumpkin_1980
+    collection: Vintage Kids Halloween - Break - WBBM/CBS Great Pumpkin opening & break (1980) [wbbm_great_pumpkin_1980]
+    type: commercial
+    slot: WBBM/CBS Great Pumpkin opening & break (1980)
+    network: CBS / WBBM-TV 2 Chicago
+    runtime: PT4M5S
+    source: archive
+    url: https://archive.org/download/youtube-fv7A4B58jZc/fv7A4B58jZc.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/youtube-fv7A4B58jZc'
+    broadcast_date: '1980-10-25'
+    year: 1980
+  - id: nbc_halloween_1981
+    collection: Vintage Kids Halloween - Break - NBC Halloween assorted commercials (Oct 30, 1981) [nbc_halloween_1981]
+    type: commercial
+    slot: NBC Halloween assorted commercials (Oct 30, 1981)
+    network: NBC
+    runtime: PT3M41S
+    source: youtube
+    url: https://www.youtube.com/watch?v=8gE8EzfeIGo
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=8gE8EzfeIGo'
+    broadcast_date: '1981-10-30'
+    year: 1981
+  - id: casper_halloween_1981_ads
+    collection: Vintage Kids Halloween - Break - Commercials from Casper Halloween Special (Oct 1981) [casper_halloween_1981_ads]
+    type: commercial
+    slot: Commercials from Casper Halloween Special (Oct 1981)
+    network: NBC
+    runtime: PT3M29S
+    source: youtube
+    url: https://www.youtube.com/watch?v=pbcBoVPx4T0
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=pbcBoVPx4T0'
+    broadcast_date: '1981-10-30'
+    year: 1981
+  - id: cbs_halloween_1985_ads
+    collection: Vintage Kids Halloween - Break - CBS 1985 Halloween specials commercials [cbs_halloween_1985_ads]
+    type: commercial
+    slot: CBS 1985 Halloween specials commercials
+    network: CBS
+    runtime: PT3M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Y5qJ70fkRzA
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Y5qJ70fkRzA'
+    broadcast_date: '1985-10-30'
+    year: 1985
+  - id: cbs_garfield_cb_1985_breaks
+    collection: 'Vintage Kids Halloween - Break - CBS breaks, intros & outros: Garfield & Charlie Brown (1985) [cbs_garfield_cb_1985_breaks]'
+    type: commercial
+    slot: 'CBS breaks, intros & outros: Garfield & Charlie Brown (1985)'
+    network: CBS
+    runtime: PT18M37S
+    source: youtube
+    url: https://www.youtube.com/watch?v=q88ekg_6M1k
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=q88ekg_6M1k'
+    broadcast_date: '1985-10-30'
+    year: 1985
+  - id: kron_halloween_1986
+    collection: Vintage Kids Halloween - Break - KRON/NBC commercials, Halloween 1986 [kron_halloween_1986]
+    type: commercial
+    slot: KRON/NBC commercials, Halloween 1986
+    network: NBC / KRON-TV 4 San Francisco
+    runtime: PT4M57S
+    source: archive
+    url: https://archive.org/download/capture-a-2454/CaptureA_2454.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-2454'
+    broadcast_date: '1986-10-31'
+    year: 1986
+  - id: kptv_disney_1986
+    collection: Vintage Kids Halloween - Break - Disney Scary Tales / Halloween Hall of Fame breaks (Oct 1986) [kptv_disney_1986]
+    type: commercial
+    slot: Disney Scary Tales / Halloween Hall of Fame breaks (Oct 1986)
+    network: KPTV 12 Portland (independent)
+    runtime: PT15M11S
+    source: archive
+    url: https://archive.org/download/october-1986-disney-commercials-ads-promos-kptv-12-portland-oregon-halloween-/October%201986%20Disney%20Commercials%20Ads%20Promos%20KPTV%2012%20Portland%20Oregon%20%28%20Halloween%20VHS%20pt%201%20%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/october-1986-disney-commercials-ads-promos-kptv-12-portland-oregon-halloween-'
+    broadcast_date: '1986-10-25'
+    year: 1986
+  - id: kcra_halloween_1988
+    collection: Vintage Kids Halloween - Break - KCRA/NBC commercials, Halloween 1988 [kcra_halloween_1988]
+    type: commercial
+    slot: KCRA/NBC commercials, Halloween 1988
+    network: NBC / KCRA-TV 3 Sacramento
+    runtime: PT11M10S
+    source: archive
+    url: https://archive.org/download/capture-a-3997/CaptureA_3997.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-3997'
+    broadcast_date: '1988-10-31'
+    year: 1988
+  - id: cbs_great_pumpkin_1991
+    collection: 'Vintage Kids Halloween - Break - CBS breaks: It''s the Great Pumpkin, Charlie Brown (1991) [cbs_great_pumpkin_1991]'
+    type: commercial
+    slot: 'CBS breaks: It''s the Great Pumpkin, Charlie Brown (1991)'
+    network: CBS
+    runtime: PT7M49S
+    source: youtube
+    url: https://www.youtube.com/watch?v=iEq29W4eZRM
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=iEq29W4eZRM'
+    broadcast_date: '1991-10-30'
+    year: 1991
+  - id: abc_halloween_1995
+    collection: Vintage Kids Halloween - Break - ABC Halloween bumpers & commercials (Hocus Pocus, 1995) [abc_halloween_1995]
+    type: commercial
+    slot: ABC Halloween bumpers & commercials (Hocus Pocus, 1995)
+    network: ABC (Ohio affiliate)
+    runtime: PT14M33S
+    source: youtube
+    url: https://www.youtube.com/watch?v=cv5lHP4vAEY
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=cv5lHP4vAEY'
+    broadcast_date: '1995-10-30'
+    year: 1995
+  - id: abc_tgif_halloween_1996
+    collection: Vintage Kids Halloween - Break - ABC TGIF Halloween commercials (WBKO, 1996) [abc_tgif_halloween_1996]
+    type: commercial
+    slot: ABC TGIF Halloween commercials (WBKO, 1996)
+    network: ABC / WBKO 13 Bowling Green
+    runtime: PT26M5S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Zf9cvUlduTM
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Zf9cvUlduTM'
+    broadcast_date: '1996-10-25'
+    year: 1996
+  - id: kima_halloween_1999
+    collection: Vintage Kids Halloween - Break - KIMA/CBS commercials, Halloween 1999 [kima_halloween_1999]
+    type: commercial
+    slot: KIMA/CBS commercials, Halloween 1999
+    network: CBS / KIMA-TV 29 Yakima
+    runtime: PT18M7S
+    source: archive
+    url: https://archive.org/download/capture-a-3384/CaptureA_3384.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-3384'
+    broadcast_date: '1999-10-31'
+    year: 1999

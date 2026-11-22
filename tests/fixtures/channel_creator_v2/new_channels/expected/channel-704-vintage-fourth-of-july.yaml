@@ -1,0 +1,194 @@
+channels:
+- number: '704'
+  name: Vintage Fourth of July
+  group: Holiday
+  description: 'Fourth of July broadcasts: ABC''s 1986 Liberty Weekend coverage and Macy''s fireworks, with original commercials, bumpers and holiday station IDs.'
+  enabled: true
+  streams:
+  - id: liberty_opening_abc_1986
+    collection: 'Vintage Fourth of July - Liberty Weekend: Opening Ceremonies (ABC 1986) [liberty_opening_abc_1986]'
+    type: event
+    year: 1986
+    slot: 'Liberty Weekend: Opening Ceremonies (ABC, 1986-07-03)'
+    network: ABC
+    runtime: PT2H40M18S
+    source: youtube
+    url: https://www.youtube.com/watch?v=00l8CNcDo9U
+    notes: 'Tier 2; commercials: unverified. 2 h 40 min; commercials not stated. Family program, not a kids special. Page: https://www.youtube.com/watch?v=00l8CNcDo9U'
+    broadcast_date: '1986-07-03'
+  - id: liberty_july4_abc_1986
+    collection: 'Vintage Fourth of July - Liberty Weekend: July 4, 1986 (ABC 1986) [liberty_july4_abc_1986]'
+    type: event
+    year: 1986
+    slot: 'Liberty Weekend: July 4, 1986 (ABC, 1986-07-04)'
+    network: ABC
+    runtime: PT1H56M47S
+    source: youtube
+    url: https://www.youtube.com/watch?v=alyvheAnNoc
+    notes: 'Tier 2; commercials: unverified. 1 h 57 min; commercials not stated. Page: https://www.youtube.com/watch?v=alyvheAnNoc'
+    broadcast_date: '1986-07-04'
+  - id: liberty_with_ads_abc_1986
+    collection: Vintage Fourth of July - Liberty Weekend broadcast with commercials (ABC 1986) [liberty_with_ads_abc_1986]
+    type: event
+    year: 1986
+    slot: Liberty Weekend broadcast with commercials (ABC, 1986-07-05)
+    network: ABC
+    runtime: PT1H42M9S
+    source: youtube
+    url: https://www.youtube.com/watch?v=qgO27MdcAl0
+    notes: 'Tier 1; commercials: yes. Title: with commercials (1 h 42 min). Exact day not stated (placeholder July 5). Page: https://www.youtube.com/watch?v=qgO27MdcAl0'
+    broadcast_date: '1986-07-05'
+  - id: liberty_closing_abc_1986
+    collection: 'Vintage Fourth of July - Liberty Weekend: Sports Salute to the Statue & Closing Ceremonies (ABC 1986) [liberty_closing_abc_1986]'
+    type: event
+    year: 1986
+    slot: 'Liberty Weekend: Sports Salute to the Statue & Closing Ceremonies (ABC, 1986-07-06)'
+    network: ABC
+    runtime: PT3H59M20S
+    source: archive
+    url: https://archive.org/download/1986-july-6th-sports-tribute-100th-anniversary-statue-liberty-commercials/1986%20July%206th%20Sports%20Tribute%20100th%20Anniversary%20Statue%20Liberty%20Commercials.mp4
+    notes: 'Tier 1; commercials: yes. Original broadcast with commercials (3 h 59 min). Page: https://archive.org/details/1986-july-6th-sports-tribute-100th-anniversary-statue-liberty-commercials'
+    broadcast_date: '1986-07-06'
+  - id: macys_fireworks_wpix_1998
+    collection: Vintage Fourth of July - Macy's 4th of July Fireworks Spectacular (WPIX 11 New York 1998) [macys_fireworks_wpix_1998]
+    type: event
+    year: 1998
+    slot: Macy's 4th of July Fireworks Spectacular (WPIX 11 New York (WB), 1998-07-04)
+    network: WPIX 11 New York (WB)
+    runtime: PT41M51S
+    source: youtube
+    url: https://www.youtube.com/watch?v=NWBP1t8I5Ho
+    notes: 'Tier 2; commercials: unverified. From an estate-sale tape (42 min); not CBS/ABC/NBC. Page: https://www.youtube.com/watch?v=NWBP1t8I5Ho'
+    broadcast_date: '1998-07-04'
+  - id: wgn_july4_1981
+    collection: Vintage Fourth of July - Break - WGN "Happy 4th of July" bumper (1981) [wgn_july4_1981]
+    type: commercial
+    slot: WGN "Happy 4th of July" bumper (1981)
+    network: WGN-TV 9 Chicago (independent)
+    runtime: PT10S
+    source: youtube
+    url: https://www.youtube.com/watch?v=jG_123aOyrc
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=jG_123aOyrc'
+    broadcast_date: '1981-07-04'
+    year: 1981
+  - id: july4_bumps_1985_87
+    collection: Vintage Fourth of July - Break - 1980s Fourth of July bumps (WNYW, WPHL, WPVI) [july4_bumps_1985_87]
+    type: commercial
+    slot: 1980s Fourth of July bumps (WNYW, WPHL, WPVI)
+    network: Various
+    runtime: PT27S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Jy-SupJ3IYM
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=Jy-SupJ3IYM'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: wfaa_july4_1986
+    collection: Vintage Fourth of July - Break - WFAA "Happy 4th of July" card during Liberty Weekend (1986) [wfaa_july4_1986]
+    type: commercial
+    slot: WFAA "Happy 4th of July" card during Liberty Weekend (1986)
+    network: ABC / WFAA-TV 8 Dallas
+    runtime: PT5S
+    source: youtube
+    url: https://www.youtube.com/watch?v=MSbcWCiZJCw
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=MSbcWCiZJCw'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: wpta_july4_1986_p1
+    collection: Vintage Fourth of July - Break - WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 1 [wpta_july4_1986_p1]
+    type: commercial
+    slot: WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 1
+    network: ABC / WPTA 21 Fort Wayne
+    runtime: PT23M6S
+    source: archive
+    url: https://archive.org/download/wpta-21-abc-commercial-breaks-independence-day-1986-part-1/WPTA-21%20ABC%20Commercial%20Breaks%28Independence%20Day%201986%29%28Part%201%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wpta-21-abc-commercial-breaks-independence-day-1986-part-1'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: wpta_july4_1986_p2
+    collection: Vintage Fourth of July - Break - WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 2 [wpta_july4_1986_p2]
+    type: commercial
+    slot: WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 2
+    network: ABC / WPTA 21 Fort Wayne
+    runtime: PT16M26S
+    source: archive
+    url: https://archive.org/download/wpta-21-abc-commercial-breaks-independence-day-1986-part-2/WPTA-21%20ABC%20Commercial%20Breaks%28Independence%20Day%201986%29%28Part%202%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wpta-21-abc-commercial-breaks-independence-day-1986-part-2'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: wsjv_july4_1986
+    collection: Vintage Fourth of July - Break - WSJV/ABC local breaks, Independence Day 1986 [wsjv_july4_1986]
+    type: commercial
+    slot: WSJV/ABC local breaks, Independence Day 1986
+    network: ABC / WSJV 28 South Bend
+    runtime: PT3M11S
+    source: archive
+    url: https://archive.org/download/wsjv-28-abc-local-commercial-breaks-independence-day-1986/WSJV-28%20ABC%20Local%20Commercial%20Breaks%28Independence%20Day%201986%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wsjv-28-abc-local-commercial-breaks-independence-day-1986'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: wndu_july4_1986
+    collection: Vintage Fourth of July - Break - WNDU/NBC commercial breaks, Independence Day 1986 [wndu_july4_1986]
+    type: commercial
+    slot: WNDU/NBC commercial breaks, Independence Day 1986
+    network: NBC / WNDU-TV 16 South Bend
+    runtime: PT12M41S
+    source: archive
+    url: https://archive.org/download/wndu-16-nbc-commercial-breaks-independence-day-1986/WNDU-16%20NBC%20Commercial%20Breaks%28Independence%20Day%201986%29.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/wndu-16-nbc-commercial-breaks-independence-day-1986'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: wabc_liberty_1986
+    collection: Vintage Fourth of July - Break - WABC commercials, July 3-5, 1986 (Liberty Weekend) [wabc_liberty_1986]
+    type: commercial
+    slot: WABC commercials, July 3-5, 1986 (Liberty Weekend)
+    network: ABC / WABC-TV 7 New York
+    runtime: PT45M29S
+    source: youtube
+    url: https://www.youtube.com/watch?v=ZBBIBWdzaoA
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=ZBBIBWdzaoA'
+    broadcast_date: '1986-07-04'
+    year: 1986
+  - id: kndo_july4_1999_p1
+    collection: Vintage Fourth of July - Break - KNDO/NBC commercials, 4th of July 1999 (part 1) [kndo_july4_1999_p1]
+    type: commercial
+    slot: KNDO/NBC commercials, 4th of July 1999 (part 1)
+    network: NBC / KNDO 23 Yakima
+    runtime: PT17M1S
+    source: youtube
+    url: https://www.youtube.com/watch?v=56oK_S6XBqc
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=56oK_S6XBqc'
+    broadcast_date: '1999-07-04'
+    year: 1999
+  - id: kndo_july4_1999_p2
+    collection: Vintage Fourth of July - Break - KNDO/NBC commercials, 4th of July 1999 (part 2) [kndo_july4_1999_p2]
+    type: commercial
+    slot: KNDO/NBC commercials, 4th of July 1999 (part 2)
+    network: NBC / KNDO 23 Yakima
+    runtime: PT18M12S
+    source: archive
+    url: https://archive.org/download/capture-a-2326/CaptureA_2326.mp4
+    notes: 'Commercial/bumper break reel. Page: https://archive.org/details/capture-a-2326'
+    broadcast_date: '1999-07-04'
+    year: 1999
+  - id: kndo_july4_1999_p3
+    collection: Vintage Fourth of July - Break - KNDO/NBC commercials, 4th of July 1999 (part 3) [kndo_july4_1999_p3]
+    type: commercial
+    slot: KNDO/NBC commercials, 4th of July 1999 (part 3)
+    network: NBC / KNDO 23 Yakima
+    runtime: PT15M58S
+    source: youtube
+    url: https://www.youtube.com/watch?v=MFWnwT5lVAo
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=MFWnwT5lVAo'
+    broadcast_date: '1999-07-04'
+    year: 1999
+  - id: kima_july4_2002
+    collection: Vintage Fourth of July - Break - KIMA/CBS commercials, 4th of July 2002 (partial) [kima_july4_2002]
+    type: commercial
+    slot: KIMA/CBS commercials, 4th of July 2002 (partial)
+    network: CBS / KIMA-TV 29 Yakima
+    runtime: PT2M51S
+    source: youtube
+    url: https://www.youtube.com/watch?v=WKq-2aXS4CE
+    notes: 'Commercial/bumper break reel. Page: https://www.youtube.com/watch?v=WKq-2aXS4CE'
+    broadcast_date: '2002-07-04'
+    year: 2002

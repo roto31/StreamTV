@@ -1,0 +1,109 @@
+name: 704 Vintage Fourth of July
+description: Chronological run (1986 -> 1998) of off-air Fourth of July broadcasts; one vintage station-break reel between programs, then long commercial reels and mixed tapes. Loops.
+media:
+  preferred_extension: mp4
+  mp4_only: true
+content:
+- key: liberty_opening_abc_1986
+  collection: 'Vintage Fourth of July - Liberty Weekend: Opening Ceremonies (ABC 1986) [liberty_opening_abc_1986]'
+  order: chronological
+- key: liberty_july4_abc_1986
+  collection: 'Vintage Fourth of July - Liberty Weekend: July 4, 1986 (ABC 1986) [liberty_july4_abc_1986]'
+  order: chronological
+- key: liberty_with_ads_abc_1986
+  collection: Vintage Fourth of July - Liberty Weekend broadcast with commercials (ABC 1986) [liberty_with_ads_abc_1986]
+  order: chronological
+- key: liberty_closing_abc_1986
+  collection: 'Vintage Fourth of July - Liberty Weekend: Sports Salute to the Statue & Closing Ceremonies (ABC 1986) [liberty_closing_abc_1986]'
+  order: chronological
+- key: macys_fireworks_wpix_1998
+  collection: Vintage Fourth of July - Macy's 4th of July Fireworks Spectacular (WPIX 11 New York 1998) [macys_fireworks_wpix_1998]
+  order: chronological
+- key: wgn_july4_1981
+  collection: Vintage Fourth of July - Break - WGN "Happy 4th of July" bumper (1981) [wgn_july4_1981]
+  order: chronological
+- key: july4_bumps_1985_87
+  collection: Vintage Fourth of July - Break - 1980s Fourth of July bumps (WNYW, WPHL, WPVI) [july4_bumps_1985_87]
+  order: chronological
+- key: wfaa_july4_1986
+  collection: Vintage Fourth of July - Break - WFAA "Happy 4th of July" card during Liberty Weekend (1986) [wfaa_july4_1986]
+  order: chronological
+- key: wpta_july4_1986_p2
+  collection: Vintage Fourth of July - Break - WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 2 [wpta_july4_1986_p2]
+  order: chronological
+- key: wsjv_july4_1986
+  collection: Vintage Fourth of July - Break - WSJV/ABC local breaks, Independence Day 1986 [wsjv_july4_1986]
+  order: chronological
+- key: wndu_july4_1986
+  collection: Vintage Fourth of July - Break - WNDU/NBC commercial breaks, Independence Day 1986 [wndu_july4_1986]
+  order: chronological
+- key: kndo_july4_1999_p1
+  collection: Vintage Fourth of July - Break - KNDO/NBC commercials, 4th of July 1999 (part 1) [kndo_july4_1999_p1]
+  order: chronological
+- key: kndo_july4_1999_p2
+  collection: Vintage Fourth of July - Break - KNDO/NBC commercials, 4th of July 1999 (part 2) [kndo_july4_1999_p2]
+  order: chronological
+- key: kndo_july4_1999_p3
+  collection: Vintage Fourth of July - Break - KNDO/NBC commercials, 4th of July 1999 (part 3) [kndo_july4_1999_p3]
+  order: chronological
+- key: kima_july4_2002
+  collection: Vintage Fourth of July - Break - KIMA/CBS commercials, 4th of July 2002 (partial) [kima_july4_2002]
+  order: chronological
+- key: wpta_july4_1986_p1
+  collection: Vintage Fourth of July - Break - WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 1 [wpta_july4_1986_p1]
+  order: chronological
+- key: wabc_liberty_1986
+  collection: Vintage Fourth of July - Break - WABC commercials, July 3-5, 1986 (Liberty Weekend) [wabc_liberty_1986]
+  order: chronological
+sequence:
+- key: vintage-fourth-of-july-channel
+  items:
+  - all: liberty_opening_abc_1986
+    custom_title: 'Liberty Weekend: Opening Ceremonies (ABC, 1986-07-03)'
+  - all: wgn_july4_1981
+    custom_title: 'Station Break: WGN "Happy 4th of July" bumper (1981)'
+    filler_kind: Commercial
+  - all: wndu_july4_1986
+    custom_title: 'Station Break: WNDU/NBC commercial breaks, Independence Day 1986'
+    filler_kind: Commercial
+  - all: liberty_july4_abc_1986
+    custom_title: 'Liberty Weekend: July 4, 1986 (ABC, 1986-07-04)'
+  - all: july4_bumps_1985_87
+    custom_title: 'Station Break: 1980s Fourth of July bumps (WNYW, WPHL, WPVI)'
+    filler_kind: Commercial
+  - all: kndo_july4_1999_p1
+    custom_title: 'Station Break: KNDO/NBC commercials, 4th of July 1999 (part 1)'
+    filler_kind: Commercial
+  - all: liberty_with_ads_abc_1986
+    custom_title: Liberty Weekend broadcast with commercials (ABC, 1986-07-05)
+  - all: wfaa_july4_1986
+    custom_title: 'Station Break: WFAA "Happy 4th of July" card during Liberty Weekend (1986)'
+    filler_kind: Commercial
+  - all: kndo_july4_1999_p2
+    custom_title: 'Station Break: KNDO/NBC commercials, 4th of July 1999 (part 2)'
+    filler_kind: Commercial
+  - all: liberty_closing_abc_1986
+    custom_title: 'Liberty Weekend: Sports Salute to the Statue & Closing Ceremonies (ABC, 1986-07-06)'
+  - all: wpta_july4_1986_p2
+    custom_title: 'Station Break: WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 2'
+    filler_kind: Commercial
+  - all: kndo_july4_1999_p3
+    custom_title: 'Station Break: KNDO/NBC commercials, 4th of July 1999 (part 3)'
+    filler_kind: Commercial
+  - all: macys_fireworks_wpix_1998
+    custom_title: Macy's 4th of July Fireworks Spectacular (WPIX 11 New York (WB), 1998-07-04)
+  - all: wsjv_july4_1986
+    custom_title: 'Station Break: WSJV/ABC local breaks, Independence Day 1986'
+    filler_kind: Commercial
+  - all: kima_july4_2002
+    custom_title: 'Station Break: KIMA/CBS commercials, 4th of July 2002 (partial)'
+    filler_kind: Commercial
+  - all: wpta_july4_1986_p1
+    custom_title: 'Commercial Break Marathon: WPTA/ABC breaks during the Statue of Liberty Centennial (1986) part 1'
+    filler_kind: Commercial
+  - all: wabc_liberty_1986
+    custom_title: 'Commercial Break Marathon: WABC commercials, July 3-5, 1986 (Liberty Weekend)'
+    filler_kind: Commercial
+playout:
+- sequence: vintage-fourth-of-july-channel
+- repeat: true

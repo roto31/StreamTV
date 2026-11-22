@@ -19,7 +19,8 @@ Goal: one live channel on a fresh macOS install using the public demo pack.
      `curl -s -X POST http://127.0.0.1:8410/api/import/channels/yaml -F "file=@data/public_demo/channel_101.example.yaml"`
 
 3. **Install the demo schedule**  
-   Copy [`schedules/101.example.yml`](../../schedules/101.example.yml) to `schedules/101.yml` next to your `config.yaml` (Application Support for the app, or repo root for LaunchAgent). Soft-restart channel 101 if the server was already running.
+   Copy [`schedules/101.example.yml`](../../schedules/101.example.yml) to `schedules/101.yml` next to your `config.yaml` (Application Support for the app, or repo root for LaunchAgent). The file must include `content`, `sequence` (e.g. `main_sequence`), and `playout` with `repeat: true` — see [`schedules/README.md`](../../schedules/README.md). Soft-restart:  
+   `curl -s -X POST http://127.0.0.1:8410/api/channels/by-number/101/stream-restart`
 
 4. **Check lineup**  
    - `curl -s http://127.0.0.1:8410/lineup.json | head`  
