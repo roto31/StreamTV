@@ -1,0 +1,28 @@
+# Local model checklist (Channel Creator MCP)
+
+Repo: `__REPO_ROOT__`
+Python: `__PYTHON__`
+StreamTV API: `__BASE_URL__`
+
+## Recommended models
+
+| Hardware | Model | Command |
+|----------|--------|---------|
+| ~20–24 GB | **Qwen3 32B** (default) | `ollama pull qwen3:32b` |
+| ~40+ GB | Llama 3.3 70B Q4 | `ollama pull llama3.3:70b` |
+| ~8–16 GB | Qwen3 8B | `ollama pull qwen3:8b` |
+
+Avoid tiny 3B-class models for multi-step Builder tool chains.
+
+## Wire
+
+1. Register the MCP fragment from `generated/` in Continue or Cline (same stdio as Cursor).
+2. Paste `generated/intake_system_prompt.md` into the client system / custom instructions.
+3. Confirm StreamTV is listening on `__BASE_URL__`.
+
+## Local UX rules
+
+- Cap shortlists to 5–10 candidates before confirm
+- Explicit “say **build** to proceed”
+- One tool call at a time for ≤8B models
+- Never invent channel numbers or Archive `.ia.mp4` URLs

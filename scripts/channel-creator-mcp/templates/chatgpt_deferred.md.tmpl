@@ -1,0 +1,20 @@
+# ChatGPT — Channel Creator MCP (deferred)
+
+ChatGPT cannot use LAN stdio MCP against StreamTV in this release.
+
+## Why deferred
+
+- Custom GPTs need authenticated **HTTPS** Actions or remote MCP
+- Do **not** port-forward `:8410` without TLS + API key
+- Never send cookies, channel packs, or lab IPs to a cloud host
+
+## Later checklist
+
+1. Authenticated HTTPS endpoint (tunnel or reverse proxy) to StreamTV
+2. OpenAPI Actions or remote MCP wrapping Builder tools
+3. Same intake rules (Search vs Paste; ban `*.ia.mp4`)
+
+Until then use **Cursor**, **Claude Desktop**, **VS Code** (Continue/Cline), or **local Ollama**.
+
+Repo (for operators who still want local MCP): `__REPO_ROOT__`
+API (local only): `__BASE_URL__`
