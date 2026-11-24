@@ -32,23 +32,23 @@ AVCC_CONTAINER_HINTS = ("mp4", "mov", "m4a", "3gp", "matroska", "webm")
 YOUTUBE_URL_TTL_VOD_SECONDS = 240
 YOUTUBE_URL_TTL_LIVE_SECONDS = 25
 
-# yt-dlp client policy (verified against yt-dlp PO Token Guide, 2026-07).
+# yt-dlp client policy (PO Token Guide + yt-dlp 2026.08+ defaults).
 # YouTube enforces Proof-of-Origin (PO) Tokens per client:
-#   web        -> SABR-only, GVS PO Token required   (unusable without plugin)
-#   android/ios-> GVS or Player PO Token required    (unusable without plugin)
-#   tv         -> formats DRM'd without account cookies
-#   web_safari -> HLS (m3u8) formats require NO PO Token   <- primary
-#   android_vr -> no PO Token ("made for kids" videos unavailable) <- fallback
-#   web_embedded -> no PO Token (embeddable videos only)   <- last resort
+#   web / mweb / android / ios -> GVS or Player PO Token (needs plugin)
+#   tv                         -> formats DRM'd without account cookies
+#   android_vr                 -> 403 on many GVS URLs (removed from yt-dlp defaults)
+#   visionos                   -> no PO Token; progressive + HLS   <- primary
+#   web_safari                 -> HLS (m3u8) often no PO Token     <- fallback
+#   web_embedded               -> no PO Token (embeddable only)    <- last resort
 # HLS live streams require no PO Token on any client except ios.
-YOUTUBE_PLAYER_CLIENTS = ["web_safari", "android_vr", "web_embedded"]
+YOUTUBE_PLAYER_CLIENTS = ["visionos", "web_safari", "web_embedded"]
 
 # Extractor args dict to merge into every yt-dlp options dict for YouTube.
 YOUTUBE_EXTRACTOR_ARGS = {"youtube": {"player_client": YOUTUBE_PLAYER_CLIENTS}}
 
 # Minimum acceptable yt-dlp version; warn loudly at startup if older.
-# YouTube extractor breakage in stale yt-dlp is the #1 fleet-wide failure mode.
-YTDLP_MIN_VERSION = "2026.07.04"
+# Floor includes visionos client (#17184) and android_vr default removal (#17461).
+YTDLP_MIN_VERSION = "2026.08.19"
 
 # STREAMING selector (Track B, single- or dual-URL consumption by FFmpeg):
 # prefer muxed H.264+AAC (incl. HLS variants), then split avc1+mp4a pairs

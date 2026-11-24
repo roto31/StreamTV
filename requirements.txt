@@ -16,7 +16,7 @@ alembic==1.17.2           # Latest version (requires Python 3.10+)
 httpx==0.28.1             # Latest version (Python 3.8+ compatible) - fixes 4 CVEs
 
 # Media Processing
-yt-dlp>=2026.7.4          # YouTube extractor floor (PO Token / SABR era) — keep in sync with YTDLP_MIN_VERSION
+yt-dlp>=2026.8.19         # YouTube extractor floor (visionos client) — keep in sync with YTDLP_MIN_VERSION
 ffmpeg-python==0.2.0      # No updates available
 
 # Web Framework

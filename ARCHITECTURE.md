@@ -276,6 +276,22 @@ flowchart LR
 never `*.ia.mp4` derivatives (`builder_add_links` + playout guards). New-channel
 only (G5); `channel_build` needs `plan_token` + `confirm="build"`.
 
+## macOS StreamTV.app (Web UI embed)
+
+```mermaid
+flowchart LR
+  App["StreamTV.app"] --> Lifecycle["Start or attach :8410"]
+  App --> Native["Channels / Guide / Manage"]
+  App --> Admin["Admin hub"]
+  App --> WebUI["Web UI WKWebView"]
+  Native --> API[":8410 /api"]
+  Admin --> WebUI
+  WebUI --> UI["Jinja WebUI"]
+  Lifecycle --> API
+```
+
+First-run / SetupDone: [docs/guides/FIRST_RUN_SETUP.md](docs/guides/FIRST_RUN_SETUP.md).
+
 ## Distributions
 
 The canonical application is the root `streamtv/` package. Platform mirrors
