@@ -132,6 +132,19 @@ After identity **200**, retune **one** Live TV channel (native, then YouTube).
 
 ## 5. Remux / AAC / Codecs (Issue 72)
 
+```mermaid
+flowchart TD
+  Sym["Fleet Playback Error / sample rate not set"] --> Soak{"StreamTV /auto/v* soak OK?"}
+  Soak -->|no| ST["Fix StreamTV first"]
+  Soak -->|yes| Id{"/identity 200?"}
+  Id -->|no| Maint["PMS maintenance / claim"]
+  Id -->|yes| Disk{"Boot volume free space?"}
+  Disk -->|full| Space["Free disk / TranscoderTempDirectory"]
+  Disk -->|ok| AAC{"libaac_decoder.dylib present?"}
+  AAC -->|no| Install["verify_plex_aac_codecs.sh<br/>install_plex_aac_codecs.sh"]
+  AAC -->|yes| Other["Prefs / Grabber / single-channel retest"]
+```
+
 If StreamTV soak is good, disk has space, and `/identity` is 200, but **all**
 Live TV channels fail with Grabber `Recording failed` / empty Transcoder
 `SegmentList` / `sample rate not set`:

@@ -2,7 +2,7 @@
 
 Complete documentation for StreamTV on macOS.
 
-> **Canonical guides (prefer these):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) · [Player preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Backup](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) · [Schedules](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) · [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (**retired** — script heals only). This page is a large historical amalgam — if it conflicts, trust the linked guides.
+> **Canonical guides (prefer these):** [ARCHITECTURE.md](https://github.com/roto31/StreamTV/blob/main/ARCHITECTURE.md) · [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap) · [Core-Dependency-Freshness](Core-Dependency-Freshness) · [Plex-Playback-Error-Host](Plex-Playback-Error-Host) · [Player preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Backup](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md) · [Schedules](https://github.com/roto31/StreamTV/blob/main/docs/SCHEDULES.md) · [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) (**retired** — script heals only). This page is a large historical amalgam — if it conflicts, trust the linked guides.
 
 ## Quick Links
 
@@ -27,7 +27,7 @@ Automatic portable zips and first-launch restore: [Backup and restore](https://g
 
 ## Quick Installation
 
-**Preferred:** install the signed DMG from [Releases](https://github.com/roto31/StreamTV/releases) (tip **v1.4.5**). First channel: [15-minute guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/FIRST_CHANNEL_15_MIN.md).
+**Preferred:** install the signed DMG from [Releases](https://github.com/roto31/StreamTV/releases) (tip **v1.4.7**). First-run: [First-Run-Setup](First-Run-Setup). First channel: [15-minute guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/FIRST_CHANNEL_15_MIN.md).
 
 From a source checkout:
 

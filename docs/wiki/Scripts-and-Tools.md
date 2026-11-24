@@ -4,6 +4,26 @@ Complete documentation for all StreamTV utility scripts and tools.
 
 > **Heal / soft-deploy scripts (tip):** `scripts/heal_stalled_ffmpeg.py`, `scripts/heal_playout_lag.py`, `scripts/heal_tunarr_ram.sh`, `scripts/deploy_soft.sh` — see [SOFT_DEPLOY](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md), [FFMPEG_STALL_KEEPALIVE](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md), [TUNARRRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md). macOS install: prefer [Releases DMG](https://github.com/roto31/StreamTV/releases) or `packaging/macos/install_macos.sh` (not `./install_macos.sh` at repo root).
 
+## First-run / freshness / Plex AAC (v1.4.7)
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/check_core_dependency_freshness.py` | yt-dlp floor + player-client policy + FFmpeg ([Core-Dependency-Freshness](Core-Dependency-Freshness)) |
+| `scripts/verify_plex_aac_codecs.sh` | Confirm `libaac_decoder.dylib` under Plex Codecs |
+| `scripts/install_plex_aac_codecs.sh` | Trigger PMS download / optional `--from-dir` donor |
+| `scripts/install-com-streamtv-launchagent.sh` | Production `com.streamtv` LaunchAgent |
+| `scripts/validate_starter_pack.py` | Validate optional sample packs (product builds) |
+| `scripts/validate_channel_pack.py` | Offline channel+schedule GitOps gate |
+| `scripts/apply_channel_pack.sh` | Import → soft deploy → Plex guide reload ([Channel-Pack-GitOps](Channel-Pack-GitOps)) |
+| `scripts/apply_public_update.sh` | In-app / Settings → Updates apply path |
+
+```mermaid
+flowchart LR
+  Fresh["check_core_dependency_freshness.py"] --> YT["yt-dlp ≥ floor"]
+  AAC["verify_plex_aac_codecs.sh"] --> Install["install_plex_aac_codecs.sh"]
+  Pack["validate_channel_pack.py"] --> Apply["apply_channel_pack.sh"]
+```
+
 # Scripts
 
 Utility scripts for managing StreamTV.

@@ -2,7 +2,7 @@
 
 Welcome to the StreamTV platform documentation wiki.
 
-**Current tip:** **v1.4.5** — see [Releases](https://github.com/roto31/StreamTV/releases) and [Product scope](https://github.com/roto31/StreamTV/blob/main/docs/PRODUCT_SCOPE.md).
+**Current tip:** **v1.4.7** — see [Releases](https://github.com/roto31/StreamTV/releases) and [Product scope](https://github.com/roto31/StreamTV/blob/main/docs/PRODUCT_SCOPE.md).
 
 Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree/main/docs) in the public repo. This wiki is the curated entry layer.
 
@@ -13,8 +13,8 @@ Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree
 
 ## Quick start
 
-1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases)
-2. Follow the [Installation Guide](Installation-Guide)
+1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (`StreamTV.1.4.7-macos.dmg`)
+2. Follow the [Installation Guide](Installation-Guide) · [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap)
 3. [First channel in 15 minutes](https://github.com/roto31/StreamTV/blob/main/docs/guides/FIRST_CHANNEL_15_MIN.md) (public demo pack)
 
 ## Architecture diagrams (canonical)
@@ -27,6 +27,10 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 
 ## Operator guides
 
+- [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset) · [In-App-Updates](In-App-Updates)
+- [Core-Dependency-Freshness](Core-Dependency-Freshness) (yt-dlp floor / player clients)
+- [Plex-Playback-Error-Host](Plex-Playback-Error-Host) (Issue 71–72 AAC / maintenance)
+- [Channel-Pack-GitOps](Channel-Pack-GitOps) (private promote → validate → apply)
 - [Browser `/player` preview](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md)
 - [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md)
 - [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md)
@@ -34,7 +38,6 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 - [Backup and restore](https://github.com/roto31/StreamTV/blob/main/docs/guides/BACKUP_RESTORE.md)
 - Ops healing: [FFmpeg stall](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) (AI Recovery retired)
 - [LoudNorm fleet audio](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) (default **off**)
-- [FFmpeg stall / keepalive](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md)
 - [Fleet probe protocol](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md)
 - [Metadata enrichment](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md)
 - [EPG sync classes](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md)
@@ -56,6 +59,8 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 ## Wiki pages
 
 - [Documentation Index](Documentation-Index)
+- [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap) · [Core-Dependency-Freshness](Core-Dependency-Freshness)
+- [Plex-Playback-Error-Host](Plex-Playback-Error-Host) · [Channel-Pack-GitOps](Channel-Pack-GitOps) · [In-App-Updates](In-App-Updates)
 - [Implementation & Integrations](Implementation)
 - [Channel Creator MCP](Channel-Creator-MCP) · [Host wiring](Channel-Creator-MCP-Host-Wiring) · [HTTP auth](Channel-Creator-MCP-Auth)
 - [API Reference](API-Reference)

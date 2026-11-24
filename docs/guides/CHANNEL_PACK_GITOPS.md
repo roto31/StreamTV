@@ -108,6 +108,18 @@ sync CI for private packs (packs are excluded from public).
 
 ## 4. Apply sequence (Mac Studio production)
 
+```mermaid
+flowchart TD
+  MCP["MCP channel_build PASS"] --> Promote["Promote → data/channels_N_slug.yaml"]
+  Promote --> PR["Private PR + CI validate_channel_pack.py"]
+  PR --> Apply["apply_channel_pack.sh on production host"]
+  Apply --> V["validate"]
+  V --> Imp["import_channels.py"]
+  Imp --> Soft["deploy_soft.sh --channel N"]
+  Soft --> Guide["reload_plex_streamtv_guide.sh"]
+  Guide --> Smoke["lineup.json contains N"]
+```
+
 Preconditions (Issue 42/43):
 
 ```bash

@@ -2,7 +2,7 @@
 
 Complete Plex Media Server integration documentation.
 
-> **Canonical operator guides:** [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Fleet probe](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md) · [Add Tunarr in Plex](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md) · [Schedules](Schedules) (YAML authority; UI read-only) · [Tunarr hybrid](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md)
+> **Canonical operator guides:** [Plex-Playback-Error-Host](Plex-Playback-Error-Host) (Issues 71–72) · [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) · [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [Fleet probe](https://github.com/roto31/StreamTV/blob/main/docs/guides/FLEET_PROBE_PROTOCOL.md) · [Add Tunarr in Plex](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md) · [Schedules](Schedules) (YAML authority; UI read-only) · [Tunarr hybrid](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md) · [First-Run-Setup](First-Run-Setup) AAC gate
 
 > This page is a large historical amalgam. Prefer the linked guides when they disagree.
 > Guide data comes from `schedules/{n}.yml` → XMLTV — not from web schedule creation.

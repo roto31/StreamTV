@@ -28,7 +28,10 @@ Run these diagnostic scripts directly from this page to check your installation:
 | Keepalive-only / stalled FFmpeg | [FFmpeg stall keepalive](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
 | TunarrRAM full | [TunarrRAM recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | Plex spinner / YouTube cold cache | [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) |
-| Plex Playback Error (preview OK) / `/identity` 503 | [Plex Playback Error host triage](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_PLAYBACK_ERROR_HOST.md) (Issue 71) |
+| Plex Playback Error (preview OK) / `/identity` 503 | wiki [Plex-Playback-Error-Host](Plex-Playback-Error-Host) · [guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_PLAYBACK_ERROR_HOST.md) (Issue 71) |
+| Fleet Live TV `sample rate not set` / empty SegmentList | wiki [Plex-Playback-Error-Host](Plex-Playback-Error-Host) AAC § · `scripts/verify_plex_aac_codecs.sh` (Issue 72) |
+| YouTube GVS 403 / stale yt-dlp | wiki [Core-Dependency-Freshness](Core-Dependency-Freshness) · `scripts/check_core_dependency_freshness.py` (Issue 73) |
+| First-run blocked / SetupDone 409 | wiki [First-Run-Setup](First-Run-Setup) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset) |
 | Soft restart (no kickstart) | [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) |
 | Loudness / loudnorm CPU | [LoudNorm fleet audio](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
 | AI recovery / Ollama (retired) | Use heal scripts — [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) · [FFmpeg stall](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |

@@ -54,8 +54,11 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Core operator quickstart | [guides/CORE_OPERATOR_QUICKSTART.md](guides/CORE_OPERATOR_QUICKSTART.md) |
 | Backup and restore | [guides/BACKUP_RESTORE.md](guides/BACKUP_RESTORE.md) |
 | First-run setup | [guides/FIRST_RUN_SETUP.md](guides/FIRST_RUN_SETUP.md) |
+| Production bootstrap (universal) | [guides/PRODUCTION_BOOTSTRAP_UNIVERSAL.md](guides/PRODUCTION_BOOTSTRAP_UNIVERSAL.md) |
 | SetupDone / factory reset | [guides/SETUP_DONE_AND_FACTORY_RESET.md](guides/SETUP_DONE_AND_FACTORY_RESET.md) |
 | Source auth (YouTube / Archive.org) | [guides/SOURCE_AUTH_YOUTUBE_ARCHIVE.md](guides/SOURCE_AUTH_YOUTUBE_ARCHIVE.md) |
+| Core dependency freshness (yt-dlp) | [guides/CORE_DEPENDENCY_FRESHNESS.md](guides/CORE_DEPENDENCY_FRESHNESS.md) |
+| Plex Playback Error host triage | [guides/PLEX_PLAYBACK_ERROR_HOST.md](guides/PLEX_PLAYBACK_ERROR_HOST.md) |
 | macOS Web UI sidebar | [guides/MACOS_APP_WEBUI_SIDEBAR.md](guides/MACOS_APP_WEBUI_SIDEBAR.md) |
 | Native admin parity | [guides/NATIVE_ADMIN_PARITY.md](guides/NATIVE_ADMIN_PARITY.md) |
 | In-app Updates | [guides/IN_APP_UPDATES.md](guides/IN_APP_UPDATES.md) |

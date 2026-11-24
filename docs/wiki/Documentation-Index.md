@@ -2,10 +2,10 @@
 
 Complete guide to StreamTV documentation, organized by topic.
 
-**Version:** 1.4.4 · **Updated:** 2026-11-22  
+**Version:** 1.4.7 · **Updated:** 2026-11-24  
 Sync this wiki with `bash scripts/sync_public_docs.sh --apply --wiki` from StreamTV-source.
 
-**Platform notes:** Builder = Archive.org + YouTube; Schedules UI read-only (`schedules/{n}.yml`); Collections UI and AI Recovery retired.
+**Platform notes:** Builder = Archive.org + YouTube; Schedules UI read-only (`schedules/{n}.yml`); Collections UI and AI Recovery retired; first-run includes install location, optional samples, Plex AAC gate, yt-dlp freshness.
 
 > Deep docs live in the public repo tree. Prefer **absolute links** below (GitHub Wiki cannot resolve `../guides/`).
 
@@ -13,7 +13,8 @@ Sync this wiki with `bash scripts/sync_public_docs.sh --apply --wiki` from Strea
 
 ## First-run / macOS app
 
-- Wiki: [First-Run-Setup](First-Run-Setup) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset) · [Source-Auth-YouTube-Archive](Source-Auth-YouTube-Archive)
+- Wiki: [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset) · [Source-Auth-YouTube-Archive](Source-Auth-YouTube-Archive)
+- Wiki: [Core-Dependency-Freshness](Core-Dependency-Freshness) · [Plex-Playback-Error-Host](Plex-Playback-Error-Host) · [Channel-Pack-GitOps](Channel-Pack-GitOps)
 - Wiki: [macOS-App-WebUI-Sidebar](macOS-App-WebUI-Sidebar) · [Native-Admin-Parity](Native-Admin-Parity) · [In-App-Updates](In-App-Updates)
 
 ## Quick start
@@ -51,6 +52,10 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | Guide | Link |
 |-------|------|
 | Core operator quickstart | [CORE_OPERATOR_QUICKSTART.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CORE_OPERATOR_QUICKSTART.md) |
+| First-run / SetupDone | wiki [First-Run-Setup](First-Run-Setup) · [PRODUCTION_BOOTSTRAP](https://github.com/roto31/StreamTV/blob/main/docs/guides/PRODUCTION_BOOTSTRAP_UNIVERSAL.md) |
+| Core dependency freshness | wiki [Core-Dependency-Freshness](Core-Dependency-Freshness) · [guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/CORE_DEPENDENCY_FRESHNESS.md) |
+| Plex Playback Error host | wiki [Plex-Playback-Error-Host](Plex-Playback-Error-Host) · [guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_PLAYBACK_ERROR_HOST.md) |
+| Channel pack GitOps | wiki [Channel-Pack-GitOps](Channel-Pack-GitOps) · [guide](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_PACK_GITOPS.md) |
 | Browser `/player` preview | [PLAYER_PREVIEW.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLAYER_PREVIEW.md) |
 | Soft deploy | [SOFT_DEPLOY.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) |
 | Plex video hold | [PLEX_VIDEO_HOLD.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) |
@@ -85,6 +90,8 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 ## Wiki pages (this wiki)
 
 - [Home](Home) · [macOS](macOS)
+- [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset)
+- [Core-Dependency-Freshness](Core-Dependency-Freshness) · [Plex-Playback-Error-Host](Plex-Playback-Error-Host) · [Channel-Pack-GitOps](Channel-Pack-GitOps) · [In-App-Updates](In-App-Updates)
 - [Beginner-Guide](Beginner-Guide) · [Intermediate-Guide](Intermediate-Guide) · [Expert-Guide](Expert-Guide)
 - [Installation-Guide](Installation-Guide) · [Schedules](Schedules) · [Logging](Logging)
 - [Authentication](Authentication) · [Authentication-System](Authentication-System)
@@ -109,4 +116,4 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 
 ---
 
-**Status:** Wiki mirror current with tip **1.4.5** (core trim + signed DMG + public demo pack); publish via `scripts/sync_public_docs.sh --apply --wiki`.
+**Status:** Wiki mirror current with tip **1.4.7** (first-run bootstrap, Plex AAC gate, yt-dlp freshness, signed DMG); publish via `scripts/sync_public_docs.sh --apply --wiki`.

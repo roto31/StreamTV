@@ -4,6 +4,22 @@ Goal: a brand-new Mac gets a **Studio-class** StreamTV server without copying
 any lab-specific Studio settings (LAN IPs, TunarrRAM paths, `dvr_id`, private
 fleet YAML).
 
+```mermaid
+flowchart LR
+  DMG["Signed DMG / clone"] --> Loc{"Install location"}
+  Loc -->|Standard| AppSup["Application Support"]
+  Loc -->|Advanced| Repo["Existing repo + venv"]
+  AppSup --> Seed["Seed config.example.yaml"]
+  Repo --> Seed
+  Seed --> Agents["LaunchAgents"]
+  Agents --> Samples{"Optional sample packs?"}
+  Samples -->|yes| Import["Import 9101–9104"]
+  Samples -->|no| Auth["Source auth + MCP"]
+  Import --> Auth
+  Auth --> Gate["Plex AAC gate if PMS present"]
+  Gate --> Done["SetupDone"]
+```
+
 ## What first-run installs
 
 | Piece | Behavior |
@@ -49,4 +65,5 @@ Validate:
 ./venv/bin/python scripts/validate_starter_pack.py
 ```
 
-See also [FIRST_RUN_SETUP.md](FIRST_RUN_SETUP.md), [FIRST_CHANNEL_15_MIN.md](FIRST_CHANNEL_15_MIN.md).
+See also [FIRST_RUN_SETUP.md](FIRST_RUN_SETUP.md), [FIRST_CHANNEL_15_MIN.md](FIRST_CHANNEL_15_MIN.md),
+[Core dependency freshness](CORE_DEPENDENCY_FRESHNESS.md), [Channel pack GitOps](CHANNEL_PACK_GITOPS.md).
