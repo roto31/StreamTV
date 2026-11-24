@@ -3,9 +3,16 @@
 [![Releases](https://img.shields.io/github/v/release/roto31/StreamTV)](https://github.com/roto31/StreamTV/releases)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**StreamTV** is a **macOS** IPTV streaming platform that creates TV channels from
-**YouTube** and **Archive.org**. Stream directly to Plex, Emby, Jellyfin, and
-HDHomeRun-compatible devices. Remux keeps source resolution; clients scale.
+Looking for a way to produce your own streaming channels—but would rather not
+store massive amounts of media? Enter **StreamTV**. It creates curated live
+channels from **Archive.org** and **YouTube** based on criteria you describe,
+then streams them to Plex, Emby, Jellyfin, and other HDHomeRun-compatible
+clients without building a local media library. An optional
+[Channel Creator MCP](docs/guides/CHANNEL_CREATOR_MCP.md) installs on your AI
+agent, IDE, or local LLM so you can author channels in natural language.
+
+**StreamTV** is a **macOS** IPTV platform (signed + notarized DMG). Remux keeps
+source resolution; clients scale for display.
 
 > **Source:** Canonical development is private [`roto31/StreamTV-source`](https://github.com/roto31/StreamTV-source).
 > This public repo publishes **sanitized documentation**, the **GitHub Wiki**,
@@ -28,8 +35,8 @@ HDHomeRun-compatible devices. Remux keeps source resolution; clients scale.
 
 ## Quick start
 
-1. Download **v1.4.5** from [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.5) (`StreamTV.1.4.5-macos.dmg`, signed + notarized)
-2. Read the [Installation Guide](docs/wiki/Installation-Guide.md) and [Product scope](docs/PRODUCT_SCOPE.md)
+1. Download **v1.4.7** from [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.7) (`StreamTV.1.4.7-macos.dmg`, signed + notarized)
+2. Read the [Installation Guide](docs/wiki/Installation-Guide.md), [First-run setup](https://github.com/roto31/StreamTV/wiki/First-Run-Setup), and [Product scope](docs/PRODUCT_SCOPE.md)
 3. Follow [First channel in 15 minutes](docs/guides/FIRST_CHANNEL_15_MIN.md) (public demo pack)
 
 ## Documentation

@@ -1,8 +1,10 @@
 # StreamTV product scope
 
 **Platform:** macOS only (signed DMG).  
-**Tip version:** **1.4.5** — see root [`VERSION`](../VERSION) and [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.5).  
-**Bedrock:** streaming / scheduling / FFmpeg constants / HDHomeRun / cache / `api/iptv.py` remain **FROZEN** ([STREAMING_BEDROCK_FROZEN.md](STREAMING_BEDROCK_FROZEN.md)); 1.4.5 trim did not modify those paths.
+**Tip version:** **1.4.7** — see root [`VERSION`](../VERSION) and [Releases](https://github.com/roto31/StreamTV/releases/tag/v1.4.7).  
+**Bedrock:** streaming / scheduling / FFmpeg constants / HDHomeRun / cache / `api/iptv.py` remain **FROZEN** ([STREAMING_BEDROCK_FROZEN.md](STREAMING_BEDROCK_FROZEN.md)).
+
+Looking for a way to produce your own streaming channels—but would rather not store massive amounts of media? Enter **StreamTV**: curated **Archive.org** and **YouTube** channels from criteria you describe, delivered to Plex / Emby / Jellyfin without a local media library. Optional [Channel Creator MCP](guides/CHANNEL_CREATOR_MCP.md) for AI agents, IDEs, and local LLMs.
 
 ## In scope (core)
 

@@ -1,6 +1,6 @@
 # StreamTV Platform Documentation
 
-Welcome to the StreamTV platform documentation wiki.
+Looking for a way to produce your own streaming channels—but would rather not store massive amounts of media? Enter **StreamTV**. It creates curated live channels from **Archive.org** and **YouTube** based on criteria you describe, then streams them to Plex, Emby, Jellyfin, and other HDHomeRun-compatible clients without building a local media library. An optional [Channel Creator MCP](Channel-Creator-MCP) installs on your AI agent, IDE, or local LLM so you can author channels in natural language.
 
 **Current tip:** **v1.4.7** — see [Releases](https://github.com/roto31/StreamTV/releases) and [Product scope](https://github.com/roto31/StreamTV/blob/main/docs/PRODUCT_SCOPE.md).
 

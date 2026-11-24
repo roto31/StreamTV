@@ -17,14 +17,16 @@
 
 ## What is StreamTV?
 
-StreamTV is a platform that creates TV channels from online video sources like YouTube and Archive.org. Think of it as your own personal TV network that you can watch in apps like Plex, Emby, or Jellyfin.
+Looking for a way to produce your own streaming channels—but would rather not store massive amounts of media? Enter **StreamTV**. It creates curated live channels from **Archive.org** and **YouTube** based on criteria you describe, then streams them to Plex, Emby, Jellyfin, and other HDHomeRun-compatible clients without building a local media library. An optional [Channel Creator MCP](Channel-Creator-MCP) installs on your AI agent, IDE, or local LLM so you can author channels in natural language.
+
+Think of it as your own personal TV network.
 
 ### What Can You Do With StreamTV?
 
-- **Create TV Channels**: Turn YouTube playlists or Archive.org collections into continuous TV channels (Channel Builder or Import)
+- **Create TV Channels**: Turn YouTube playlists or Archive.org collections into continuous TV channels (Channel Builder, Import, or Channel Creator MCP)
 - **Watch in Plex**: Add StreamTV as a "tuner" in Plex and watch channels like regular TV
 - **Guide from YAML**: Each channel’s order and guide come from `schedules/{number}.yml` on disk
-- **No Downloads Required**: Streams come from the internet (optional local YouTube cache on supported setups)
+- **No giant media library required**: Streams come from the internet (optional local YouTube cache on supported setups)
 
 ### Simple Analogy
 
