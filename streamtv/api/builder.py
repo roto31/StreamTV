@@ -367,6 +367,8 @@ async def patch_draft(draft_id: str, body: DraftPatchRequest) -> BuilderDraft:
         "no_repeat_scope",
         "no_repeat_against",
         "explain_level",
+        "kept_candidate_indexes",
+        "candidates",
     ):
         val = getattr(body, attr, None)
         if val is not None:
@@ -780,6 +782,7 @@ async def classify_draft(draft_id: str) -> dict:
 async def add_candidates(draft_id: str, body: CandidateIdsRequest) -> BuilderDraft:
     draft = _draft_or_404(draft_id)
     by_id = {str(c.get("id")): c for c in draft.candidates}
+    kept = list(draft.kept_candidate_indexes or [])
     for cid in body.candidate_ids:
         c = by_id.get(cid)
         if not c:
@@ -788,6 +791,11 @@ async def add_candidates(draft_id: str, body: CandidateIdsRequest) -> BuilderDra
         if body.station_group:
             c["group"] = body.station_group
             c["station_group"] = body.station_group
+        # Track kept indexes for /plan (otherwise plan uses every candidate).
+        for idx, raw in enumerate(draft.candidates):
+            if str(raw.get("id")) == str(cid) and idx not in kept:
+                kept.append(idx)
+                break
         url = c.get("url")
         if url and not any(l.url == url for l in draft.links):
             role = (
@@ -811,6 +819,7 @@ async def add_candidates(draft_id: str, body: CandidateIdsRequest) -> BuilderDra
                     stream_id=c.get("id"),
                 )
             )
+    draft.kept_candidate_indexes = kept
     return draft_store.save(draft)
 
 

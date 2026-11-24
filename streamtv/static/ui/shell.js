@@ -93,6 +93,8 @@
     { title: 'Plex API', keywords: 'plex live tv', url: '/settings/plex', icon: 'integration_instructions' },
     { title: 'Source Authentication', keywords: 'youtube archive oauth', url: '/settings/auth', icon: 'vpn_key' },
     { title: 'Backup & Restore', keywords: 'export import backup', url: '/settings/backup', icon: 'backup' },
+    { title: 'Updates', keywords: 'upgrade version release dmg', url: '/settings/updates', icon: 'system_update' },
+    { title: 'First-run Setup', keywords: 'setup onboarding', url: '/setup', icon: 'rocket_launch' },
     { title: 'Streaming Logs', keywords: 'ffmpeg log errors', url: '/logs', icon: 'terminal' },
     { title: 'Plex Server Logs', keywords: 'plex log', url: '/plex-logs', icon: 'dvr' },
     { title: 'Health Check', keywords: 'diagnostics health', url: '/health-check', icon: 'health_and_safety' },

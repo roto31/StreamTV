@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}First-run Setup - StreamTV{% endblock %}
+{% block content %}
+<div class="container" style="max-width:720px;margin:0 auto;padding:24px;">
+  <h1>Welcome — First-run Setup</h1>
+  <p class="subtitle">Complete these steps once. Progress runs in the background; you will be prompted only when needed.</p>
+
+  <div class="card" style="margin-bottom:16px;padding:16px;" id="installLocationCard">
+    <h2>Install location</h2>
+    <p class="subtitle" style="font-size:0.9em;">Standard installs the production LaunchAgent under Application Support. Advanced uses a repo you already cloned and set up.</p>
+    <label style="display:block;margin:8px 0;"><input type="radio" name="installMode" value="app_support" checked /> Standard (recommended) — Application Support</label>
+    <label style="display:block;margin:8px 0;"><input type="radio" name="installMode" value="repo" /> Advanced — existing repo / clone</label>
+    <div id="repoPathRow" hidden style="margin-top:8px;">
+      <label for="repoPath">Repo path</label>
+      <input id="repoPath" type="text" style="width:100%;max-width:520px;" placeholder="/path/to/StreamTV (venv + streamtv package required)" />
+      <p class="subtitle" style="font-size:0.85em;">You must already have cloned/built the repo and run <code>python3 -m venv venv && ./venv/bin/pip install -r requirements.txt</code>.</p>
+    </div>
+    <button type="button" class="btn btn-secondary" id="installRuntimeBtn">Install server LaunchAgents</button>
+    <p id="installRuntimeStatus" style="margin-top:8px;font-size:0.9em;color:var(--text-secondary);"></p>
+  </div>
+
+  <div class="card" id="portCard" style="margin-bottom:16px;padding:16px;">
+    <h2>Server port</h2>
+    <p id="portMessage">Checking port…</p>
+    <div id="portConflict" hidden>
+      <label for="portInput">Port</label>
+      <input id="portInput" type="number" min="1" max="65535" style="width:120px;margin:0 8px;" />
+      <div id="portSuggestions" style="margin:8px 0;"></div>
+      <button type="button" class="btn btn-primary" id="setPortBtn">Set Port</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;padding:16px;">
+    <h2>Background setup</h2>
+    <ul id="jobList" style="list-style:none;padding:0;"></ul>
+    <button type="button" class="btn btn-secondary" id="startJobsBtn">Start setup checks</button>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;padding:16px;" id="plexCodecsCard">
+    <h2>Plex AAC codecs (Live TV)</h2>
+    <p id="plexCodecsStatus">Checking…</p>
+    <p class="subtitle" style="font-size:0.9em;">
+      Plex has no Settings screen that lists codec packs. StreamTV checks
+      <code>~/Library/Application Support/Plex Media Server/Codecs/</code>
+      for <code>libaac_decoder.dylib</code>. When Plex is installed, SetupDone is blocked until codecs are present.
+    </p>
+    <button type="button" class="btn btn-secondary" id="retryCodecsBtn">Retry codec installation</button>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;padding:16px;" id="sampleChannelsCard">
+    <h2>Optional sample channels</h2>
+    <p class="subtitle" style="font-size:0.9em;">Curated like a production lineup (Archive.org / music videos). Skip if you will import your own packs.</p>
+    <div id="sampleChannelList"></div>
+    <button type="button" class="btn btn-secondary" id="installSamplesBtn">Install selected samples</button>
+    <p id="sampleStatus" style="margin-top:8px;font-size:0.9em;color:var(--text-secondary);"></p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;padding:16px;">
+    <h2>Source sign-in</h2>
+    <p>Keep YouTube and Archive.org credentials current for streaming.</p>
+    <p>
+      <a class="btn btn-outlined" href="/api/auth/youtube" target="_blank" rel="noopener">YouTube Sign In</a>
+      <a class="btn btn-outlined" href="/api/auth/archive-org" target="_blank" rel="noopener">Archive.org Sign In</a>
+    </p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;padding:16px;">
+    <h2>Optional — Channel Creator MCP</h2>
+    <label><input type="checkbox" id="mcpEnable" /> Install MCP for my AI platform</label>
+    <div id="mcpHosts" style="margin-top:12px;display:none;"></div>
+  </div>
+
+  <button type="button" class="btn btn-primary" id="finishBtn">Finish setup</button>
+  <p id="setupStatus" style="margin-top:12px;color:var(--text-secondary);"></p>
+</div>
+<script nonce="{{ request.state.csp_nonce }}">
+whenDomReady(async function () {
+  const statusEl = document.getElementById('setupStatus');
+  const jobList = document.getElementById('jobList');
+  const plexEl = document.getElementById('plexCodecsStatus');
+
+  function renderPlex(s) {
+    const p = s.plex_codecs || {};
+    if (!p.detected) {
+      plexEl.textContent = p.detail || 'Plex not installed — codec gate skipped';
+      return;
+    }
+    if (p.ok) {
+      plexEl.textContent = p.detail || 'AAC codecs OK';
+    } else {
+      plexEl.textContent = 'Missing AAC codecs — Finish setup is blocked until Retry succeeds. ' + (p.detail || '');
+    }
+  }
+
+  function renderSamples(s) {
+    const box = document.getElementById('sampleChannelList');
+    box.innerHTML = '';
+    (s.sample_channels || []).forEach(ch => {
+      const lab = document.createElement('label');
+      lab.style.display = 'block';
+      lab.style.margin = '6px 0';
+      const disabled = ch.available === false ? 'disabled' : '';
+      lab.innerHTML = `<input type="checkbox" class="sample-ch" value="${ch.number}" ${disabled} /> <strong>${ch.number}</strong> ${ch.name} — ${ch.blurb || ''}`;
+      box.appendChild(lab);
+    });
+  }
+
+  document.querySelectorAll('input[name="installMode"]').forEach(el => {
+    el.addEventListener('change', () => {
+      document.getElementById('repoPathRow').hidden = document.querySelector('input[name="installMode"]:checked').value !== 'repo';
+    });
+  });
+
+  document.getElementById('installRuntimeBtn').onclick = async () => {
+    const mode = document.querySelector('input[name="installMode"]:checked').value;
+    const body = { mode };
+    if (mode === 'repo') body.workdir = document.getElementById('repoPath').value.trim();
+    document.getElementById('installRuntimeStatus').textContent = 'Installing LaunchAgents…';
+    const r = await fetch('/api/setup/install-runtime', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const j = await r.json().catch(() => ({}));
+    document.getElementById('installRuntimeStatus').textContent = r.ok
+      ? ('Installed: ' + (j.workdir || 'ok'))
+      : ('Failed: ' + JSON.stringify(j.detail || j));
+  };
+
+  document.getElementById('installSamplesBtn').onclick = async () => {
+    const channels = [...document.querySelectorAll('.sample-ch:checked')].map(el => el.value);
+    document.getElementById('sampleStatus').textContent = 'Installing…';
+    const r = await fetch('/api/setup/sample-channels', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channels })
+    });
+    const j = await r.json().catch(() => ({}));
+    document.getElementById('sampleStatus').textContent = r.ok
+      ? (j.detail || 'Installed')
+      : ('Failed: ' + JSON.stringify(j.detail || j));
+  };
+
+  async function refreshStatus() {
+    const r = await fetch('/api/setup/status');
+    const s = await r.json();
+    document.getElementById('portMessage').textContent = s.port_probe.message;
+    document.getElementById('portInput').value = s.current_port;
+    const conflict = document.getElementById('portConflict');
+    if (!s.port_probe.available) {
+      conflict.hidden = false;
+      const sug = document.getElementById('portSuggestions');
+      sug.innerHTML = '';
+      (s.port_probe.suggestions || []).forEach(p => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn btn-outlined';
+        b.textContent = String(p);
+        b.style.marginRight = '6px';
+        b.onclick = () => { document.getElementById('portInput').value = p; };
+        sug.appendChild(b);
+      });
+    }
+    const hosts = document.getElementById('mcpHosts');
+    hosts.innerHTML = '';
+    (s.mcp_hosts || []).forEach(h => {
+      const lab = document.createElement('label');
+      lab.style.display = 'block';
+      lab.innerHTML = `<input type="checkbox" class="mcp-host" value="${h.id}" /> ${h.label} <small>(${h.group})</small>`;
+      hosts.appendChild(lab);
+    });
+    renderPlex(s);
+    renderSamples(s);
+    if (s.setup_done) {
+      statusEl.textContent = 'Setup already complete — redirecting…';
+      location.href = '/';
+    }
+    return s;
+  }
+
+  document.getElementById('mcpEnable').addEventListener('change', (e) => {
+    document.getElementById('mcpHosts').style.display = e.target.checked ? 'block' : 'none';
+  });
+
+  document.getElementById('setPortBtn').onclick = async () => {
+    const port = parseInt(document.getElementById('portInput').value, 10);
+    const r = await fetch('/api/setup/port', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ port })
+    });
+    const j = await r.json();
+    if (!r.ok) {
+      statusEl.textContent = (j.detail && j.detail.message) || JSON.stringify(j.detail) || 'Port change failed';
+      return;
+    }
+    statusEl.textContent = `Port set to ${j.port}. Restart the server, then open ${j.base_url}/setup`;
+  };
+
+  function renderJobs(progress) {
+    jobList.innerHTML = '';
+    (progress.jobs || []).forEach(job => {
+      const li = document.createElement('li');
+      li.textContent = `${job.id}: ${job.status}${job.detail ? ' — ' + job.detail : ''}`;
+      jobList.appendChild(li);
+    });
+  }
+
+  document.getElementById('startJobsBtn').onclick = async () => {
+    await fetch('/api/setup/start', { method: 'POST' });
+    const poll = setInterval(async () => {
+      const r = await fetch('/api/setup/progress');
+      const p = await r.json();
+      renderJobs(p);
+      if (p.finished) {
+        clearInterval(poll);
+        await refreshStatus();
+      }
+    }, 500);
+  };
+
+  document.getElementById('retryCodecsBtn').onclick = async () => {
+    statusEl.textContent = 'Retrying Plex AAC codec installation…';
+    plexEl.textContent = 'Installing…';
+    const r = await fetch('/api/setup/plex-codecs/install', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const j = await r.json();
+    await refreshStatus();
+    statusEl.textContent = j.ok
+      ? 'Codecs installed — you can Finish setup'
+      : ('Codec install incomplete: ' + (j.detail || JSON.stringify(j)));
+  };
+
+  document.getElementById('finishBtn').onclick = async () => {
+    statusEl.textContent = 'Finishing…';
+    if (document.getElementById('mcpEnable').checked) {
+      const hosts = [...document.querySelectorAll('.mcp-host:checked')].map(el => el.value);
+      await fetch('/api/setup/mcp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: true, hosts })
+      });
+    }
+    const r = await fetch('/api/setup/complete', { method: 'POST' });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) {
+      statusEl.textContent = 'Setup complete';
+      location.href = '/';
+      return;
+    }
+    if (r.status === 409 && j.detail && j.detail.error === 'plex_codecs_missing') {
+      statusEl.textContent = j.detail.message || 'Plex AAC codecs missing — use Retry codec installation';
+      await refreshStatus();
+      return;
+    }
+    statusEl.textContent = 'Could not write SetupDone marker: ' + (j.detail ? JSON.stringify(j.detail) : r.status);
+  };
+
+  await refreshStatus();
+  await fetch('/api/setup/start', { method: 'POST' });
+  const poll = setInterval(async () => {
+    const r = await fetch('/api/setup/progress');
+    const p = await r.json();
+    renderJobs(p);
+    if (p.finished) {
+      clearInterval(poll);
+      await refreshStatus();
+    }
+  }, 500);
+});
+</script>
+{% endblock %}

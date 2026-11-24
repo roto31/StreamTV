@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Updates - StreamTV{% endblock %}
+{% block content %}
+<div class="container" style="max-width:800px;margin:0 auto;padding:24px;">
+  <h1>Updates</h1>
+  <div id="banner" class="card" style="display:none;padding:12px;margin-bottom:16px;background:rgba(52,199,89,0.15);"></div>
+  <div class="card" style="padding:16px;margin-bottom:16px;">
+    <p><strong>Current version:</strong> <span id="curVer">…</span></p>
+    <p><strong>Install mode:</strong> <span id="mode">…</span></p>
+    <p><strong>Latest version:</strong> <span id="latVer">…</span></p>
+    <p id="fetchErr" style="color:var(--error);"></p>
+  </div>
+  <div class="card" style="padding:16px;margin-bottom:16px;">
+    <h2>Release notes</h2>
+    <pre id="notes" style="white-space:pre-wrap;font-size:14px;max-height:320px;overflow:auto;"></pre>
+  </div>
+  <label style="display:block;margin-bottom:12px;">
+    <input type="checkbox" id="agree" /> I agree to download and apply this update (backup runs first; rollback on failure).
+  </label>
+  <button type="button" class="btn btn-primary" id="updateBtn" disabled>Update</button>
+  <a class="btn btn-outlined" id="dmgBtn" href="/api/updates/dmg" style="margin-left:8px;">Download DMG</a>
+  <p id="jobStatus" style="margin-top:16px;color:var(--text-secondary);"></p>
+</div>
+<script nonce="{{ request.state.csp_nonce }}">
+whenDomReady(async function () {
+  async function load() {
+    const r = await fetch('/api/updates/status');
+    const s = await r.json();
+    document.getElementById('curVer').textContent = s.current_version;
+    document.getElementById('latVer').textContent = s.latest_version || '—';
+    document.getElementById('mode').textContent = s.install_mode;
+    document.getElementById('notes').textContent = s.release_notes || '(no notes)';
+    document.getElementById('fetchErr').textContent = s.fetch_error || '';
+    const banner = document.getElementById('banner');
+    if (s.banner && s.banner.message && !s.banner.acked) {
+      banner.style.display = 'block';
+      banner.textContent = s.banner.message;
+      banner.onclick = async () => {
+        await fetch('/api/updates/banner/ack', { method: 'POST' });
+        banner.style.display = 'none';
+      };
+    }
+    document.getElementById('jobStatus').textContent = s.job
+      ? `${s.job.status}: ${s.job.message}${s.job.error ? ' — ' + s.job.error : ''}`
+      : '';
+  }
+  const agree = document.getElementById('agree');
+  const btn = document.getElementById('updateBtn');
+  agree.onchange = () => { btn.disabled = !agree.checked; };
+  btn.onclick = async () => {
+    btn.disabled = true;
+    await fetch('/api/updates/agree-and-apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agree: true })
+    });
+    const poll = setInterval(async () => {
+      const r = await fetch('/api/updates/job');
+      const j = await r.json();
+      document.getElementById('jobStatus').textContent =
+        `${j.status}: ${j.message}${j.error ? ' — ' + j.error : ''}`;
+      if (['done', 'failed', 'idle'].includes(j.status)) clearInterval(poll);
+    }, 1000);
+  };
+  await load();
+});
+</script>
+{% endblock %}

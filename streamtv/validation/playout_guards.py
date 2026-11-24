@@ -104,6 +104,81 @@ def validate_archive_stream_urls(
     return report
 
 
+def _is_filler_schedule_key(key: str, title: str = "") -> bool:
+    """Commercial / pad rows are allowed to repeat; program rows are not adjacent."""
+    k = (key or "").lower()
+    t = (title or "").lower()
+    return (
+        k.startswith("brk_")
+        or k.startswith("pad_")
+        or "station break" in t
+        or "late-night programming" in t
+        or "filler" in t
+    )
+
+
+def validate_schedule_program_diversity(
+    schedule: dict[str, Any],
+    *,
+    channel_label: str = "",
+    max_program_share: float = 0.20,
+    max_consecutive_same: int = 1,
+) -> GuardReport:
+    """Block tiny fill-pool loops and consecutive program repeats (Issue 69).
+
+    Daypart loops may reuse program keys across the cycle, but must not:
+      - schedule the same non-filler program key back-to-back
+      - let one non-filler key dominate (>max_program_share of program slots)
+    """
+    report = GuardReport()
+    prefix = f"{channel_label}: " if channel_label else ""
+    for seq in schedule.get("sequence") or []:
+        items = seq.get("items") or []
+        program_keys: list[str] = []
+        for it in items:
+            key = str(it.get("all") or it.get("content") or "")
+            title = str(it.get("custom_title") or "")
+            if not key or _is_filler_schedule_key(key, title):
+                continue
+            program_keys.append(key)
+        if len(program_keys) < 2:
+            continue
+        # Consecutive identical program keys (always — even on short sequences)
+        streak = 1
+        worst_streak = 1
+        worst_key = program_keys[0]
+        for a, b in zip(program_keys, program_keys[1:]):
+            if a == b:
+                streak += 1
+                if streak > worst_streak:
+                    worst_streak = streak
+                    worst_key = a
+            else:
+                streak = 1
+        if worst_streak > max_consecutive_same:
+            report.error(
+                f"{prefix}schedule sequence '{seq.get('key', '?')}' repeats "
+                f"program key '{worst_key}' {worst_streak}x consecutively "
+                f"(max {max_consecutive_same}) — Issue 69: use a larger fill pool "
+                "and LRU / no-adjacent selection"
+            )
+        # Monopoly share needs enough slots to be meaningful
+        if len(program_keys) < 4:
+            continue
+        counts = Counter(program_keys)
+        top_key, top_n = counts.most_common(1)[0]
+        share = top_n / len(program_keys)
+        if share > max_program_share and top_n >= 8:
+            report.error(
+                f"{prefix}schedule sequence '{seq.get('key', '?')}' overuses "
+                f"program key '{top_key}' ({top_n}/{len(program_keys)} = "
+                f"{share:.0%} > {max_program_share:.0%}) — Issue 69: do not loop a "
+                "1-item prog/fill pool for overnight or afternoon pads; rotate "
+                "real inventory and reserve commercial pads for short remainders"
+            )
+    return report
+
+
 def validate_stream_schedule_ratio(
     streams: list[dict[str, Any]],
     schedule: dict[str, Any],
@@ -208,6 +283,7 @@ def validate_unified_channel(
     merged = GuardReport()
     for part in (
         validate_schedule_sequence(schedule, channel_label=label),
+        validate_schedule_program_diversity(schedule, channel_label=label),
         validate_archive_stream_urls(streams, channel_label=label),
         validate_stream_schedule_ratio(streams, schedule, channel_label=label),
         validate_logo_path(ch, project_root=root, channel_label=label),

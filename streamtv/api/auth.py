@@ -23,12 +23,10 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
-# Initialize Jinja2 templates with auto-escaping enabled for XSS protection
-# FastAPI's Jinja2Templates uses autoescape by default, but we ensure it's enabled
-templates = Jinja2Templates(
-    directory="streamtv/templates",
-    # Jinja2Templates enables auto-escaping by default for security
-)
+# Absolute path — relative "streamtv/templates" 500s when cwd is Application Support
+# (StreamTV.app LaunchAgent / double-click). Same pattern as docs.py / main.py.
+TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 # Initialize rate limiter for authentication endpoints
 limiter = Limiter(key_func=get_remote_address)
@@ -68,39 +66,53 @@ class YouTubeCookies(BaseModel):
     cookies_file: str
 
 
-@router.get("/archive-org", response_class=HTMLResponse)
-async def archive_org_login_page_legacy(request: Request):
-    """Archive.org authentication page (legacy route - uses new template)"""
-    # Use the same template as /archive for consistency
-    return templates.TemplateResponse(request, "auth_archive.html", {
-"authenticated": bool(config.archive_org.cookies_file),
-        "cookies_file": config.archive_org.cookies_file or ""
-})
-
-@router.get("/archive", response_class=HTMLResponse)
-async def archive_org_login_page(request: Request):
-    """Archive.org login page"""
-    # Check if credentials exist (from Keychain or config)
+def _archive_org_login_context() -> dict:
+    """Shared context for Archive.org username/password login pages."""
     from ..utils.macos_credentials import (
         get_credentials_from_keychain,
         resolve_archive_org_login_email,
     )
+
     preferred = config.archive_org.username
     keychain_creds = None
     if preferred:
         keychain_creds = get_credentials_from_keychain("archive.org", account=preferred)
     if not keychain_creds:
         keychain_creds = get_credentials_from_keychain("archive.org")
-    authenticated = bool(keychain_creds) or bool(config.archive_org.username)
+    authenticated = bool(keychain_creds) or bool(config.archive_org.username) or bool(
+        getattr(config.archive_org, "cookies_file", None)
+    )
     if keychain_creds:
         username = resolve_archive_org_login_email(keychain_creds[0], preferred)
     else:
         username = config.archive_org.username or ""
-    
-    return templates.TemplateResponse(request, "auth_archive_org.html", {
-"authenticated": authenticated,
-        "username": username
-})
+    return {
+        "authenticated": authenticated,
+        "username": username,
+        "cookies_file": getattr(config.archive_org, "cookies_file", None) or "",
+    }
+
+
+@router.get("/archive-org", response_class=HTMLResponse, operation_id="auth_archive_org_login_page")
+async def archive_org_login_page_legacy(request: Request):
+    """Dashboard Sign In target — username/password (and status) for Archive.org."""
+    return templates.TemplateResponse(
+        request, "auth_archive_org.html", _archive_org_login_context()
+    )
+
+
+@router.get("/archive", response_class=HTMLResponse, operation_id="auth_archive_cookies_page")
+async def archive_org_cookies_page(request: Request):
+    """Archive.org browser-cookies authentication page."""
+    return templates.TemplateResponse(
+        request,
+        "auth_archive.html",
+        {
+            "authenticated": bool(getattr(config.archive_org, "cookies_file", None)),
+            "cookies_file": getattr(config.archive_org, "cookies_file", None) or "",
+            "username": config.archive_org.username or "",
+        },
+    )
 
 
 @router.post("/archive-org")
@@ -245,15 +257,6 @@ async def youtube_set_cookies(request: Request, file: UploadFile = File(...)):
 
 
 # Archive.org Authentication Endpoints
-
-@router.get("/archive", response_class=HTMLResponse)
-async def archive_login_page(request: Request):
-    """Archive.org authentication page"""
-    return templates.TemplateResponse(request, "auth_archive.html", {
-"authenticated": bool(config.archive_org.cookies_file),
-        "cookies_file": config.archive_org.cookies_file or ""
-})
-
 
 @router.post("/archive/cookies")
 @rate_limit("10/hour")

@@ -156,6 +156,27 @@ def check_content_keys(schedule: dict[str, Any]) -> GateResult:
     )
 
 
+def check_schedule_program_diversity(schedule: dict[str, Any]) -> GateResult:
+    """G9: no consecutive / monopoly program fill (Issue 69 / Channel Creator MCP)."""
+    from streamtv.validation.playout_guards import validate_schedule_program_diversity
+
+    report = validate_schedule_program_diversity(schedule, channel_label="")
+    ok = report.ok
+    msg = "schedule program diversity OK"
+    if report.errors:
+        msg = report.errors[0]
+    return GateResult(
+        "G9",
+        ok=ok,
+        message=msg,
+        repair=(
+            "Do not loop a 1-item fill/prog pool for overnight pads; rotate RS/"
+            "highlight inventory with LRU / no-adjacent selection; use short "
+            "commercial pads only for remainders (Issue 69)"
+        ),
+    )
+
+
 def check_no_repeat(
     streams: list[dict[str, Any]],
     schedule: dict[str, Any],
@@ -285,6 +306,7 @@ def evaluate_compiled_package(
     report.results.append(
         check_no_repeat(streams, schedule, inventory_titles=inventory_titles)
     )
+    report.results.append(check_schedule_program_diversity(schedule))
     report.results.append(
         check_runtimes_present(streams, skip_availability=skip_availability)
     )

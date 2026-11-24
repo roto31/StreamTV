@@ -1,11 +1,12 @@
 """YAML file validation using JSON schemas"""
 
-import yaml
 import json
-from pathlib import Path
-from typing import Dict, Any, List, Optional
 import logging
-from jsonschema import validate, ValidationError as JSONSchemaValidationError, Draft7Validator
+import re
+import yaml
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from jsonschema import Draft7Validator, ValidationError as JSONSchemaValidationError, validate
 from jsonschema.exceptions import SchemaError
 
 logger = logging.getLogger(__name__)

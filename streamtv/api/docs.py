@@ -129,11 +129,79 @@ def markdown_to_html(markdown_content: str) -> str:
         return build_script_button(script_id, clean_text)
     
     html_content = re.sub(script_pattern, replace_script_link, html_content)
-    
+
     # Clear script links for next call
     markdown_to_html._script_links = []
-    
+
+    # Rewrite repo-relative .md links to /docs/{slug} for WebUI All Guides
+    html_content = rewrite_doc_markdown_links(html_content)
+
     return html_content
+
+
+def _docs_path_to_slug() -> dict[str, str]:
+    """Invert DOCS_FILES: normalized path → slug (built after DOCS_FILES is defined)."""
+    mapping: dict[str, str] = {}
+    for slug, rel in DOCS_FILES.items():
+        norm = rel.replace("\\", "/").lstrip("./")
+        mapping[norm] = slug
+        mapping[Path(norm).name] = slug
+        # Also key by path relative to docs/
+        if norm.startswith("docs/"):
+            mapping[norm[len("docs/") :]] = slug
+            mapping[f"./{norm[len('docs/') :]}"] = slug
+    return mapping
+
+
+def rewrite_doc_markdown_links(html_content: str) -> str:
+    """Map hrefs like BEGINNER_GUIDE.md / guides/FOO.md to /docs/{slug}."""
+    import re
+    from urllib.parse import unquote, urlparse
+
+    path_to_slug = _docs_path_to_slug()
+
+    def _resolve(href: str) -> str | None:
+        raw = unquote(href.strip())
+        if not raw or raw.startswith(("http://", "https://", "mailto:", "script:", "#")):
+            return None
+        if raw.startswith("/docs/") or raw == "/documentation":
+            return None
+        # Strip query/fragment
+        parsed = urlparse(raw)
+        path = parsed.path or raw
+        path = path.replace("\\", "/")
+        # Normalize ../ARCHITECTURE.md from docs/README → ARCHITECTURE.md at repo root
+        candidates = [
+            path.lstrip("./"),
+            path[2:] if path.startswith("./") else path,
+        ]
+        if path.startswith("../"):
+            candidates.append(path[3:])
+        if not path.startswith("docs/") and not path.startswith("/"):
+            candidates.append(f"docs/{path.lstrip('./')}")
+        # Drop leading slash for site-root mistaken paths
+        if path.startswith("/") and path.endswith(".md"):
+            candidates.append(path.lstrip("/"))
+            candidates.append(f"docs/{path.lstrip('/')}")
+
+        for cand in candidates:
+            cand = cand.lstrip("/")
+            if cand in path_to_slug:
+                return f"/docs/{path_to_slug[cand]}"
+            name = Path(cand).name
+            if name in path_to_slug and cand.endswith(".md"):
+                return f"/docs/{path_to_slug[name]}"
+        return None
+
+    def _repl(match: re.Match[str]) -> str:
+        href = match.group(1)
+        resolved = _resolve(href)
+        if resolved:
+            return f'href="{resolved}"'
+        return match.group(0)
+
+    return re.sub(r'href="([^"]+)"', _repl, html_content)
+
 
 # Comprehensive documentation files mapping
 # Maps doc_type routes to actual markdown files in the docs folder
@@ -239,6 +307,26 @@ DOCS_FILES = {
     "add_tunarr_in_plex": "docs/guides/ADD_TUNARR_IN_PLEX.md",
     "vimeo_bedrock_gate": "docs/guides/VIMEO_BEDROCK_GATE.md",
     "architecture": "ARCHITECTURE.md",
+    "backup_restore": "docs/guides/BACKUP_RESTORE.md",
+    "soft_deploy": "docs/guides/SOFT_DEPLOY.md",
+    "player_preview": "docs/guides/PLAYER_PREVIEW.md",
+    "plex_video_hold": "docs/guides/PLEX_VIDEO_HOLD.md",
+    "tunarr_ram": "docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md",
+    "fleet_probe": "docs/guides/FLEET_PROBE_PROTOCOL.md",
+    "ffmpeg_stall": "docs/guides/FFMPEG_STALL_KEEPALIVE.md",
+    "loudnorm": "docs/guides/LOUDNORM_FLEET_AUDIO.md",
+    "channel_creator_mcp": "docs/guides/CHANNEL_CREATOR_MCP.md",
+    "channel_creator_mcp_host_wiring": "docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md",
+    "channel_creator_mcp_auth": "docs/guides/CHANNEL_CREATOR_MCP_AUTH.md",
+    "pbs_playwright": "docs/guides/PBS_PLAYWRIGHT.md",
+    "sanitization_policy": "docs/public-repo/SANITIZATION_POLICY.md",
+    "lessons_learned": "LESSONS_LEARNED.md",
+    "first_run_setup": "docs/guides/FIRST_RUN_SETUP.md",
+    "setup_done_factory_reset": "docs/guides/SETUP_DONE_AND_FACTORY_RESET.md",
+    "source_auth_youtube_archive": "docs/guides/SOURCE_AUTH_YOUTUBE_ARCHIVE.md",
+    "macos_app_webui_sidebar": "docs/guides/MACOS_APP_WEBUI_SIDEBAR.md",
+    "native_admin_parity": "docs/guides/NATIVE_ADMIN_PARITY.md",
+    "in_app_updates": "docs/guides/IN_APP_UPDATES.md",
 }
 
 # Legacy mapping for backward compatibility

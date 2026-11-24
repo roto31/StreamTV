@@ -256,9 +256,13 @@
                 bindActionHandlers(handoffRoot);
             }
             await loadChannels();
-            const auto = localStorage.getItem('autoPlayChannel');
+            // Prefer ?channel= (SwiftUI / deep links), then localStorage handoff.
+            const params = new URLSearchParams(window.location.search || '');
+            const fromQuery = params.get('channel') || params.get('auto');
+            const fromStorage = localStorage.getItem('autoPlayChannel');
+            if (fromStorage) localStorage.removeItem('autoPlayChannel');
+            const auto = fromQuery || fromStorage;
             if (auto) {
-                localStorage.removeItem('autoPlayChannel');
                 const name = channelCards.get(String(auto)) || `Channel ${auto}`;
                 await loadChannel(String(auto), name);
             }

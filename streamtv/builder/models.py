@@ -316,6 +316,8 @@ class DraftPatchRequest(BaseModel):
     no_repeat_scope: Optional[Literal["channel", "channel_and_others", "off"]] = None
     no_repeat_against: Optional[list[str]] = None
     explain_level: Optional[Literal["beginner", "intermediate", "expert"]] = None
+    kept_candidate_indexes: Optional[list[int]] = None
+    candidates: Optional[list[dict[str, Any]]] = None
 
 
 class LinksBatchRequest(BaseModel):

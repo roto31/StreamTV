@@ -183,14 +183,18 @@ fi
 hdr "2. Apply"
 if [[ $MODE == apply ]]; then
   warn "apply merges into live host configs — backups use .bak.<stamp>"
-  # Cursor project config
-  if [[ " ${HOSTS[*]} " == *" cursor "* ]] || [[ $HOST == all ]]; then
-    dest="${REPO}/.cursor/mcp.json"
-    stamp=$(date +%Y%m%d%H%M%S)
-    [[ -f $dest ]] && cp "$dest" "${dest}.bak.${stamp}" && ok "backed up $dest"
-    cp "$OUT_DIR/cursor.${PROFILE}.json" "$dest"
-    ok "applied cursor → $dest"
+  # All first-run hosts (Cursor, VS Code, Continue, Cline, Claude Desktop/Code,
+  # LM Studio, Goose, Open WebUI, ChatGPT, Claude web) go through Python apply.
+  host_csv="${(j:,:)HOSTS}"
+  if ! "$PYTHON" -m streamtv.setup.mcp_apply_hosts \
+      --host "$host_csv" \
+      --repo "$REPO" \
+      --out-dir "$OUT_DIR" \
+      --profile "$PROFILE"
+  then
+    fail "2. Apply" "mcp_apply_hosts failed for: $host_csv"
   fi
+  ok "applied host(s): $host_csv"
   record "2. Apply" PASS
 else
   info "mode=emit — skip live apply"
@@ -209,13 +213,21 @@ else
 fi
 
 hdr "4. Compact intake (local models)"
-"$PYTHON" - <<PY
-from mcp_streamtv import resources
-print(resources.CHANNEL_INTAKE_COMPACT[:500])
-print("…")
+if "$PYTHON" - <<'PY'
+try:
+    from mcp_streamtv import resources
+    print(resources.CHANNEL_INTAKE_COMPACT[:500])
+    print("…")
+except Exception as exc:
+    raise SystemExit(f"skip compact intake: {exc}")
 PY
-ok "printed compact intake"
-record "4. Compact intake" PASS
+then
+  ok "printed compact intake"
+  record "4. Compact intake" PASS
+else
+  warn "compact intake skipped (install requirements-mcp-streamtv.txt for full smoke)"
+  record "4. Compact intake" SKIP
+fi
 
 summary
 print -r -- "$fg_bold[green]OVERALL: PASS$reset_color"

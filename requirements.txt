@@ -63,7 +63,7 @@ urllib3==2.7.0            # Fixes CVE-2026-44431 and CVE-2026-44432
 
 # Security Notes:
 # - All dependencies updated to latest secure versions compatible with Python 3.10+
-# - yt-dlp floor updated to 2026.7.4 for current YouTube extractor behavior
+# - yt-dlp floor updated to 2026.8.19 for visionos client (Issue 73; was 2026.7.4)
 # - FastAPI, Uvicorn, and Pydantic updated to latest versions with security patches
 # - LXML updated to 6.1.1 to address XML parsing vulnerabilities
 # - SQLAlchemy updated to 2.0.45 (latest, supports Python 3.7+)

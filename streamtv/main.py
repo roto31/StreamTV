@@ -56,18 +56,13 @@ async def lifespan(app: FastAPI):
     logger.info("LIFESPAN: Starting lifespan function...")
     logger.info("Initializing StreamTV...")
 
-    # yt-dlp version policy (non-fatal, log-only)
+    # Core dependency freshness (non-fatal, log-only) — Issue 73
     try:
-        import yt_dlp
-        from streamtv.ffmpeg.constants import YTDLP_MIN_VERSION
-        installed = yt_dlp.version.__version__
-        if installed < YTDLP_MIN_VERSION:   # CalVer strings compare lexically
-            logger.warning(
-                f"yt-dlp {installed} is older than the recommended {YTDLP_MIN_VERSION}. "
-                "Stale yt-dlp is the most common cause of sudden YouTube failures. "
-                "Update with: pip install -U yt-dlp")
+        from streamtv.utils.dependency_freshness import log_freshness_at_startup
+
+        log_freshness_at_startup(check_pypi=False)
     except Exception as e:
-        logger.warning(f"Could not verify yt-dlp version: {e}")
+        logger.warning(f"Could not verify core dependency freshness: {e}")
 
     logger.info("LIFESPAN: About to call init_db()...")
     # Apply staged restore from macOS onboarding / Settings before opening the DB.
@@ -528,9 +523,31 @@ async def root(request: Request):
             }
         }
 
-    # Always show the dashboard - it will display authentication status
-    # and provide links to authentication setup pages if needed
+    # LaunchAgent-only first-run fallback (app users use native onboarding).
+    # Existing installs (DB already present) are treated as setup-complete.
+    try:
+        from .setup.first_run_state import is_setup_done, write_setup_done
+
+        if not is_setup_done():
+            db_path = Path("streamtv.db")
+            if db_path.is_file() and db_path.stat().st_size > 0:
+                write_setup_done(extra={"migrated_existing_install": True})
+            else:
+                from fastapi.responses import RedirectResponse
+
+                return RedirectResponse(url="/setup", status_code=302)
+    except Exception:
+        pass
+
     return templates.TemplateResponse(request, "index.html")
+
+
+@app.get("/setup", response_class=HTMLResponse, operation_id="setup_first_run_page")
+async def setup_first_run_page(request: Request):
+    """WebUI first-run wizard (LaunchAgent / server-only fallback)."""
+    if templates:
+        return templates.TemplateResponse(request, "setup_first_run.html")
+    return HTMLResponse("<h1>Setup</h1><p>Templates unavailable. Use /api/setup/status</p>")
 
 
 @app.get("/auth/setup", response_class=HTMLResponse)
@@ -646,6 +663,16 @@ async def settings_backup_page(request: Request):
     return HTMLResponse(
         "<h1>Backup &amp; Restore</h1>"
         "<p>Templates not available. Use API at /api/backup/status</p>"
+    )
+
+
+@app.get("/settings/updates", response_class=HTMLResponse, operation_id="settings_updates_page")
+async def settings_updates_page(request: Request):
+    """In-app Updates (version, release notes, agree-and-apply, DMG)."""
+    if templates:
+        return templates.TemplateResponse(request, "settings_updates.html")
+    return HTMLResponse(
+        "<h1>Updates</h1><p>Templates not available. Use API at /api/updates/status</p>"
     )
 
 

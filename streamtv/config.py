@@ -250,7 +250,7 @@ class TunerEndpointConfig(BaseSettings):
     """One upstream HDHomeRun-compatible tuner to normalize for Plex."""
 
     name: str = "tunarr"
-    url: str = "http://192.0.2.1:8000"
+    url: str = ""  # LAN-neutral; set by operator (never ship lab IPs)
     force_device_id: Optional[str] = None
     force_base_url: Optional[str] = None
     xmltv_url: Optional[str] = None
@@ -399,15 +399,8 @@ class Config:
         tm_data = dict(config_data.get("tuner_manager", {}) or {})
         raw_tuners = tm_data.pop("tuners", None)
         if raw_tuners is None:
-            # Sensible default: proxy local Tunarr for Plex GUI add
-            raw_tuners = [
-                {
-                    "name": "tunarr",
-                    "url": "http://192.0.2.1:8000",
-                    "xmltv_url": "http://192.0.2.1:8000/api/xmltv.xml",
-                    "role": "proxy",
-                }
-            ]
+            # LAN-neutral: no lab Tunarr IP injected for brand-new installs
+            raw_tuners = []
         parsed_tuners = [
             TunerEndpointConfig(**t) if isinstance(t, dict) else t
             for t in (raw_tuners or [])

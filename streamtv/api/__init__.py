@@ -24,6 +24,8 @@ from .builder import router as builder_router
 from .integrations_tunarr import router as integrations_tunarr_router
 from .plex_library import router as plex_library_router
 from .backup import router as backup_router
+from .setup import router as setup_router
+from .updates import router as updates_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -46,6 +48,8 @@ api_router.include_router(builder_router, tags=["Channel Builder"])
 api_router.include_router(integrations_tunarr_router, tags=["Tunarr Integration"])
 api_router.include_router(plex_library_router, tags=["Plex Library"])
 api_router.include_router(backup_router, tags=["Backup"])
+api_router.include_router(setup_router, tags=["Setup"])
+api_router.include_router(updates_router, tags=["Updates"])
 
 # IPTV router is separate (no /api prefix)
 iptv_router_instance = iptv_router

@@ -53,14 +53,14 @@ hdhomerun:
 # Paste: http://<streamtv-lan>:8410/tuners/proxy/tunarr
 # Guide:  http://<streamtv-lan>:8410/tuners/guide.xml
 tuner_manager:
-  enabled: true
+  enabled: false  # Enable after you set a real Tunarr/HDHR host (LAN-neutral default)
   merged_guide: true
-  tuners:
-    - name: tunarr
-      url: http://<tunarr-host>:8000
-      # force_device_id: null  # auto-generated once → data/tuner_device_ids/tunarr
-      # force_base_url: null   # null → advertise this proxy as BaseURL (required)
-      xmltv_url: http://<tunarr-host>:8000/api/xmltv.xml
+  tuners: []
+  # Example when ready:
+  # tuners:
+  #   - name: tunarr
+  #     url: http://<tunarr-host>:8000
+  #     xmltv_url: http://<tunarr-host>:8000/api/xmltv.xml
 
 plex:
   enabled: false  # Enable Plex API integration for EPG enhancement
