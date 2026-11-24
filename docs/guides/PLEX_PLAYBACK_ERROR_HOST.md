@@ -130,15 +130,74 @@ After identity **200**, retune **one** Live TV channel (native, then YouTube).
 
 ---
 
-## 5. Remux / AAC notes (secondary)
+## 5. Remux / AAC / Codecs (Issue 72)
 
-If StreamTV soak is good, disk has space, and `/identity` is 200, but Plex still
-fails:
+If StreamTV soak is good, disk has space, and `/identity` is 200, but **all**
+Live TV channels fail with Grabber `Recording failed` / empty Transcoder
+`SegmentList` / `sample rate not set`:
 
-- Check Transcoder logs for `AAC` / `sample rate not set` / `0 channels` —
-  often early null keepalive or hold-splice before real media.
-- Do **not** enable YouTube Plex video hold to hide spinners (Issue 62).
-- Do **not** patch frozen `streamtv/` without owner `APPROVED:`.
+### Where to look (Plex has no codec inventory UI)
+
+Plex **Settings** do **not** list installed codec packs. Operators verify on disk
+and in logs:
+
+1. **Filesystem (source of truth):**
+
+   `~/Library/Application Support/Plex Media Server/Codecs/<build>-darwin-*/libaac_decoder.dylib`
+
+   Sibling: `EasyAudioEncoder-*-darwin-*/` under the same `Codecs/` folder.
+   Build id matches `Plex Transcoder -version` (`ffmpeg version <build> …`).
+
+2. **Logs:** `~/Library/Logs/Plex Media Server/` — Transcoder Statistics with
+   empty `<SegmentList />`, or stderr `sample rate not set` /
+   `Could not find codec parameters … Audio: aac`.
+
+3. **Live TV UI only as symptom:** Grabber “Recording failed” / Playback Error
+   on every channel while StreamTV `/auto/v*` soak is fine.
+
+### Check + install scripts
+
+```bash
+bash scripts/verify_plex_aac_codecs.sh
+bash scripts/install_plex_aac_codecs.sh
+# If PMS download did not populate packs, copy from a healthy same-build host:
+bash scripts/install_plex_aac_codecs.sh --from-dir "/path/to/healthy/Plex Media Server/Codecs"
+# or: STREAMTV_PLEX_CODEC_SOURCE=…
+```
+
+Install order: (1) trigger Plex Transcoder remux of `data/plex_hold.ts` so PMS
+can fetch packs on demand; (2) donor `--from-dir` copy of matching build-id +
+EasyAudioEncoder trees into the **default** Codecs path above.
+
+First-run SetupDone **blocks** when Plex is detected and AAC codecs are missing
+(`POST /api/setup/complete` → 409); use **Retry codec installation** in WebUI
+`/setup` or StreamTV.app onboarding.
+
+1. **Check Codecs first** (highest leverage on a fresh or reinstalled PMS):
+
+   ```bash
+   bash scripts/verify_plex_aac_codecs.sh
+   CODEC="$HOME/Library/Application Support/Plex Media Server/Codecs"
+   find "$CODEC" -name 'libaac_decoder.dylib' -print
+   ls -la "$CODEC"/*-darwin-*/ 2>/dev/null | head
+   ```
+
+   Plex Transcoder disables built-in AAC and loads `libaac_decoder.dylib` via
+   `FFMPEG_EXTERNAL_LIBS`. An **empty** version directory → copy remux cannot
+   set AAC sample rate → exit 234. Homebrew `ffmpeg -c copy` can still succeed
+   (false negative for “StreamTV is broken”).
+
+   Codecs are **PMS Application Support**, not StreamTV. Do not ship them in
+   StreamTV installers; restore via PMS download or same-build host copy.
+
+2. **Restore:** `scripts/install_plex_aac_codecs.sh` (PMS trigger, then optional
+   `--from-dir`), or play any library AAC item, or copy the matching
+   `<build>-darwin-*/` + `EasyAudioEncoder-…` trees from a healthy host with the
+   **same** Transcoder build id.
+
+3. Early null keepalive / hold-splice can still confuse remux (secondary). Do
+   **not** enable YouTube Plex video hold to hide spinners (Issue 62). Do
+   **not** patch frozen `streamtv/` without owner `APPROVED:`.
 
 ---
 
@@ -161,12 +220,17 @@ df -h /Volumes/TunarrRAM 2>/dev/null
 
 # Transcoder preference
 defaults read com.plexapp.plexmediaserver TranscoderTempDirectory 2>/dev/null || true
+
+# AAC codec pack (Issue 72)
+bash scripts/verify_plex_aac_codecs.sh
+find "$HOME/Library/Application Support/Plex Media Server/Codecs" \
+  -name 'libaac_decoder.dylib' -print
 ```
 
 ---
 
 ## See also
 
-- LESSONS_LEARNED Issue 71
+- LESSONS_LEARNED Issues 71–72
 - Rule `.cursor/rules/plex-livetv-host-ops.mdc`
 - Issues 42–43 (app vs production), 51 (soft deploy), 53 (log slice), 62–64 (YouTube)

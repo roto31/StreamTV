@@ -366,14 +366,19 @@ Preferences problem — use HDHomeRun / YouTube skills.
 2. Point `TranscoderTempDirectory` at a volume with headroom (via `defaults write`
    or a **single-attribute** Preferences edit — never replace Preferences with a
    minimal stub).
-3. YouTube channels: TunarrRAM + `youtube_full_cache` + heal agent; do not enable
+3. **AAC codec pack (Issue 72):** if every Live TV channel fails with
+   `sample rate not set` / empty SegmentList while StreamTV soak is fine, run
+   `bash scripts/verify_plex_aac_codecs.sh` then
+   `bash scripts/install_plex_aac_codecs.sh` (Plex has no Settings UI for codec
+   packs — check `~/Library/Application Support/Plex Media Server/Codecs/`).
+4. YouTube channels: TunarrRAM + `youtube_full_cache` + heal agent; do not enable
    YouTube Plex video hold (Issue 62).
-4. If `/identity` stays 503: GUI quit/reopen Plex, complete sign-in/claim/TCC;
+5. If `/identity` stays 503: GUI quit/reopen Plex, complete sign-in/claim/TCC;
    API claim will also 503 during maintenance.
 
 Full playbook: [`docs/guides/PLEX_PLAYBACK_ERROR_HOST.md`](guides/PLEX_PLAYBACK_ERROR_HOST.md).  
 Related: [`docs/plex/PLEX_LIVE_TV_RECOVERY.md`](plex/PLEX_LIVE_TV_RECOVERY.md),
-LESSONS Issue 71, rule `plex-livetv-host-ops.mdc`.
+LESSONS Issues 71–72, rule `plex-livetv-host-ops.mdc`.
 
 ## Advanced Troubleshooting
 

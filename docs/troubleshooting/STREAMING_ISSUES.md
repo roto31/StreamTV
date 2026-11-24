@@ -12,7 +12,8 @@ Common issues with video streaming and playback in StreamTV.
 | Uneven loudness / true-peak spikes / loudnorm CPU | [LoudNorm fleet audio](../guides/LOUDNORM_FLEET_AUDIO.md) |
 | Want AI classify + approved heals | **Out of scope** — use heal scripts only; see [Product scope](../PRODUCT_SCOPE.md), [AUTO_HEALER.md](../AUTO_HEALER.md) (retired stub) |
 | Plex guide stale after StreamTV OK | [Plex Live TV recovery](../plex/PLEX_LIVE_TV_RECOVERY.md) |
-| Plex Playback Error / `/identity` 503 while StreamTV OK | [Plex Playback Error host triage](../guides/PLEX_PLAYBACK_ERROR_HOST.md) (Issue 71) |
+| Plex Playback Error / `/identity` 503 while StreamTV OK | [Plex Playback Error host triage](../guides/PLEX_PLAYBACK_ERROR_HOST.md) (Issues 71–72) |
+| Fleet-wide Live TV `sample rate not set` / empty SegmentList | Issue 72 AAC codecs — `scripts/verify_plex_aac_codecs.sh` / `install_plex_aac_codecs.sh` |
 | YouTube mid-song 403 / full-cache tradeoffs | Section below + [TunarrRAM recovery](../guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 
 ## YouTube mid-stream 403 (music channels)

@@ -12,11 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7] - 2026-11-24
+
 ### Added
 - **First-run setup** — SetupDone marker, in-app / WebUI setup (port, YouTube & Archive.org sign-in, optional MCP), factory reset.
 - **macOS app Web UI tab** — Administer via embedded WebUI or native Admin hub; Settings → Updates with release notes and DMG download.
 - **Channel Creator MCP v2** — Guided 11-tool profile, Streamable HTTP on port 8411 with bearer/OAuth/dual (Cloudflare Access) auth, host and remote setup scripts, and end-to-end rehearsal. Wiki-first: [Channel Creator MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP), [host wiring](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Host-Wiring), [auth](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Auth) (same content also under `docs/guides/`).
 - **Channel Creator MCP one-liner** — `curl -fsSL https://raw.githubusercontent.com/roto31/StreamTV/main/scripts/install_channel_creator_mcp.sh | bash` clones the public repo and runs interactive host wiring.
+- **Core dependency freshness check** — operator script verifies yt-dlp minimum version, YouTube player-client policy, and FFmpeg presence so sudden YouTube breakages from stale extractors are caught early.
+- **Plex Live TV AAC codec check (first-run)** — when Plex Media Server is installed, setup verifies external AAC decoder packs under Plex’s Application Support Codecs folder and blocks finish until they are present (with retry). Operator scripts can trigger Plex’s on-demand download or copy from a healthy same-build host.
+- **First-run production bootstrap** — optional install of the macOS LaunchAgent for the StreamTV server, weekly yt-dlp updater, and install-location choice (standard app support vs advanced existing folder). Optional sample channel packs may be offered in the product build.
 
 ### Fixed
 - **YouTube playback 403 on some VODs** — player client policy now prefers `visionos` (then `web_safari`, `web_embedded`); yt-dlp minimum version raised to 2026.8.19.

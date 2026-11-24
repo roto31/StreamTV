@@ -78,14 +78,19 @@ analyze_plex_error() {
         solution="This is a Plex transcoding issue.\n• Plex's FFmpeg doesn't support this option\n• Usually harmless, can be ignored\n• Or update Plex FFmpeg"
         action="check_plex_ffmpeg"
 
-    elif echo "$error_message" | grep -qiE "playback error|error opening output file media-|startup maintenance|not yet signed in"; then
-        diagnosis="Plex host / remux failure (Issue 71)"
-        solution="StreamTV preview OK does not mean Plex can remux.\n• Confirm production :8410 soak (codecs, not HTTP 200)\n• Free boot disk; set TranscoderTempDirectory off full /\n• Never replace Preferences.xml with a minimal stub\n• If /identity is 503: GUI quit/reopen + sign-in (API claim also 503)\n• YouTube: TunarrRAM + youtube_full_cache; hold YouTube=0\n\nSee docs/guides/PLEX_PLAYBACK_ERROR_HOST.md"
-        action="general_check"
+    elif echo "$error_message" | grep -qiE "sample rate not set|libaac_decoder|empty SegmentList|Could not find codec parameters.*aac"; then
+        diagnosis="Plex AAC codec pack missing (Issue 72)"
+        solution="Plex Transcoder needs external AAC dylibs.\n• No Settings UI lists codecs — check filesystem\n• Run: bash scripts/verify_plex_aac_codecs.sh\n• Install: bash scripts/install_plex_aac_codecs.sh\n• Or --from-dir a healthy same-build Codecs folder\n• Path: ~/Library/Application Support/Plex Media Server/Codecs/"
+        action="check_plex_aac_codecs"
+
+    elif echo "$error_message" | grep -qiE "playback error|recording failed"; then
+        diagnosis="Plex Live TV Playback Error (host)"
+        solution="Prove StreamTV soak first, then host triage:\n• Disk / TranscoderTempDirectory (Issue 71)\n• AAC codecs verify/install (Issue 72)\n• /identity 200 vs 503 maintenance\nSee docs/guides/PLEX_PLAYBACK_ERROR_HOST.md"
+        action="check_plex_aac_codecs"
 
     else
         diagnosis="Unknown error"
-        solution="Please check:\n• StreamTV logs\n• Plex logs\n• Network connectivity\n• Server status\n• docs/guides/PLEX_PLAYBACK_ERROR_HOST.md (Issue 71)"
+        solution="Please check:\n• StreamTV logs\n• Plex logs\n• Network connectivity\n• Server status"
         action="general_check"
     fi
 
@@ -191,6 +196,16 @@ run_diagnostic() {
 
         "check_plex_ffmpeg")
             results="This is a Plex transcoding warning.\nUsually harmless and can be ignored.\n"
+            ;;
+
+        "check_plex_aac_codecs")
+            if [[ -x "$PROJECT_ROOT/scripts/verify_plex_aac_codecs.sh" ]]; then
+                results="$(bash "$PROJECT_ROOT/scripts/verify_plex_aac_codecs.sh" 2>&1)\n"
+                results="${results}\nInstall: bash scripts/install_plex_aac_codecs.sh\n"
+                results="${results}Donor: bash scripts/install_plex_aac_codecs.sh --from-dir <healthy Codecs>\n"
+            else
+                results="verify_plex_aac_codecs.sh missing\n"
+            fi
             ;;
 
         *)

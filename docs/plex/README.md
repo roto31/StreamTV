@@ -52,8 +52,9 @@ Complete guides for integrating StreamTV with Plex Media Server.
 **[PLEX_LIVE_TV_RECOVERY.md](PLEX_LIVE_TV_RECOVERY.md)**
 - DVR id / `reloadGuide` after StreamTV restart
 
-**[../guides/PLEX_PLAYBACK_ERROR_HOST.md](../guides/PLEX_PLAYBACK_ERROR_HOST.md)** (Issue 71)
+**[../guides/PLEX_PLAYBACK_ERROR_HOST.md](../guides/PLEX_PLAYBACK_ERROR_HOST.md)** (Issues 71–72)
 - Playback Error while StreamTV preview OK
+- Missing AAC codec packs (`libaac_decoder.dylib`) — verify/install scripts; first-run SetupDone gate
 - Boot disk / TranscoderTempDirectory
 - `/identity` 503 startup maintenance
 - TunarrRAM / YouTube full-cache checklist
