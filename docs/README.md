@@ -53,6 +53,12 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 |-------|------|
 | Core operator quickstart | [guides/CORE_OPERATOR_QUICKSTART.md](guides/CORE_OPERATOR_QUICKSTART.md) |
 | Backup and restore | [guides/BACKUP_RESTORE.md](guides/BACKUP_RESTORE.md) |
+| First-run setup | [guides/FIRST_RUN_SETUP.md](guides/FIRST_RUN_SETUP.md) |
+| SetupDone / factory reset | [guides/SETUP_DONE_AND_FACTORY_RESET.md](guides/SETUP_DONE_AND_FACTORY_RESET.md) |
+| Source auth (YouTube / Archive.org) | [guides/SOURCE_AUTH_YOUTUBE_ARCHIVE.md](guides/SOURCE_AUTH_YOUTUBE_ARCHIVE.md) |
+| macOS Web UI sidebar | [guides/MACOS_APP_WEBUI_SIDEBAR.md](guides/MACOS_APP_WEBUI_SIDEBAR.md) |
+| Native admin parity | [guides/NATIVE_ADMIN_PARITY.md](guides/NATIVE_ADMIN_PARITY.md) |
+| In-app Updates | [guides/IN_APP_UPDATES.md](guides/IN_APP_UPDATES.md) |
 | Ops healing (scripts only) | [FFMPEG_STALL_KEEPALIVE](guides/FFMPEG_STALL_KEEPALIVE.md) · [TUNARRRAM](guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [SOFT_DEPLOY](guides/SOFT_DEPLOY.md) |
 | LoudNorm fleet audio | [guides/LOUDNORM_FLEET_AUDIO.md](guides/LOUDNORM_FLEET_AUDIO.md) |
 | FFmpeg stall / keepalive | [guides/FFMPEG_STALL_KEEPALIVE.md](guides/FFMPEG_STALL_KEEPALIVE.md) |
@@ -75,6 +81,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Channel Creator MCP legacy installer | [`scripts/setup_channel_creator_mcp.sh`](../scripts/setup_channel_creator_mcp.sh) · [helpers README](../scripts/channel-creator-mcp/README.md) |
 | Application icon (macOS + favicon) | [`branding/app-icon/`](../branding/app-icon/README.md) · `scripts/install_app_icon.sh` |
 | Import vs Builder | [guides/IMPORT_VS_BUILDER.md](guides/IMPORT_VS_BUILDER.md) |
+| Channel pack GitOps (private promote → validate → apply) | [guides/CHANNEL_PACK_GITOPS.md](guides/CHANNEL_PACK_GITOPS.md) · `scripts/validate_channel_pack.py` · `scripts/apply_channel_pack.sh` |
 | Metadata enrichment | [guides/METADATA_ENRICHMENT.md](guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md) |
 | PBS (retired from Builder) | [guides/PBS_PLAYWRIGHT.md](guides/PBS_PLAYWRIGHT.md) |

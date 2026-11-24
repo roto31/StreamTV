@@ -28,6 +28,7 @@ Run these diagnostic scripts directly from this page to check your installation:
 | Keepalive-only / stalled FFmpeg | [FFmpeg stall keepalive](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
 | TunarrRAM full | [TunarrRAM recovery](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | Plex spinner / YouTube cold cache | [Plex video hold](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_VIDEO_HOLD.md) |
+| Plex Playback Error (preview OK) / `/identity` 503 | [Plex Playback Error host triage](https://github.com/roto31/StreamTV/blob/main/docs/guides/PLEX_PLAYBACK_ERROR_HOST.md) (Issue 71) |
 | Soft restart (no kickstart) | [Soft deploy](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) |
 | Loudness / loudnorm CPU | [LoudNorm fleet audio](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
 | AI recovery / Ollama (retired) | Use heal scripts — [AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md) · [FFmpeg stall](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |

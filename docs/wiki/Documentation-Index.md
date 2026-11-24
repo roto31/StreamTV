@@ -11,6 +11,11 @@ Sync this wiki with `bash scripts/sync_public_docs.sh --apply --wiki` from Strea
 
 ---
 
+## First-run / macOS app
+
+- Wiki: [First-Run-Setup](First-Run-Setup) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset) · [Source-Auth-YouTube-Archive](Source-Auth-YouTube-Archive)
+- Wiki: [macOS-App-WebUI-Sidebar](macOS-App-WebUI-Sidebar) · [Native-Admin-Parity](Native-Admin-Parity) · [In-App-Updates](In-App-Updates)
+
 ## Quick start
 
 - [Quick Start Guide](https://github.com/roto31/StreamTV/blob/main/docs/installation/QUICK_START.md)

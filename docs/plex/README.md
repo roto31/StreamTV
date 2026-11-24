@@ -49,6 +49,15 @@ Complete guides for integrating StreamTV with Plex Media Server.
 - Authentication problems
 - Network troubleshooting
 
+**[PLEX_LIVE_TV_RECOVERY.md](PLEX_LIVE_TV_RECOVERY.md)**
+- DVR id / `reloadGuide` after StreamTV restart
+
+**[../guides/PLEX_PLAYBACK_ERROR_HOST.md](../guides/PLEX_PLAYBACK_ERROR_HOST.md)** (Issue 71)
+- Playback Error while StreamTV preview OK
+- Boot disk / TranscoderTempDirectory
+- `/identity` 503 startup maintenance
+- TunarrRAM / YouTube full-cache checklist
+
 ---
 
 ## ⚙️ Configuration

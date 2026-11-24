@@ -12,7 +12,8 @@ streaming/FFmpeg codebase.
 **Rule:** `.cursor/rules/streamtv-channel-creator-mcp.mdc`
 
 Related: [Channel Builder](../channel-builder.md) · [Import vs Builder](IMPORT_VS_BUILDER.md) ·
-[Soft deploy](SOFT_DEPLOY.md) · [ARCHITECTURE.md](../../ARCHITECTURE.md)
+[Soft deploy](SOFT_DEPLOY.md) · [Channel pack GitOps](CHANNEL_PACK_GITOPS.md) ·
+[ARCHITECTURE.md](../../ARCHITECTURE.md)
 
 ---
 
@@ -221,6 +222,11 @@ flowchart LR
 - Auto-rollback of only this build’s files/rows on post-write failure.
 - Mutating tools return `summary_table` — show it verbatim; stop on FAIL.
 - Templates `kids_specials` / `holiday_family` / `prime_time_station_ids` — never rebuild example channels 101–1225.
+- **G9 (Issue 69):** schedule must not place the same non-filler program key
+  back-to-back, and must not let one program key dominate overnight/afternoon
+  fill (>20% of program slots). Daypart channels: rotate real inventory with
+  LRU / no-adjacent selection; use short commercial pads only for remainders —
+  never loop a 1-item news/prog pool.
 
 Legacy detail tools (`builder_*`, soft `streamtv_playout_reset` / `streamtv_stream_restart`) remain under `builder`/`full`.
 

@@ -349,6 +349,32 @@ When asking for help, include:
 - **Documentation**: Browse guides in the web interface
 - **GitHub Issues**: Report bugs and request features
 
+## Plex Live TV Playback Error (host) — Issue 71
+
+**Symptoms:** Plex Live TV shows **Playback Error** (or never leaves loading)
+while StreamTV WebUI preview and/or YouTube RAM cache look fine; or
+`curl http://127.0.0.1:32400/identity` returns **503** “startup maintenance”.
+
+**Do this first:** Prove StreamTV independently (`:8410` production cwd, lineup
+count, soak `/auto/v{N}` for codecs / null %). If that fails, this is not a Plex
+Preferences problem — use HDHomeRun / YouTube skills.
+
+**Host checklist (summary):**
+
+1. Free space on boot Data volume — full disk breaks Plex Transcoder
+   `media-%05d.ts` writes.
+2. Point `TranscoderTempDirectory` at a volume with headroom (via `defaults write`
+   or a **single-attribute** Preferences edit — never replace Preferences with a
+   minimal stub).
+3. YouTube channels: TunarrRAM + `youtube_full_cache` + heal agent; do not enable
+   YouTube Plex video hold (Issue 62).
+4. If `/identity` stays 503: GUI quit/reopen Plex, complete sign-in/claim/TCC;
+   API claim will also 503 during maintenance.
+
+Full playbook: [`docs/guides/PLEX_PLAYBACK_ERROR_HOST.md`](guides/PLEX_PLAYBACK_ERROR_HOST.md).  
+Related: [`docs/plex/PLEX_LIVE_TV_RECOVERY.md`](plex/PLEX_LIVE_TV_RECOVERY.md),
+LESSONS Issue 71, rule `plex-livetv-host-ops.mdc`.
+
 ## Advanced Troubleshooting
 
 ### Debug Mode

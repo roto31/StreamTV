@@ -13,8 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **First-run setup** — SetupDone marker, in-app / WebUI setup (port, YouTube & Archive.org sign-in, optional MCP), factory reset.
+- **macOS app Web UI tab** — Administer via embedded WebUI or native Admin hub; Settings → Updates with release notes and DMG download.
 - **Channel Creator MCP v2** — Guided 11-tool profile, Streamable HTTP on port 8411 with bearer/OAuth/dual (Cloudflare Access) auth, host and remote setup scripts, and end-to-end rehearsal. Wiki-first: [Channel Creator MCP](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP), [host wiring](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Host-Wiring), [auth](https://github.com/roto31/StreamTV/wiki/Channel-Creator-MCP-Auth) (same content also under `docs/guides/`).
 - **Channel Creator MCP one-liner** — `curl -fsSL https://raw.githubusercontent.com/roto31/StreamTV/main/scripts/install_channel_creator_mcp.sh | bash` clones the public repo and runs interactive host wiring.
+
+### Fixed
+- **YouTube playback 403 on some VODs** — player client policy now prefers `visionos` (then `web_safari`, `web_embedded`); yt-dlp minimum version raised to 2026.8.19.
+- **YouTube / Archive.org Sign In** blank Internal Server Error in the macOS app when the server runs from Application Support.
 
 ### Changed
 - **Docs / Wiki** — ChatGPT remote access is no longer “deferred”; indexes and diagrams cover stdio local hosts and tunneled `:8411` for ChatGPT / Claude web.

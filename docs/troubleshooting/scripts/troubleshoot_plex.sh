@@ -78,9 +78,14 @@ analyze_plex_error() {
         solution="This is a Plex transcoding issue.\n• Plex's FFmpeg doesn't support this option\n• Usually harmless, can be ignored\n• Or update Plex FFmpeg"
         action="check_plex_ffmpeg"
 
+    elif echo "$error_message" | grep -qiE "playback error|error opening output file media-|startup maintenance|not yet signed in"; then
+        diagnosis="Plex host / remux failure (Issue 71)"
+        solution="StreamTV preview OK does not mean Plex can remux.\n• Confirm production :8410 soak (codecs, not HTTP 200)\n• Free boot disk; set TranscoderTempDirectory off full /\n• Never replace Preferences.xml with a minimal stub\n• If /identity is 503: GUI quit/reopen + sign-in (API claim also 503)\n• YouTube: TunarrRAM + youtube_full_cache; hold YouTube=0\n\nSee docs/guides/PLEX_PLAYBACK_ERROR_HOST.md"
+        action="general_check"
+
     else
         diagnosis="Unknown error"
-        solution="Please check:\n• StreamTV logs\n• Plex logs\n• Network connectivity\n• Server status"
+        solution="Please check:\n• StreamTV logs\n• Plex logs\n• Network connectivity\n• Server status\n• docs/guides/PLEX_PLAYBACK_ERROR_HOST.md (Issue 71)"
         action="general_check"
     fi
 

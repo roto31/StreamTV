@@ -9,4 +9,6 @@
 
 Import remains required for migration and compiled artifacts. Builder does not replace it.
 
+Private GitOps (promote MCP YAML → PR → `apply_channel_pack.sh`): [Channel pack GitOps](CHANNEL_PACK_GITOPS.md).
+
 See also: [Channel Builder](/docs/channel_builder)

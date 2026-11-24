@@ -38,9 +38,15 @@ bash scripts/setup_channel_creator_mcp.sh
 
 ```bash
 zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode emit --profile guided
-# Apply Cursor project config (backs up first):
-zsh scripts/channel_creator_mcp_hosts.zsh --host cursor --mode apply --profile guided
+# Apply live host configs for every first-run host (backs up first):
+zsh scripts/channel_creator_mcp_hosts.zsh --host all --mode apply --profile guided
+# Or one host:
+zsh scripts/channel_creator_mcp_hosts.zsh --host claude-desktop --mode apply --profile guided
 ```
+
+First-run `POST /api/setup/mcp` emits fragments then applies **all selected startup-screen
+hosts** via `streamtv.setup.mcp_apply_hosts` (Cursor, VS Code, Continue, Cline, Claude
+Desktop/Code, LM Studio, Goose, Open WebUI checklists, ChatGPT/Claude web checklists).
 
 ```mermaid
 flowchart TD
