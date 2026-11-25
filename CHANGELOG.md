@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7.4] - 2026-11-24
+
+### Fixed
+- **Setup: sample channels were greyed out** when pack files were not beside the running server. StreamTV now finds packs in the app bundle / Application Support / install directory and makes them selectable.
+
 ## [1.4.7.3] - 2026-11-24
 
 ### Fixed
