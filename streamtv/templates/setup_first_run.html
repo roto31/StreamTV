@@ -99,7 +99,16 @@ whenDomReady(async function () {
   function renderSamples(s) {
     const box = document.getElementById('sampleChannelList');
     box.innerHTML = '';
-    (s.sample_channels || []).forEach(ch => {
+    const channels = s.sample_channels || [];
+    const missing = channels.filter(ch => ch.available === false);
+    if (missing.length) {
+      const note = document.createElement('p');
+      note.style.color = 'var(--text-secondary, #666)';
+      note.textContent = missing[0].unavailable_reason
+        || 'Starter pack files are missing on this install — update StreamTV or reinstall the app.';
+      box.appendChild(note);
+    }
+    channels.forEach(ch => {
       const lab = document.createElement('label');
       lab.style.display = 'block';
       lab.style.margin = '6px 0';

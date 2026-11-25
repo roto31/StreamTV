@@ -60,3 +60,23 @@ def test_install_runtime_failure_message_is_short() -> None:
     message = summarize_failure(steps)
     assert "installer script is missing" in message
     assert "{" not in message and "/x/" not in message
+
+
+def test_starter_packs_root_finds_bundle_or_cwd(tmp_path: Path, monkeypatch) -> None:
+    from streamtv.setup import starter_packs as sp
+
+    # Empty cwd should still resolve to the repo pack tree shipped with the package.
+    monkeypatch.chdir(tmp_path)
+    root = sp.starter_packs_root()
+    assert sp._pack_complete(root)
+
+
+def test_ensure_starter_packs_seeds_workdir(tmp_path: Path, monkeypatch) -> None:
+    from streamtv.setup import starter_packs as sp
+
+    monkeypatch.chdir(tmp_path)
+    seeded = sp.ensure_starter_packs_in_workdir(tmp_path)
+    assert seeded is not None
+    assert sp._pack_complete(tmp_path / "data" / "starter_packs")
+    body = sp.list_catalog()
+    assert all(c["available"] is True for c in body)

@@ -1,8 +1,9 @@
-"""Optional first-run starter channel packs (private product; not public sync)."""
+"""Optional first-run starter channel packs (Movies / Music / Kids / Sports)."""
 
 from __future__ import annotations
 
 import logging
+import os
 import shutil
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -44,8 +45,74 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
+def _pack_complete(root: Path) -> bool:
+    return all((root / f"channel_{n}.yaml").is_file() for n in STARTER_NUMBERS)
+
+
+def _candidate_pack_roots() -> list[Path]:
+    """Search order for starter pack YAMLs (setup greys out when none found)."""
+    roots: list[Path] = []
+    env = (os.environ.get("STREAMTV_STARTER_PACKS_DIR") or "").strip()
+    if env:
+        roots.append(Path(env).expanduser())
+    roots.append(Path.cwd() / "data" / "starter_packs")
+    roots.append(_repo_root() / "data" / "starter_packs")
+    app_support = Path.home() / "Library" / "Application Support" / "StreamTV" / "data" / "starter_packs"
+    roots.append(app_support)
+    roots.append(Path("/Applications/StreamTV.app/Contents/Resources/data/starter_packs"))
+    # Dedupe while preserving order
+    seen: set[str] = set()
+    out: list[Path] = []
+    for root in roots:
+        key = str(root)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(root)
+    return out
+
+
+def find_starter_packs_root() -> Optional[Path]:
+    for root in _candidate_pack_roots():
+        try:
+            if _pack_complete(root):
+                return root
+        except OSError:
+            continue
+    return None
+
+
 def starter_packs_root() -> Path:
+    """Preferred pack directory (complete tree if found, else package-relative default)."""
+    found = find_starter_packs_root()
+    if found is not None:
+        return found
     return _repo_root() / "data" / "starter_packs"
+
+
+def ensure_starter_packs_in_workdir(workdir: Optional[Path] = None) -> Optional[Path]:
+    """Copy a complete pack tree into workdir/data/starter_packs when missing.
+
+    LaunchAgent / App Support installs often run with cwd that lacks packs even when
+    the app bundle or another tree has them. Seeding un-greys the setup picker.
+    """
+    wd = Path(workdir) if workdir is not None else Path.cwd()
+    dest = wd / "data" / "starter_packs"
+    if _pack_complete(dest):
+        return dest
+    src = find_starter_packs_root()
+    if src is None or src.resolve() == dest.resolve():
+        return dest if _pack_complete(dest) else None
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(src, dest)
+        logger.info("Seeded starter packs into %s from %s", dest, src)
+        return dest
+    except OSError as exc:
+        logger.warning("Could not seed starter packs into %s: %s", dest, exc)
+        return src if _pack_complete(src) else None
 
 
 @dataclass
@@ -60,6 +127,7 @@ class StarterInstallResult:
 
 
 def list_catalog(*, base_url: str = "http://127.0.0.1:8410") -> list[dict[str, Any]]:
+    ensure_starter_packs_in_workdir()
     root = starter_packs_root()
     items: list[dict[str, Any]] = []
     for row in CATALOG:
@@ -71,10 +139,16 @@ def list_catalog(*, base_url: str = "http://127.0.0.1:8410") -> list[dict[str, A
             {
                 **row,
                 "available": available,
+                "unavailable_reason": (
+                    None
+                    if available
+                    else "Starter pack files are missing on this install"
+                ),
                 "icon_url": (
                     f"{base_url.rstrip('/')}/static/channel_icons/channel_{number}.png"
                     if icon_pack.is_file()
                     or (_repo_root() / "data" / "channel_icons" / f"channel_{number}.png").is_file()
+                    or (Path.cwd() / "data" / "channel_icons" / f"channel_{number}.png").is_file()
                     else None
                 ),
                 "has_pack_icon": icon_pack.is_file(),
@@ -128,8 +202,9 @@ async def install_starter_channels(
     db_session: Any = None,
 ) -> StarterInstallResult:
     """Import selected starter packs into the active StreamTV workdir."""
-    root = starter_packs_root()
     wd = workdir or Path.cwd()
+    ensure_starter_packs_in_workdir(wd)
+    root = starter_packs_root()
     installed: list[str] = []
     errors: list[str] = []
 
