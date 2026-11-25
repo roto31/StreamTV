@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7.6] - 2026-11-25
+
+### Fixed
+- **macOS DMG** — new signed and notarized build with the refreshed optional starter channels and clearer sample-install errors.
+
 ## [1.4.7.5] - 2026-11-25
 
 ### Changed
