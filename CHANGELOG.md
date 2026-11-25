@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Settings → Updates: "Download DMG" could offer an older version** — it now always fetches the latest release, and the update check refreshes every 5 minutes.
+
 ## [1.4.7.2] - 2026-11-24
 
 ### Fixed
