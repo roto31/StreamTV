@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7.1] - 2026-11-24
+
 ### Fixed
-- **Settings → Updates: "Agree and update" failed with a server error** — the update endpoint could raise an internal error instead of starting the backup/apply job. It now starts correctly and reports progress as expected.
+- **Update process fixed** — Settings → Updates → "Agree and update" (in the Web UI and the macOS app) failed with a server error and never started. The update now runs: pre-update backup, apply, restart, then a "server is back up" banner. If you are on 1.4.7 and the button fails, install this DMG manually once; later updates work in-app.
 
 ## [1.4.7] - 2026-11-24
 
