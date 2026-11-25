@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7.5] - 2026-11-25
+
+### Changed
+- **Optional starter channels refreshed** — Movies, Music Videos, Saturday Morning Kids, and Greatest Sports use fuller curated playlists (cartoon blocks and championship highlights rather than holiday/Olympic filler).
+
+### Fixed
+- **Sample-channel install failures are visible** — invalid stream metadata is sanitized before import, and the setup UI shows errors instead of advancing when a pack fails.
+
 ## [1.4.7.4] - 2026-11-24
 
 ### Fixed
