@@ -1,0 +1,12 @@
+name: Starter Sports
+content:
+- key: sports_main
+  collection: Starter Sports
+  order: shuffle
+sequence:
+- key: main_sequence
+  items:
+  - all: sports_main
+playout:
+- sequence: main_sequence
+- repeat: true

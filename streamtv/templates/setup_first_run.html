@@ -17,6 +17,10 @@
     </div>
     <button type="button" class="btn btn-secondary" id="installRuntimeBtn">Install server LaunchAgents</button>
     <p id="installRuntimeStatus" style="margin-top:8px;font-size:0.9em;color:var(--text-secondary);"></p>
+    <details id="installRuntimeDetails" hidden style="font-size:0.8em;color:var(--text-secondary);">
+      <summary>Show details</summary>
+      <pre id="installRuntimeRaw" style="white-space:pre-wrap;word-break:break-word;"></pre>
+    </details>
   </div>
 
   <div class="card" id="portCard" style="margin-bottom:16px;padding:16px;">
@@ -122,9 +126,16 @@ whenDomReady(async function () {
       body: JSON.stringify(body)
     });
     const j = await r.json().catch(() => ({}));
-    document.getElementById('installRuntimeStatus').textContent = r.ok
-      ? ('Installed: ' + (j.workdir || 'ok'))
-      : ('Failed: ' + JSON.stringify(j.detail || j));
+    const statusEl = document.getElementById('installRuntimeStatus');
+    const detailsEl = document.getElementById('installRuntimeDetails');
+    detailsEl.hidden = r.ok;
+    if (r.ok) {
+      statusEl.textContent = 'Installed: ' + (j.workdir || 'ok');
+    } else {
+      const d = j.detail || j;
+      statusEl.textContent = (typeof d === 'object' && d.message) || (typeof d === 'string' ? d : 'LaunchAgent install failed. Open Show details for the reason.');
+      document.getElementById('installRuntimeRaw').textContent = JSON.stringify(d, null, 2);
+    }
   };
 
   document.getElementById('installSamplesBtn').onclick = async () => {

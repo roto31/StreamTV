@@ -1,0 +1,12 @@
+name: Starter Music
+content:
+- key: music_main
+  collection: Starter Music Videos
+  order: shuffle
+sequence:
+- key: main_sequence
+  items:
+  - all: music_main
+playout:
+- sequence: main_sequence
+- repeat: true

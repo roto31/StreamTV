@@ -1,0 +1,16 @@
+name: Starter Kids
+content:
+- key: kids_main
+  collection: Starter Saturday Morning
+  order: shuffle
+- key: kids_breaks
+  collection: Starter Saturday Breaks
+  order: shuffle
+sequence:
+- key: main_sequence
+  items:
+  - all: kids_main
+  - all: kids_breaks
+playout:
+- sequence: main_sequence
+- repeat: true

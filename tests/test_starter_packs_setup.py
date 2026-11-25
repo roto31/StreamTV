@@ -51,3 +51,12 @@ def test_starter_pack_files_exist() -> None:
         assert (root / f"channel_{number}.yaml").is_file()
         assert (root / "schedules" / f"{number}.yml").is_file()
         assert (root / "icons" / f"channel_{number}.png").is_file()
+
+
+def test_install_runtime_failure_message_is_short() -> None:
+    from streamtv.setup.runtime_install import summarize_failure
+
+    steps = {"com_streamtv": {"ok": False, "detail": "missing /x/scripts/install-com-streamtv-launchagent.sh"}}
+    message = summarize_failure(steps)
+    assert "installer script is missing" in message
+    assert "{" not in message and "/x/" not in message

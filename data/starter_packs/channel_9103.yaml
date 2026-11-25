@@ -1,0 +1,477 @@
+channels:
+- number: '9103'
+  name: Saturday Morning Kids
+  group: Kids
+  description: Vintage Saturday-morning style kids programming with short commercial/break
+    fillers between programs (structure from Studio vintage kids packs).
+  enabled: true
+  playout_mode: continuous
+  logo_path: /static/channel_icons/channel_9103.png
+  streams:
+  - id: starter_9103_halloween_is_grinch_night_abc_wls_tv_7_c_bb2d9019ae
+    collection: Starter Saturday Morning
+    type: event
+    year: 1979
+    runtime: PT29M20S
+    source: youtube
+    url: https://www.youtube.com/watch?v=xPSDxfSdRb8
+    title: Halloween Is Grinch Night (ABC / WLS-TV 7 Chicago, 1979-10-28)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_raggedy_ann_andy_in_the_pumpkin_who_coul_cd018462a5
+    collection: Starter Saturday Morning
+    type: event
+    year: 1980
+    runtime: PT27M25S
+    source: youtube
+    url: https://www.youtube.com/watch?v=p2bQ2eo2jjE
+    title: Raggedy Ann & Andy in The Pumpkin Who Couldn't Smile (CBS, 1980-10-24)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_boo_to_you_too_winnie_the_pooh_premiere_0e38d62809
+    collection: Starter Saturday Morning
+    type: event
+    year: 1996
+    runtime: PT30M58S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Q6A-ISuU3sE
+    title: Boo to You Too! Winnie the Pooh (premiere) (CBS, 1996-10-25)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_wcco_cbs_breaks_during_great_pumpkin_boo_5925420d5d
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1996
+    runtime: PT14M52S
+    source: youtube
+    url: https://www.youtube.com/watch?v=uhORheS2lgA
+    title: WCCO/CBS breaks during Great Pumpkin + Boo to You Too (Oct 25, 1996)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_kstp_abc_commercials_halloween_1999_duri_fd0f162b51
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1999
+    runtime: PT14M21S
+    source: youtube
+    url: https://www.youtube.com/watch?v=NYoPgXm8VyU
+    title: KSTP/ABC commercials, Halloween 1999 (during Casper)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_nbc_halloween_assorted_commercials_oct_3_daf97a8183
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1981
+    runtime: PT3M41S
+    source: youtube
+    url: https://www.youtube.com/watch?v=8gE8EzfeIGo
+    title: NBC Halloween assorted commercials (Oct 30, 1981)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_commercials_from_casper_halloween_specia_7372daaac5
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1981
+    runtime: PT3M29S
+    source: youtube
+    url: https://www.youtube.com/watch?v=pbcBoVPx4T0
+    title: Commercials from Casper Halloween Special (Oct 1981)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_cbs_1985_halloween_specials_commercials_93a529abba
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1985
+    runtime: PT3M35S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Y5qJ70fkRzA
+    title: CBS 1985 Halloween specials commercials
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_cbs_breaks_intros_outros_garfield_charli_2edbffcebb
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1985
+    runtime: PT18M37S
+    source: youtube
+    url: https://www.youtube.com/watch?v=q88ekg_6M1k
+    title: 'CBS breaks, intros & outros: Garfield & Charlie Brown (1985)'
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_cbs_breaks_it_s_the_great_pumpkin_charli_e1fda11c0f
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1991
+    runtime: PT7M49S
+    source: youtube
+    url: https://www.youtube.com/watch?v=iEq29W4eZRM
+    title: 'CBS breaks: It''s the Great Pumpkin, Charlie Brown (1991)'
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_abc_halloween_bumpers_commercials_hocus_7d243b9fdb
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1995
+    runtime: PT14M33S
+    source: youtube
+    url: https://www.youtube.com/watch?v=cv5lHP4vAEY
+    title: ABC Halloween bumpers & commercials (Hocus Pocus, 1995)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_abc_tgif_halloween_commercials_wbko_1996_8c2c3901f9
+    collection: Starter Saturday Morning
+    type: commercial
+    year: 1996
+    runtime: PT26M5S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Zf9cvUlduTM
+    title: ABC TGIF Halloween commercials (WBKO, 1996)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_the_thanksgiving_that_almost_wasn_t_cart_8a740c9ac8
+    collection: Starter Saturday Morning
+    type: event
+    year: 1998
+    runtime: PT33M27S
+    source: youtube
+    url: https://www.youtube.com/watch?v=-BDbjGoV8HY
+    title: The Thanksgiving That Almost Wasn't (Cartoon Network, 1998-11-26)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1965_69_n_e7aaa1e599
+    collection: Starter Saturday Morning
+    type: event
+    year: 1965
+    runtime: PT11M20S
+    source: youtube
+    url: https://www.youtube.com/watch?v=eM-rVUCoR0s
+    title: Macy's Thanksgiving Day Parade 1965-69 (NBC, 1966-11-24)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1968_nbc_ca3f3f3f2e
+    collection: Starter Saturday Morning
+    type: event
+    year: 1968
+    runtime: PT18M59S
+    source: youtube
+    url: https://www.youtube.com/watch?v=MQJimI8awzM
+    title: Macy's Thanksgiving Day Parade 1968 (NBC, 1968-11-28)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1976_nbc_5b5358b588
+    collection: Starter Saturday Morning
+    type: event
+    year: 1976
+    runtime: PT1H59M
+    source: youtube
+    url: https://www.youtube.com/watch?v=twHX3Pb501g
+    title: Macy's Thanksgiving Day Parade 1976 (NBC, 1976-11-25)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1977_nbc_6c2783b29f
+    collection: Starter Saturday Morning
+    type: event
+    year: 1977
+    runtime: PT21M1S
+    source: youtube
+    url: https://www.youtube.com/watch?v=84ZlEXqGBVk
+    title: Macy's Thanksgiving Day Parade 1977 (NBC, 1977-11-24)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1978_cbs_662e750f4c
+    collection: Starter Saturday Morning
+    type: event
+    year: 1978
+    runtime: PT23M12S
+    source: youtube
+    url: https://www.youtube.com/watch?v=Ehk5cfEEzfU
+    title: Macy's Thanksgiving Day Parade 1978 (CBS, 1978-11-23)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1979_nbc_723a9a4468
+    collection: Starter Saturday Morning
+    type: event
+    year: 1979
+    runtime: PT34M24S
+    source: youtube
+    url: https://www.youtube.com/watch?v=SWHsL73txG4
+    title: Macy's Thanksgiving Day Parade 1979 (NBC, 1979-11-22)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1983_part_c2b36e71d3
+    collection: Starter Saturday Morning
+    type: event
+    year: 1983
+    runtime: PT1H25M14S
+    source: youtube
+    url: https://www.youtube.com/watch?v=eQDi_1wlQ_M
+    title: Macy's Thanksgiving Day Parade 1983 (Part 1) (NBC, 1983-11-24)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1983_part_709a884253
+    collection: Starter Saturday Morning
+    type: event
+    year: 1983
+    runtime: PT1H29M58S
+    source: youtube
+    url: https://www.youtube.com/watch?v=IWhYO9fTrtI
+    title: Macy's Thanksgiving Day Parade 1983 (Part 2) (NBC, 1983-11-24)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1984_nbc_42b7a95305
+    collection: Starter Saturday Morning
+    type: event
+    year: 1984
+    runtime: PT2H52M3S
+    source: youtube
+    url: https://www.youtube.com/watch?v=aphgFPsN5QI
+    title: Macy's Thanksgiving Day Parade 1984 (NBC, 1984-11-22)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1985_nbc_47cc082a8b
+    collection: Starter Saturday Morning
+    type: event
+    year: 1985
+    runtime: PT3H12S
+    source: youtube
+    url: https://www.youtube.com/watch?v=1P7ZLLE0Zx0
+    title: Macy's Thanksgiving Day Parade 1985 (NBC, 1985-11-28)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_1990_nbc_8d6ef7c3ce
+    collection: Starter Saturday Morning
+    type: event
+    year: 1990
+    runtime: PT2H57M21S
+    source: youtube
+    url: https://www.youtube.com/watch?v=IaKxiEs_AeA
+    title: Macy's Thanksgiving Day Parade 1990 (NBC / WLUK-TV 11 Green Bay, 1990-11-22)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_2002_nbc_d7bc693479
+    collection: Starter Saturday Morning
+    type: event
+    year: 2002
+    runtime: PT2H54M45S
+    source: youtube
+    url: https://www.youtube.com/watch?v=vC_URrUuzto
+    title: Macy's Thanksgiving Day Parade 2002 (NBC, 2002-11-28)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_2004_nbc_59bb07595a
+    collection: Starter Saturday Morning
+    type: event
+    year: 2004
+    runtime: PT3H1M50S
+    source: youtube
+    url: https://www.youtube.com/watch?v=1tdgQrDr6GA
+    title: Macy's Thanksgiving Day Parade 2004 (NBC, 2004-11-25)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_2017_nbc_b4605fdd10
+    collection: Starter Saturday Morning
+    type: event
+    year: 2017
+    runtime: PT2H8M7S
+    source: youtube
+    url: https://www.youtube.com/watch?v=rYyUYZjo2IU
+    title: Macy's Thanksgiving Day Parade 2017 (NBC, 2017-11-23)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_macy_s_thanksgiving_day_parade_2019_nbc_d76f3c1952
+    collection: Starter Saturday Morning
+    type: event
+    year: 2019
+    runtime: PT2H8M24S
+    source: youtube
+    url: https://www.youtube.com/watch?v=BIXmZ48Iww8
+    title: Macy's Thanksgiving Day Parade 2019 (NBC, 2019-11-28)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9103_a_disney_halloween_cbs_walt_disney_antho_55121e93d2
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1981
+    runtime: PT53M28S
+    source: archive_org
+    url: https://archive.org/download/1981-a-disney-halloween/1981%20A%20Disney%20Halloween.mp4
+    title: A Disney Halloween (CBS (Walt Disney anthology), 1981-10-24)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_kidding_around_halloween_82_local_kids_s_6e2aa4844d
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1982
+    runtime: PT28M46S
+    source: archive_org
+    url: https://archive.org/download/youtube-LNbQX3Uvpeo/LNbQX3Uvpeo.mp4
+    title: Kidding Around - Halloween '82 (local kids show) (NBC O&O / WMAQ-TV 5 Chicago,
+      1982-10-30)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_disney_s_halloween_treat_premiere_cbs_wi_6b5351e974
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1982
+    runtime: PT49M19S
+    source: archive_org
+    url: https://archive.org/download/disneys-halloween-treat-10-30-1982-walt-disney-cbs/Disney%27s%20Halloween%20Treat%20%2810-30-1982%2C%20Walt%20Disney%2C%20CBS%29.mp4
+    title: Disney's Halloween Treat (premiere) (CBS / WISH-TV 8 Indianapolis, 1982-10-30)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_kidding_around_halloween_83_local_kids_s_1855948dc3
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1983
+    runtime: PT29M23S
+    source: archive_org
+    url: https://archive.org/download/youtube-iakS-aOAYxw/iakS-aOAYxw.mp4
+    title: Kidding Around - Halloween '83 (local kids show) (NBC O&O / WMAQ-TV 5 Chicago,
+      1983-10-29)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_disney_s_halloween_treat_repeat_cbs_1983_9296c86291
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1983
+    runtime: PT49M25S
+    source: archive_org
+    url: https://archive.org/download/1983-disneys-halloween-treat/1983%20Disney%27s%20Halloween%20Treat.mp4
+    title: Disney's Halloween Treat (repeat) (CBS, 1983-10-29)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_garfield_s_halloween_adventure_it_s_the_63b53d5efb
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1985
+    runtime: PT58M59S
+    source: archive_org
+    url: https://archive.org/download/halloween-cartoons-1985/Halloween%20Cartoons%201985.mp4
+    title: Garfield's Halloween Adventure + It's the Great Pumpkin, Charlie Brown
+      (CBS, 1985-10-30)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_disney_s_scary_tales_halloween_night_won_a97466489f
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1985
+    runtime: PT1H7M7S
+    source: archive_org
+    url: https://archive.org/download/TheVistaGroup-TVCommercials1985October31DisneyHalloweenPittsburghPAKDKACBS/TV%20Commercials%20%E2%80%A2%201985%20October%2031%20%E2%80%A2%20Disney%20Halloween%20%E2%80%A2%20Pittsburgh%2C%20PA%20%E2%80%A2%20KDKA%20%28CBS%29%20%E2%80%A2%2060%20FPS.mp4
+    title: Disney's Scary Tales - Halloween night (Wonderful World of Disney) (CBS
+      / KDKA-TV 2 Pittsburgh, 1985-10-31)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_garfield_s_halloween_adventure_cbs_1986_4ac124a7af
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1986
+    runtime: PT27M6S
+    source: archive_org
+    url: https://archive.org/download/img-0279_202209/IMG_0279.mp4
+    title: Garfield's Halloween Adventure (CBS, 1986-10-23)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_disney_s_scary_tales_wonderful_world_of_f5cdeca341
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1987
+    runtime: PT58M11S
+    source: archive_org
+    url: https://archive.org/download/disneys-scary-tales-of-halloween-fox/Wwod%20Scary%20Halloween%2010%2025%2087%20On%20Fox%20-%20Copy.mp4
+    title: Disney's Scary Tales (Wonderful World of Disney) (Fox, 1987-10-25)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_it_s_the_great_pumpkin_charlie_brown_boo_28f29c5db7
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 2002
+    runtime: PT1H47S
+    source: archive_org
+    url: https://archive.org/download/CharlieBrownWinnieThePooh2002/TVREC0008.mp4
+    title: It's the Great Pumpkin, Charlie Brown + Boo to You Too! Winnie the Pooh
+      (ABC / WHTM-TV 27 Harrisburg, 2002-10-25)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_kstp_tv_commercials_october_1996_80f84a8e70
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1996
+    runtime: PT7M36S
+    source: archive_org
+    url: https://archive.org/download/SmokesVHSTape584/October%201996%20Commercials.mp4
+    title: KSTP-TV commercials (October 1996)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_wbbm_cbs_great_pumpkin_opening_break_198_b59a769825
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1980
+    runtime: PT4M5S
+    source: archive_org
+    url: https://archive.org/download/youtube-fv7A4B58jZc/fv7A4B58jZc.mp4
+    title: WBBM/CBS Great Pumpkin opening & break (1980)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_kron_nbc_commercials_halloween_1986_842a675a4e
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1986
+    runtime: PT4M57S
+    source: archive_org
+    url: https://archive.org/download/capture-a-2454/CaptureA_2454.mp4
+    title: KRON/NBC commercials, Halloween 1986
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_disney_scary_tales_halloween_hall_of_fam_2ecad820d4
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1986
+    runtime: PT15M11S
+    source: archive_org
+    url: https://archive.org/download/october-1986-disney-commercials-ads-promos-kptv-12-portland-oregon-halloween-/October%201986%20Disney%20Commercials%20Ads%20Promos%20KPTV%2012%20Portland%20Oregon%20%28%20Halloween%20VHS%20pt%201%20%29.mp4
+    title: Disney Scary Tales / Halloween Hall of Fame breaks (Oct 1986)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_kcra_nbc_commercials_halloween_1988_37e9f42e0f
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1988
+    runtime: PT11M10S
+    source: archive_org
+    url: https://archive.org/download/capture-a-3997/CaptureA_3997.mp4
+    title: KCRA/NBC commercials, Halloween 1988
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_kima_cbs_commercials_halloween_1999_24f90c3933
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1999
+    runtime: PT18M7S
+    source: archive_org
+    url: https://archive.org/download/capture-a-3384/CaptureA_3384.mp4
+    title: KIMA/CBS commercials, Halloween 1999
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_the_berenstain_bears_meet_bigpaw_nbc_198_e5524552e0
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1980
+    runtime: PT23M8S
+    source: archive_org
+    url: https://archive.org/download/youtube-ruQozkxioKg/The_Berenstain_Bears_Meet_Bigpaw_-_full_NBC_television_Thanksgiving_special_1980-ruQozkxioKg.mp4
+    title: The Berenstain Bears Meet Bigpaw (NBC, 1980-11-20)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_the_turkey_caper_syndicated_original_air_77d6008c8f
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1985
+    runtime: PT28M22S
+    source: archive_org
+    url: https://archive.org/download/the_turkey_caper/The%20Turkey%20Caper%20%281985%29%20-%20Original%20Airing.mp4
+    title: The Turkey Caper (Syndicated (original airing), 1985-11-09)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_garfield_s_thanksgiving_premiere_bugs_bu_fb2b6334fb
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1989
+    runtime: PT1H15M21S
+    source: archive_org
+    url: https://archive.org/download/cbs-thanksgiving-day-nov-22nd-1989-garfield-thanksgiving-bugs-bunny-thanksgiving/CBS%20Thanksgiving%20Day%20Nov%2022nd%201989%20-%20Garfield%20Thanksgiving%20Bugs%20Bunny%20Thanksgiving%20Diet%20%26%20Pres.%20Thanksgiving%20Address.mp4
+    title: Garfield's Thanksgiving (premiere) + Bugs Bunny's Thanksgiving Diet (CBS,
+      1989-11-22)
+    notes: 3–5 minute-class commercial/break interstitial.
+  - id: starter_9103_nov_dec_1984_tape_a_charlie_brown_thanks_974744568b
+    collection: Starter Saturday Breaks
+    type: commercial
+    year: 1984
+    runtime: PT3H22M43S
+    source: archive_org
+    url: https://archive.org/download/1984-tv-shows-with-commercials-charlie-brown-thanksgiving-partial-rudolf-the-red/1984%20TV%20Shows%20with%20Commercials%2C%20Charlie%20Brown%20Thanksgiving%20%28Partial%29%2C%20Rudolf%20the%20Red-Nosed%20Reindeer%2C%20Rainbow%20Bright%20%28Partial%29%2C%20The%20Cosby%20Show%20%28Partial%29%2C%20Random%20Disney%20Movie.mp4
+    title: 'Nov-Dec 1984 tape: A Charlie Brown Thanksgiving (partial), Rudolph, Rainbow
+      Brite & more (Not stated, 1984-11-21)'
+    notes: 3–5 minute-class commercial/break interstitial.

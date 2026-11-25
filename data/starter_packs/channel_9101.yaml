@@ -1,0 +1,438 @@
+channels:
+- number: '9101'
+  name: Movies (All Eras)
+  group: Movies
+  description: Multi-era features weighted toward recognizable titles available on
+    Archive.org, with preview/trailer breaks when available. Curated like Studio movie
+    channels — not a PD/CC filler pack.
+  enabled: true
+  playout_mode: continuous
+  logo_path: /static/channel_icons/channel_9101.png
+  streams:
+  - id: starter_9101_18_again_7c8245d470
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT1H40M9S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/18%20Again%20%281988%29.mp4
+    title: 18 Again
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_adventures_in_babysitting_06468246e1
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H42M25S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Adventures%20in%20Babysitting%20%281987%29.mp4
+    title: Adventures in Babysitting
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_alien_nation_982b227586
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT1H29M56S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Alien%20Nation%20%281988%29.mp4
+    title: Alien Nation
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_an_innocent_man_f0debd3bd2
+    collection: Starter Movies
+    type: movie
+    year: '1989'
+    runtime: PT1H53M31S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/An%20Innocent%20Man%20%281989%29.mp4
+    title: An Innocent Man
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_baby_boom_ffd99ec44d
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H50M18S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Baby%20Boom%C2%A0%281987%29.mp4
+    title: Baby Boom
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_baby_secret_of_the_lost_legend_cc02a4d9f3
+    collection: Starter Movies
+    type: movie
+    year: '1985'
+    runtime: PT1H32M43S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Baby-Secret%20of%20the%20Lost%20Legend%20%281985%29.mp4
+    title: Baby-Secret of the Lost Legend
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_back_to_the_future_227cf041e3
+    collection: Starter Movies
+    type: movie
+    year: '1985'
+    runtime: PT1H56M7S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Back%20to%20the%20Future%20%281985%29.mp4
+    title: Back to the Future
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_beaches_4de464dd71
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT2H3M25S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Beaches%20%281988%29.mp4
+    title: Beaches
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_big_business_eff86a4afe
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT1H37M45S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Big%20Business%20%281988%29.mp4
+    title: Big Business
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_blind_date_b5257e643b
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H35M13S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Blind%20Date%20%281987%29.mp4
+    title: Blind Date
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_can_t_buy_me_love_64603f5696
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H34M7S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Can%27t%20Buy%20Me%20Love%20%281987%29.mp4
+    title: Can't Buy Me Love
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_caveman_5d7cc3ab02
+    collection: Starter Movies
+    type: movie
+    year: '1981'
+    runtime: PT1H29M50S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Caveman%20%281981%29.mp4
+    title: Caveman
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_clue_1985_es_0b22e5646c
+    collection: Starter Movies
+    type: movie
+    year: null
+    runtime: PT1H36M50S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Clue%20%281985%20Es%29.mp4
+    title: Clue (1985 Es)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_cocoon_b5c572ac96
+    collection: Starter Movies
+    type: movie
+    year: '1985'
+    runtime: PT1H57M10S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Cocoon%C2%A0%281985%29.mp4
+    title: Cocoon
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_d_a_r_y_l_bed8884fdb
+    collection: Starter Movies
+    type: movie
+    year: '1985'
+    runtime: PT1H40M13S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/D.A.R.Y.L.%C2%A0%281985%29.mp4
+    title: D.A.R.Y.L.
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_down_and_out_in_beverly_hills_fd6957f8ad
+    collection: Starter Movies
+    type: movie
+    year: '1986'
+    runtime: PT1H43M17S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Down%20and%20Out%20in%20Beverly%20Hills%20%281986%29.mp4
+    title: Down and Out in Beverly Hills
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_e_t_1982_extended_edition_8ea757220a
+    collection: Starter Movies
+    type: movie
+    year: null
+    runtime: PT1H59M56S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/E.T.%20%281982%20Extended%20Edition%29.mp4
+    title: E.T. (1982 Extended Edition)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_evil_angels_c384684ff4
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT2H1M29S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Evil%20Angels%20%281988%29.mp4
+    title: Evil Angels
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_fandango_91b75a0b64
+    collection: Starter Movies
+    type: movie
+    year: '1985'
+    runtime: PT1H30M39S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Fandango%20%281985%29.mp4
+    title: Fandango
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_fish_called_wanda_a_12f3af5fd4
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT1H43M34S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Fish%20Called%20Wanda%2C%20A%20%281988%29.mp4
+    title: Fish Called Wanda, A
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_flashdance_9de75a056d
+    collection: Starter Movies
+    type: movie
+    year: '1983'
+    runtime: PT1H34M43S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Flashdance%20%281983%29.mp4
+    title: Flashdance
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_footloose_2de9a675de
+    collection: Starter Movies
+    type: movie
+    year: '1984'
+    runtime: PT1H47M12S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Footloose%20%281984%29.mp4
+    title: Footloose
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_f_x_c359ac8ec8
+    collection: Starter Movies
+    type: movie
+    year: '1986'
+    runtime: PT1H48M37S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/F%E2%81%84X%20%281986%29.mp4
+    title: F⁄X
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_gorillas_in_the_mist_00777025a6
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT2H9M18S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Gorillas%20in%20The%20Mist%20%281988%29.mp4
+    title: Gorillas in The Mist
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_great_balls_of_fire_b35595f6ae
+    collection: Starter Movies
+    type: movie
+    year: '1989'
+    runtime: PT1H47M54S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Great%20Balls%20of%20Fire%20%281989%29.mp4
+    title: Great Balls of Fire
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_hangar_18_0a578ecb1e
+    collection: Starter Movies
+    type: movie
+    year: '1980'
+    runtime: PT1H37M29S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Hangar%2018%20%281980%29.mp4
+    title: Hangar 18
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_her_alibi_1989_es_5900ed3f2a
+    collection: Starter Movies
+    type: movie
+    year: null
+    runtime: PT1H34M9S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Her%20Alibi%20%281989%20Es%29.mp4
+    title: Her Alibi (1989 Es)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_hunk_50c99e8853
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H42M42S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Hunk%20%281987%29.mp4
+    title: Hunk
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_indiana_jones_and_the_last_crusade_02775421ce
+    collection: Starter Movies
+    type: movie
+    year: '1989'
+    runtime: PT2H6M53S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Indiana%20Jones%20and%20The%20Last%20Crusade%20%281989%29.mp4
+    title: Indiana Jones and The Last Crusade
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_kiss_of_the_spider_woman_7151d86b4e
+    collection: Starter Movies
+    type: movie
+    year: '1985'
+    runtime: PT2H39S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Kiss%20of%20the%20Spider%20Woman%20%281985%29.mp4
+    title: Kiss of the Spider Woman
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_labyrinth_0e9e7cceeb
+    collection: Starter Movies
+    type: movie
+    year: '1986'
+    runtime: PT1H41M3S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Labyrinth%20%281986%29.mp4
+    title: Labyrinth
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_license_to_drive_098c88e925
+    collection: Starter Movies
+    type: movie
+    year: '1988'
+    runtime: PT1H29M51S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/License%20to%20Drive%20%281988%29.mp4
+    title: License to Drive
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_mannequin_35661ca64b
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H30M24S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Mannequin%20%281987%29.mp4
+    title: Mannequin
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_moonstruck_21a1be2c63
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H41M55S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Moonstruck%20%281987%29.mp4
+    title: Moonstruck
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_my_boyfriend_s_back_1989_tv_ef03e1c4b2
+    collection: Starter Movies
+    type: movie
+    year: null
+    runtime: PT1H33M54S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/My%20Boyfriend%27s%20Back%20%281989%20TV%29.mp4
+    title: My Boyfriend's Back (1989 TV)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_mystic_pizza_1988_es_4d52f8ecef
+    collection: Starter Movies
+    type: movie
+    year: null
+    runtime: PT1H44M22S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Mystic%20Pizza%20%281988%20Es%29.mp4
+    title: Mystic Pizza (1988 Es)
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_national_lampoon_s_vacation_a9439a43cc
+    collection: Starter Movies
+    type: movie
+    year: '1983'
+    runtime: PT1H38M16S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/National%20Lampoon%27s%20Vacation%20%281983%29.mp4
+    title: National Lampoon's Vacation
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_never_cry_wolf_d0a28738a1
+    collection: Starter Movies
+    type: movie
+    year: '1983'
+    runtime: PT1H45M25S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Never%20Cry%20Wolf%20%281983%29.mp4
+    title: Never Cry Wolf
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_nine_to_five_1c62638b3c
+    collection: Starter Movies
+    type: movie
+    year: '1980'
+    runtime: PT1H49M22S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/Nine%20To%20Five%20%281980%29.mp4
+    title: Nine To Five
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_no_way_out_19a8123ce7
+    collection: Starter Movies
+    type: movie
+    year: '1987'
+    runtime: PT1H54M22S
+    source: archive_org
+    url: https://archive.org/download/never-cry-wolf-1983/No%20Way%20Out%20%281987%29.mp4
+    title: No Way Out
+    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
+      product).
+  - id: starter_9101_disney_animated_shorts_1938x06_mickey_s_9cdb823558
+    collection: Starter Movie Previews
+    type: trailer
+    year: null
+    runtime: PT7M46S
+    source: archive_org
+    url: https://archive.org/download/disneyanimatedshorts/Disney%20Animated%20Shorts%20-%201938x06%20-%20Mickey%27s%20Trailer.mp4
+    title: Disney Animated Shorts - 1938x06 - Mickey's Trailer
+    notes: Movie preview/trailer interstitial.
+  - id: starter_9101_disney_animated_shorts_1950x07_trailer_h_92ccf1008f
+    collection: Starter Movie Previews
+    type: trailer
+    year: null
+    runtime: PT6M27S
+    source: archive_org
+    url: https://archive.org/download/disneyanimatedshorts/Disney%20Animated%20Shorts%20-%201950x07%20-%20Trailer%20Horn.mp4
+    title: Disney Animated Shorts - 1950x07 - Trailer Horn
+    notes: Movie preview/trailer interstitial.
+  - id: starter_9101_1980_winter_olympics_day_01_preview_and_edcbaabdbd
+    collection: Starter Movie Previews
+    type: trailer
+    year: null
+    runtime: PT1H9M9S
+    source: archive_org
+    url: https://archive.org/download/1980-winter-olympics-day-01-preview-and-opening-ceremony/1980%20Winter%20Olympics%20-%20Day%2001%20-%20Preview%20and%20Opening%20Ceremony.mp4
+    title: 1980 Winter Olympics - Day 01 - Preview and Opening Ceremony
+    notes: Movie preview/trailer interstitial.

@@ -122,6 +122,22 @@ def install_tunarr_ram_heal_if_present() -> dict[str, Any]:
     return result
 
 
+def summarize_failure(steps: dict[str, Any]) -> str:
+    """One-line, user-facing reason for a failed LaunchAgent install."""
+    labels = {
+        "com_streamtv": "StreamTV server agent",
+        "ytdlp_upgrade": "weekly yt-dlp updater",
+    }
+    for key, label in labels.items():
+        step = steps.get(key) or {}
+        if not step.get("ok"):
+            detail = str(step.get("detail", "")).strip()
+            if detail.startswith("missing ") and detail.endswith(".sh"):
+                return f"Could not install the {label}: installer script is missing. Update StreamTV and retry."
+            return f"Could not install the {label}. Open Show details for the reason."
+    return "LaunchAgent install failed. Open Show details for the reason."
+
+
 def install_runtime(*, workdir: Optional[str] = None, mode: str = "app_support") -> dict[str, Any]:
     """Install core LaunchAgents for a brand-new universal production-like host."""
     if mode == "app_support":
@@ -153,7 +169,10 @@ def install_runtime(*, workdir: Optional[str] = None, mode: str = "app_support")
     steps["ytdlp_upgrade"] = install_ytdlp_upgrade_agent()
     steps["tunarr_ram_heal"] = install_tunarr_ram_heal_if_present()
     ok = bool(steps["com_streamtv"].get("ok")) and bool(steps["ytdlp_upgrade"].get("ok"))
-    return {"ok": ok, "workdir": str(wd), "mode": mode, "steps": steps}
+    result: dict[str, Any] = {"ok": ok, "workdir": str(wd), "mode": mode, "steps": steps}
+    if not ok:
+        result["message"] = summarize_failure(steps)
+    return result
 
 
 def detect_ffmpeg_paths() -> dict[str, Optional[str]]:

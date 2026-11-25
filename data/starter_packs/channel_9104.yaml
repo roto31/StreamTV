@@ -1,0 +1,325 @@
+channels:
+- number: '9104'
+  name: Greatest Sports
+  group: Sports
+  description: Historic sporting events and films available on Archive.org, curated
+    for a multi-day continuous schedule.
+  enabled: true
+  playout_mode: continuous
+  logo_path: /static/channel_icons/channel_9104.png
+  streams:
+  - id: starter_9104_1992_winter_olympics_day_01_opening_cere_a90c11922a
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-01-opening-ceremony-pt.-1/1992%20Winter%20Olympics%20-%20Day%2001%20-%20Opening%20Ceremony%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 01 - Opening Ceremony Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_01_opening_cere_449b5cc685
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-01-opening-ceremony-pt.-1/1992%20Winter%20Olympics%20-%20Day%2001%20-%20Opening%20Ceremony%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 01 - Opening Ceremony Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_02_pt_1_57ee9a371a
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-02-pt.-6/1992%20Winter%20Olympics%20-%20Day%2002%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 02 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_02_pt_2_5b41f64d43
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-02-pt.-6/1992%20Winter%20Olympics%20-%20Day%2002%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 02 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_02_pt_3_8b089b6460
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-02-pt.-6/1992%20Winter%20Olympics%20-%20Day%2002%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 02 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_02_pt_4_ab98147233
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-02-pt.-6/1992%20Winter%20Olympics%20-%20Day%2002%20Pt.%204.mp4
+    title: 1992 Winter Olympics - Day 02 Pt. 4
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_02_pt_5_8addcf7d2d
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-02-pt.-6/1992%20Winter%20Olympics%20-%20Day%2002%20Pt.%205.mp4
+    title: 1992 Winter Olympics - Day 02 Pt. 5
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_02_pt_6_44678371c0
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-02-pt.-6/1992%20Winter%20Olympics%20-%20Day%2002%20Pt.%206.mp4
+    title: 1992 Winter Olympics - Day 02 Pt. 6
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_03_pt_1_15b7bcdb81
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-03-pt.-1/1992%20Winter%20Olympics%20-%20Day%2003%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 03 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_03_pt_2_2ab9a3209f
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-03-pt.-1/1992%20Winter%20Olympics%20-%20Day%2003%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 03 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_03_pt_3_17d535ff25
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-03-pt.-1/1992%20Winter%20Olympics%20-%20Day%2003%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 03 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_04_pt_1_7dca79f85d
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-04-pt.-1/1992%20Winter%20Olympics%20-%20Day%2004%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 04 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_04_pt_2_e4207065ef
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-04-pt.-1/1992%20Winter%20Olympics%20-%20Day%2004%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 04 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_04_pt_3_b664ec959f
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-04-pt.-1/1992%20Winter%20Olympics%20-%20Day%2004%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 04 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_04_pt_4_79b971d34d
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-04-pt.-1/1992%20Winter%20Olympics%20-%20Day%2004%20Pt.%204.mp4
+    title: 1992 Winter Olympics - Day 04 Pt. 4
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_05_pt_1_fb36a9f7a5
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-05-pt.-2/1992%20Winter%20Olympics%20-%20Day%2005%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 05 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_05_pt_2_ff301eebac
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-05-pt.-2/1992%20Winter%20Olympics%20-%20Day%2005%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 05 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_05_pt_3_31c041be17
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-05-pt.-2/1992%20Winter%20Olympics%20-%20Day%2005%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 05 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_06_pt_1_185804a884
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-06-pt.-1/1992%20Winter%20Olympics%20-%20Day%2006%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 06 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_06_pt_2_b003c2810d
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-06-pt.-1/1992%20Winter%20Olympics%20-%20Day%2006%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 06 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_06_pt_3_f30c664fd9
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-06-pt.-1/1992%20Winter%20Olympics%20-%20Day%2006%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 06 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_06_pt_4_f80d2efee8
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-06-pt.-1/1992%20Winter%20Olympics%20-%20Day%2006%20Pt.%204.mp4
+    title: 1992 Winter Olympics - Day 06 Pt. 4
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_07_pt_1_3e82b27e5a
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-07-pt.-2/1992%20Winter%20Olympics%20-%20Day%2007%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 07 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_07_pt_2_6fc2297bc0
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-07-pt.-2/1992%20Winter%20Olympics%20-%20Day%2007%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 07 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_07_pt_3_70a2e93e64
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-07-pt.-2/1992%20Winter%20Olympics%20-%20Day%2007%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 07 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_07_pt_4_a13d26074f
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-07-pt.-2/1992%20Winter%20Olympics%20-%20Day%2007%20Pt.%204.mp4
+    title: 1992 Winter Olympics - Day 07 Pt. 4
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_1_3736cd5baf
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_2_e8bcd291df
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_3_614c3bd761
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%203.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 3
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_4_1ffd197f18
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%204.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 4
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_5_26fa22c846
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%205.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 5
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_6_8a25477e67
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%206.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 6
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_08_pt_7_fe716e64e8
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-08-pt.-4/1992%20Winter%20Olympics%20-%20Day%2008%20Pt.%207.mp4
+    title: 1992 Winter Olympics - Day 08 Pt. 7
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_09_pt_1_ec5576efa5
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-09-pt.-3/1992%20Winter%20Olympics%20-%20Day%2009%20Pt.%201.mp4
+    title: 1992 Winter Olympics - Day 09 Pt. 1
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
+  - id: starter_9104_1992_winter_olympics_day_09_pt_2_411e14b4ab
+    collection: Starter Sports
+    type: event
+    year: 1992
+    runtime: PT1H
+    source: archive_org
+    url: https://archive.org/download/1992-winter-olympics-day-09-pt.-3/1992%20Winter%20Olympics%20-%20Day%2009%20Pt.%202.mp4
+    title: 1992 Winter Olympics - Day 09 Pt. 2
+    notes: Starter pack curated from Studio-style Archive inventory (private product).
