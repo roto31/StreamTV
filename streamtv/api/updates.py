@@ -24,7 +24,7 @@ router = APIRouter(prefix="/updates", tags=["Updates"])
 
 _PUBLIC_REPO = os.environ.get("STREAMTV_PUBLIC_REPO", "roto31/StreamTV")
 _CACHE: Dict[str, Any] = {"fetched_at": 0.0, "payload": None}
-_CACHE_TTL = 3600.0
+_CACHE_TTL = 300.0
 _STATE_FILE = Path.home() / "Library" / "Application Support" / "StreamTV" / "update_state.json"
 _UPDATE_LOCK = threading.Lock()
 _UPDATE_STATE: Dict[str, Any] = {
@@ -74,9 +74,13 @@ def _save_banner_state(data: Dict[str, Any]) -> None:
         logger.warning("Could not write update_state: %s", exc)
 
 
-def _fetch_latest_release() -> Dict[str, Any]:
+def _fetch_latest_release(force: bool = False) -> Dict[str, Any]:
     now = time.time()
-    if _CACHE["payload"] and (now - float(_CACHE["fetched_at"])) < _CACHE_TTL:
+    if (
+        not force
+        and _CACHE["payload"]
+        and (now - float(_CACHE["fetched_at"])) < _CACHE_TTL
+    ):
         return _CACHE["payload"]  # type: ignore[return-value]
 
     url = f"https://api.github.com/repos/{_PUBLIC_REPO}/releases/latest"
@@ -126,9 +130,9 @@ def _version_from_tag(tag: Optional[str]) -> Optional[str]:
 
 
 @router.get("/status", operation_id="updates_status")
-async def updates_status() -> Dict[str, Any]:
+async def updates_status(refresh: bool = False) -> Dict[str, Any]:
     current = _app_version()
-    latest = _fetch_latest_release()
+    latest = _fetch_latest_release(force=refresh)
     latest_ver = _version_from_tag(latest.get("tag_name"))
     update_available = bool(latest_ver and latest_ver != current and not latest.get("error"))
     banner = _load_banner_state()
@@ -310,7 +314,8 @@ async def updates_job() -> Dict[str, Any]:
 
 @router.get("/dmg", operation_id="updates_dmg")
 async def updates_dmg():
-    latest = _fetch_latest_release()
+    # Always ask GitHub: a cached lookup can point at an older DMG.
+    latest = _fetch_latest_release(force=True)
     for asset in latest.get("assets") or []:
         name = (asset.get("name") or "").lower()
         url = asset.get("browser_download_url")
