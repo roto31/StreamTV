@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Settings → Updates: "Agree and update" failed with a server error** — the update endpoint could raise an internal error instead of starting the backup/apply job. It now starts correctly and reports progress as expected.
+
 ## [1.4.7] - 2026-11-24
 
 ### Added
