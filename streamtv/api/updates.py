@@ -283,6 +283,7 @@ def _run_update_job(mode: str) -> None:
 
 @router.post("/agree-and-apply", operation_id="updates_agree_and_apply")
 async def updates_agree_and_apply(body: AgreeApplyBody) -> Dict[str, Any]:
+    global _UPDATE_STATE
     if not body.agree:
         raise HTTPException(status_code=400, detail="agree=true required")
     mode = detect_install_mode()
