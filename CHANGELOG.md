@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7.2] - 2026-11-24
+
+### Fixed
+- **First-run setup: starter channels were greyed out** — the optional Movies / Music Videos / Saturday Morning Kids / Greatest Sports starter channels (9101–9104) are now included and selectable.
+- **First-run setup: LaunchAgent install errors** — failures now show a short plain-language message, with technical details tucked under "Show details".
+- **In-app update now also refreshes the setup helper scripts**, so "Install LaunchAgents" works after updating.
+
 ## [1.4.7.1] - 2026-11-24
 
 ### Fixed
