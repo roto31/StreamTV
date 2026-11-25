@@ -4,14 +4,35 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import shutil
+import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Optional
 
+import yaml
+
 logger = logging.getLogger(__name__)
 
 STARTER_NUMBERS = ("9101", "9102", "9103", "9104")
+
+# channel.schema.json stream.type enum — aliases map common authoring mistakes.
+_SCHEMA_STREAM_TYPES = frozenset(
+    {"event", "bumper", "commercial", "news", "filler", "movie", "episode"}
+)
+_TYPE_ALIASES = {
+    "music_video": "episode",
+    "music-video": "episode",
+    "musicvideo": "episode",
+    "trailer": "commercial",
+    "preview": "commercial",
+    "ad": "commercial",
+    "advertisement": "commercial",
+    "promo": "bumper",
+    "clip": "filler",
+    "short": "filler",
+}
 
 CATALOG: list[dict[str, Any]] = [
     {
@@ -30,13 +51,13 @@ CATALOG: list[dict[str, Any]] = [
         "number": "9103",
         "id": "kids",
         "name": "Saturday Morning Kids",
-        "blurb": "Vintage Saturday-morning style cartoons with short commercial breaks.",
+        "blurb": "Vintage Saturday-morning cartoon blocks (CBS/ABC style) with commercial breaks.",
     },
     {
         "number": "9104",
         "id": "sports",
         "name": "Greatest Sports",
-        "blurb": "Historic sporting events and films still available on Archive.org.",
+        "blurb": "Championship games and highlight specials (not Olympic day-part clones).",
     },
 ]
 
@@ -195,6 +216,71 @@ def _set_build_days(days: int = 3) -> None:
         logger.warning("Could not set build_days=%s: %s", days, exc)
 
 
+def _coerce_year(value: Any) -> Optional[int]:
+    if value is None or value == "":
+        return None
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if 1800 <= value <= 2100 else None
+    s = str(value).strip()
+    m = re.match(r"^(\d{4})$", s)
+    if m:
+        y = int(m.group(1))
+        return y if 1800 <= y <= 2100 else None
+    m = re.search(r"(19|20)\d{2}", s)
+    if m:
+        y = int(m.group(0))
+        return y if 1800 <= y <= 2100 else None
+    return None
+
+
+def sanitize_stream_dict(stream: dict[str, Any]) -> dict[str, Any]:
+    """Coerce stream fields to channel.schema.json (type enum + integer year)."""
+    out = dict(stream)
+    raw_type = out.get("type")
+    if isinstance(raw_type, str):
+        key = raw_type.strip().lower().replace(" ", "_")
+        mapped = _TYPE_ALIASES.get(key, key)
+        out["type"] = mapped if mapped in _SCHEMA_STREAM_TYPES else "event"
+    year = _coerce_year(out.get("year"))
+    if year is None:
+        out.pop("year", None)
+    else:
+        out["year"] = year
+    return out
+
+
+def sanitize_channel_doc(doc: dict[str, Any]) -> dict[str, Any]:
+    """Return a schema-safe copy of a channel YAML document."""
+    channels = []
+    for ch in doc.get("channels") or []:
+        ch_out = dict(ch)
+        streams = ch_out.get("streams") or []
+        ch_out["streams"] = [sanitize_stream_dict(s) for s in streams if isinstance(s, dict)]
+        channels.append(ch_out)
+    out = dict(doc)
+    out["channels"] = channels
+    return out
+
+
+def write_sanitized_pack_yaml(src: Path) -> Path:
+    """Load pack YAML, sanitize streams, write a temp file for import."""
+    raw = yaml.safe_load(src.read_text(encoding="utf-8")) or {}
+    if not isinstance(raw, dict):
+        raise ValueError(f"invalid channel YAML root in {src}")
+    clean = sanitize_channel_doc(raw)
+    fd, name = tempfile.mkstemp(prefix=f"{src.stem}_sanitized_", suffix=".yaml")
+    path = Path(name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            yaml.safe_dump(clean, fh, sort_keys=False, allow_unicode=True)
+    except Exception:
+        path.unlink(missing_ok=True)
+        raise
+    return path
+
+
 async def install_starter_channels(
     numbers: list[str],
     *,
@@ -219,10 +305,12 @@ async def install_starter_channels(
         if not yaml_path.is_file():
             errors.append(f"{number}: pack YAML missing")
             continue
+        sanitized: Optional[Path] = None
         try:
             _copy_icon(number, wd)
             _install_schedule(number, wd)
-            await import_channels_from_yaml(yaml_path, validate=True, db_session=db_session)
+            sanitized = write_sanitized_pack_yaml(yaml_path)
+            await import_channels_from_yaml(sanitized, validate=True, db_session=db_session)
             try:
                 from streamtv.streaming.channel_manager import channel_manager
 
@@ -233,6 +321,12 @@ async def install_starter_channels(
         except Exception as exc:  # noqa: BLE001
             logger.exception("starter install failed for %s", number)
             errors.append(f"{number}: {exc}")
+        finally:
+            if sanitized is not None:
+                try:
+                    sanitized.unlink(missing_ok=True)
+                except OSError:
+                    pass
 
     if installed:
         _set_build_days(3)
@@ -241,10 +335,8 @@ async def install_starter_channels(
     if errors:
         detail += f"; errors={errors}"
     ok = bool(installed) and not errors
-    if installed and errors:
-        ok = False
     return StarterInstallResult(
-        ok=ok if errors else bool(installed) or wanted == [],
+        ok=ok,
         installed=installed,
         detail=detail,
         errors=errors,

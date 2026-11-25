@@ -3,14 +3,14 @@ content:
 - key: movies_main
   collection: Starter Movies
   order: shuffle
-- key: movies_trailers
-  collection: Starter Movie Previews
+- key: movies_breaks
+  collection: Starter Movie Trailers
   order: shuffle
 sequence:
 - key: main_sequence
   items:
   - all: movies_main
-  - all: movies_trailers
+  - all: movies_breaks
 playout:
 - sequence: main_sequence
 - repeat: true

@@ -179,9 +179,12 @@ async def setup_sample_channels_install(body: SampleChannelsBody) -> Dict[str, A
         result = await install_starter_channels(body.channels or [], db_session=db)
     finally:
         db.close()
-    if not result.ok and result.errors and not result.installed:
+    # Surface partial failures (e.g. 9101 schema reject while 9103 installed).
+    # Previously returned HTTP 200 with ok=false, so the macOS setup UI advanced
+    # and operators only saw "two packs" without the validation errors.
+    if result.errors or not result.ok:
         raise HTTPException(status_code=400, detail=result.to_dict())
-    return {"ok": result.ok, **result.to_dict()}
+    return {"ok": True, **result.to_dict()}
 
 
 @router.get("/plex-codecs", operation_id="setup_plex_codecs_status")

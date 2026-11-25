@@ -80,3 +80,45 @@ def test_ensure_starter_packs_seeds_workdir(tmp_path: Path, monkeypatch) -> None
     assert sp._pack_complete(tmp_path / "data" / "starter_packs")
     body = sp.list_catalog()
     assert all(c["available"] is True for c in body)
+
+
+def test_sanitize_stream_type_and_year_aliases() -> None:
+    from streamtv.setup.starter_packs import sanitize_stream_dict
+
+    music = sanitize_stream_dict(
+        {"id": "a", "type": "music_video", "year": "1984", "title": "Jump"}
+    )
+    assert music["type"] == "episode"
+    assert music["year"] == 1984
+
+    trailer = sanitize_stream_dict(
+        {"id": "b", "type": "trailer", "year": "circa 1990", "title": "Preview"}
+    )
+    assert trailer["type"] == "commercial"
+    assert trailer["year"] == 1990
+
+    bad_year = sanitize_stream_dict({"id": "c", "type": "movie", "year": "unknown"})
+    assert "year" not in bad_year
+
+
+def test_sample_channels_install_returns_400_on_errors(monkeypatch) -> None:
+    from streamtv.api import setup as setup_api
+    from streamtv.main import app
+    from streamtv.setup.starter_packs import StarterInstallResult
+
+    async def _fake_install(numbers, *, workdir=None, db_session=None):
+        return StarterInstallResult(
+            ok=False,
+            installed=["9103"],
+            detail="installed=['9103']; errors=['9101: validation failed']",
+            errors=["9101: validation failed"],
+        )
+
+    monkeypatch.setattr(setup_api, "install_starter_channels", _fake_install)
+    client = TestClient(app)
+    r = client.post("/api/setup/sample-channels", json={"channels": ["9101", "9103"]})
+    assert r.status_code == 400
+    detail = r.json()["detail"]
+    assert detail["ok"] is False
+    assert "9101: validation failed" in detail["errors"]
+    assert detail["installed"] == ["9103"]

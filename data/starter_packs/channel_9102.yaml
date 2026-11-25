@@ -2,500 +2,414 @@ channels:
 - number: '9102'
   name: Music Videos (Top of Genre)
   group: Music
-  description: Best-of-genre music videos across eras, curated like Studio music channels
-    (Top40Weekly-style). YouTube sources when that matches production depth.
+  description: Best-of-genre music videos across eras (Archive-first; YouTube when
+    needed).
   enabled: true
   playout_mode: continuous
   logo_path: /static/channel_icons/channel_9102.png
   streams:
   - id: starter_9102_van_halen_jump_official_music_video_hd_354f5db1f7
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M2S
     source: youtube
     url: https://www.youtube.com/watch?v=SwYN7mTi6HM
     title: Van Halen - Jump (Official Music Video) [HD]
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_van_halen_panama_official_music_video_40b232c23e
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT3M42S
     source: youtube
     url: https://www.youtube.com/watch?v=fuKDBPw8wQA
     title: Van Halen - Panama (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_van_halen_hot_for_teacher_official_music_e33451991a
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT5M35S
     source: youtube
     url: https://www.youtube.com/watch?v=6M4_Ommfvv0
     title: Van Halen - Hot For Teacher (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_van_halen_runaround_official_video_hd_63a965d2a8
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M17S
     source: youtube
     url: https://www.youtube.com/watch?v=oy_4No7h2Vg
     title: Van Halen - Runaround (Official Video) [HD]
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_back_in_black_official_4k_video_5e0e1c7df3
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M14S
     source: youtube
     url: https://www.youtube.com/watch?v=pAgnJDJN4VA
     title: AC/DC - Back In Black (Official 4K Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_you_shook_me_all_night_long_offici_086bceec94
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT3M28S
     source: youtube
     url: https://www.youtube.com/watch?v=Lo2qQmj0_h4
     title: AC/DC - You Shook Me All Night Long (Official 4K Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_acdcvevo_ac_dc_hells_bells_official_vide_67eee7fde9
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT2M58S
     source: youtube
     url: https://www.youtube.com/watch?v=b0lFahRXHuk
     title: acdcVEVO  - AC/DC - Hells Bells (Official Video) - acdcVEVO
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_for_those_about_to_rock_we_salute_9fdd6ba1cf
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT6M19S
     source: youtube
     url: https://www.youtube.com/watch?v=8fPf6L0XNvM
     title: AC/DC - For Those About To Rock (We Salute You) (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_thunderstruck_official_video_7520bb025f
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M53S
     source: youtube
     url: https://www.youtube.com/watch?v=v2AC41dglnM
     title: AC/DC - Thunderstruck (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_highway_to_hell_official_video_ca39aa0d14
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT3M27S
     source: youtube
     url: https://www.youtube.com/watch?v=l482T0yNkeo
     title: AC/DC - Highway to Hell (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_shoot_to_thrill_iron_man_2_version_ba686ad991
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT5M33S
     source: youtube
     url: https://www.youtube.com/watch?v=xRQnJyP77tY
     title: AC/DC - Shoot To Thrill (Iron Man 2 Version)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_ac_dc_who_made_who_official_hd_video_3891dbc38b
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT3M26S
     source: youtube
     url: https://www.youtube.com/watch?v=PiZHNw1MtzI
     title: AC/DC - Who Made Who (Official HD Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_queen_another_one_bites_the_dust_officia_5596d59f0a
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT3M43S
     source: youtube
     url: https://www.youtube.com/watch?v=rY0WxgSXdEE
     title: Queen - Another One Bites the Dust (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_queen_crazy_little_thing_called_love_off_f05e944d86
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT2M55S
     source: youtube
     url: https://www.youtube.com/watch?v=zO6D_BAuYCI
     title: Queen - Crazy Little Thing Called Love (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_queen_and_david_bowie_under_pressure_off_32699741a6
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M13S
     source: youtube
     url: https://www.youtube.com/watch?v=a01QQZyl-_I
     title: Queen and David Bowie - Under Pressure (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_queen_i_want_to_break_free_official_vide_d7108c9f19
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M31S
     source: youtube
     url: https://www.youtube.com/watch?v=f4Mc-NYPHaQ
     title: Queen - I Want To Break Free (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_queen_radio_ga_ga_official_video_b27cecfac8
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT5M53S
     source: youtube
     url: https://www.youtube.com/watch?v=azdwsXLmrHE
     title: Queen - Radio Ga Ga (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_guns_n_roses_sweet_child_o_mine_official_166a83e864
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT5M3S
     source: youtube
     url: https://www.youtube.com/watch?v=1w7OgIMMRc4
     title: Guns N' Roses - Sweet Child O' Mine (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_guns_n_roses_welcome_to_the_jungle_b3ff19317e
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M39S
     source: youtube
     url: https://www.youtube.com/watch?v=o1tj2zJ2Wvg
     title: Guns N' Roses - Welcome To The Jungle
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_guns_n_roses_paradise_city_official_musi_e34c36fbd7
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT6M48S
     source: youtube
     url: https://www.youtube.com/watch?v=Rbm6GXllBiw
     title: Guns N' Roses - Paradise City (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_guns_n_roses_patience_8d5d7d75de
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT5M56S
     source: youtube
     url: https://www.youtube.com/watch?v=ErvgV4P6Fzc
     title: Guns N' Roses - Patience
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    notes: Starter pack sample channel.
+    year: 1980
   - id: starter_9102_bon_jovi_livin_on_a_prayer_official_musi_d2bc5cced6
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT5M29S
     source: youtube
     url: https://www.youtube.com/watch?v=lMGaiSqOp58
     title: Bon Jovi - Livin' On A Prayer Official Music Video
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_weird_al_yankovic_eat_it_official_4k_vi_89883e6058
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_bon_jovi_you_give_love_a_bad_name_ec0f408014
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M29S
+    type: episode
+    runtime: PT3M51S
     source: youtube
-    url: https://www.youtube.com/watch?v=ZcJjMnHoIBI
-    title: '"Weird Al" Yankovic - Eat It (Official 4K Video)'
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_weird_al_yankovic_fat_official_video_04a644c042
+    url: https://www.youtube.com/watch?v=KrZHPOeOxQQ
+    title: Bon Jovi - You Give Love A Bad Name
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_bon_jovi_wanted_dead_or_alive_official_m_59b9dd7f3a
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT4M57S
+    type: episode
+    runtime: PT4M10S
     source: youtube
-    url: https://www.youtube.com/watch?v=t2mU6USTBRE
-    title: '"Weird Al" Yankovic - Fat (Official Video)'
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_weird_al_yankovic_like_a_surgeon_offici_a0d2ac00a9
+    url: https://www.youtube.com/watch?v=SRvCvsRp5ho
+    title: Bon Jovi - Wanted Dead Or Alive (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_bon_jovi_bad_medicine_official_music_vid_3a5a4cc37c
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT4M8S
-    source: youtube
-    url: https://www.youtube.com/watch?v=notKtAgfwDA
-    title: '"Weird Al" Yankovic - Like A Surgeon (Official Video)'
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_til_tuesday_voices_carry_official_video_237ef5393f
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
+    type: episode
     runtime: PT4M19S
     source: youtube
-    url: https://www.youtube.com/watch?v=uejh-bHa4To
-    title: '''Til Tuesday - Voices Carry (Official Video)'
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_hq_rod_stewart_some_guys_have_all_the_l_a777247809
+    url: https://www.youtube.com/watch?v=eOUtsybozjg
+    title: Bon Jovi - Bad Medicine (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_def_leppard_pour_some_sugar_on_me_offici_ee7715cb46
     collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT4M2S
-    source: youtube
-    url: https://www.youtube.com/watch?v=sY2WIFGQttE
-    title: (HQ) Rod Stewart - Some Guys Have All The Luck  (official music video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_10_000_maniacs_because_the_night_mtv_unp_6fc060eb1d
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M40S
-    source: youtube
-    url: https://www.youtube.com/watch?v=kUGC5oRpbkg
-    title: 10,000 Maniacs - Because The Night ( MTV Unplugged )
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_10_000_maniacs_like_the_weather_5a5aa1b23b
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M57S
-    source: youtube
-    url: https://www.youtube.com/watch?v=te7bbWBXusk
-    title: 10,000 Maniacs - Like the Weather
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_a_flock_of_seagulls_i_ran_so_far_away_vi_5ba7517bb3
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M58S
-    source: youtube
-    url: https://www.youtube.com/watch?v=iIpfWORQWhU
-    title: A Flock Of Seagulls - I Ran (So Far Away) (Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_a_flock_of_seagulls_i_ran_so_far_away_19_3359c19770
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M57S
-    source: youtube
-    url: https://www.youtube.com/watch?v=0_Pq0xYr3L4
-    title: A Flock Of Seagulls - I Ran (So Far Away) [1982]
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_a_flock_of_seagulls_space_age_love_song_d6fa3e71f4
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M24S
-    source: youtube
-    url: https://www.youtube.com/watch?v=gOK3rqVgN2I
-    title: A Flock Of Seagulls - Space Age Love Song (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_a_ha_take_on_me_official_video_4k_1726cd990d
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT4M4S
-    source: youtube
-    url: https://www.youtube.com/watch?v=djV11Xbc914
-    title: a-ha - Take On Me (Official Video) [4K]
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_a_ha_the_sun_always_shines_on_t_v_offici_a09c769038
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT4M42S
-    source: youtube
-    url: https://www.youtube.com/watch?v=a3ir9HC9vYg
-    title: a-ha - The Sun Always Shines on T.V. (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_abc_be_near_me_826ac9ba7a
-    collection: Starter Music Videos
-    type: music_video
-    year: 1980s
-    runtime: PT3M58S
-    source: youtube
-    url: https://www.youtube.com/watch?v=VhAgQMqVxiE
-    title: ABC - Be Near Me
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_rodney_crowell_i_couldn_t_leave_you_if_i_d6a6ee6ea9
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M20S
-    source: youtube
-    url: https://www.youtube.com/watch?v=SPi6fW8KBW4
-    title: Rodney Crowell - I Couldn't Leave You If I Tried
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_bellamy_brothers_you_ll_never_be_sorry_8e5ecb99c4
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M20S
-    source: youtube
-    url: https://www.youtube.com/watch?v=r19049hFqF4
-    title: Bellamy Brothers - You'll Never Be Sorry
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_garth_brooks_more_than_a_memory_57631130d6
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M38S
-    source: youtube
-    url: https://www.youtube.com/watch?v=CEkUwgNWL5Y
-    title: Garth Brooks - More Than A Memory
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_alabama_high_cotton_official_video_6ed2cf49a8
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT2M59S
-    source: youtube
-    url: https://www.youtube.com/watch?v=IhsbhbnKoR0
-    title: Alabama - High Cotton (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_desert_rose_band_she_don_t_love_nobody_a42dcbf4db
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT2M43S
-    source: youtube
-    url: https://www.youtube.com/watch?v=1jbEr0EG78U
-    title: Desert Rose Band - She Don't Love Nobody
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_garth_brooks_the_thunder_rolls_official_91e3742794
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT4M27S
-    source: youtube
-    url: https://www.youtube.com/watch?v=YjF36AxKodI
-    title: Garth Brooks - The Thunder Rolls (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_the_o_kanes_oh_darlin_d7a980df7c
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT2M53S
-    source: youtube
-    url: https://www.youtube.com/watch?v=TR9AG_R6eO0
-    title: The O'Kanes - Oh Darlin'
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_waylon_jennings_america_official_video_6601fe9150
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M26S
-    source: youtube
-    url: https://www.youtube.com/watch?v=g13CfwdlObE
-    title: Waylon Jennings - America (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_the_highwaymen_highwayman_official_video_0e342e506d
-    collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M22S
-    source: youtube
-    url: https://www.youtube.com/watch?v=aFkcAH-m9W0
-    title: The Highwaymen - Highwayman (Official Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_hifi_will_the_circle_be_unbroken_vol_2_cabbb18bdb
-    collection: Starter Music Videos
-    type: music_video
-    year: null
+    type: episode
     runtime: PT4M56S
     source: youtube
-    url: https://www.youtube.com/watch?v=7bRJLkNqNXI
-    title: '[ HiFi ]  Will The Circle Be Unbroken Vol.2／Nitty Gritty Dirt Band／Johnny
-      Cash／Ricky Skaggs'
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_randy_travis_forever_and_ever_amen_offic_5cde9ad74c
+    url: https://www.youtube.com/watch?v=0UIB9Y4OFPs
+    title: DEF LEPPARD - "Pour Some Sugar On Me" (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_def_leppard_photograph_7f8273add5
     collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT4M24S
+    type: episode
+    runtime: PT4M6S
     source: youtube
-    url: https://www.youtube.com/watch?v=sgJXbIP83A8
-    title: Randy Travis - Forever And Ever, Amen (Official Music Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_garth_brooks_the_dance_1990_fa47a121ae
+    url: https://www.youtube.com/watch?v=D4dHr8evt6k
+    title: Def Leppard - Photograph
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_def_leppard_love_bites_official_video_4d315c1fb4
     collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M2S
+    type: episode
+    runtime: PT5M34S
     source: youtube
-    url: https://www.youtube.com/watch?v=lzuS1r0zFf0
-    title: Garth Brooks - The Dance - 1990
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_randy_travis_promises_video_4413b7694e
+    url: https://www.youtube.com/watch?v=0V0Z0rANEeU
+    title: Def Leppard - Love Bites (Official Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_def_leppard_hysteria_official_music_vide_bd29235eba
     collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT4M7S
+    type: episode
+    runtime: PT6M
     source: youtube
-    url: https://www.youtube.com/watch?v=2ntD9e8BS2Y
-    title: Randy Travis - Promises (Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
-  - id: starter_9102_randy_travis_i_told_you_so_video_1699842372
+    url: https://www.youtube.com/watch?v=jaiaaar88EM
+    title: DEF LEPPARD - "Hysteria" (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_inxs_need_you_tonight_official_music_vid_fe34a62123
     collection: Starter Music Videos
-    type: music_video
-    year: null
-    runtime: PT3M39S
+    type: episode
+    runtime: PT3M10S
     source: youtube
-    url: https://www.youtube.com/watch?v=TxroWJ0XQ0w
-    title: Randy Travis - I Told You So (Video)
-    notes: Starter pack curated from Studio-style Archive/YouTube inventory (private
-      product).
+    url: https://www.youtube.com/watch?v=F93ywiGMDnQ
+    title: INXS - Need You Tonight (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_inxs_devil_inside_official_music_video_418211ccc1
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT5M12S
+    source: youtube
+    url: https://www.youtube.com/watch?v=hv_zJrO_ptk
+    title: INXS - Devil Inside (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_inxs_new_sensation_official_music_video_51ed2291da
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M11S
+    source: youtube
+    url: https://www.youtube.com/watch?v=azfG5H-pCVg
+    title: INXS - New Sensation (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_inxs_never_tear_us_apart_official_music_47a3341c01
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT3M51S
+    source: youtube
+    url: https://www.youtube.com/watch?v=AIBv2GEnXlc
+    title: INXS - Never Tear Us Apart (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_journey_don_t_stop_believin_official_vid_d90ca0d337
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M9S
+    source: youtube
+    url: https://www.youtube.com/watch?v=x3idGV-7kSQ
+    title: Journey - Don't Stop Believin' (Official Video RCF)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_journey_separate_ways_worlds_apart_offic_1e663c82b6
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M26S
+    source: youtube
+    url: https://www.youtube.com/watch?v=LatorN4P9aA
+    title: Journey - Separate Ways (Worlds Apart) (Official HD Video - 1983)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_journey_open_arms_official_video_1982_f1fb02d7d9
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT3M16S
+    source: youtube
+    url: https://www.youtube.com/watch?v=i5pUOVC50Y8
+    title: Journey - Open Arms (Official Video - 1982)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_journey_faithfully_official_hd_video_198_6fbd045700
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M27S
+    source: youtube
+    url: https://www.youtube.com/watch?v=OMD8hBsA-RI
+    title: Journey - Faithfully (Official HD Video - 1983)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_heart_alone_ad6461c8b0
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT3M38S
+    source: youtube
+    url: https://www.youtube.com/watch?v=1Cw1ng75KP0
+    title: Heart - Alone
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_heart_these_dreams_be6f1a94fa
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT3M48S
+    source: youtube
+    url: https://www.youtube.com/watch?v=41P8UxneDJE
+    title: Heart - These Dreams
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_heart_what_about_love_5908abfeef
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT3M45S
+    source: youtube
+    url: https://www.youtube.com/watch?v=KE5GGMhmo-M
+    title: Heart - What About Love?
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_heart_never_02f78458ae
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M3S
+    source: youtube
+    url: https://www.youtube.com/watch?v=zWzy5q_M5Ho
+    title: Heart - Never
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_scorpions_rock_you_like_a_hurricane_offi_18e1d55c73
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M13S
+    source: youtube
+    url: https://www.youtube.com/watch?v=6yP1tcy9a10
+    title: Scorpions - Rock You Like A Hurricane (Official Music Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_scorpions_still_loving_you_official_vide_ab99be2dc2
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT4M48S
+    source: youtube
+    url: https://www.youtube.com/watch?v=7pOr3dBFAeY
+    title: Scorpions - Still Loving You (Official Video)
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_scorpions_wind_of_change_original_versio_aab06553a4
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT5M13S
+    source: youtube
+    url: https://www.youtube.com/watch?v=uWQkywHLh-s
+    title: Scorpions   Wind Of Change Original Version
+    notes: Starter pack sample channel.
+    year: 1980
+  - id: starter_9102_scorpions_no_one_like_you_official_video_3c28c33478
+    collection: Starter Music Videos
+    type: episode
+    runtime: PT3M55S
+    source: youtube
+    url: https://www.youtube.com/watch?v=6VwbyBGbqPY
+    title: Scorpions - No One Like You (Official Video)
+    notes: Starter pack sample channel.
+    year: 1980
