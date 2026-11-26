@@ -676,6 +676,21 @@ async def settings_updates_page(request: Request):
     )
 
 
+@app.get(
+    "/settings/troubleshooting",
+    response_class=HTMLResponse,
+    operation_id="settings_troubleshooting_page",
+)
+async def settings_troubleshooting_page(request: Request):
+    """Troubleshooting scripts for diagnostics and playback recovery."""
+    if templates:
+        return templates.TemplateResponse(request, "settings_troubleshooting.html")
+    return HTMLResponse(
+        "<h1>Troubleshooting</h1><p>Templates not available. "
+        "Use API at /api/scripts/list</p>"
+    )
+
+
 @app.get("/cache", response_class=HTMLResponse)
 async def cache_status_page(request: Request):
     """Cache operator status page"""

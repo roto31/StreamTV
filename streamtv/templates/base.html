@@ -118,6 +118,17 @@
                     {{ link('/settings/auth', 'vpn_key', 'Source Authentication', p.startswith('/settings/auth')) }}
                     {{ link('/settings/backup', 'backup', 'Backup &amp; Restore'|safe, p.startswith('/settings/backup')) }}
                     {{ link('/settings/updates', 'system_update', 'Updates', p.startswith('/settings/updates')) }}
+                    {{ link('/settings/troubleshooting', 'build', 'Troubleshooting', p.startswith('/settings/troubleshooting')) }}
+                </div>
+            </div>
+
+            <div class="nav-group" role="group" aria-labelledby="ng-trouble">
+                <div class="nav-group-title" id="ng-trouble">Troubleshooting</div>
+                <div class="nav-group-content">
+                    {{ link('/settings/troubleshooting', 'handyman', 'Scripts', p.startswith('/settings/troubleshooting')) }}
+                    {{ link('/health-check', 'health_and_safety', 'Health Check', p.startswith('/health-check')) }}
+                    {{ link('/test-stream', 'bug_report', 'Test Stream', p.startswith('/test-stream')) }}
+                    {{ link('/cache', 'storage', 'Cache Status', p.startswith('/cache')) }}
                 </div>
             </div>
 
@@ -126,9 +137,6 @@
                 <div class="nav-group-content">
                     {{ link('/logs', 'terminal', 'Streaming Logs', p.startswith('/logs')) }}
                     {{ link('/plex-logs', 'dvr', 'Plex Server Logs', p.startswith('/plex-logs')) }}
-                    {{ link('/health-check', 'health_and_safety', 'Health Check', p.startswith('/health-check')) }}
-                    {{ link('/cache', 'storage', 'Cache Status', p.startswith('/cache')) }}
-                    {{ link('/test-stream', 'bug_report', 'Test Stream', p.startswith('/test-stream')) }}
                 </div>
             </div>
 

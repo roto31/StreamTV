@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Troubleshooting - StreamTV{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <div>
+            <div class="page-title" role="heading" aria-level="1">Troubleshooting</div>
+            <p class="page-subtitle">Diagnostics and playback aids. Hover a script name for full guidance.</p>
+        </div>
+        <a href="/settings" class="btn btn-outlined">← Settings Overview</a>
+    </div>
+
+    <div class="card" style="padding: 16px 20px; margin-bottom: 16px;">
+        <strong>Related:</strong>
+        <a href="/health-check">Health Check</a> ·
+        <a href="/test-stream">Test Stream</a> ·
+        <a href="/logs">Streaming Logs</a> ·
+        <a href="/cache">Cache Status</a> ·
+        <a href="/docs/troubleshooting">Docs</a>
+    </div>
+
+    <div class="card" style="padding: 20px; margin-bottom: 16px;">
+        <div class="page-title" style="font-size: 1.15rem; margin-bottom: 4px;" role="heading" aria-level="2">Scripts</div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin: 0 0 16px;">
+            Public-safe operator scripts for diagnosing installs and recovering playback.
+            Confirm before repair actions. Kickstart+pre-warm is Terminal-only.
+        </p>
+        <div id="scriptGroups"></div>
+        <pre id="scriptResult" style="margin-top: 16px; white-space: pre-wrap; font-size: 12px; display: none; max-height: 360px; overflow: auto;"></pre>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+    const groupsEl = document.getElementById('scriptGroups');
+    const resultEl = document.getElementById('scriptResult');
+    const categoryOrder = ['playback', 'diagnostics', 'maintenance'];
+    const categoryLabels = {
+        playback: 'Playback & playout',
+        diagnostics: 'Diagnostics',
+        maintenance: 'Maintenance'
+    };
+
+    function fetchJSON(url, opts) {
+        if (typeof authenticatedFetch === 'function') {
+            return authenticatedFetch(url, opts).then(r => r.json().then(j => ({ ok: r.ok, status: r.status, body: j })));
+        }
+        return fetch(url, opts).then(r => r.json().then(j => ({ ok: r.ok, status: r.status, body: j })));
+    }
+
+    function render(scripts) {
+        const byCat = {};
+        Object.values(scripts).forEach(s => {
+            const cat = s.category || 'diagnostics';
+            (byCat[cat] = byCat[cat] || []).push(s);
+        });
+        const parts = [];
+        categoryOrder.forEach(cat => {
+            const list = byCat[cat];
+            if (!list || !list.length) return;
+            list.sort((a, b) => a.name.localeCompare(b.name));
+            parts.push(`<h3 style="margin: 18px 0 8px; font-size: 15px;">${categoryLabels[cat] || cat}</h3>`);
+            parts.push('<div style="display: flex; flex-direction: column; gap: 8px;">');
+            list.forEach(s => {
+                const tip = (s.hover || s.description || '').replace(/"/g, '&quot;');
+                const btn = s.runnable
+                    ? `<button type="button" class="btn btn-secondary" data-run="${s.id}" data-confirm="${s.confirm ? '1' : '0'}" title="${tip}">Run</button>`
+                    : `<span class="btn btn-outlined" style="opacity: 0.7; cursor: help;" title="${tip}">Terminal only</span>`;
+                parts.push(`
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border, #333); border-radius: 8px;">
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-weight: 600;" title="${tip}">${s.name}</div>
+                      <div style="font-size: 13px; color: var(--text-secondary);">${s.description}</div>
+                      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;"><code>scripts/${s.script}</code> · ${s.type}</div>
+                    </div>
+                    ${btn}
+                  </div>`);
+            });
+            parts.push('</div>');
+        });
+        groupsEl.innerHTML = parts.join('') || '<p>No scripts available.</p>';
+        groupsEl.querySelectorAll('[data-run]').forEach(btn => {
+            btn.addEventListener('click', () => runScript(btn.getAttribute('data-run'), btn.getAttribute('data-confirm') === '1'));
+        });
+    }
+
+    async function runScript(id, needsConfirm) {
+        if (needsConfirm && !window.confirm('Run this repair/maintenance script?')) return;
+        resultEl.style.display = 'block';
+        resultEl.textContent = 'Running ' + id + '…';
+        try {
+            const res = await fetchJSON('/api/scripts/' + encodeURIComponent(id) + '/run', { method: 'POST' });
+            const j = res.body || {};
+            const head = (res.ok && j.success ? 'OK' : 'FAILED') + ' — ' + (j.script_name || id) + '\n';
+            resultEl.textContent = head + (j.stdout || '') + (j.stderr ? '\n--- stderr ---\n' + j.stderr : '') + (j.detail ? '\n' + j.detail : '');
+        } catch (e) {
+            resultEl.textContent = 'Error: ' + e;
+        }
+    }
+
+    fetchJSON('/api/scripts/list').then(res => {
+        render((res.body && res.body.scripts) || {});
+    }).catch(e => {
+        groupsEl.textContent = 'Failed to load scripts: ' + e;
+    });
+})();
+</script>
+{% endblock %}

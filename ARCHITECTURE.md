@@ -282,15 +282,20 @@ only (G5); `channel_build` needs `plan_token` + `confirm="build"`.
 flowchart LR
   App["StreamTV.app"] --> Lifecycle["Start or attach :8410"]
   App --> Native["Channels / Guide / Manage"]
-  App --> Admin["Admin hub"]
+  App --> Admin["Admin hub / Settings"]
   App --> WebUI["Web UI WKWebView"]
   Native --> API[":8410 /api"]
+  Admin --> Catalog["GET /api/scripts"]
   Admin --> WebUI
-  WebUI --> UI["Jinja WebUI"]
+  WebUI --> UI["Jinja + Settings → Troubleshooting"]
+  UI --> Catalog
+  Catalog --> Scripts["scripts/*.sh|py allowlist"]
   Lifecycle --> API
 ```
 
-First-run / SetupDone: [docs/guides/FIRST_RUN_SETUP.md](docs/guides/FIRST_RUN_SETUP.md).
+First-run / SetupDone: [docs/guides/FIRST_RUN_SETUP.md](docs/guides/FIRST_RUN_SETUP.md).  
+Troubleshooting catalog: [docs/TROUBLESHOOTING_SCRIPTS.md](docs/TROUBLESHOOTING_SCRIPTS.md).  
+Resilience ops (Phase 3 parked): [docs/guides/STREAMING_RESILIENCE_OPS.md](docs/guides/STREAMING_RESILIENCE_OPS.md).
 
 ## Distributions
 

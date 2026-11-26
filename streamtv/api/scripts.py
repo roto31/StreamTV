@@ -9,10 +9,16 @@ import subprocess
 import logging
 import json
 import os
+import sys
 from typing import Optional
 import socket
 import platform
 import urllib.request
+
+from streamtv.troubleshooting.script_catalog import (
+    TROUBLESHOOTING_SCRIPTS,
+    list_scripts_public,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -22,98 +28,77 @@ router = APIRouter(tags=["Scripts"])
 BASE_DIR = Path(__file__).parent.parent.parent
 SCRIPTS_DIR = BASE_DIR / "scripts"
 
-# Available troubleshooting scripts
-TROUBLESHOOTING_SCRIPTS = {
-    "check_python": {
-        "name": "Check Python Installation",
-        "description": "Verifies Python installation and version",
-        "script": "check_python.py",
-        "type": "diagnostic"
-    },
-    "check_ffmpeg": {
-        "name": "Check FFmpeg Installation",
-        "description": "Verifies FFmpeg installation and version",
-        "script": "check_ffmpeg.py",
-        "type": "diagnostic"
-    },
-    "check_database": {
-        "name": "Check Database",
-        "description": "Checks database integrity and connectivity",
-        "script": "check_database.py",
-        "type": "diagnostic"
-    },
-    "check_ports": {
-        "name": "Check Ports",
-        "description": "Checks if required ports are available",
-        "script": "check_ports.py",
-        "type": "diagnostic"
-    },
-    "test_connectivity": {
-        "name": "Test Connectivity",
-        "description": "Tests network connectivity to media sources",
-        "script": "test_connectivity.py",
-        "type": "diagnostic"
-    },
-    "repair_database": {
-        "name": "Repair Database",
-        "description": "Attempts to repair corrupted database",
-        "script": "repair_database.py",
-        "type": "repair"
-    },
-    "clear_cache": {
-        "name": "Clear Cache",
-        "description": "Clears application cache",
-        "script": "clear_cache.py",
-        "type": "maintenance"
-    }
+_INLINE_FALLBACKS = {
+    "check_python",
+    "check_ffmpeg",
+    "check_database",
+    "check_ports",
+    "test_connectivity",
 }
 
-@router.get("/scripts/list")
-async def list_scripts():
-    """List all available troubleshooting scripts"""
-    return {"scripts": TROUBLESHOOTING_SCRIPTS}
 
-@router.post("/scripts/{script_id}/run")
+@router.get("/scripts/list", operation_id="list_troubleshooting_scripts")
+async def list_scripts():
+    """List troubleshooting / playback scripts (public-safe catalog)."""
+    return {"scripts": list_scripts_public()}
+
+
+@router.post("/scripts/{script_id}/run", operation_id="run_troubleshooting_script")
 async def run_script(script_id: str, request: Request):
     """Run a troubleshooting script"""
     if script_id not in TROUBLESHOOTING_SCRIPTS:
         raise HTTPException(status_code=404, detail="Script not found")
-    
+
     script_info = TROUBLESHOOTING_SCRIPTS[script_id]
+    if not script_info.get("runnable", True):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"{script_info['name']} must be run from Terminal: "
+                f"bash scripts/{script_info['script']}"
+            ),
+        )
+
     script_path = SCRIPTS_DIR / script_info["script"]
-    
+    timeout = int(script_info.get("timeout_sec", 60))
+    extra_args = list(script_info.get("args") or [])
+
     if not script_path.exists():
-        # Try to create a simple diagnostic script on the fly
-        if script_id == "check_python":
-            return await _run_check_python()
-        elif script_id == "check_ffmpeg":
-            return await _run_check_ffmpeg()
-        elif script_id == "check_database":
-            return await _run_check_database()
-        elif script_id == "check_ports":
-            return await _run_check_ports()
-        elif script_id == "test_connectivity":
-            return await _run_test_connectivity()
-        else:
-            raise HTTPException(status_code=404, detail="Script file not found")
-    
+        if script_id in _INLINE_FALLBACKS:
+            if script_id == "check_python":
+                return await _run_check_python()
+            if script_id == "check_ffmpeg":
+                return await _run_check_ffmpeg()
+            if script_id == "check_database":
+                return await _run_check_database()
+            if script_id == "check_ports":
+                return await _run_check_ports()
+            if script_id == "test_connectivity":
+                return await _run_test_connectivity()
+        raise HTTPException(status_code=404, detail="Script file not found")
+
     try:
-        # Run the script
+        if script_info.get("shell") or script_path.suffix == ".sh":
+            cmd = ["bash", str(script_path), *extra_args]
+        else:
+            cmd = [sys.executable, str(script_path), *extra_args]
+
         result = subprocess.run(
-            ["python3", str(script_path)],
+            cmd,
             capture_output=True,
             text=True,
-            timeout=60,
-            cwd=str(BASE_DIR)
+            timeout=timeout,
+            cwd=str(BASE_DIR),
+            env={**os.environ, "STREAMTV_BASE_URL": "http://127.0.0.1:8410", "STREAMTV_BASE": "http://127.0.0.1:8410"},
         )
-        
+
         return {
             "success": result.returncode == 0,
             "script_id": script_id,
             "script_name": script_info["name"],
             "stdout": result.stdout,
             "stderr": result.stderr,
-            "return_code": result.returncode
+            "return_code": result.returncode,
         }
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=500, detail="Script execution timed out")
