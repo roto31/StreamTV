@@ -16,7 +16,11 @@ flowchart LR
   Import --> Auth
   Auth --> Gate["Plex AAC gate if PMS present"]
   Gate --> Done["SetupDone"]
+  Done --> KeepWarm["Optional: SSD cache + prewarm"]
+  KeepWarm --> Trouble["Settings → Troubleshooting"]
 ```
+
+After SetupDone, see [Streaming-Resilience-Ops](Streaming-Resilience-Ops) for SSD keep-warm / pre-warm LaunchAgent.
 
 ## What first-run installs
 

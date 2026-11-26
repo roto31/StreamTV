@@ -18,7 +18,11 @@ flowchart LR
   Import --> Auth
   Auth --> Gate["Plex AAC gate if PMS present"]
   Gate --> Done["SetupDone"]
+  Done --> KeepWarm["Optional: SSD cache + prewarm LA"]
+  KeepWarm --> Trouble["Settings → Troubleshooting"]
 ```
+
+After SetupDone, operators may point `cache.cache_directory` at an SSD, raise `prefetch_count`, and install `com.streamtv.prewarm-youtube` — see [STREAMING_RESILIENCE_OPS.md](STREAMING_RESILIENCE_OPS.md).
 
 ## What first-run installs
 

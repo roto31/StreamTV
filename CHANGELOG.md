@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7.7] - 2026-11-25
+
+### Added
+- **Settings → Troubleshooting** — Web UI and Swift Admin hub list public-safe operator scripts (`GET /api/scripts`) with hover help; run via existing `/api/scripts/{name}/run`.
+- **Streaming resilience ops (docs)** — SSD YouTube keep-warm, pre-warm LaunchAgent/scripts, F-class quarantine guidance; Phase 3 code changes remain **parked**.
+
+### Changed
+- Tip VERSION **1.4.7.7**; wiki / Architecture mermaid updated for Troubleshooting + resilience ops.
+
 ## [1.4.7.6] - 2026-11-25
 
 ### Fixed
@@ -46,7 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Update process fixed** — Settings → Updates → "Agree and update" (in the Web UI and the macOS app) failed with a server error and never started. The update now runs: pre-update backup, apply, restart, then a "server is back up" banner. If you are on 1.4.7 and the button fails, install this DMG manually once; later updates work in-app.
-
 ## [1.4.7] - 2026-11-24
 
 ### Added

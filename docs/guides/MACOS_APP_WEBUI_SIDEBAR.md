@@ -12,6 +12,10 @@ flowchart LR
   Sidebar --> Settings
   WebUI --> Local["127.0.0.1 WebUI"]
   Admin --> Local
+  Settings --> TroubleNative["Troubleshooting section"]
+  TroubleNative --> ScriptsAPI["/api/scripts/*"]
+  WebUI --> TroublePage["/settings/troubleshooting"]
+  TroublePage --> ScriptsAPI
 ```
 
-Settings **Switch to Web UI tab** selects that sidebar item; **Open in Browser** remains available.
+Settings **Switch to Web UI tab** selects that sidebar item; **Open in Browser** remains available. Native **Settings → Troubleshooting** mirrors the WebUI Scripts catalog (hover help + Run).

@@ -4,7 +4,7 @@ Complete documentation for all StreamTV utility scripts and tools.
 
 > **Heal / soft-deploy scripts (tip):** `scripts/heal_stalled_ffmpeg.py`, `scripts/heal_playout_lag.py`, `scripts/heal_tunarr_ram.sh`, `scripts/deploy_soft.sh` — see [SOFT_DEPLOY](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md), [FFMPEG_STALL_KEEPALIVE](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md), [TUNARRRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md). macOS install: prefer [Releases DMG](https://github.com/roto31/StreamTV/releases) or `packaging/macos/install_macos.sh` (not `./install_macos.sh` at repo root).
 
-## First-run / freshness / Plex AAC (v1.4.7)
+## First-run / freshness / Plex AAC (v1.4.7+)
 
 | Script | Purpose |
 |--------|---------|
@@ -17,11 +17,29 @@ Complete documentation for all StreamTV utility scripts and tools.
 | `scripts/apply_channel_pack.sh` | Import → soft deploy → Plex guide reload ([Channel-Pack-GitOps](Channel-Pack-GitOps)) |
 | `scripts/apply_public_update.sh` | In-app / Settings → Updates apply path |
 
+## Keep-warm / playback (Phase 3 parked)
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/prewarm_youtube_cache.py` | Sequential HDHR pre-warm for YouTube full-cache |
+| `scripts/kickstart_streamtv_with_prewarm.sh` | Kickstart `com.streamtv` then pre-warm |
+| `scripts/install-prewarm-youtube-launchagent.sh` | Optional daily 17:00 pre-warm LaunchAgent |
+| `scripts/heal_stalled_ffmpeg.py` | Lesson 41 Archive FFmpeg keepalive wedge |
+| `scripts/probe_hdhr_hang.py` | Detect keepalive-only / stalled FFmpeg |
+| `scripts/deploy_soft.sh` | Soft-restart channel streams |
+
+**UI:** Settings → Troubleshooting / nav **Troubleshooting → Scripts** (`streamtv/troubleshooting/script_catalog.py`). See [Streaming-Resilience-Ops](Streaming-Resilience-Ops).
+
 ```mermaid
 flowchart LR
   Fresh["check_core_dependency_freshness.py"] --> YT["yt-dlp ≥ floor"]
   AAC["verify_plex_aac_codecs.sh"] --> Install["install_plex_aac_codecs.sh"]
   Pack["validate_channel_pack.py"] --> Apply["apply_channel_pack.sh"]
+  Prewarm["prewarm_youtube_cache.py"] --> Ready["Cache READY"]
+  Probe["probe_hdhr_hang.py"] --> Heal["heal_stalled_ffmpeg.py"]
+  UI["Settings → Troubleshooting"] --> Catalog["script_catalog /api/scripts"]
+  Catalog --> Prewarm
+  Catalog --> Probe
 ```
 
 # Scripts

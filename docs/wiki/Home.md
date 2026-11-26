@@ -17,7 +17,7 @@ There's no library to build and no drives to buy. Your hoarder instincts still g
 - **Real channel feel.** Scheduled programming, a guide, period commercial breaks.
 - **Works with what you run.** Plex, Emby, Jellyfin, anything that speaks HDHomeRun.
 
-**Current tip:** **v1.4.7** — see [Releases](https://github.com/roto31/StreamTV/releases) and [Product scope](https://github.com/roto31/StreamTV/blob/main/docs/PRODUCT_SCOPE.md).
+**Current tip:** **v1.4.7.7** — Settings → Troubleshooting scripts, streaming resilience ops (Phase 3 parked). See [Releases](https://github.com/roto31/StreamTV/releases) and [Product scope](https://github.com/roto31/StreamTV/blob/main/docs/PRODUCT_SCOPE.md).
 
 Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree/main/docs) in the public repo. This wiki is the curated entry layer.
 
@@ -28,7 +28,7 @@ Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree
 
 ## Quick start
 
-1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (`StreamTV.1.4.7-macos.dmg`)
+1. Download the latest [macOS release](https://github.com/roto31/StreamTV/releases) (`StreamTV.1.4.7.7-macos.dmg` when published)
 2. Follow the [Installation Guide](Installation-Guide) · [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap)
 3. [First channel in 15 minutes](https://github.com/roto31/StreamTV/blob/main/docs/guides/FIRST_CHANNEL_15_MIN.md) (public demo pack)
 
@@ -43,6 +43,7 @@ Wiki ASCII diagrams (Expert / Intermediate) are summaries only — if they disag
 ## Operator guides
 
 - [First-Run-Setup](First-Run-Setup) · [Production-Bootstrap](Production-Bootstrap) · [SetupDone-and-Factory-Reset](SetupDone-and-Factory-Reset) · [In-App-Updates](In-App-Updates)
+- [Streaming-Resilience-Ops](Streaming-Resilience-Ops) (SSD keep-warm; Phase 3 parked) · [Scripts-and-Tools](Scripts-and-Tools) (Troubleshooting UI)
 - [Core-Dependency-Freshness](Core-Dependency-Freshness) (yt-dlp floor / player clients)
 - [Plex-Playback-Error-Host](Plex-Playback-Error-Host) (Issue 71–72 AAC / maintenance)
 - [Channel-Pack-GitOps](Channel-Pack-GitOps) (private promote → validate → apply)

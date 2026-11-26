@@ -1,20 +1,31 @@
 # Troubleshooting Scripts Documentation
 
-StreamTV includes interactive troubleshooting scripts that use SwiftDialog to help diagnose and resolve issues. These scripts provide a user-friendly interface for common problems.
+StreamTV exposes a **public-safe** catalog of diagnostic and playback scripts in:
 
-## Quick Diagnostics
+- Web UI → **Troubleshooting → Scripts** (`/settings/troubleshooting`)
+- Web UI → **Settings → Troubleshooting**
+- macOS app → **Settings → Troubleshooting** (hover for full help; Run calls `/api/scripts/{id}/run`)
 
-Run these diagnostic scripts directly from this page to check your installation:
+Canonical registry: `streamtv/troubleshooting/script_catalog.py` (no lab IPs or operator home paths).
 
-- [Run Script: check_python](script:check_python) - Check Python installation and version
-- [Run Script: check_ffmpeg](script:check_ffmpeg) - Check FFmpeg installation and version
-- [Run Script: check_database](script:check_database) - Check database connectivity and integrity
-- [Run Script: check_ports](script:check_ports) - Check if required ports are available
-- [Run Script: test_connectivity](script:test_connectivity) - Test network connectivity to media sources (with auto-fix for DNS issues)
-- [Run Script: repair_database](script:repair_database) - Attempt to repair corrupted database
-- [Run Script: clear_cache](script:clear_cache) - Clear application cache
+## Quick Diagnostics (API / UI)
 
-**How to use:** Click on any script button above. You'll be prompted to confirm before the script runs. The results will appear below.
+| ID | Use |
+|----|-----|
+| `check_python` / `check_ffmpeg` / `check_database` / `check_ports` | Install sanity |
+| `test_connectivity` | YouTube / Archive.org DNS + HTTPS |
+| `health_check` | Broad platform health |
+| `probe_hdhr_hang` | Keepalive-only / stalled FFmpeg (Lesson 41) |
+| `heal_stalled_ffmpeg_dry` / `_apply` | List or kill stalled Archive.org FFmpeg |
+| `prewarm_youtube_cache` | Warm YouTube SSD cache before Plex |
+| `deploy_soft` | Restart channel streams without full kickstart |
+| `check_core_dependency_freshness` | yt-dlp / player-client floors (Issue 73) |
+| `verify_plex_aac_codecs` | PMS AAC decoder present (Issue 72) |
+| `kickstart_with_prewarm` | **Terminal only** — full LaunchAgent kickstart + pre-warm |
+
+**How to use:** Open Settings → Troubleshooting (or the Troubleshooting nav group). Hover a script name for the full tooltip. Confirm before repair actions.
+
+Legacy SwiftDialog menu scripts (`troubleshoot_streamtv.sh`) remain available from Terminal; see below.
 
 ## Prerequisites
 
