@@ -28,7 +28,7 @@ After SetupDone, operators may point `cache.cache_directory` at an SSD, raise `p
 
 | Piece | Behavior |
 |-------|----------|
-| Config | Seeded from `config.example.yaml` only (`base_url` localhost; `tuner_manager` off) |
+| Config | Seeded from `config.example.yaml` only (`base_url` localhost) |
 | venv + deps | Application Support (app) or existing repo venv (advanced) |
 | yt-dlp | Floor / tip ensure (`ensure_yt_dlp_current`) |
 | `com.streamtv` | [`scripts/install-com-streamtv-launchagent.sh`](../../scripts/install-com-streamtv-launchagent.sh) — WorkingDirectory = chosen workdir |
@@ -45,14 +45,14 @@ After SetupDone, operators may point `cache.cache_directory` at an SSD, raise `p
 ## Never auto-copied from Studio
 
 - `/Volumes/SSD Storage/...` workdirs
-- `192.168.1.x` base URLs / Tunarr / Plex hosts
+- `192.168.1.x` base URLs / external / Plex hosts
 - `plex.dvr_id`, cookies, private `data/unified/` fleet
 - Studio LaunchAgent `EnvironmentVariables` (`STREAMTV_CACHE_YOUTUBE_FULL_CACHE=true`, etc.)
 
 ## Optional after first-run
 
 1. Mount or create TunarrRAM → install heal agent → enable `youtube_full_cache` if desired.
-2. Set `tuner_manager` / Plex hosts for your LAN.
+2. Set Plex hosts for your LAN.
 3. Add StreamTV as HDHomeRun in Plex; reload guide after lineup exists.
 4. Import your own channel packs (GitOps) instead of / in addition to samples.
 

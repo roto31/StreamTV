@@ -26,7 +26,7 @@ After SetupDone, see [Streaming-Resilience-Ops](Streaming-Resilience-Ops) for SS
 
 | Piece | Behavior |
 |-------|----------|
-| Config | Seeded from `config.example.yaml` (`base_url` localhost; `tuner_manager` off) |
+| Config | Seeded from `config.example.yaml` (`base_url` localhost) |
 | venv + deps | Application Support (app) or existing repo venv (advanced) |
 | yt-dlp | Floor / tip ensure |
 | `com.streamtv` | LaunchAgent — WorkingDirectory = chosen workdir |
@@ -48,7 +48,7 @@ After SetupDone, see [Streaming-Resilience-Ops](Streaming-Resilience-Ops) for SS
 ## Optional after first-run
 
 1. Mount TunarrRAM → install heal agent → enable `youtube_full_cache` if desired.
-2. Set `tuner_manager` / Plex hosts for your LAN.
+2. Set Plex hosts for your LAN.
 3. Add StreamTV as HDHomeRun in Plex; reload guide after lineup exists.
 4. Import your own channel packs ([Channel-Pack-GitOps](Channel-Pack-GitOps)).
 

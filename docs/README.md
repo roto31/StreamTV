@@ -70,7 +70,6 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Soft deploy (no full kickstart) | [guides/SOFT_DEPLOY.md](guides/SOFT_DEPLOY.md) |
 | Browser `/player` preview | [guides/PLAYER_PREVIEW.md](guides/PLAYER_PREVIEW.md) |
 | Fleet probe protocol | [guides/FLEET_PROBE_PROTOCOL.md](guides/FLEET_PROBE_PROTOCOL.md) |
-| Add Tunarr in Plex | [guides/ADD_TUNARR_IN_PLEX.md](guides/ADD_TUNARR_IN_PLEX.md) |
 | FFmpeg profiles | [guides/FFMPEG_PROFILES.md](guides/FFMPEG_PROFILES.md) |
 | YouTube geo-blocks | [guides/YOUTUBE_GEO_BLOCKS.md](guides/YOUTUBE_GEO_BLOCKS.md) |
 | Vimeo bedrock gate | [guides/VIMEO_BEDROCK_GATE.md](guides/VIMEO_BEDROCK_GATE.md) |
@@ -89,7 +88,6 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | EPG sync classes | [guides/EPG_SYNC_CLASSES.md](guides/EPG_SYNC_CLASSES.md) |
 | PBS (retired from Builder) | [guides/PBS_PLAYWRIGHT.md](guides/PBS_PLAYWRIGHT.md) |
 | Archive.org operator | [guides/ARCHIVE_ORG_OPERATOR.md](guides/ARCHIVE_ORG_OPERATOR.md) |
-| StreamTV + Tunarr hybrid | [guides/STREAMTV_TUNARR_HYBRID.md](guides/STREAMTV_TUNARR_HYBRID.md) |
 | Sanitization policy (public sync) | [SANITIZATION_POLICY.md](SANITIZATION_POLICY.md) |
 
 ## Architecture diagrams

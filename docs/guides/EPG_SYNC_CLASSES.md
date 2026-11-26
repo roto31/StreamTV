@@ -82,9 +82,8 @@ Lagging rows cap to media duration (+120s) and rebase so the live title still co
 ## Plex DVR hygiene
 
 - Use **one** StreamTV HDHomeRun device (`http://<host>:8410/discover.json`).
-- Remove duplicate or Tunarr DVR entries when using direct StreamTV guide.
-- Set `tuner_manager.merged_guide: false` and EPG URL:
-  `http://<host>:8410/iptv/xmltv.xml`
+- Remove duplicate or external DVR entries when using direct StreamTV guide.
+- Set EPG URL to `http://<host>:8410/iptv/xmltv.xml`
 - **`reloadGuide` DVR id:** operator scripts and `com.streamtv.epg-health` default to
   Plex DVR **119** (retired **117** / **113** / **109** return HTTP 404). StreamTV
   `guide_reload` falls back to live `/livetv/dvrs` discovery on failure. Override with

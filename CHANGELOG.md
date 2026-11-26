@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- Removed the external tuner proxy and library export integration. Docs and wiki keep Tunarr only as zlib design-inspiration credit ([NOTICE](NOTICE)); TunarrRAM remains the local RAM-disk volume name.
+
 ## [1.4.7.7] - 2026-11-25
 
 ### Added
@@ -96,7 +99,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Schedules API** — Creating or editing schedule *items* via `/api/schedule-items` returns **410**; edit `schedules/{n}.yml` on disk instead.
 - **NOTICE** — Acknowledgments for ErsatzTV Legacy and Tunarr (zlib); StreamTV does not vendor their source.
 - **Documentation / Wiki** — Implementation page rewritten for current integrations; schedule create/edit docs match read-only UI and API 410.
-- **Tunarr proxy** — Status endpoint only; library browse routes removed.
 - **Swagger `/docs`** — Works with Content-Security-Policy (exact `/docs` and `/redoc`).
 - **Browser preview** — `/player` uses mpegts.js (MPEG-TS), not HLS-primary.
 
@@ -150,8 +152,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Vintage holiday channel packs** — New Year's (**1201**), Valentine's (**214**), Easter (**401**), Fourth of July (**704**), Halloween (**1031**), Thanksgiving (**1128**), plus Kids Christmas (**1225**), each with matching mid-century guide icons.
 - **Plex Live TV video hold** — Cold start and mid-show gaps send a real H.264+AAC placeholder instead of empty keepalive packets so Apple TV is less likely to bounce to the guide — see [Plex video hold](docs/guides/PLEX_VIDEO_HOLD.md).
 - **Channel 1954.1 — Godzilla Movies** — 30 Godzilla films from Archive.org in release-year order (1954–2004), with a channel guide icon. Guide listings use the movie title only. Disney Anthology remains channel 1954.
-- **Optional offline English burn for Archive.org** — Inventory checks every audio track for English first; optional idle burn tooling remains for rare titles without embedded English — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
-- **Optional Tunarr library export** — Export ready Archive.org cache files to a separate folder for Tunarr Local Media (does not change live TV) — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
 
 ### Fixed
 - **Channel 1989 guide titles** — Humanized Archive.org filename stems into readable guide titles (URLs / stream ids unchanged).
@@ -174,7 +174,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Godzilla Live TV English subtitles** — Channel 1954.1 again overlays embedded English DVD subtitles on Japanese-audio prints, with hardenings so Plex is less likely to stall — see [FFmpeg profiles](docs/guides/FFMPEG_PROFILES.md).
-- **Optional Tunarr library prefetch** — Download full Archive.org files into the Tunarr library folder from StreamTV channel inventory; re-scan Tunarr after apply — see [StreamTV + Tunarr hybrid](docs/guides/STREAMTV_TUNARR_HYBRID.md).
 
 ### Docs
 - Operator guides for FFmpeg stall heal, LoudNorm CPU monitor, and TunarrRAM heal scripts match the in-repo tooling — see [FFmpeg stall](docs/guides/FFMPEG_STALL_KEEPALIVE.md), [LoudNorm](docs/guides/LOUDNORM_FLEET_AUDIO.md), [TunarrRAM](docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md).
@@ -253,8 +252,7 @@ See [Metadata enrichment](docs/guides/METADATA_ENRICHMENT.md) · [EPG sync class
 - **Core platform closure** — PBS metadata on media create; configurable boot-defer channel lists; bedrock backup script; media PATCH API; import path admin gate; HDHR/IPTV/builder HTTP tests; operator quickstart and source guides
 - **WebGUI** — authenticated API fetch on core pages; media library add/delete/edit; dashboard PBS auth status; Resources nav links (Guides, Builder, Import)
 - **Channel Builder** — block build when PBS show URLs need expansion
-- **Tunarr integration API** — media sources, search, custom shows proxy
-- **Plex hybrid UI** — Tunarr-first library browse with native fallback
+- **external integration API** — media sources, search, custom shows proxy
 - **Channel Builder v2** — source-first wizard with PBS show expander
 - **tvOS scaffold** — channel list, EPG, HLS playback executable
 

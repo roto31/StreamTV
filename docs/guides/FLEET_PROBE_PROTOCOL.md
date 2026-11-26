@@ -1,4 +1,4 @@
-# Fleet probe protocol (StreamTV + Tunarr)
+# Fleet probe protocol (StreamTV + external)
 
 Use this before declaring channels “dead.” Aggressive concurrent curls refill
 TunarrRAM and create false keepalive-only results.
@@ -12,7 +12,7 @@ TunarrRAM and create false keepalive-only results.
 4. **Classify late packets**, not only the first chunk (first chunk is often the
    8192-byte null keepalive).
 5. **Do not** soft-restart all channels then immediately fleet-probe.
-6. Tunarr h264+aac alone is not success — identical short captures / `testsrc` /
+6. external h264+aac alone is not success — identical short captures / `testsrc` /
    `generic-offline-screen` mean the **error slate**, not the program.
 
 ## Smoke (single channel)

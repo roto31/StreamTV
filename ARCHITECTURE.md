@@ -14,6 +14,10 @@ watermarks UI, resolutions UI, PBS auth UI (see `parked/`).
 > Diagrams are Mermaid. GitHub renders them automatically. Keep them in sync when
 > the streaming, import, or source-resolution paths change (see
 > `.cursor/rules/streaming-pipeline-verification.mdc`).
+>
+> **Tunarr naming in diagrams:** `TunarrRAM` is a local StreamTV RAM-disk volume
+> label (not Tunarr software). Product credit for Tunarr design inspiration lives
+> in [NOTICE](NOTICE) — diagrams do not depict a live Tunarr integration.
 
 ## 1. System architecture
 
@@ -39,7 +43,7 @@ flowchart TD
         SCHED["Scheduling: ScheduleParser + ScheduleEngine (YAML)"]
         STREAMER["MPEGTSStreamer (FFmpeg -> MPEG-TS)"]
         SM["StreamManager (source detection + URL resolution)"]
-        CACHE["Optional cache: TunarrRAM youtube_full_cache"]
+        CACHE["Optional cache: TunarrRAM volume youtube_full_cache"]
         HOLD["Optional Plex video hold (native re-hold; YT wait default off)"]
         subgraph Adapters
             YT["YouTubeAdapter (yt-dlp)"]
@@ -53,7 +57,7 @@ flowchart TD
 
     EXT["Source origins: archive.org, youtube.com (+ PBS/Plex if in inventory)"]
     FFMPEG["FFmpeg / FFprobe"]
-    HEAL["LaunchAgents: TunarrRAM heal, yt-dlp upgrade; soft deploy stream-restart"]
+    HEAL["LaunchAgents: TunarrRAM volume heal, yt-dlp upgrade; soft deploy stream-restart"]
 
     PLEX -->|discover/lineup/tune| HDHR
     KODI -->|M3U / XMLTV| IPTV

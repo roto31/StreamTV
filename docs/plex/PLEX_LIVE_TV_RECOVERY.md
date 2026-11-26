@@ -105,25 +105,20 @@ start times per on-air item. To clear airings already stacked in Plex:
 
 1. Plex → Settings → Live TV & DVR → remove the XMLTV guide source (or the
    whole StreamTV device).
-2. Re-add the tuner; set EPG to `http://<streamtv-host>:8410/tuners/guide.xml`
-   when `merged_guide` is enabled.
+2. Re-add the tuner; set EPG to `http://<streamtv-host>:8410/iptv/xmltv.xml`.
 3. Run `bash scripts/reload_plex_streamtv_guide.sh` once, wait 2–3 minutes,
    then retune channels on clients.
 
 ### 4. Re-add tuner (last resort)
 
-**Before re-adding:** remove duplicate DVRs (physical HDHomeRun, Tunarr, or old
+**Before re-adding:** remove duplicate DVRs (physical HDHomeRun or old
 StreamTV entries). Plex should use **one** StreamTV device at
 `http://<streamtv-host>:8410/hdhomerun/discover.json` with EPG
-`http://<streamtv-host>:8410/iptv/xmltv.xml` when `tuner_manager.merged_guide`
-is **false** (recommended for playout-aligned guide).
+`http://<streamtv-host>:8410/iptv/xmltv.xml`.
 
-1. Plex → Settings → Live TV & DVR → remove extra StreamTV/Tunarr/duplicate devices.
+1. Plex → Settings → Live TV & DVR → remove extra StreamTV/duplicate devices.
 2. Re-add using `http://<streamtv-host>:8410/hdhomerun/discover.json`.
 3. Rescan channels and set XMLTV to `http://<streamtv-host>:8410/iptv/xmltv.xml`.
-   When `tuner_manager.merged_guide` is enabled (StreamTV + Tunarr on one Plex
-   server), use the merged guide:
-   `http://<streamtv-host>:8410/tuners/guide.xml`
 
 ## StreamTV-side checks
 
@@ -139,4 +134,3 @@ Healthy tune: HTTP **200** and non-zero bytes within ~20s.
 ## Related docs
 
 - [Plex integration troubleshooting](../troubleshooting/PLEX_INTEGRATION_ISSUES.md)
-- [Add Tunarr/StreamTV in Plex](../guides/ADD_TUNARR_IN_PLEX.md)

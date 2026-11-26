@@ -75,8 +75,6 @@ Mirrors the public wiki — edit in [wiki/](wiki/), sync with `scripts/sync_publ
 - [Archive.org operator](guides/ARCHIVE_ORG_OPERATOR.md)
 - [FFmpeg profiles](guides/FFMPEG_PROFILES.md)
 - [YouTube geo-blocks](guides/YOUTUBE_GEO_BLOCKS.md)
-- [StreamTV + Tunarr hybrid](guides/STREAMTV_TUNARR_HYBRID.md)
-- [Add Tunarr in Plex](guides/ADD_TUNARR_IN_PLEX.md)
 - [Vimeo bedrock gate](guides/VIMEO_BEDROCK_GATE.md)
 - [Soft deploy (no full uvicorn kickstart)](guides/SOFT_DEPLOY.md) — Lesson 51
 - [macOS release CI](macos-release-ci.md) — tag → signed/notarized DMG
@@ -243,7 +241,7 @@ repair_database.sh
 ```
 docs/
 ├── INDEX.md / README.md
-├── guides/                   # Operator guides (EPG, enrichment, PBS, Tunarr)
+├── guides/                   # Operator guides (EPG, enrichment, PBS, external)
 ├── wiki/                     # GitHub Wiki mirror
 ├── channel-builder.md
 ├── archive-parser/           # Archive.org channel creation

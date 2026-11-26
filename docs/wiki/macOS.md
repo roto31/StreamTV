@@ -418,7 +418,7 @@ Complete guide to all StreamTV documentation, organized by topic with descriptio
 
 - **[AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md)** — optional AI-assisted recovery; production defaults **`enabled: false`**, **`apply_fixes: false`** (advise / dry-run). Prefer in-tree heal scripts.
 - **[ERSATZTV_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_INTEGRATION.md)** - ErsatzTV-**inspired** schedule YAML directives (not a fork)
-- **[Implementation](Implementation)** - Integrations (Tunarr) + attribution
+- **[Implementation](Implementation)** - Integrations (external) + attribution
 - `ERSATZTV_COMPLETE_INTEGRATION.md` is a **historical** 2024 status dump
 
 ### External Integrations
@@ -2227,13 +2227,12 @@ auto_healer:
 
 ---
 
-## ErsatzTV / Tunarr (current)
+## ErsatzTV / external (current)
 
 Do not use the old amalgamated “COMPLETE INTEGRATION” paste that used to live here.
 
 - **ErsatzTV-inspired schedules:** [ERSATZTV_INTEGRATION.md](https://github.com/roto31/StreamTV/blob/main/docs/features/ERSATZTV_INTEGRATION.md)
 - **Integrations + attribution:** [Implementation](Implementation)
-- **Tunarr hybrid (external peer):** [STREAMTV_TUNARR_HYBRID.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md)
 
 AI Recovery / Auto-Healer operator UI is **retired** — use heal scripts ([AUTO_HEALER.md](https://github.com/roto31/StreamTV/blob/main/docs/AUTO_HEALER.md)).
 

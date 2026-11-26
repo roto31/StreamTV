@@ -45,7 +45,7 @@
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
 │ Data: SQLite · YAML schedules (UI read-only) · config · heals │
-│ External: YouTube · Archive.org · FFmpeg · optional Tunarr peer │
+│ External: YouTube · Archive.org · FFmpeg                        │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

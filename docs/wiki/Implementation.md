@@ -16,38 +16,9 @@ Canonical deep docs live under [`docs/`](https://github.com/roto31/StreamTV/tree
 | AI Recovery / Foundation Models / Ollama UI | **Retired** (parked) | `parked/ai-recovery/` |
 | Soft deploy vs kickstart | Soft recycles channel streams; kickstart reloads Python | [SOFT_DEPLOY.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/SOFT_DEPLOY.md) |
 
-## Integrations (Tunarr)
+## Third-party inspiration (Tunarr credit)
 
-StreamTV does **not** vendor Tunarr source. It talks to an optional external Tunarr process and can proxy it for Plex.
-
-### REST proxy (`/api/integrations/tunarr/*`)
-
-Implemented in `streamtv/api/integrations_tunarr.py` (client: `streamtv/integrations/tunarr_client.py`):
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| `GET` | `/api/integrations/tunarr/status` | Configured URL + reachability |
-| `GET` | `/api/integrations/tunarr/media-sources` | Upstream media sources |
-| `GET` | `/api/integrations/tunarr/media-sources/{id}/libraries` | Libraries for a source |
-| `GET` | `/api/integrations/tunarr/libraries/{id}/programs` | Programs in a library |
-| `GET` | `/api/integrations/tunarr/search?q=` | Program search |
-| `GET` | `/api/integrations/tunarr/custom-shows` | Custom shows |
-| `GET` | `/api/integrations/tunarr/smart-collections` | Smart collections |
-| `GET` | `/api/integrations/tunarr/filler-lists` | Filler lists |
-
-Requires `tuner_manager.tuners` with a Tunarr upstream URL; otherwise status reports unconfigured / media routes return **503**.
-
-### Tuner manager (Plex-facing)
-
-Separate from `/api/integrations/*`: `streamtv/api/tuner_manager.py` + `streamtv/tuners/*` expose `/tuners`, `/tuners/guide.xml`, and `/tuners/proxy/{name}/…` so Plex can use a Tunarr (or similar) HDHomeRun-style device through StreamTV.
-
-Config keys: `tuner_manager.enabled`, `listen_path_prefix`, `merged_guide`, `tuners[]` (`name`, `url`, `force_device_id`, `force_base_url`, `xmltv_url`, `role`) — see `streamtv/config.py`.
-
-### Optional Tunarr library export
-
-`tunarr_library.export_directory` + `scripts/export_tunarr_library.py` / `scripts/prefetch_tunarr_library.py` can feed Tunarr Local Media from Archive.org inventory. This does **not** change live HDHomeRun playout.
-
-Operator guide: [StreamTV + Tunarr hybrid](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md).
+StreamTV does **not** vendor [Tunarr](https://github.com/chrisbenincasa/tunarr) source and no longer runs an external Tunarr proxy, merged guide, or library-export integration. Remaining credit is for **design inspiration** (continuous playout / RAM-cache ideas). Full attribution: root [NOTICE](https://github.com/roto31/StreamTV/blob/main/NOTICE).
 
 ### TunarrRAM naming
 
@@ -97,7 +68,7 @@ Primary Live TV path for Plex is HDHomeRun `/auto/v*` + MPEG-TS, not “create s
 | Project | What StreamTV has | What StreamTV is not |
 |---------|-------------------|----------------------|
 | [ErsatzTV Legacy](https://github.com/ErsatzTV/legacy) (zlib; archived/deprecated line) | Inspired schedule YAML patterns and the five directives above, reimplemented in Python under `streamtv/scheduling/` | Not a fork; not vendored ErsatzTV source |
-| [Tunarr](https://github.com/chrisbenincasa/tunarr) (zlib) | Optional external peer via HTTP client + tuner proxy + library export helpers | Not vendored Tunarr source; Collections “Tunarr-first” UI is retired; TunarrRAM is a local volume name only |
+| [Tunarr](https://github.com/chrisbenincasa/tunarr) (zlib) | Design inspiration for continuous playout and RAM-cache ideas (Tunarr-style comments in code) | Not vendored Tunarr source; no live Tunarr HTTP client, `/tuners` proxy, or library export |
 
 Canonical acknowledgments: root [NOTICE](https://github.com/roto31/StreamTV/blob/main/NOTICE). StreamTV itself is MIT — [LICENSE](https://github.com/roto31/StreamTV/blob/main/LICENSE).
 

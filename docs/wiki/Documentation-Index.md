@@ -75,8 +75,6 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | Metadata enrichment | [METADATA_ENRICHMENT.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/METADATA_ENRICHMENT.md) |
 | EPG sync classes | [EPG_SYNC_CLASSES.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/EPG_SYNC_CLASSES.md) |
 | Archive.org operator | [ARCHIVE_ORG_OPERATOR.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_ORG_OPERATOR.md) |
-| StreamTV + Tunarr hybrid | [STREAMTV_TUNARR_HYBRID.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/STREAMTV_TUNARR_HYBRID.md) |
-| Add Tunarr in Plex | [ADD_TUNARR_IN_PLEX.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/ADD_TUNARR_IN_PLEX.md) |
 | FFmpeg profiles | [FFMPEG_PROFILES.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_PROFILES.md) |
 | PBS (retired from Builder) | [PBS_PLAYWRIGHT.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/PBS_PLAYWRIGHT.md) |
 | YouTube geo-blocks | [YOUTUBE_GEO_BLOCKS.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/YOUTUBE_GEO_BLOCKS.md) |

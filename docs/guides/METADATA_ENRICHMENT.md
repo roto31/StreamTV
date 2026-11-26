@@ -13,7 +13,6 @@ Guide to enriching StreamTV media with TVDB, TVMaze, TMDB, and cited historical 
 | Survive Archive.org scrape under `meta_data.archive` | Link Live TV airings to library watched/resume |
 | Playback-safe `meta_data` writes | Change `duration`, playout indices, schedules, or URLs |
 
-Plex Live TV is HDHomeRun + XMLTV only. For library-matched UX, use Tunarr library channels — see [STREAMTV_TUNARR_HYBRID.md](STREAMTV_TUNARR_HYBRID.md).
 
 **Gracenote/TMS:** not integrated. Use for manual conflict confirmation only.
 

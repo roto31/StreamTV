@@ -5,11 +5,9 @@ Advanced / specialized StreamTV feature notes.
 ## Current
 
 - **[ERSATZTV_INTEGRATION.md](ERSATZTV_INTEGRATION.md)** — ErsatzTV-**inspired** schedule YAML directives (Python in `streamtv/scheduling/`; not a fork)
-- Wiki **[Implementation](../wiki/Implementation.md)** — Integrations (Tunarr proxy), scheduling surface, attribution
 
 ## Hybrid / operator
 
-- **[STREAMTV_TUNARR_HYBRID.md](../guides/STREAMTV_TUNARR_HYBRID.md)** — Optional external Tunarr peer (not vendored)
 
 ## Retired / parked
 

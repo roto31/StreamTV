@@ -4,7 +4,6 @@ StreamTV can cache YouTube (and related) media on a RAM disk such as
 `/Volumes/TunarrRAM/streamtv-cache`. When that volume fills, playout fails with
 `Errno 28` (no space) and clients see black screens.
 
-Related: [StreamTV + Tunarr hybrid](STREAMTV_TUNARR_HYBRID.md), [EPG sync classes](EPG_SYNC_CLASSES.md).
 
 ## Symptoms
 
@@ -48,9 +47,9 @@ full “keep ≥300 Mi free” healer.
 
 Deletes every file under `streamtv-cache` **except** paths currently open by
 ffmpeg/StreamTV (active streaming / download), including matching `.part`
-siblings. Also removes orphan Tunarr HLS dirs `/Volumes/TunarrRAM/stream_*`
+siblings. Also removes orphan external HLS dirs `/Volumes/TunarrRAM/stream_*`
 when not open (legacy HLS-on-RAM; settings should use SSD
-`~/Library/Caches/tunarr-transcode`). Prefetch copies that are not open are
+`~/Library/Caches/streamtv-transcode`). Prefetch copies that are not open are
 removed so a 2 Gi RAM disk cannot reach the 1.7 GiB used ceiling.
 
 ```bash
