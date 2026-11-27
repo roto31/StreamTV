@@ -65,6 +65,7 @@ Wiki Expert/Intermediate ASCII diagrams are summaries only.
 | Ops healing (scripts only) | [FFMPEG_STALL](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) · [TunarrRAM](https://github.com/roto31/StreamTV/blob/main/docs/guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | LoudNorm (default **off**) | [LOUDNORM_FLEET_AUDIO.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/LOUDNORM_FLEET_AUDIO.md) |
 | FFmpeg stall / keepalive | [FFMPEG_STALL_KEEPALIVE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/FFMPEG_STALL_KEEPALIVE.md) |
+| Archive probe retry + keepalive heal (41b) | [ARCHIVE_PROBE_RETRY_KEEPALIVE.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md) · wiki [Streaming-Resilience-Ops](Streaming-Resilience-Ops) |
 | Channel Builder | [channel-builder.md](https://github.com/roto31/StreamTV/blob/main/docs/channel-builder.md) |
 | Channel Creator MCP v2 (guided + signal-path diagrams) | wiki [Channel-Creator-MCP](Channel-Creator-MCP) · [guides/CHANNEL_CREATOR_MCP.md](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP.md) |
 | Channel Creator MCP host wiring | wiki [Channel-Creator-MCP-Host-Wiring](Channel-Creator-MCP-Host-Wiring) · [guides/…](https://github.com/roto31/StreamTV/blob/main/docs/guides/CHANNEL_CREATOR_MCP_HOST_WIRING.md) |

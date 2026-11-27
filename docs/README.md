@@ -65,6 +65,7 @@ In-tree wiki pages live in **[wiki/](wiki/)** — same structure as the public [
 | Ops healing (scripts only) | [FFMPEG_STALL_KEEPALIVE](guides/FFMPEG_STALL_KEEPALIVE.md) · [TUNARRRAM](guides/TUNARRRAM_PLAYOUT_RECOVERY.md) · [SOFT_DEPLOY](guides/SOFT_DEPLOY.md) |
 | LoudNorm fleet audio | [guides/LOUDNORM_FLEET_AUDIO.md](guides/LOUDNORM_FLEET_AUDIO.md) |
 | FFmpeg stall / keepalive | [guides/FFMPEG_STALL_KEEPALIVE.md](guides/FFMPEG_STALL_KEEPALIVE.md) |
+| Archive probe retry + keepalive heal (41b) | [guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md](guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md) |
 | Plex video hold | [guides/PLEX_VIDEO_HOLD.md](guides/PLEX_VIDEO_HOLD.md) |
 | TunarrRAM playout recovery | [guides/TUNARRRAM_PLAYOUT_RECOVERY.md](guides/TUNARRRAM_PLAYOUT_RECOVERY.md) |
 | Soft deploy (no full kickstart) | [guides/SOFT_DEPLOY.md](guides/SOFT_DEPLOY.md) |

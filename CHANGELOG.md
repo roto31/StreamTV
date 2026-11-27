@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Archive.org probe retry** — when the quick codec probe misses on large CDN files, StreamTV retries once (including a local ring buffer when available) before forcing a software encode, so verified H.264/AAC Archive items can remux instead of stalling Live TV on keepalives. See [Archive probe retry](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
+- **Keepalive tune heal** — periodic healer samples HDHomeRun channels; keepalive-only tunes trigger a soft channel restart. Stalled Archive FFmpeg processes are cleaned up sooner (about 90 seconds of idle CPU).
+- **Idle YouTube auto-warm** — with full-cache mode, idle channels keep the on-air YouTube window downloading so cold zaps reach READY without a manual pre-warm.
+
+### Changed
+- Streaming resilience / Architecture Mermaid diagrams document Archive probe escalation and the stall + keepalive heal LaunchAgent.
+
 ### Removed
 - Removed the external tuner proxy and library export integration. Docs and wiki keep Tunarr only as zlib design-inspiration credit ([NOTICE](NOTICE)); TunarrRAM remains the local RAM-disk volume name.
 

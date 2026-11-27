@@ -21,10 +21,14 @@ Complete documentation for all StreamTV utility scripts and tools.
 
 | Script | Purpose |
 |--------|---------|
-| `scripts/prewarm_youtube_cache.py` | Sequential HDHR pre-warm for YouTube full-cache |
+| `scripts/prewarm_youtube_cache.py` | Sequential HDHR cold-tune pre-warm (YouTube + Archive); `--from-lineup` for full lineup |
 | `scripts/kickstart_streamtv_with_prewarm.sh` | Kickstart `com.streamtv` then pre-warm |
-| `scripts/install-prewarm-youtube-launchagent.sh` | Optional daily 17:00 pre-warm LaunchAgent |
-| `scripts/heal_stalled_ffmpeg.py` | Lesson 41 Archive FFmpeg keepalive wedge |
+| `scripts/install-prewarm-youtube-launchagent.sh` | Optional daily 17:00 pre-warm LA (`--from-lineup`) |
+| `scripts/heal_streamtv_ssd_cache.py` | Enforce media-cache ceiling (default 30 GiB) / free-floor (15 GiB) |
+| `scripts/install-streamtv-ssd-cache-heal-launchagent.sh` | Install `com.streamtv.ssd-cache-heal` (~120s) |
+| `scripts/heal_stalled_ffmpeg.py` | Lesson 41 Archive FFmpeg keepalive wedge (etime≥90s) |
+| `scripts/heal_keepalive_tunes.py` | Lesson 41b: keepalive-only `/auto/v*` → kill + soft-restart |
+| `scripts/install-stalled-ffmpeg-heal-launchagent.sh` | Install stall + keepalive heal LA (~120s) |
 | `scripts/probe_hdhr_hang.py` | Detect keepalive-only / stalled FFmpeg |
 | `scripts/deploy_soft.sh` | Soft-restart channel streams |
 
@@ -37,10 +41,14 @@ flowchart LR
   Pack["validate_channel_pack.py"] --> Apply["apply_channel_pack.sh"]
   Prewarm["prewarm_youtube_cache.py"] --> Ready["Cache READY"]
   Probe["probe_hdhr_hang.py"] --> Heal["heal_stalled_ffmpeg.py"]
+  Heal --> KeepHeal["heal_keepalive_tunes.py"]
   UI["Settings → Troubleshooting"] --> Catalog["script_catalog /api/scripts"]
   Catalog --> Prewarm
   Catalog --> Probe
+  Catalog --> KeepHeal
 ```
+
+Archive probe miss class: [ARCHIVE_PROBE_RETRY_KEEPALIVE](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
 
 # Scripts
 

@@ -30,9 +30,14 @@ abort:
 
 | Path | Role |
 |------|------|
-| `scripts/heal_stalled_ffmpeg.py` | Dry-run by default; `--apply` SIGKILL low-CPU long-running Archive FFmpeg (**skips** `-filter_complex` / overlay / `subtitles=` burn encodes — quiet CPU is normal there) |
-| `scripts/install-stalled-ffmpeg-heal-launchagent.sh` | Installs `com.streamtv.stalled-ffmpeg-heal` (every **120** s) |
+| `scripts/heal_stalled_ffmpeg.py` | Dry-run by default; `--apply` SIGTERM low-CPU Archive FFmpeg with etime≥**90 s** (was 300); **skips** `-filter_complex` / overlay / `subtitles=` burn encodes |
+| `scripts/heal_keepalive_tunes.py` | Sample `/auto/v*` → keepalive-only (~8192) → kill + soft stream-restart (Lesson **41b**) |
+| `scripts/install-stalled-ffmpeg-heal-launchagent.sh` | Installs `com.streamtv.stalled-ffmpeg-heal` (every **120** s); runs both healers |
 | `.cursor/skills/heal-stalled-ffmpeg-keepalive` | Operator verify skill |
+
+**Startup / probe-miss wedges:** multi-GB Archive CDN probe miss → forced libx264 →
+keepalive is covered by [ARCHIVE_PROBE_RETRY_KEEPALIVE.md](ARCHIVE_PROBE_RETRY_KEEPALIVE.md)
+(probe retry + etime **90** + keepalive bridge).
 
 StreamTVMac Foundation Models recovery whitelists `heal_stalled_ffmpeg.py` and
 runs it from the repo when present.
@@ -60,4 +65,5 @@ Do not disable `STREAMTV_FFMPEG_STALL_SEC` for overlay channels.
 - [Auto-healer / Foundation Models](../AUTO_HEALER.md)
 - [TunarrRAM recovery](TUNARRRAM_PLAYOUT_RECOVERY.md) for cache disk full / Errno 28
 - [Streaming issues](../troubleshooting/STREAMING_ISSUES.md)
-- [Lessons Learned](../../LESSONS_LEARNED.md) Issues 41, 44, 59
+- [Archive probe retry + keepalive](ARCHIVE_PROBE_RETRY_KEEPALIVE.md) (Lesson 41b)
+- [Lessons Learned](../../LESSONS_LEARNED.md) Issues 41, 41b, 44, 59
