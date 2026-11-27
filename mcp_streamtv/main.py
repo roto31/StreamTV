@@ -49,7 +49,6 @@ LEGACY_TOOL_SPECS: list[tuple[str, str]] = [
     ("streamtv_update_schedule", "Update a StreamTV schedule"),
     ("streamtv_get_playlist", "Get StreamTV M3U playlist"),
     ("streamtv_get_epg", "Get StreamTV XMLTV EPG"),
-    ("streamtv_tunarr_status", "Tunarr sidecar status (reachability only)"),
     ("streamtv_suggest_channel_number", "Suggest the next free numeric channel number"),
     ("builder_list_sources", "List Channel Builder sources (Archive.org, YouTube)"),
     ("builder_auth_status", "Per-source auth configured state"),

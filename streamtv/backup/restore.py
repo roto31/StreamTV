@@ -160,7 +160,7 @@ def restore_from_zip(
             _safety_copy(db_dest, safety)
             if data_dest.exists():
                 # Only back up yaml/icons subsets we replace, not entire cache
-                for sub in ("channel_icons", "builder_drafts", "tuner_device_ids"):
+                for sub in ("channel_icons", "builder_drafts"):
                     _safety_copy(data_dest / sub, safety / "data")
                 for yaml_file in data_dest.glob("*.yaml"):
                     _safety_copy(yaml_file, safety / "data")
@@ -203,7 +203,7 @@ def restore_from_zip(
                 data_dest.mkdir(parents=True, exist_ok=True)
                 for path in data_src.glob("*.yaml"):
                     shutil.copy2(path, data_dest / path.name)
-                for sub in ("channel_icons", "builder_drafts", "tuner_device_ids"):
+                for sub in ("channel_icons", "builder_drafts"):
                     src_sub = data_src / sub
                     if src_sub.is_dir():
                         dest_sub = data_dest / sub

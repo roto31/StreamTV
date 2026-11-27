@@ -1,32 +1,14 @@
-"""Tests for Plex video hold mux and Tunarr SSD transcode purge."""
+"""Tests for Plex video hold mux."""
 
 from __future__ import annotations
 
 import asyncio
-import importlib.util
-from pathlib import Path
 
 import pytest
-
-ROOT = Path(__file__).resolve().parents[1]
 
 # StreamTV null keepalive (same construction as mpegts_keepalive)
 _MPEGTS_NULL = bytes([0x47, 0x1F, 0xFF, 0x10] + [0xFF] * 184)
 _KEEPALIVE = (_MPEGTS_NULL * ((8192 // 188) + 1))[:8192]
-
-
-def _load_purge():
-    script = ROOT / "scripts" / "heal_tunarr_ssd_transcode.py"
-    spec = importlib.util.spec_from_file_location("heal_tunarr_ssd_transcode", script)
-    assert spec and spec.loader
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
-@pytest.fixture(scope="module")
-def purge():
-    return _load_purge()
 
 
 @pytest.fixture(scope="module")
@@ -173,79 +155,3 @@ def test_youtube_wait_hold_env_default_on(hold_mod, monkeypatch) -> None:
 def test_hold_chunk_pace(hold_mod) -> None:
     pace = hold_mod.hold_chunk_pace_sec(8192)
     assert 0.02 <= pace <= 0.2
-
-
-def test_ssd_should_purge_by_size(purge) -> None:
-    assert purge.should_purge(
-        int(4.1 * 1024**3), int(50 * 1024**3), max_gb=4.0, min_free_gb=20.0
-    )
-    assert not purge.should_purge(
-        int(1.0 * 1024**3), int(50 * 1024**3), max_gb=4.0, min_free_gb=20.0
-    )
-
-
-def test_ssd_should_purge_by_free_floor(purge) -> None:
-    assert purge.should_purge(
-        int(0.5 * 1024**3), int(10 * 1024**3), max_gb=4.0, min_free_gb=20.0
-    )
-
-
-def test_ssd_purge_oldest_closed_sessions(purge, tmp_path: Path, monkeypatch) -> None:
-    root = tmp_path / "tunarr-transcode"
-    root.mkdir()
-    # Fake small free space + large dir via monkeypatch
-    old = root / "stream_old"
-    new = root / "stream_new"
-    old.mkdir()
-    new.mkdir()
-    (old / "a.ts").write_bytes(b"x" * 1000)
-    (new / "b.ts").write_bytes(b"y" * 1000)
-
-    import time
-
-    older = time.time() - 1000
-    newer = time.time() - 10
-    import os
-
-    os.utime(old, (older, older))
-    os.utime(new, (newer, newer))
-
-    monkeypatch.setattr(
-        purge,
-        "volume_stats",
-        lambda _p: (100 * 1024**3, 5 * 1024**3),  # 5 GiB free < 20
-    )
-    monkeypatch.setattr(purge, "open_paths_under", lambda _r: set())
-    monkeypatch.setattr(
-        purge,
-        "dir_size_bytes",
-        lambda p: 1000 if p in (old, new) else (2000 if p == root else 0),
-    )
-
-    result = purge.purge_transcode(
-        root, dry_run=False, max_gb=4.0, min_free_gb=20.0
-    )
-    assert result["deleted_sessions"] >= 1
-    assert not old.exists()
-    # May delete both until free floor is "met" (mocked free stays 5GB) —
-    # with mocked free never rising, both sessions can go. At least oldest gone.
-    assert result["purged"] is True
-
-
-def test_ssd_refuses_tunarr_ram(purge) -> None:
-    with pytest.raises(SystemExit):
-        purge.assert_safe_target(Path("/Volumes/TunarrRAM/streamtv-cache"))
-    with pytest.raises(SystemExit):
-        purge.assert_safe_target(Path("/Volumes/TunarrRAM"))
-
-
-def test_proxy_rewrites_stream_via_base() -> None:
-    from streamtv.tuners.proxy import TunerProxy
-
-    p = TunerProxy("tunarr", "http://127.0.0.1:8000")
-    out = p._rewrite_stream_url(
-        "http://127.0.0.1:8000/stream/channels/abc",
-        streamtv_base="http://192.0.2.1:8410",
-    )
-    assert out.startswith("http://192.0.2.1:8410/tuners/proxy/tunarr/")
-    assert "/stream/channels/abc" in out

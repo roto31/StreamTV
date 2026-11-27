@@ -184,7 +184,7 @@ def create_snapshot(
                 for path in sorted(data.glob("*.yaml")):
                     if path.is_file():
                         _add_file(zf, path, f"data/{path.name}", members)
-                for sub in ("channel_icons", "builder_drafts", "tuner_device_ids"):
+                for sub in ("channel_icons", "builder_drafts"):
                     _add_tree(zf, data / sub, f"data/{sub}", members)
 
             schedules = schedules_dir()

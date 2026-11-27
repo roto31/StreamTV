@@ -444,7 +444,7 @@ def maybe_wrap_youtube_wait_hold(
 
 
 async def proxy_upstream_bytes(url: str, *, timeout: float = 0.0) -> AsyncIterator[bytes]:
-    """Stream bytes from an upstream HTTP MPEG-TS URL (Tunarr etc.)."""
+    """Stream bytes from an upstream HTTP MPEG-TS URL."""
     import httpx
 
     timeout_cfg = httpx.Timeout(None if timeout <= 0 else timeout, connect=15.0)

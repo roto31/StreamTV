@@ -21,7 +21,6 @@ from .export_api import router as export_router
 from .ffmpeg_profiles import router as ffmpeg_profiles_router
 from .cache import router as cache_router
 from .builder import router as builder_router
-from .integrations_tunarr import router as integrations_tunarr_router
 from .plex_library import router as plex_library_router
 from .backup import router as backup_router
 from .setup import router as setup_router
@@ -45,7 +44,6 @@ api_router.include_router(export_router, tags=["Export"])
 api_router.include_router(ffmpeg_profiles_router, tags=["FFmpeg Profiles"])
 api_router.include_router(cache_router, tags=["Cache"])
 api_router.include_router(builder_router, tags=["Channel Builder"])
-api_router.include_router(integrations_tunarr_router, tags=["Tunarr Integration"])
 api_router.include_router(plex_library_router, tags=["Plex Library"])
 api_router.include_router(backup_router, tags=["Backup"])
 api_router.include_router(setup_router, tags=["Setup"])

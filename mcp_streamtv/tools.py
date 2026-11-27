@@ -508,12 +508,6 @@ async def streamtv_get_epg(access_token: Optional[str] = None, plain: bool = Tru
     return {"epg": response}
 
 
-async def streamtv_tunarr_status() -> Dict[str, Any]:
-    """Proxy Tunarr integration status from StreamTV (reachability only)."""
-    client = await get_client()
-    return await client.request("GET", f"{config.base_url}/api/integrations/tunarr/status")
-
-
 # --- Channel Builder + soft-deploy ops (NL channel creator) ---
 
 _BUILDER = "/api/builder"

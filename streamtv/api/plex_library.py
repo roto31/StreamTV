@@ -1,4 +1,4 @@
-"""Native Plex library browse API (fallback when Tunarr is unavailable)."""
+"""Native Plex library browse API."""
 
 from __future__ import annotations
 

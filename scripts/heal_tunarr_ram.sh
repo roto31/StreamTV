@@ -54,7 +54,7 @@ fi
 
 "${PYTHON}" "${PURGE}" "${ARGS[@]}"
 
-# Orphan Tunarr HLS session dirs on the RAM volume (legacy path before SSD transcode)
+# Orphan legacy HLS session dirs on the RAM volume (legacy path before SSD transcode)
 VOLUME_ROOT="$(dirname "${CACHE}")"
 if [[ "${VOLUME_ROOT}" == /Volumes/TunarrRAM ]]; then
   OPEN_TMP="$(mktemp)"
@@ -62,14 +62,14 @@ if [[ "${VOLUME_ROOT}" == /Volumes/TunarrRAM ]]; then
   for d in "${VOLUME_ROOT}"/stream_*; do
     [[ -d "${d}" ]] || continue
     if grep -qF "${d}" "${OPEN_TMP}" 2>/dev/null; then
-      echo "keep open Tunarr HLS dir: ${d}"
+      echo "keep open legacy HLS dir: ${d}"
       continue
     fi
     if [[ "${DRY_RUN}" == "1" ]]; then
-      echo "dry-run would remove orphan Tunarr HLS: ${d}"
+      echo "dry-run would remove orphan legacy HLS: ${d}"
     else
       rm -rf "${d}"
-      echo "removed orphan Tunarr HLS: ${d}"
+      echo "removed orphan legacy HLS: ${d}"
     fi
   done
   rm -f "${OPEN_TMP}"

@@ -8,7 +8,7 @@ try:
     from pydantic_settings import BaseSettings
 except ImportError:
     from pydantic import BaseSettings
-from pydantic import Field
+from pydantic import BaseModel, Field
 import yaml
 
 logger = logging.getLogger(__name__)
@@ -246,17 +246,6 @@ class CacheConfig(BaseSettings):
         case_sensitive = False
 
 
-class TunerEndpointConfig(BaseSettings):
-    """One upstream HDHomeRun-compatible tuner to normalize for Plex."""
-
-    name: str = "tunarr"
-    url: str = ""  # LAN-neutral; set by operator (never ship lab IPs)
-    force_device_id: Optional[str] = None
-    force_base_url: Optional[str] = None
-    xmltv_url: Optional[str] = None
-    role: str = "proxy"
-
-
 class BackupConfig(BaseSettings):
     """Automatic portable backup of settings, channels, and schedules."""
 
@@ -270,38 +259,11 @@ class BackupConfig(BaseSettings):
         case_sensitive = False
 
 
-class TunarrLibraryConfig(BaseSettings):
-    """Export READY cache files to a Tunarr Local Media folder (not the live cache)."""
+class TunerManagerConfig(BaseModel):
+    """Inert compatibility stub read by frozen HDHomeRun code."""
 
     enabled: bool = False
-    # Absolute or project-relative path; must NOT nest under cache.cache_directory.
-    export_directory: str = "data/tunarr_library"
-    # archive_org only in v1
-    sources: List[str] = Field(default_factory=lambda: ["archive_org"])
-    naming: str = "source_id"  # source_id | basename
-    # Prefetch agent: download full Archive.org MP4s into export_directory ahead of Tunarr scan.
-    prefetch_hours: float = 6.0
-    prefetch_max_items: int = 5
-    prefetch_max_gb: float = 20.0
-    # Empty = all enabled continuous channels that have Archive.org playlist items.
-    channel_numbers: List[str] = Field(default_factory=list)
-
-    class Config:
-        env_prefix = "STREAMTV_TUNARR_LIBRARY_"
-        case_sensitive = False
-
-
-class TunerManagerConfig(BaseSettings):
-    """Proxy Tunarr (and similar) so Plex GUI Add Device accepts a hex DeviceID."""
-
-    enabled: bool = True
-    listen_path_prefix: str = "/tuners"
-    merged_guide: bool = True
-    tuners: list = []
-
-    class Config:
-        env_prefix = "STREAMTV_TUNER_MANAGER_"
-        case_sensitive = False
+    merged_guide: bool = False
 
 
 def _load_secrets_env() -> None:
@@ -361,9 +323,7 @@ class Config:
             "plex": PlexConfig,
             "metadata": MetadataConfig,
             "cache": CacheConfig,
-            "tuner_manager": TunerManagerConfig,
             "backup": BackupConfig,
-            "tunarr_library": TunarrLibraryConfig,
         }
         
         # Store OAuth state temporarily (in production, use proper session storage)
@@ -385,9 +345,8 @@ class Config:
         self.plex = PlexConfig(**config_data.get("plex", {}))
         self.metadata = MetadataConfig(**config_data.get("metadata", {}))
         self.backup = BackupConfig(**config_data.get("backup", {}))
-        self.tunarr_library = TunarrLibraryConfig(
-            **(config_data.get("tunarr_library", {}) or {})
-        )
+        # Ignore obsolete external-tuner YAML keys if present.
+        self.tuner_manager = TunerManagerConfig()
 
         cache_data = dict(config_data.get("cache", {}) or {})
         ds_data = cache_data.pop("download_strategy", {}) or {}
@@ -395,25 +354,6 @@ class Config:
             download_strategy=DownloadStrategyConfig(**ds_data),
             **cache_data,
         )
-
-        tm_data = dict(config_data.get("tuner_manager", {}) or {})
-        raw_tuners = tm_data.pop("tuners", None)
-        if raw_tuners is None:
-            # LAN-neutral: no lab Tunarr IP injected for brand-new installs
-            raw_tuners = []
-        parsed_tuners = [
-            TunerEndpointConfig(**t) if isinstance(t, dict) else t
-            for t in (raw_tuners or [])
-        ]
-        self.tuner_manager = TunerManagerConfig(
-            tuners=parsed_tuners,
-            **tm_data,
-        )
-        if os.getenv("STREAMTV_TUNER_MANAGER_ENABLED") is not None:
-            self.tuner_manager.enabled = (
-                os.getenv("STREAMTV_TUNER_MANAGER_ENABLED", "").lower()
-                in ("1", "true", "yes", "on")
-            )
 
         # Security: Override sensitive values from environment variables if set
         # This ensures env vars take precedence even if they're in YAML
@@ -532,17 +472,6 @@ class Config:
                 section,
                 CacheConfig(download_strategy=DownloadStrategyConfig(**ds_data), **cache_data),
             )
-        elif section == "tuner_manager":
-            tm_data = dict(section_data)
-            raw_tuners = tm_data.pop("tuners", []) or []
-            parsed_tuners = [
-                TunerEndpointConfig(**t) if isinstance(t, dict) else t for t in raw_tuners
-            ]
-            setattr(
-                self,
-                section,
-                TunerManagerConfig(tuners=parsed_tuners, **tm_data),
-            )
         else:
             setattr(self, section, section_class(**section_data))
 
@@ -584,18 +513,8 @@ class Config:
             download_strategy=DownloadStrategyConfig(**ds_data),
             **cache_data,
         )
-        tm_data = dict(config_data.get("tuner_manager", {}) or {})
-        raw_tuners = tm_data.pop("tuners", None)
-        if raw_tuners is None:
-            raw_tuners = []
-        parsed_tuners = [
-            TunerEndpointConfig(**t) if isinstance(t, dict) else t
-            for t in (raw_tuners or [])
-        ]
-        self.tuner_manager = TunerManagerConfig(
-            tuners=parsed_tuners,
-            **tm_data,
-        )
+        # Ignore obsolete external-tuner YAML keys if present.
+        self.tuner_manager = TunerManagerConfig()
 
 
 # Global config instance (override path: STREAMTV_CONFIG=config.pilot-cache.yaml)

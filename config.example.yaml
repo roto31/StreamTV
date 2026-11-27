@@ -49,19 +49,6 @@ hdhomerun:
   tuner_count: 2
   enable_ssdp: true  # Enable SSDP discovery (requires port 1900). Set to false if port is in use.
 
-# Proxy Tunarr (or other HDHR emulators) so Plex GUI "Add device" accepts a hex DeviceID.
-# Paste: http://<streamtv-lan>:8410/tuners/proxy/tunarr
-# Guide:  http://<streamtv-lan>:8410/tuners/guide.xml
-tuner_manager:
-  enabled: false  # Enable after you set a real Tunarr/HDHR host (LAN-neutral default)
-  merged_guide: true
-  tuners: []
-  # Example when ready:
-  # tuners:
-  #   - name: tunarr
-  #     url: http://<tunarr-host>:8000
-  #     xmltv_url: http://<tunarr-host>:8000/api/xmltv.xml
-
 plex:
   enabled: false  # Enable Plex API integration for EPG enhancement
   base_url: null  # Plex Media Server URL (e.g., "http://<your-plex-host>:32400")
@@ -139,22 +126,6 @@ cache:
     youtube_rate_limit_seconds: 30.0
     youtube_rate_limit_cooldown_seconds: 3600.0
     scheduled_downloads: []
-
-# Optional: export READY Archive.org cache files for Tunarr Local Media.
-# Must NOT nest under cache.cache_directory. Do not point Tunarr at the live cache.
-# See docs/guides/STREAMTV_TUNARR_HYBRID.md
-tunarr_library:
-  enabled: false
-  export_directory: data/tunarr_library
-  sources:
-    - archive_org
-  naming: source_id  # source_id | basename
-  # Prefetch full Archive.org MP4s into export_directory (not TunarrRAM).
-  # See scripts/prefetch_tunarr_library.py and STREAMTV_TUNARR_HYBRID.md
-  prefetch_hours: 6
-  prefetch_max_items: 5
-  prefetch_max_gb: 20
-  channel_numbers: []  # empty = all enabled continuous Archive.org channels
 
 # Automatic portable backup (settings, channels, schedules, secrets).
 # Zips land in Application Support/StreamTV/backups/ (or <config parent>/backups/).

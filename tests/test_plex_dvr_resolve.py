@@ -25,7 +25,7 @@ def test_prefer_streamtv_dvr_orders_title_then_enabled() -> None:
     dvrs = [
         {"id": "10", "title": "Other", "enabled": True},
         {"id": "119", "title": "StreamTV", "enabled": True},
-        {"id": "11", "title": "Tunarr", "enabled": False},
+        {"id": "11", "title": "OtherDVR", "enabled": False},
         {"id": "/livetv/dvrs/120", "title": "stream tv backup", "enabled": False},
     ]
     assert _prefer_streamtv_dvr(dvrs) == ["119", "120", "10", "11"]

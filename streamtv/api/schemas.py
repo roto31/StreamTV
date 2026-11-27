@@ -296,7 +296,7 @@ class ScheduleItemBase(BaseModel):
     fixed_start_time_behavior: Optional[str] = None  # "start_immediately", "skip_item", "wait_for_next"
     
     # Collection Type
-    collection_type: Optional[str] = "collection"  # "collection", "television_show", ... — smart_collection deprecated (use Tunarr proxy)
+    collection_type: Optional[str] = "collection"  # "collection", "television_show", ... — smart_collection deprecated
     collection_id: Optional[int] = None
     media_item_id: Optional[int] = None
     playlist_id: Optional[int] = None

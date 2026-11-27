@@ -18,7 +18,6 @@ from slowapi.errors import RateLimitExceeded
 from .config import config
 from .database import init_db, get_db
 from .api import api_router, iptv_router_instance, docs_router, logs_router
-from .api.tuner_manager import tuner_router
 from .hdhomerun import (
     hdhomerun_router,
     SSDPServer,
@@ -334,7 +333,6 @@ app.add_middleware(
     exempt_paths=[
         "/api/",
         "/iptv/",
-        "/tuners",
         "/cache/files/",
         "/docs",
         "/redoc",
@@ -348,7 +346,6 @@ exempt_api_paths = [
     "/api/auth/",  # Authentication endpoints
     "/api/health/",  # Health checks
     "/iptv/",  # IPTV endpoints (may use query param tokens)
-    "/tuners",  # Tunarr/HDHR proxy for Plex GUI add (no API key)
     "/cache/files/",  # Cached media served to local FFmpeg / Plex
     "/docs",  # API documentation
     "/redoc",  # API documentation
@@ -389,14 +386,6 @@ async def root_xmltv(
 
 app.include_router(docs_router)
 app.include_router(logs_router)
-
-# Tuner manager: proxy Tunarr (etc.) for Plex GUI Add Device
-if config.tuner_manager.enabled:
-    app.include_router(tuner_router)
-    logger.info(
-        "Tuner manager enabled — Plex add URLs at /tuners (proxy prefix %s)",
-        config.tuner_manager.listen_path_prefix,
-    )
 
 # Include HDHomeRun router if enabled
 if config.hdhomerun.enabled:

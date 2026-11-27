@@ -39,12 +39,6 @@ def test_validate_workdir_missing(tmp_path: Path) -> None:
     assert result.ok is False
 
 
-def test_tuner_manager_default_has_no_lab_ip() -> None:
-    from streamtv.config import TunerEndpointConfig
-
-    assert "192.168.1." not in (TunerEndpointConfig().url or "")
-
-
 def test_starter_pack_files_exist() -> None:
     root = Path(__file__).resolve().parents[1] / "data" / "starter_packs"
     for number in ("9101", "9102", "9103", "9104"):
