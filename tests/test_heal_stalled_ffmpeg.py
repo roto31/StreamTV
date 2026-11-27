@@ -30,8 +30,23 @@ def test_copy_path_archive_is_kill(heal) -> None:
         "-c copy -f mpegts pipe:1"
     )
     assert (
-        heal.classify_candidate(cmd, min_etime_sec=300, max_pcpu=0.15, etime_sec=400, pcpu=0.0)
+        heal.classify_candidate(cmd, min_etime_sec=90, max_pcpu=0.15, etime_sec=120, pcpu=0.0)
         == "kill"
+    )
+
+
+def test_etime_90_kill_vs_60_skip(heal) -> None:
+    cmd = (
+        "/opt/homebrew/bin/ffmpeg -i https://dn800205.us.archive.org/0/items/x/x.mp4 "
+        "-c:v libx264 -f mpegts pipe:1"
+    )
+    assert (
+        heal.classify_candidate(cmd, min_etime_sec=90, max_pcpu=0.15, etime_sec=90, pcpu=0.0)
+        == "kill"
+    )
+    assert (
+        heal.classify_candidate(cmd, min_etime_sec=90, max_pcpu=0.15, etime_sec=60, pcpu=0.0)
+        == "skip_criteria"
     )
 
 
@@ -60,7 +75,7 @@ def test_subtitles_burn_skipped(heal) -> None:
 def test_short_etime_skip_criteria(heal) -> None:
     cmd = "/opt/homebrew/bin/ffmpeg -i https://archive.org/x.mp4 -c copy -f mpegts pipe:1"
     assert (
-        heal.classify_candidate(cmd, min_etime_sec=300, max_pcpu=0.15, etime_sec=60, pcpu=0.0)
+        heal.classify_candidate(cmd, min_etime_sec=90, max_pcpu=0.15, etime_sec=60, pcpu=0.0)
         == "skip_criteria"
     )
 

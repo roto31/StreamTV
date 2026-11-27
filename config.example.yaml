@@ -100,7 +100,7 @@ cache:
   # full   — download-first; wait for cache before playout (legacy; high disk use)
   playback_mode: direct
   cache_directory: data/cache
-  max_size_gb: 2.0
+  max_size_gb: 30.0
   default_ttl_hours: 72
   queue_poll_interval_seconds: 15
   download_timeout_seconds: 3600
@@ -114,6 +114,10 @@ cache:
   # Buffer mode: download YouTube VOD to cache_directory before FFmpeg (avoids googlevideo 403).
   # Prefer true only with RAM-disk headroom + heal_tunarr_ram (≥300 Mi free).
   youtube_full_cache: false
+  # When youtube_full_cache: idle channels enqueue/prioritize the wall-clock
+  # YouTube window on this interval (tune-only otherwise skips boundary prefetch).
+  auto_warm_enabled: true
+  auto_warm_interval_seconds: 60
   youtube_cache_wait_seconds: 120
   evict_after_play: true
   evict_off_schedule: true

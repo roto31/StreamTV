@@ -227,6 +227,8 @@ class ChannelStream:
         self._item_stream_retries: Dict[int, int] = {}
         self._pending_archive_tune_seek_seconds: float = 0.0
         self._abort_current_item_for_tune: bool = False
+        # Idle tune-only auto-warm cadence (monotonic seconds); 0 = never run yet.
+        self._last_auto_warm_mono: float = 0.0
 
     def _reload_on_item_boundary_enabled(self) -> bool:
         from streamtv.config import config
@@ -1514,6 +1516,19 @@ class ChannelStream:
                                 )
                             finally:
                                 save_db.close()
+                        # APPROVED: idle YouTube full-cache auto-warm — tune-only
+                        # sleep skips boundary prefetch; warm wall-clock window here.
+                        from streamtv.cache import get_runtime
+                        from streamtv.cache.auto_warm import warm_idle_youtube_window
+
+                        _, download_queue = get_runtime()
+                        self._last_auto_warm_mono = await warm_idle_youtube_window(
+                            channel_number=str(self.channel_number),
+                            schedule_items=self._schedule_items,
+                            guide_index=guide_idx,
+                            download_queue=download_queue,
+                            last_warm_mono=self._last_auto_warm_mono,
+                        )
                         continue
 
                     if self._forced_item_index is not None:

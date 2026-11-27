@@ -212,7 +212,7 @@ class CacheConfig(BaseSettings):
     # full   — download-first; wait for cache/buffer before playout (legacy default)
     playback_mode: str = "full"
     cache_directory: str = "data/cache"
-    max_size_gb: float = 10.0
+    max_size_gb: float = 30.0
     default_ttl_hours: int = 72
     queue_poll_interval_seconds: int = 15
     download_timeout_seconds: int = 3600
@@ -233,6 +233,10 @@ class CacheConfig(BaseSettings):
     # Buffer mode only: download YouTube VOD to RAM/disk cache instead of CDN direct
     # (eliminates googlevideo 403 mid-song pauses). Archive.org stays CDN-first.
     youtube_full_cache: bool = False
+    # Idle tune-only: periodically enqueue/prioritize wall-clock YouTube window so
+    # openings are READY before Plex zap (no HDHR prewarm required for keep-warm).
+    auto_warm_enabled: bool = True
+    auto_warm_interval_seconds: float = 60.0
     # Max seconds to wait for a YouTube cache file before CDN fallback (playout/tune).
     youtube_cache_wait_seconds: float = 120.0
     # Tunarr-style RAM disk: delete cache file when an item finishes playing.

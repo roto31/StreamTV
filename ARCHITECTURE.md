@@ -125,10 +125,10 @@ sequenceDiagram
     AORG-->>AO: 200/302 direct CDN URL
     AO-->>SM: direct stream URL
     SM-->>STR: stream URL
-    alt ffprobe OK within budget
-        STR->>FF: VBR mpegts remux or libx264+AAC transcode
-    else Archive.org probe skip (Issue 23)
-        STR->>FF: H.264 video copy + AAC encode, VBR mpegts (no -muxrate 4M)
+    alt Archive ffprobe OK (5s) or one 15s retry (ring .part then CDN)
+        STR->>FF: copy or remux when codecs verified (Issue 41b)
+    else Archive probe still miss (Issue 23)
+        STR->>FF: force libx264+AAC — never invent H.264 copy
     end
     FF-->>STR: TS packets (must exceed 8192 bytes)
     STR-->>HDHR: TS chunks
@@ -182,18 +182,23 @@ and `LESSONS_LEARNED.md` Issues 23, 28–32.
 
 ```mermaid
 flowchart TD
-    IN["HTTP input URL"] --> PROBE{"ffprobe within budget?"}
-    PROBE -->|yes| COPY{"can_copy_video + can_copy_audio?"}
-    PROBE -->|timeout on archive.org .mp4| SKIP["Issue 23: H.264 copy + AAC encode"]
-    SKIP --> VBR1["VBR mpegts remux<br/>no -muxrate, no extra_flags on copy"]
+    IN["HTTP / Archive CDN URL"] --> Q5{"Archive quick ffprobe 5s?"}
+    Q5 -->|yes| COPY{"can_copy_video + can_copy_audio?"}
+    Q5 -->|miss| R15["One 15s retry: ring .part then CDN"]
+    R15 -->|codecs known| COPY
+    R15 -->|still miss| INF["Issue 23: force libx264+AAC<br/>never invent H.264 copy"]
     COPY -->|full copy| VBR2["VBR mpegts remux (full copy)"]
     COPY -->|needs transcode| XCODE["libx264 + AAC<br/>no h264_videotoolbox encode"]
     COPY -->|.ia.mp4 URL| XCODE
-    VBR1 --> OUT["mpegts stdout -> ChannelManager -> Plex"]
-    VBR2 --> OUT
-    XCODE --> CBR["CBR -muxrate 4M + encoder flags allowed"]
+    INF --> XCODE
+    VBR2 --> OUT["mpegts stdout -> ChannelManager -> Plex"]
+    XCODE --> CBR["CBR -muxrate 4M + encoder flags when encoding"]
     CBR --> OUT
+    OUT -->|keepalive-only 8192| HEAL["heal_stalled_ffmpeg + heal_keepalive_tunes<br/>etime≥90s / soft stream-restart"]
 ```
+
+See also [Archive probe retry + keepalive heal](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md)
+(Lesson **41b**).
 
 ## Consumer endpoints
 

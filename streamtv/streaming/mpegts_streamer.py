@@ -803,23 +803,64 @@ class MPEGTSStreamer:
 
         return codec_info
 
+    def _archive_org_ring_part_path(self, stream_url: str) -> Optional[Path]:
+        """Return archive_org ring-buffer .part path when large enough to ffprobe."""
+        parsed = urlparse(stream_url)
+        path = unquote(parsed.path or "")
+        parts = [p for p in path.strip("/").split("/") if p]
+        identifier: Optional[str] = None
+        filename: Optional[str] = None
+        if "download" in parts:
+            i = parts.index("download")
+            if len(parts) > i + 2:
+                identifier, filename = parts[i + 1], parts[i + 2]
+        elif "items" in parts:
+            i = parts.index("items")
+            if len(parts) > i + 2:
+                identifier, filename = parts[i + 1], parts[i + 2]
+        if not identifier or not filename:
+            return None
+        part = (
+            Path(config.cache.cache_directory).expanduser()
+            / "archive_org"
+            / identifier
+            / f"{filename}.part"
+        )
+        try:
+            if part.is_file() and part.stat().st_size >= 1_000_000:
+                return part
+        except OSError:
+            return None
+        return None
+
+    @staticmethod
+    def _codec_copy_flags_from_names(
+        video_codec: Optional[str], audio_codec: Optional[str]
+    ) -> tuple[bool, bool]:
+        """Copy eligibility from codec names (Issue 23 — never invent without probe)."""
+        v = (video_codec or "").lower()
+        a = (audio_codec or "").lower()
+        return v in ("h264", "avc"), a in ("aac", "mp3", "mp2")
+
     async def _quick_ffprobe_codec(
         self,
         probe_url: str,
         *,
         timeout: float = 5.0,
         subtitle_probe: bool = False,
+        probesize: Optional[str] = None,
+        analyzeduration: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
         """Fast ffprobe for Archive.org tune path (small probesize, short timeout).
 
         Do not enlarge probesize for every burn-enabled channel (mjpeg mis-probe).
         Escalate only when subtitle_probe=True (non-English audio, missing sub list).
         """
-        probesize = "500000"
-        analyzeduration = "500000"
+        ps = probesize or "500000"
+        ad = analyzeduration or "500000"
         if subtitle_probe:
-            probesize = "3000000"
-            analyzeduration = "3000000"
+            ps = probesize or "3000000"
+            ad = analyzeduration or "3000000"
             timeout = max(timeout, 8.0)
         ffprobe_cmd = [
             config.ffmpeg.ffprobe_path or "ffprobe",
@@ -828,8 +869,8 @@ class MPEGTSStreamer:
             "-show_streams",
             "-show_format",
             "-timeout", "3000000",
-            "-probesize", probesize,
-            "-analyzeduration", analyzeduration,
+            "-probesize", ps,
+            "-analyzeduration", ad,
             "-user_agent", "Mozilla/5.0 (compatible; StreamTV/1.0)",
             probe_url,
         ]
@@ -902,8 +943,63 @@ class MPEGTSStreamer:
 
         # Archive.org HTTP: quick ffprobe first (Issue 23 + MPEG-4 safety).
         # Blind H.264 copy assumption breaks Plex on MPEG-4 Part 2 sources (ch 1992).
+        # 1984.2: 5s probe often times out on multi-GB CDN → false force-transcode.
         if is_http and "archive.org" in probe_url.lower():
             quick = await self._quick_ffprobe_codec(probe_url, timeout=5.0)
+            if not quick:
+                logger.info(
+                    "Archive.org quick probe miss; retrying with longer timeout "
+                    "(url=%s…)",
+                    probe_url[:80],
+                )
+                ring_part = self._archive_org_ring_part_path(stream_url)
+                if ring_part is None:
+                    ring_part = self._archive_org_ring_part_path(probe_url)
+                # Prefer ring .part for detection, then always fall back to CDN
+                # 15s retry if ring miss (1984.2: incomplete .part probed fast-fail).
+                if ring_part is not None:
+                    logger.info(
+                        "Archive.org probe retry using ring buffer %s "
+                        "(%.1f MB)",
+                        ring_part.name,
+                        ring_part.stat().st_size / (1024 * 1024),
+                    )
+                    quick = await self._quick_ffprobe_codec(
+                        str(ring_part),
+                        timeout=15.0,
+                        probesize="2000000",
+                        analyzeduration="2000000",
+                    )
+                    if quick:
+                        copy_v, copy_a = self._codec_copy_flags_from_names(
+                            quick.get("video_codec"), quick.get("audio_codec")
+                        )
+                        quick["can_copy_video"] = copy_v
+                        quick["can_copy_audio"] = copy_a
+                        logger.info(
+                            "Archive.org probe retry ok: video=%s audio=%s "
+                            "copy_v=%s copy_a=%s (ring)",
+                            quick["video_codec"],
+                            quick["audio_codec"],
+                            copy_v,
+                            copy_a,
+                        )
+                if not quick:
+                    quick = await self._quick_ffprobe_codec(
+                        probe_url,
+                        timeout=15.0,
+                        probesize="2000000",
+                        analyzeduration="2000000",
+                    )
+                    if quick:
+                        logger.info(
+                            "Archive.org probe retry ok: video=%s audio=%s "
+                            "copy_v=%s copy_a=%s (cdn)",
+                            quick["video_codec"],
+                            quick["audio_codec"],
+                            quick["can_copy_video"],
+                            quick["can_copy_audio"],
+                        )
             if quick:
                 audio_lang = _normalize_media_lang(quick.get("audio_language"))
                 need_subs = (
