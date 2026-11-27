@@ -12,6 +12,7 @@ Dependencies:
 """
 
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 from urllib.parse import urlparse
@@ -27,7 +28,6 @@ except ImportError:
 
 from ..config import config
 from ..database.models import MediaItem, StreamSource
-from ..utils.clock import utc_now_naive
 from .cache_manager import CacheManager
 from .download_queue import DownloadQueue
 from .archive_org_downloader import ArchiveOrgDownloader
@@ -261,7 +261,8 @@ class DownloadScheduler:
         if not job:
             logger.warning(f"Job {job_id!r} not found in scheduler.")
             return False
-        job.modify(next_run_time=utc_now_naive())
+        # APScheduler localizes naive datetimes to the scheduler timezone.
+        job.modify(next_run_time=datetime.now(timezone.utc))
         return True
 
     def list_jobs(self) -> list[dict]:

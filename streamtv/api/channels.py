@@ -590,6 +590,20 @@ async def restart_channel_stream_by_number(
     return await restart_channel_stream(channel.id, request, db)
 
 
+@router.get("/by-number/{channel_number}/stream-clients")
+async def channel_stream_clients(channel_number: str, request: Request) -> dict:
+    """Connected tuner clients for a running continuous stream (0 when not running).
+
+    Healers must not soft-restart a channel an Apple TV / Plex client is watching.
+    """
+    mgr = _get_channel_manager(request)
+    streams = getattr(mgr, "_streams", {}) or {}
+    stream = streams.get(str(channel_number))
+    clients = int(getattr(stream, "_client_count", 0) or 0) if stream else 0
+    running = bool(getattr(stream, "_is_running", False)) if stream else False
+    return {"channel": str(channel_number), "running": running, "clients": clients}
+
+
 @router.post("/stream-restart-all")
 async def restart_all_channel_streams(request: Request):
     """Restart every enabled channel stream without recycling uvicorn (Phase 3 soft deploy)."""

@@ -54,7 +54,9 @@ cat >"${PLIST_PATH}" <<PLIST
     <key>STREAMTV_BASE_URL</key>
     <string>http://127.0.0.1:8410</string>
     <key>STREAMTV_KEEPALIVE_HEAL_TUNE_SEC</key>
-    <string>12</string>
+    <string>30</string>
+    <key>STREAMTV_KEEPALIVE_HEAL_MIN_FAILS</key>
+    <string>2</string>
     <key>PATH</key>
     <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>

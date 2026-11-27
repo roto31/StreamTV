@@ -57,6 +57,35 @@ def test_overlay_growing_ts_does_not_warn() -> None:
     )
 
 
+def test_copy_path_aborts_when_trickle_never_goes_silent() -> None:
+    """A chunk every few seconds resets consecutive silence; rate still aborts."""
+    assert (
+        midstream_stall_decision(
+            overlay_active=False,
+            silence_sec=0.0,
+            stall_limit_sec=90.0,
+            bytes_yielded=8192,
+            first_silence_event=False,
+            elapsed_sec=20.0,
+        )
+        == "abort"
+    )
+
+
+def test_copy_path_rate_ok_does_not_abort() -> None:
+    assert (
+        midstream_stall_decision(
+            overlay_active=False,
+            silence_sec=0.0,
+            stall_limit_sec=90.0,
+            bytes_yielded=2_000_000,
+            first_silence_event=False,
+            elapsed_sec=20.0,
+        )
+        == "continue"
+    )
+
+
 def test_overlay_true_hang_still_aborts() -> None:
     assert (
         midstream_stall_decision(

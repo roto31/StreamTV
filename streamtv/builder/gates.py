@@ -40,6 +40,7 @@ class GateReport:
     results: list[GateResult] = field(default_factory=list)
     artifacts: list[str] = field(default_factory=list)
     rolled_back: list[str] = field(default_factory=list)
+    user_warnings: list[str] = field(default_factory=list)
 
     @property
     def ok(self) -> bool:
@@ -93,6 +94,7 @@ class GateReport:
             "rolled_back": list(self.rolled_back),
             "summary_table": self.summary_table(),
             "results": [r.as_dict() for r in self.results],
+            "user_warnings": list(self.user_warnings),
         }
 
 
@@ -112,6 +114,11 @@ def check_no_duration_items(schedule: dict[str, Any]) -> GateResult:
 
 
 def check_unique_ids_in_streams(streams: list[dict[str, Any]]) -> GateResult:
+    from streamtv.validation.playout_guards import (
+        URL_COLLAPSE_USER_WARNING,
+        duplicate_stream_url_groups,
+    )
+
     ids = [str(s.get("id")) for s in streams if s.get("id")]
     dupes = sorted({i for i in ids if ids.count(i) > 1})
     ia_mp4 = [
@@ -119,17 +126,27 @@ def check_unique_ids_in_streams(streams: list[dict[str, Any]]) -> GateResult:
         for s in streams
         if ".ia.mp4" in str(s.get("url") or "").lower()
     ]
-    ok = not dupes and not ia_mp4
-    msg = "unique stream ids"
+    url_dupes = duplicate_stream_url_groups(streams)
+    ok = not dupes and not ia_mp4 and not url_dupes
+    msg = "unique stream ids and URLs"
+    repair = "Use ids.make_stream_id / builder_id_registry"
     if dupes:
         msg = f"duplicate ids: {dupes[:5]}"
     elif ia_mp4:
         msg = f".ia.mp4 URLs: {ia_mp4[:5]}"
+        repair = "Use canonical archive.org/download/.../.mp4 (never .ia.mp4)"
+    elif url_dupes:
+        sample = next(iter(url_dupes.values()))
+        msg = (
+            f"duplicate stream URLs (ids {sample[:5]}) — "
+            f"import collapses to one MediaItem"
+        )
+        repair = URL_COLLAPSE_USER_WARNING
     return GateResult(
         "G2",
         ok=ok,
         message=msg,
-        repair="Use ids.make_stream_id / builder_id_registry",
+        repair=repair,
     )
 
 
@@ -297,6 +314,11 @@ def evaluate_compiled_package(
     inventory_titles: Optional[set[str]] = None,
     skip_availability: bool = False,
 ) -> GateReport:
+    from streamtv.validation.playout_guards import (
+        URL_COLLAPSE_USER_WARNING,
+        duplicate_stream_url_groups,
+    )
+
     report = GateReport()
     channels = channel_doc.get("channels") or []
     streams = (channels[0].get("streams") if channels else []) or []
@@ -310,6 +332,8 @@ def evaluate_compiled_package(
     report.results.append(
         check_runtimes_present(streams, skip_availability=skip_availability)
     )
+    if duplicate_stream_url_groups(streams):
+        report.user_warnings.append(URL_COLLAPSE_USER_WARNING)
     return report
 
 

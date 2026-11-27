@@ -111,11 +111,22 @@ class DownloadQueue:
 
     async def enqueue(self, media_item: MediaItem) -> None:
         """Queue a media item for background download (idempotent)."""
-        from streamtv.cache.playback_mode import source_downloads_enabled
+        from streamtv.cache.playback_mode import (
+            source_downloads_enabled,
+            youtube_full_cache_enabled,
+        )
 
         if not source_downloads_enabled(media_item.source):
             return
         self.cache_manager.queue_for_download(media_item)
+        # Boundary/idle prefetch re-enqueue renews accessed_at so READY
+        # window items stay inside the LRU grace period.
+        if (
+            media_item.source == StreamSource.YOUTUBE
+            and youtube_full_cache_enabled()
+            and media_item.source_id
+        ):
+            self.cache_manager.get_cached_path(media_item.source_id)
 
     async def download_now(self, media_item: MediaItem) -> Optional[Path]:
         """Download a single item immediately (used for cache-first Archive.org playback)."""

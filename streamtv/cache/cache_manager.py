@@ -3,9 +3,10 @@
 import asyncio
 import logging
 import shutil
+import threading
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, Iterable, Optional
 
 from sqlalchemy.orm import Session
 
@@ -32,10 +33,47 @@ class CacheManager:
         self.max_size_bytes = int(config.cache.max_size_gb * 1024 ** 3)
         self.default_ttl_hours = config.cache.default_ttl_hours
         self.cache_dir.mkdir(parents=True, exist_ok=True)
+        # Named pin groups (on-air / prefetch window). LRU must not evict these
+        # even when accessed_at is older than the grace window (Issue 74).
+        self._pin_groups: dict[str, set[str]] = {}
+        self._pin_lock = threading.Lock()
         logger.info(
             f"CacheManager initialized. dir={self.cache_dir} "
             f"max={config.cache.max_size_gb:.1f} GB ttl={self.default_ttl_hours}h"
         )
+
+    # ------------------------------------------------------------------
+    # LRU pin groups (on-air / in-window YouTube)
+    # ------------------------------------------------------------------
+
+    def set_pin_group(self, group: str, source_ids: Iterable[str]) -> None:
+        """Replace a named pin group. Empty source_ids clears the group."""
+        key = str(group or "").strip()
+        if not key:
+            return
+        ids = {str(s).strip() for s in source_ids if s and str(s).strip()}
+        with self._pin_lock:
+            if ids:
+                self._pin_groups[key] = ids
+            else:
+                self._pin_groups.pop(key, None)
+
+    def clear_pin_group(self, group: str) -> None:
+        self.set_pin_group(group, ())
+
+    def pinned_source_ids(self) -> set[str]:
+        with self._pin_lock:
+            out: set[str] = set()
+            for group_ids in self._pin_groups.values():
+                out |= group_ids
+            return out
+
+    def is_pinned(self, source_id: str) -> bool:
+        sid = str(source_id or "").strip()
+        if not sid:
+            return False
+        with self._pin_lock:
+            return any(sid in group_ids for group_ids in self._pin_groups.values())
 
     # ------------------------------------------------------------------
     # Public read API (synchronous — safe to call from async context)
@@ -610,7 +648,11 @@ class CacheManager:
         return count
 
     def evict_lru_to_fit(self, needed_bytes: int) -> None:
-        """Free at least needed_bytes by evicting least-recently-used entries."""
+        """Free at least needed_bytes by evicting least-recently-used entries.
+
+        Skips pin-group source_ids (on-air / in-window) and the 20-minute
+        accessed_at grace window.
+        """
         db = self.db_session_factory()
         try:
             current = self._total_size_bytes(db)
@@ -618,6 +660,8 @@ class CacheManager:
                 return
             to_free = (current + needed_bytes) - self.max_size_bytes
             freed = 0
+            pinned = self.pinned_source_ids()
+            skipped_pinned = 0
             grace_cutoff = utc_now_naive() - timedelta(minutes=20)
             rows = (
                 db.query(CachedMedia)
@@ -629,6 +673,9 @@ class CacheManager:
             for row in rows:
                 if freed >= to_free:
                     break
+                if row.source_id in pinned:
+                    skipped_pinned += 1
+                    continue
                 freed += row.size_bytes or 0
                 self._evict_row(db, row)
                 logger.info(
@@ -638,9 +685,12 @@ class CacheManager:
             if freed < to_free:
                 logger.warning(
                     "LRU eviction could not free %.1f MB (freed %.1f MB); "
-                    "recently accessed entries are protected",
+                    "recently accessed / pinned entries are protected "
+                    "(pinned_skipped=%s pinned_total=%s)",
                     to_free / 1024 / 1024,
                     freed / 1024 / 1024,
+                    skipped_pinned,
+                    len(pinned),
                 )
             db.commit()
         finally:

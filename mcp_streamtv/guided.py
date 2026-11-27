@@ -584,13 +584,22 @@ async def channel_build(
         json={"skip_availability": skip_availability},
     )
     if report.get("overall") == "FAIL" or report.get("ok") is False:
+        warnings = report.get("user_warnings") or []
+        say = "Gates failed before write. Fix the issues and re-plan."
+        if any("same stream URL" in str(w) for w in warnings):
+            say = (
+                "Gates failed: two items share the same stream URL. Keep one "
+                "stream row per URL (do not add library + block twins). "
+                "Built-in gates block silent import collapse."
+            )
         return _result(
-            "Gates failed before write. Fix the issues and re-plan.",
+            say,
             "channel_plan",
             "Repair failing gates",
             draft_id=draft_id,
             summary_table=report.get("summary_table"),
             gates=report,
+            user_warnings=warnings,
             probe_runtimes=probe_runtimes,
         )
     artifacts = await client.request(

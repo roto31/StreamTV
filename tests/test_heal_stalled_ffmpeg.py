@@ -24,6 +24,21 @@ def heal():
     return _load_mod()
 
 
+def test_realtime_copy_is_not_killed(heal) -> None:
+    """-re copy stays near 0% CPU while Apple TV is watching. Do not SIGKILL."""
+    cmd = (
+        "/opt/homebrew/bin/ffmpeg -re -i "
+        "https://dn800205.us.archive.org/0/items/1984-olympics-tape-1-new/tape.mp4 "
+        "-c:v copy -c:a copy -f mpegts pipe:1"
+    )
+    assert (
+        heal.classify_candidate(
+            cmd, min_etime_sec=90, max_pcpu=0.15, etime_sec=18 * 60 + 46, pcpu=0.1
+        )
+        == "skip_live_copy"
+    )
+
+
 def test_copy_path_archive_is_kill(heal) -> None:
     cmd = (
         "/opt/homebrew/bin/ffmpeg -i https://ia601007.us.archive.org/foo.mp4 "

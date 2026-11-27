@@ -37,7 +37,26 @@ _STORED_KEYS = (
     "needs_annexb",
     "subtitle_streams",
     "audio_language",
+    # Video geometry: written by scripts/warm_archive_probe_cache.py; read by
+    # tuners/video_hold to pick a hold asset that matches the program SPS.
+    "width",
+    "height",
+    "profile",
 )
+
+
+def video_geometry(codec_info: Optional[dict[str, Any]]) -> Optional[tuple[int, int]]:
+    """Return (width, height) from sidecar codec info, or None if absent/invalid."""
+    if not codec_info:
+        return None
+    try:
+        width = int(codec_info.get("width") or 0)
+        height = int(codec_info.get("height") or 0)
+    except (TypeError, ValueError):
+        return None
+    if width <= 0 or height <= 0:
+        return None
+    return width, height
 
 
 def archive_item_key(stream_url: str) -> Optional[tuple[str, str]]:

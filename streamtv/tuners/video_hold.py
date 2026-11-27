@@ -28,6 +28,10 @@ DEFAULT_SILENCE_SEC = 45.0
 DEFAULT_HOLD_CHUNK = 8192
 # Pace hold ~1.5 Mbps so Plex is not flooded with black and the event loop yields
 HOLD_BITRATE_BPS = 1_500_000
+# Archive FFmpeg often emits a tiny PAT/PMT/video burst then stdout-stalls while
+# the non-faststart MP4 opens. Splicing on that burst (rehold=False) leaves the
+# client with no further A/V. Require sustained bytes before leaving the hold.
+DEFAULT_ARCHIVE_MIN_SPLICE_BYTES = 65_536
 
 HoldPath = Union[str, Path]
 
@@ -50,12 +54,32 @@ def hold_chunk_pace_sec(chunk_len: int) -> float:
     return max(0.02, (chunk_len * 8) / float(HOLD_BITRATE_BPS))
 
 
+HOLD_GEOMETRY_480 = (640, 480)
+HOLD_GEOMETRY_720 = (1280, 720)
+
+
 def default_hold_path() -> Path:
     env = os.environ.get("STREAMTV_PLEX_HOLD_TS", "").strip()
     if env:
         return Path(env).expanduser()
     # Repo root / data/plex_hold.ts relative to this package: streamtv/tuners/
     return Path(__file__).resolve().parents[2] / "data" / "plex_hold.ts"
+
+
+def default_archive_hold_480_path() -> Path:
+    env = os.environ.get("STREAMTV_PLEX_HOLD_ARCHIVE_TS", "").strip()
+    if env:
+        return Path(env).expanduser()
+    return Path(__file__).resolve().parents[2] / "data" / "plex_hold_480.ts"
+
+
+def archive_hold_paths_by_geometry() -> dict[tuple[int, int], Path]:
+    """Hold asset per program geometry; a hold whose SPS differs from the
+    program melts Apple TV after the splice (Lesson 41c), so no fallback."""
+    return {
+        HOLD_GEOMETRY_480: default_archive_hold_480_path(),
+        HOLD_GEOMETRY_720: default_hold_path(),
+    }
 
 
 def pid_of_packet(packet: bytes) -> int:
@@ -117,6 +141,12 @@ def has_video_payload(chunk: bytes) -> bool:
     return bool(strip_null_packets(chunk))
 
 
+# MPEG-TS PSI / common FFmpeg PMT PID — never truncate these for discontinuity.
+_PSI_OR_PMT_PIDS = frozenset({0x0000, 0x0001, 0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x1000})
+# FFmpeg mpegts default elementary video PID in StreamTV holds / remux.
+_DEFAULT_VIDEO_PID = 0x0100
+
+
 def discontinuity_flag_chunk(chunk: bytes) -> bytes:
     """Set discontinuity_indicator on the first TS packet with adaptation field.
 
@@ -149,6 +179,42 @@ def discontinuity_flag_chunk(chunk: bytes) -> bytes:
     room = TS_PACKET_SIZE - 6
     new_pkt[6 : 6 + min(room, len(payload))] = payload[:room]
     return bytes(new_pkt) + chunk[TS_PACKET_SIZE:]
+
+
+def discontinuity_flag_media_chunk(chunk: bytes) -> bytes:
+    """Like discontinuity_flag_chunk, but never truncates PSI/PMT packets.
+
+    Archive splices often start with SDT/PAT/PMT (payload-only). Mutating those
+    by stuffing an adaptation field corrupts table sections and leaves Plex /
+    Apple TV decoders in a green/pixel melt after the hold.
+    """
+    if len(chunk) < TS_PACKET_SIZE or chunk[0] != 0x47:
+        return chunk
+    n = len(chunk) // TS_PACKET_SIZE
+    for i in range(n):
+        off = i * TS_PACKET_SIZE
+        pkt = chunk[off : off + TS_PACKET_SIZE]
+        pid = pid_of_packet(pkt)
+        if pid < 0 or pid in _PSI_OR_PMT_PIDS or pid == NULL_PID:
+            continue
+        flagged = discontinuity_flag_chunk(pkt)
+        return chunk[:off] + flagged + chunk[off + TS_PACKET_SIZE :]
+    return chunk
+
+
+def pending_has_video_pusi(chunks: list[bytes], *, video_pid: int = _DEFAULT_VIDEO_PID) -> bool:
+    """True if buffered upstream contains a video PES start (random-access hint)."""
+    for chunk in chunks:
+        if len(chunk) < TS_PACKET_SIZE or chunk[0] != 0x47:
+            continue
+        n = len(chunk) // TS_PACKET_SIZE
+        for i in range(n):
+            pkt = chunk[i * TS_PACKET_SIZE : (i + 1) * TS_PACKET_SIZE]
+            if pid_of_packet(pkt) != video_pid:
+                continue
+            if pkt[1] & 0x40:  # payload_unit_start_indicator
+                return True
+    return False
 
 
 async def iter_hold_file(
@@ -185,6 +251,9 @@ async def video_hold_mux(
     hold_path: Optional[HoldPath] = None,
     silence_sec: Optional[float] = None,
     rehold_on_silence: bool = True,
+    hold_label: Optional[str] = None,
+    min_splice_bytes: int = 0,
+    require_video_pusi: bool = False,
 ) -> AsyncIterator[bytes]:
     """Yield hold until upstream has real video; optionally re-hold on silence/nulls.
 
@@ -192,33 +261,53 @@ async def video_hold_mux(
     emit hold only until the first non-null splice, then pass upstream forever.
     That avoids Archive-style post-splice black freeze while still covering the
     youtube_full_cache tune-buffer gap that returns Plex to the guide.
+
+    ``min_splice_bytes`` (Archive wait-phase) keeps emitting hold until at least
+    that many cleaned upstream bytes are buffered, so a tiny first FFmpeg burst
+    followed by stdout stall does not leave the client with no A/V.
+    ``require_video_pusi`` also waits for a video PES start before splicing so
+    decoders are not handed mid-GOP after the black hold.
     """
     path = Path(hold_path) if hold_path else default_hold_path()
     if silence_sec is None:
         silence_sec = silence_sec_from_env()
+    splice_floor = max(0, int(min_splice_bytes))
     queue: asyncio.Queue[Optional[bytes]] = asyncio.Queue(maxsize=64)
     stop = asyncio.Event()
 
     async def _pump_upstream() -> None:
+        # FFmpeg reads are 8192 bytes (43 TS packets + 96 byte tail). Cutting
+        # each read on its own drops the straddling packet and the next read
+        # resyncs, which is a continuity jump every chunk — Plex tears.
+        carry = b""
         try:
             async for chunk in upstream:
                 if stop.is_set():
                     break
-                # Drop pure null keepalives; enqueue real (or mixed) data
-                if is_all_null_keepalive(chunk):
+                # A new chunk that already starts on 0x47 is not the tail of the
+                # previous packet (tests, or a resync). Drop the orphan tail.
+                # A real FFmpeg read that continues a split packet does not
+                # start with 0x47, so the tail is prepended.
+                if carry and chunk[:1] == b"\x47" and carry[:1] == b"\x47":
+                    carry = b""
+                data = carry + chunk
+                if data and data[0] != 0x47:
+                    sync_at = data.find(0x47)
+                    if sync_at < 0:
+                        carry = b""
+                        continue
+                    data = data[sync_at:]
+                usable = len(data) - (len(data) % TS_PACKET_SIZE)
+                carry = data[usable:]
+                piece = data[:usable]
+                if not piece or is_all_null_keepalive(piece):
                     continue
-                cleaned = strip_null_packets(chunk)
+                cleaned = strip_null_packets(piece)
                 if not cleaned:
                     continue
-                while True:
-                    try:
-                        queue.put_nowait(cleaned)
-                        break
-                    except asyncio.QueueFull:
-                        try:
-                            queue.get_nowait()
-                        except asyncio.QueueEmpty:
-                            pass
+                # Block when full. Dropping the oldest chunk opens continuity
+                # gaps and Plex/Apple TV tear for the rest of the item.
+                await queue.put(cleaned)
         except asyncio.CancelledError:
             raise
         except Exception as exc:
@@ -233,6 +322,8 @@ async def video_hold_mux(
     holding = True
     hold_iter = iter_hold_file(path)
     first_upstream = True
+    pending: list[bytes] = []
+    pending_bytes = 0
 
     try:
         while True:
@@ -250,19 +341,40 @@ async def video_hold_mux(
                     yield hold_chunk
                     continue
                 if item is None:
-                    # Upstream EOF while holding — stop (client should disconnect)
-                    break
+                    # Upstream EOF while holding — flush any buffered burst, else stop
+                    if not pending:
+                        break
+                    item = b""  # fall through to splice pending only
+                else:
+                    pending.append(item)
+                    pending_bytes += len(item)
+                    thin = splice_floor > 0 and pending_bytes < splice_floor
+                    no_pusi = require_video_pusi and not pending_has_video_pusi(
+                        pending
+                    )
+                    if thin or no_pusi:
+                        continue
                 holding = False
-                if first_upstream:
-                    item = discontinuity_flag_chunk(item)
+                flush = pending
+                pending = []
+                flush_bytes = pending_bytes
+                pending_bytes = 0
+                if first_upstream and flush:
+                    first = flush[0]
+                    # Flag discontinuity on first media PID — never truncate SDT/PAT/PMT.
+                    flush[0] = discontinuity_flag_media_chunk(first)
                     first_upstream = False
                     logger.info(
                         "video_hold: spliced to upstream "
-                        "(silence_sec=%.1f rehold=%s)",
+                        "(silence_sec=%.1f rehold=%s hold=%s flush_bytes=%d)",
                         silence_sec,
                         rehold_on_silence,
+                        hold_label or path.name,
+                        flush_bytes,
                     )
-                yield item
+                for piece in flush:
+                    if piece:
+                        yield piece
                 continue
 
             # Playing upstream — wait for next chunk or long silence timeout
@@ -381,6 +493,9 @@ def maybe_wrap_mpegts_hold(
     silence_sec: Optional[float] = None,
     enabled: Optional[bool] = None,
     rehold_on_silence: bool = True,
+    hold_label: Optional[str] = None,
+    min_splice_bytes: int = 0,
+    require_video_pusi: bool = False,
 ) -> Any:
     """Wrap a StreamingResponse body with video hold when enabled and hold file exists."""
     if enabled is None:
@@ -410,6 +525,9 @@ def maybe_wrap_mpegts_hold(
             hold_path=path,
             silence_sec=effective_silence,
             rehold_on_silence=rehold_on_silence,
+            hold_label=hold_label,
+            min_splice_bytes=min_splice_bytes,
+            require_video_pusi=require_video_pusi,
         ):
             yield chunk
 
@@ -453,27 +571,95 @@ def archive_wait_hold_channels() -> frozenset[str]:
     return frozenset(c.strip() for c in raw.split(",") if c.strip())
 
 
+def archive_hold_pick(
+    stream_url: Optional[str],
+) -> tuple[Optional[Path], Optional[tuple[int, int]], str]:
+    """Pick the hold asset matching an Archive item's sidecar geometry.
+
+    Returns (hold_path or None, geometry or None, reason). None means skip the
+    wrap: unknown geometry or a size with no hold asset must not be guessed.
+    """
+    from streamtv.utils import archive_probe_cache
+
+    if not stream_url or archive_probe_cache.archive_item_key(stream_url) is None:
+        return None, None, "not an archive.org item"
+    geometry = archive_probe_cache.video_geometry(archive_probe_cache.load(stream_url))
+    if geometry is None:
+        return None, None, "no sidecar geometry (run warm_archive_probe_cache.py)"
+    path = archive_hold_paths_by_geometry().get(geometry)
+    if path is None:
+        return None, geometry, f"no hold asset for {geometry[0]}x{geometry[1]}"
+    if not path.is_file():
+        return None, geometry, f"hold asset missing: {path}"
+    return path, geometry, "geometry match"
+
+
+def on_air_media_url(channel_number: str, db: Any) -> Optional[str]:
+    """URL of the channel's current playout item (continuous playout anchor)."""
+    from streamtv.database.models import Channel, ChannelPlaybackPosition, MediaItem
+
+    ch = (
+        db.query(Channel)
+        .filter(Channel.number == str(channel_number), Channel.enabled == True)  # noqa: E712
+        .first()
+    )
+    if not ch:
+        return None
+    pos = (
+        db.query(ChannelPlaybackPosition)
+        .filter(ChannelPlaybackPosition.channel_id == ch.id)
+        .first()
+    )
+    if not pos or not pos.last_item_media_id:
+        return None
+    media = db.query(MediaItem).filter(MediaItem.id == pos.last_item_media_id).first()
+    return media.url if media is not None else None
+
+
 def maybe_wrap_archive_wait_hold(
     response: Any,
     channel_number: str,
-    *,
-    hold_path: Optional[HoldPath] = None,
+    db: Any,
 ) -> Any:
     """Hold an allowlisted Archive channel until first real video (no re-hold).
 
     Non-faststart multi-GB Archive MP4s can take ~40s to open over HTTP; null
-    keepalives make Plex abandon the tune before the first program TS.
+    keepalives make Plex abandon the tune before the first program TS. The hold
+    must match the on-air item's geometry, otherwise the wrap is skipped.
     """
     if str(channel_number) not in archive_wait_hold_channels():
         return response
+    try:
+        url = on_air_media_url(channel_number, db)
+    except Exception as exc:
+        logger.warning(
+            "video_hold: Archive wait-phase skip for channel %s — on-air lookup failed: %s",
+            channel_number,
+            exc,
+        )
+        return response
+    path, geometry, reason = archive_hold_pick(url)
+    if path is None or geometry is None:
+        logger.info(
+            "video_hold: Archive wait-phase skip for channel %s — %s",
+            channel_number,
+            reason,
+        )
+        return response
+    label = f"{geometry[0]}x{geometry[1]}"
     logger.info(
-        "video_hold: Archive wait-phase wrap for channel %s (rehold=False)",
+        "video_hold: Archive wait-phase wrap for channel %s hold=%s path=%s (rehold=False)",
         channel_number,
+        label,
+        path,
     )
     return maybe_wrap_mpegts_hold(
         response,
-        hold_path=hold_path,
+        hold_path=path,
         rehold_on_silence=False,
+        hold_label=label,
+        min_splice_bytes=DEFAULT_ARCHIVE_MIN_SPLICE_BYTES,
+        require_video_pusi=True,
     )
 
 

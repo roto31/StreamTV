@@ -136,14 +136,23 @@ async def wait_for_playback_buffer(
         ):
             return True
 
+    yt_full = (
+        media_item.source == StreamSource.YOUTUBE
+        and youtube_full_cache_enabled()
+    )
+    # Pin on-air YouTube full-cache item so peer-channel prefetch cannot LRU it.
+    if yt_full and media_item.source_id:
+        cache_manager.set_pin_group(
+            f"on_air:{channel_number}", {str(media_item.source_id)}
+        )
+
     min_sec = min_buffer_seconds()
     if cache_manager.get_cached_path(media_item.source_id):
         return True
 
     # Kickstart / DB race: file on TunarrRAM but manifest not READY yet.
     if (
-        media_item.source == StreamSource.YOUTUBE
-        and youtube_full_cache_enabled()
+        yt_full
         and _adopt_youtube_disk_file(cache_manager, download_queue, media_item)
     ):
         return True
@@ -153,10 +162,6 @@ async def wait_for_playback_buffer(
         return True
 
     on_tune = tune_only_buffering() and tuner_active
-    yt_full = (
-        media_item.source == StreamSource.YOUTUBE
-        and youtube_full_cache_enabled()
-    )
     max_block = resolve_buffer_max_wait_seconds(on_tune=on_tune, yt_full=yt_full)
     target_sec = min_sec if not on_tune else min(min_sec, max_block)
 

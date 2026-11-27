@@ -446,7 +446,7 @@ if config.hdhomerun.enabled:
         wrapped = maybe_wrap_youtube_wait_hold(response, channel_number, db)
         if wrapped is not response:
             return wrapped
-        return maybe_wrap_archive_wait_hold(response, channel_number)
+        return maybe_wrap_archive_wait_hold(response, channel_number, db)
 
 # Setup templates with auto-escaping enabled for XSS protection
 templates_dir = Path(__file__).parent / "templates"

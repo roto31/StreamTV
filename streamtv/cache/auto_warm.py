@@ -94,16 +94,27 @@ async def warm_idle_youtube_window(
         # Still advance the timer so archive-led windows do not re-check every 15s.
         return now
 
+    # Pin on-air + lookahead against LRU (prefetch from other channels).
+    pin_ids = {
+        str(getattr(m, "source_id", "") or "")
+        for m in items
+        if getattr(m, "source_id", None)
+    }
+    cache_manager = getattr(download_queue, "cache_manager", None)
+    if cache_manager is not None and pin_ids:
+        cache_manager.set_pin_group(f"yt_window:{channel_number}", pin_ids)
+
     for media in items:
         await download_queue.enqueue(media)
     head = items[0]
     await download_queue.ensure_download_started(head)
     await download_queue.prioritize(head)
     logger.info(
-        "Channel %s: auto-warm YouTube window idx=%s count=%s head=%s",
+        "Channel %s: auto-warm YouTube window idx=%s count=%s head=%s pinned=%s",
         channel_number,
         guide_index,
         len(items),
         getattr(head, "source_id", "?"),
+        len(pin_ids),
     )
     return now

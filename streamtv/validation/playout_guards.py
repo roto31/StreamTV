@@ -1,6 +1,6 @@
 """Compile-time guards that block known playout failure patterns.
 
-See LESSONS_LEARNED.md Issues 22–25 and rule `playout-reliability-guards.mdc`.
+See LESSONS_LEARNED.md Issues 22–25, 75 and rule `playout-reliability-guards.mdc`.
 """
 
 from __future__ import annotations
@@ -70,7 +70,11 @@ def validate_schedule_sequence(
 def validate_archive_stream_urls(
     streams: list[dict[str, Any]], *, channel_label: str = ""
 ) -> GuardReport:
-    """Block .ia.mp4 derivatives and collection-only URLs (Issues 24–25)."""
+    """Block .ia.mp4 derivatives and collection-only URLs (Issues 24–25).
+
+    Does **not** remove streams for codec (HEVC) or reachability — Issue 75:
+    gated IA items must stay in the schedule until metadata proves them gone.
+    """
     report = GuardReport()
     prefix = f"{channel_label}: " if channel_label else ""
     for i, stream in enumerate(streams):
@@ -101,6 +105,35 @@ def validate_archive_stream_urls(
                 f"{prefix}{label}: archive stream missing runtime — "
                 "XMLTV/guide slots will collapse without MediaItem.duration"
             )
+    return report
+
+
+def warn_library_shrink(
+    *,
+    before_count: int,
+    after_count: int,
+    channel_label: str = "",
+    min_drop: int = 10,
+    min_fraction: float = 0.05,
+) -> GuardReport:
+    """Warn when an edit would shrink the Archive library enough to hollow a schedule.
+
+    Used by operator scripts / agents before applying YAML or DB playlist deletes.
+    Compile-time YAML validation does not call this (no before/after there).
+    """
+    report = GuardReport()
+    prefix = f"{channel_label}: " if channel_label else ""
+    if before_count <= 0 or after_count >= before_count:
+        return report
+    dropped = before_count - after_count
+    fraction = dropped / float(before_count)
+    if dropped >= min_drop or fraction >= min_fraction:
+        report.warn(
+            f"{prefix}library shrink {before_count} -> {after_count} "
+            f"(dropped {dropped}, {fraction:.0%}) — confirm Archive reachability "
+            f"with login cookies + metadata before removing (Issue 75); "
+            f"do not purge on bare CDN 401"
+        )
     return report
 
 
@@ -267,6 +300,112 @@ def validate_duplicate_stream_ids(
     return report
 
 
+def normalize_stream_url_for_dedupe(url: str) -> str:
+    """Normalize stream URLs for within-channel uniqueness (Issue 75 hygiene).
+
+    Delegates to builder D16 normalization so YouTube ``v=`` and Archive paths
+    stay consistent across import, compile, and Channel Creator.
+    """
+    from streamtv.builder.ids import normalize_stream_url
+
+    return normalize_stream_url(url or "")
+
+
+URL_COLLAPSE_USER_WARNING = (
+    "Two items share the same stream URL. StreamTV stores media by URL, so "
+    "import would keep only one MediaItem and silently drop the extra stream "
+    "id / collection bookkeeping. Keep a single stream row per URL in this "
+    "channel; schedule it from one collection. Built-in gates block this."
+)
+
+
+def duplicate_stream_url_groups(
+    streams: list[dict[str, Any]],
+) -> dict[str, list[str]]:
+    """Return normalized_url -> list of stream ids (only groups with len >= 2)."""
+    groups: dict[str, list[str]] = {}
+    for stream in streams or []:
+        raw = stream.get("url")
+        if not raw:
+            continue
+        key = normalize_stream_url_for_dedupe(str(raw))
+        if not key:
+            continue
+        sid = str(stream.get("id") or "") or f"<no-id@{len(groups.get(key, []))}>"
+        groups.setdefault(key, []).append(sid)
+    return {url: ids for url, ids in groups.items() if len(ids) > 1}
+
+
+def validate_duplicate_stream_urls(
+    streams: list[dict[str, Any]],
+    *,
+    channel_label: str = "?",
+) -> GuardReport:
+    """Within-channel duplicate URLs are a hard error (import collapses by URL)."""
+    report = GuardReport()
+    for _url, ids in sorted(duplicate_stream_url_groups(streams).items()):
+        id_list = ", ".join(ids[:8])
+        more = f" (+{len(ids) - 8} more)" if len(ids) > 8 else ""
+        report.error(
+            f"Channel {channel_label}: duplicate stream URL shared by ids "
+            f"[{id_list}{more}] — import collapses to one MediaItem. "
+            f"{URL_COLLAPSE_USER_WARNING}"
+        )
+    return report
+
+
+def assert_no_duplicate_stream_urls(
+    streams: list[dict[str, Any]],
+    *,
+    channel_label: str = "?",
+) -> None:
+    report = validate_duplicate_stream_urls(streams, channel_label=channel_label)
+    if not report.ok:
+        raise ValueError("\n".join(report.errors))
+
+
+def score_url_twin_keep(
+    stream: dict[str, Any],
+    *,
+    schedule_text: str = "",
+) -> tuple:
+    """Higher score wins when collapsing within-channel URL twins.
+
+    Title richness ranks above bare ``broadcast_date`` so year-only Season
+    stubs do not beat dated production episode titles (Sesame remap twins).
+    """
+    sid = str(stream.get("id") or "")
+    title = str(stream.get("title") or stream.get("slot") or "")
+    has_date = bool(
+        stream.get("broadcast_date")
+        or stream.get("episode_air_date")
+        or stream.get("air_date")
+    )
+    in_schedule = bool(sid and schedule_text and sid in schedule_text)
+    is_brk = "__brk" in sid
+    is_block = ("__mn-" in sid) or ("__" in sid and not is_brk)
+    return (
+        1 if in_schedule else 0,
+        1 if is_block else 0,
+        0 if is_brk else 1,
+        min(len(title), 300),
+        1 if has_date else 0,
+        sid,
+    )
+
+
+def choose_url_twin_winner(
+    twins: list[dict[str, Any]],
+    *,
+    schedule: Optional[dict[str, Any]] = None,
+) -> dict[str, Any]:
+    """Pick which stream row to keep for a shared URL."""
+    import json
+
+    schedule_text = json.dumps(schedule or {}, sort_keys=True)
+    return max(twins, key=lambda s: score_url_twin_keep(s, schedule_text=schedule_text))
+
+
 def validate_unified_channel(
     data: dict[str, Any],
     *,
@@ -288,6 +427,7 @@ def validate_unified_channel(
         validate_stream_schedule_ratio(streams, schedule, channel_label=label),
         validate_logo_path(ch, project_root=root, channel_label=label),
         validate_duplicate_stream_ids(streams, channel_label=label),
+        validate_duplicate_stream_urls(streams, channel_label=label),
     ):
         merged.errors.extend(part.errors)
         merged.warnings.extend(part.warnings)

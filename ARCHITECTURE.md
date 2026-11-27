@@ -194,11 +194,18 @@ flowchart TD
     VBR2 --> OUT["mpegts stdout -> ChannelManager -> Plex"]
     XCODE --> CBR["CBR -muxrate 4M + encoder flags when encoding"]
     CBR --> OUT
+    OUT -->|HEVC / non-copyable| XCODE
+    OUT -->|under-rate trickle <16KiB/s ≥15s| ABORT["abort FFmpeg → heal/restart<br/>(silence timer alone never fires)"]
     OUT -->|keepalive-only 8192| HEAL["heal_stalled_ffmpeg + heal_keepalive_tunes<br/>etime≥90s / soft stream-restart"]
+    ABORT --> HEAL
 ```
 
+**HEVC policy (2026-11-27):** production keeps HEVC → **libx264 accept-encode**.
+No Studio HEVC MPEG-TS copy / Plex Direct Play until a separate Mini fork soak
+proves it. Twin remaps are curated/report-only (`scripts/report_archive_hevc_twins.py`).
+
 See also [Archive probe retry + keepalive heal](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md)
-(Lesson **41b**).
+(Lesson **41b** / **41c** / **75**).
 
 ## Consumer endpoints
 

@@ -125,3 +125,43 @@ def test_schedule_keep_source_ids_window() -> None:
         extra_keep_source_ids={"on-air"},
     )
     assert keep == {"a", "b", "c", "on-air"}
+
+
+def test_evict_lru_skips_pinned_on_air(
+    cache_manager: CacheManager, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Pinned on-air/window source_ids must survive LRU even past access grace."""
+    from datetime import timedelta
+
+    monkeypatch.setattr(cache_manager, "max_size_bytes", 10)
+
+    pinned_path = _add_ready_row(cache_manager, "on-air-yt")
+    victim_path = _add_ready_row(cache_manager, "cold-other")
+    db = cache_manager.db_session_factory()
+    try:
+        old = utc_now_naive() - timedelta(hours=2)
+        for row in db.query(CachedMedia).all():
+            row.size_bytes = 8
+            row.accessed_at = old
+            path = Path(row.local_path)
+            path.write_bytes(b"x" * 8)
+        db.commit()
+    finally:
+        db.close()
+
+    cache_manager.set_pin_group("on_air:1988.2", {"on-air-yt"})
+    cache_manager.evict_lru_to_fit(8)
+
+    assert pinned_path.exists()
+    assert cache_manager.get_cached_path("on-air-yt") is not None
+    assert not victim_path.exists()
+    assert cache_manager.get_cached_path("cold-other") is None
+
+
+def test_set_pin_group_replace_and_clear(cache_manager: CacheManager) -> None:
+    cache_manager.set_pin_group("yt_window:1996.2", {"a", "b"})
+    assert cache_manager.pinned_source_ids() == {"a", "b"}
+    cache_manager.set_pin_group("yt_window:1996.2", {"b", "c"})
+    assert cache_manager.pinned_source_ids() == {"b", "c"}
+    cache_manager.clear_pin_group("yt_window:1996.2")
+    assert cache_manager.pinned_source_ids() == set()

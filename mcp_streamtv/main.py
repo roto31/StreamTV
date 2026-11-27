@@ -80,7 +80,10 @@ DETAIL_SPECS: list[tuple[str, str]] = [
     ("builder_plan", "Compile a plan preview and plan_token"),
     ("builder_exclude_candidates", "Record exclusions for SOURCES"),
     ("builder_set_break_plan", "Set break groups and rotation"),
-    ("builder_validate", "Run gates G1–G6 without writing"),
+    (
+        "builder_validate",
+        "Run gates (incl. G2 id/URL uniqueness); returns user_warnings on URL collapse risk",
+    )
     ("builder_report", "Write the §5.8 package files"),
     ("discover_youtube", "Ad-hoc YouTube search"),
     ("inspect_youtube_video", "Inspect one YouTube video"),

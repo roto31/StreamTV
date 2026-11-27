@@ -171,13 +171,29 @@ def build_new_channel(
 
     data_dir = root / "data"
     remapped, reuse_log = apply_existing_url_ids(list(candidates), data_dir)
-    if reuse_log:
+    d16 = [e for e in reuse_log if "to_id" in e]
+    intra = [e for e in reuse_log if e.get("reason") == "intra_draft_url_dedupe"]
+    if d16:
         report.add(
             "G2",
             True,
-            f"D16 reused {len(reuse_log)} existing URL ids",
+            f"D16 reused {len(d16)} existing URL ids",
             level="INFO",
         )
+        report.user_warnings.append(
+            "One or more videos already exist in the library; Builder reused "
+            "existing stream ids (D16) so cache keys stay stable."
+        )
+    if intra:
+        from streamtv.validation.playout_guards import URL_COLLAPSE_USER_WARNING
+
+        report.add(
+            "G2",
+            True,
+            f"collapsed {len(intra)} intra-draft duplicate URL groups",
+            level="WARN",
+        )
+        report.user_warnings.append(URL_COLLAPSE_USER_WARNING)
 
     channel_doc, schedule = build_channel_package(
         channel_spec,
@@ -189,6 +205,9 @@ def build_new_channel(
         channel_doc, schedule, skip_availability=skip_availability
     )
     report.results.extend(compiled.results)
+    for w in compiled.user_warnings:
+        if w not in report.user_warnings:
+            report.user_warnings.append(w)
     if compiled.failed:
         return report, None, {"compiled_failed": True, "reuse_log": reuse_log}
 

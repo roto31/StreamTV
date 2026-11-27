@@ -117,9 +117,14 @@ def apply_existing_url_ids(
 ) -> tuple[list[dict], list[dict]]:
     """Reuse known stream ids when URL already exists (D16).
 
+    Also collapses **intra-draft** duplicate URLs to a single candidate so
+    Channel Creator cannot emit library+block twins that import would merge.
+
     Returns (updated_candidates, reuse_log) where reuse_log entries are
-    ``{url, from_id, to_id}``.
+    ``{url, from_id, to_id}`` or ``{url, dropped_ids, kept_id, reason}``.
     """
+    from streamtv.validation.playout_guards import choose_url_twin_winner
+
     index = build_url_id_index(data_dir)
     out: list[dict] = []
     log: list[dict] = []
@@ -134,4 +139,41 @@ def apply_existing_url_ids(
             c["id"] = existing
             c["existing_id"] = existing
         out.append(c)
-    return out, log
+
+    # Intra-draft: one row per normalized URL.
+    by_url: dict[str, list[dict]] = {}
+    order: list[str] = []
+    for c in out:
+        url = normalize_stream_url(str(c.get("url") or ""))
+        if not url:
+            key = f"__empty__{id(c)}"
+            by_url[key] = [c]
+            order.append(key)
+            continue
+        if url not in by_url:
+            order.append(url)
+            by_url[url] = []
+        by_url[url].append(c)
+
+    collapsed: list[dict] = []
+    for key in order:
+        group = by_url[key]
+        if len(group) == 1 or key.startswith("__empty__"):
+            collapsed.extend(group)
+            continue
+        winner = choose_url_twin_winner(group)
+        dropped = [
+            str(c.get("id") or "")
+            for c in group
+            if str(c.get("id") or "") != str(winner.get("id") or "")
+        ]
+        log.append(
+            {
+                "url": key,
+                "kept_id": str(winner.get("id") or ""),
+                "dropped_ids": dropped,
+                "reason": "intra_draft_url_dedupe",
+            }
+        )
+        collapsed.append(winner)
+    return collapsed, log

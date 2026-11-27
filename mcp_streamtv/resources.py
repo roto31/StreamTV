@@ -87,6 +87,39 @@ Before import of hand-edited YAML:
 
 Channel Builder assigns ids during resolve/build — prefer Builder for new channels.
 
+# Stream URL uniqueness within a channel (Issue 75 hygiene)
+
+**One normalized URL → one stream row per channel.** `MediaItem.url` is unique;
+import collapses duplicate URLs into one MediaItem and silently drops the extra
+stream id / collection bookkeeping.
+
+## Do not author
+
+- Library / Retro News row **and** schedule-block row sharing the same YouTube URL
+  (different ids like `VIDEO` vs `VIDEO__mn-…`)
+- Break twin `…__brk` plus primary ads row on the same URL
+- Archive remap that points a second id at an existing production URL without
+  removing the loser twin
+
+## Do instead
+
+- One stream id per asset; schedule via collections / `all:` keys that reference
+  that single stream’s collection
+- Remap: change the URL in place **or** drop the twin — never leave two ids on one URL
+- Known URL already in `data/*.yaml` → Builder reuses that id (D16) and may emit a
+  user heads-up; that is OK across channels
+
+## Gates / tools
+
+- Builder G2 + `validate_duplicate_stream_urls` hard-fail within-channel URL dups
+- Intra-draft duplicate URLs are collapsed before write; `user_warnings` explains why
+- Audit: `scripts/check_yaml_url_dedupe.py --all`
+- Repair: `scripts/dedupe_yaml_stream_urls.py --channel N --apply`
+
+**User-facing copy when collision detected:** tell the operator that StreamTV stores
+media by URL, import would keep only one item, and built-in gates block or collapse
+the duplicate so the channel stays healthy.
+
 # Archive.org URLs — never `.ia.mp4` (Issue 24)
 
 - **Forbidden:** `*.ia.mp4` Internet Archive **derivative** URLs (bad/unusable Plex tunes).

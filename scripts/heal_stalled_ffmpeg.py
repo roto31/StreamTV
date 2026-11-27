@@ -83,6 +83,19 @@ def is_streamtv_archive_ffmpeg(cmd: str) -> bool:
     return False
 
 
+def is_realtime_copy(cmd: str) -> bool:
+    """True for `-re` + video copy. That path sits near 0% CPU while playing.
+
+    2026-11-27: pid 86829 (Tape 1, pcpu 0.1, etime 18:46) was SIGKILLed during a
+    healthy Apple TV session (60633 chunks). Low CPU is the pacing, not a wedge.
+    """
+    if not cmd:
+        return False
+    if not re.search(r"(?:^|\s)-re(?:\s|$)", cmd):
+        return False
+    return "-c:v copy" in cmd or "-c copy" in cmd
+
+
 def is_overlay_or_burn_encode(cmd: str) -> bool:
     """True for DVD/PGS burn / filter overlay — low CPU is normal; never SIGKILL.
 
@@ -107,11 +120,13 @@ def classify_candidate(
     etime_sec: int,
     pcpu: float,
 ) -> str:
-    """Return 'kill', 'skip_overlay', 'skip_not_archive', or 'skip_criteria'."""
+    """Return 'kill', 'skip_overlay', 'skip_live_copy', 'skip_not_archive', or 'skip_criteria'."""
     if not is_streamtv_archive_ffmpeg(cmd):
         return "skip_not_archive"
     if is_overlay_or_burn_encode(cmd):
         return "skip_overlay"
+    if is_realtime_copy(cmd):
+        return "skip_live_copy"
     if etime_sec < min_etime_sec or pcpu > max_pcpu:
         return "skip_criteria"
     return "kill"
@@ -124,6 +139,7 @@ def list_candidates(min_etime_sec: int, max_pcpu: float) -> list[dict[str, Any]]
     )
     found: list[dict[str, Any]] = []
     skipped_overlay = 0
+    skipped_live = 0
     for line in out.splitlines():
         line = line.strip()
         if not line or "ffmpeg" not in line:
@@ -148,6 +164,9 @@ def list_candidates(min_etime_sec: int, max_pcpu: float) -> list[dict[str, Any]]
         if verdict == "skip_overlay":
             skipped_overlay += 1
             continue
+        if verdict == "skip_live_copy":
+            skipped_live += 1
+            continue
         if verdict != "kill":
             continue
         src = ""
@@ -164,6 +183,8 @@ def list_candidates(min_etime_sec: int, max_pcpu: float) -> list[dict[str, Any]]
         )
     if skipped_overlay:
         print(f"skipped {skipped_overlay} overlay/burn ffmpeg (not kill candidates)")
+    if skipped_live:
+        print(f"skipped {skipped_live} live -re copy ffmpeg (low CPU is normal)")
     return found
 
 

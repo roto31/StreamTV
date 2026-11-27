@@ -568,9 +568,41 @@ class ChannelImporter:
             # Hard invariant: stream ids must be globally unique across the
             # whole data set (cache source_id collisions — Issues 18-21).
             # D8: uploads land in an isolated mkdtemp; still cross-check data/.
-            from streamtv.importers.stream_id_registry import assert_unique_stream_ids
+            from streamtv.importers.stream_id_registry import (
+                DuplicateStreamUrlError,
+                assert_unique_stream_ids,
+            )
+            from streamtv.validation.playout_guards import (  # noqa: WPS433
+                assert_no_duplicate_stream_urls,
+            )
 
             assert_unique_stream_ids(yaml_path.parent)
+
+            # Within-channel URL uniqueness (Issue 75 hygiene): MediaItem.url
+            # collapses duplicates on import — refuse before that happens.
+            try:
+                preview = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+            except Exception as exc:  # noqa: BLE001
+                raise ValidationError(f"Cannot parse YAML for URL dedupe: {exc}") from exc
+            if isinstance(preview.get("streams"), list):
+                try:
+                    assert_no_duplicate_stream_urls(
+                        preview["streams"],
+                        channel_label=str(
+                            (preview.get("channel") or {}).get("number")
+                            or yaml_path.stem
+                        ),
+                    )
+                except ValueError as exc:
+                    raise DuplicateStreamUrlError(str(exc)) from exc
+            for ch_cfg in preview.get("channels") or []:
+                try:
+                    assert_no_duplicate_stream_urls(
+                        ch_cfg.get("streams") or [],
+                        channel_label=str(ch_cfg.get("number") or "?"),
+                    )
+                except ValueError as exc:
+                    raise DuplicateStreamUrlError(str(exc)) from exc
             data_dir = Path(__file__).resolve().parents[2] / "data"
             if (
                 data_dir.is_dir()

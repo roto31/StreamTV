@@ -25,6 +25,10 @@ class DuplicateStreamIdError(ValueError):
     """Raised when two streams share an id across the channel data set."""
 
 
+class DuplicateStreamUrlError(ValueError):
+    """Raised when two streams in one channel share a normalized URL."""
+
+
 def _iter_stream_ids(path: Path) -> Iterable[Tuple[str, str]]:
     try:
         data = yaml.safe_load(path.read_text()) or {}

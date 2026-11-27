@@ -92,6 +92,13 @@ def _normalize_media_lang(code: Optional[str]) -> str:
     return base
 
 
+# Copy-mode video that only drips a TS packet every few seconds never reaches
+# consecutive-silence abort (each drip resets the timer) and leaves Plex black.
+# 16 KiB/s is far below 480p H.264; overlay encodes are excluded.
+ARCHIVE_MIN_YIELD_BPS = 16 * 1024
+ARCHIVE_MIN_YIELD_ELAPSED_SEC = 15.0
+
+
 def midstream_stall_decision(
     *,
     overlay_active: bool,
@@ -99,13 +106,23 @@ def midstream_stall_decision(
     stall_limit_sec: float,
     bytes_yielded: int,
     first_silence_event: bool,
+    elapsed_sec: float = 0.0,
 ) -> str:
     """Lesson 41 + 59: abort true hangs; overlay encode pauses are not warnings.
 
     Overlay libx264 often gaps stdout > subsequent_timeout while MPEG-TS is
     still growing. Copy-path still warns on first silence, then aborts at
     STREAMTV_FFMPEG_STALL_SEC of consecutive silence.
+
+    A trickle (one chunk every few seconds) resets consecutive silence forever.
+    Abort that under-rate copy path so the caller can restart the input.
     """
+    if (
+        not overlay_active
+        and elapsed_sec >= ARCHIVE_MIN_YIELD_ELAPSED_SEC
+        and bytes_yielded / elapsed_sec < ARCHIVE_MIN_YIELD_BPS
+    ):
+        return "abort"
     if silence_sec >= stall_limit_sec:
         return "abort"
     if overlay_active and bytes_yielded > 0:
@@ -1413,6 +1430,7 @@ class MPEGTSStreamer:
             stall_limit_sec = max(15.0, stall_limit_sec)
             stall_silence_started: Optional[float] = None
             bytes_yielded = 0
+            yield_started: Optional[float] = None
             
             while True:
                 try:
@@ -1449,7 +1467,36 @@ class MPEGTSStreamer:
                         await asyncio.sleep(0.1)
                         continue
                     stall_silence_started = None
+                    if yield_started is None:
+                        yield_started = time.monotonic()
                     bytes_yielded += len(chunk)
+                    elapsed_yield = time.monotonic() - yield_started
+                    if midstream_stall_decision(
+                        overlay_active=overlay_active,
+                        silence_sec=0.0,
+                        stall_limit_sec=stall_limit_sec,
+                        bytes_yielded=bytes_yielded,
+                        first_silence_event=False,
+                        elapsed_sec=elapsed_yield,
+                    ) == "abort":
+                        logger.error(
+                            "FFmpeg under-rate — %.0f B/s over %.0fs "
+                            "(floor=%d B/s); terminating pid=%s url=%s…",
+                            bytes_yielded / elapsed_yield,
+                            elapsed_yield,
+                            ARCHIVE_MIN_YIELD_BPS,
+                            getattr(process, "pid", None),
+                            (primary_url or "")[:80],
+                        )
+                        try:
+                            process.kill()
+                        except ProcessLookupError:
+                            pass
+                        await stderr_task
+                        raise RuntimeError(
+                            f"FFmpeg under-rate — {bytes_yielded / elapsed_yield:.0f} B/s "
+                            f"over {elapsed_yield:.0f}s (floor={ARCHIVE_MIN_YIELD_BPS})"
+                        )
                     yield chunk
                     
                 except asyncio.TimeoutError:
@@ -1511,12 +1558,16 @@ class MPEGTSStreamer:
                         if first_silence_event:
                             stall_silence_started = now
                         silence = now - stall_silence_started
+                        elapsed = (
+                            (now - yield_started) if yield_started is not None else 0.0
+                        )
                         stall_action = midstream_stall_decision(
                             overlay_active=overlay_active,
                             silence_sec=silence,
                             stall_limit_sec=stall_limit_sec,
                             bytes_yielded=bytes_yielded,
                             first_silence_event=first_silence_event,
+                            elapsed_sec=elapsed,
                         )
                         if stall_action == "warn":
                             logger.warning(
