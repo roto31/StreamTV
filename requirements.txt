@@ -59,7 +59,7 @@ certifi==2025.11.12       # SSL certificate bundle - fixes security issues (late
 charset-normalizer==3.4.4 # Character encoding detection - fixes parsing vulnerabilities (latest)
 idna==3.18                # Fixes PYSEC-2026-215
 requests==2.34.2          # Fixes CVE-2026-25645
-urllib3==2.7.0            # Fixes CVE-2026-44431 and CVE-2026-44432
+urllib3==2.8.0            # Fixes CVE-2026-44431 and CVE-2026-44432
 
 # Security Notes:
 # - All dependencies updated to latest secure versions compatible with Python 3.10+
