@@ -16,7 +16,7 @@ upstream StreamTV or external stream when it produces non-null TS packets.
 | Piece | Role |
 |-------|------|
 | [`streamtv/tuners/video_hold.py`](../../streamtv/tuners/video_hold.py) | Hold mux: emit hold → splice → optional re-hold; YouTube wait-phase (`rehold=False`) |
-| [`streamtv/main.py`](../../streamtv/main.py) `/auto/v*` | **YouTube wait-phase hold** when `STREAMTV_PLEX_VIDEO_HOLD_YOUTUBE=1` and `youtube_full_cache` + YouTube channel (**default off**). Full native re-hold only with `STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1`. Archive CDN-first stays unwrapped. |
+| [`streamtv/main.py`](../../streamtv/main.py) `/auto/v*` | **YouTube wait-phase hold** when `STREAMTV_PLEX_VIDEO_HOLD_YOUTUBE=1` and `youtube_full_cache` + YouTube channel (**default off**). Full native re-hold only with `STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1`. Archive CDN-first stays unwrapped unless listed in `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` (wait-phase, no re-hold; production `1984.2`; see [Layer C](ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-c--non-faststart-slow-open-lesson-41c)). `/hdhomerun/auto/v*` is never wrapped. |
 | `data/plex_hold.ts` | Pre-encoded 2s 720p loop (gitignored; generate below) |
 | `scripts/generate_plex_hold_ts.sh` | Builds the hold file |
 
@@ -73,6 +73,8 @@ curl -s -m 8 -o /tmp/arch_probe.ts -w 'HTTP %{http_code} size=%{size_download}\n
 **Pass (YouTube):** `size_download` ≫ 8192, `h264` + `aac` within ~2s; log
 `video_hold: YouTube wait-phase wrap`. Apple TV cold tune stays on channel.
 **Pass (Archive):** real program TS after brief keepalive; no wait-phase wrap log.
+**Pass (allowlisted Archive, e.g. 1984.2):** TTFB < 1 s with hold h264/aac; log
+`video_hold: Archive wait-phase wrap` then `spliced to upstream (… rehold=False)`.
 
 ## Related
 

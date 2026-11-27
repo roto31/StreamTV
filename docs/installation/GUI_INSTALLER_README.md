@@ -32,7 +32,7 @@ When issues are detected, the installer can:
 ## Requirements
 
 - macOS 10.9 (Mavericks) or later
-- Python 3.8 or higher (will be installed if missing)
+- Python 3.10 or higher (will be installed if missing)
 - tkinter (included with Python)
 
 ## Installation

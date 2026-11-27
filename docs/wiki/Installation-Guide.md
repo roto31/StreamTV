@@ -185,7 +185,7 @@ When issues are detected, the installer can:
 ## Requirements
 
 - macOS 10.9 (Mavericks) or later
-- Python 3.8 or higher (will be installed if missing)
+- Python 3.10 or higher (will be installed if missing)
 - tkinter (included with Python)
 
 ## Installation
@@ -306,7 +306,7 @@ Run the automated installation script:
 ```
 
 This script will:
-1. Check and install Python 3.8+ from python.org
+1. Check and install Python 3.10+ from python.org
 2. Install FFmpeg from official sources (Homebrew as fallback)
 3. Set up a virtual environment
 4. Install all Python dependencies
@@ -320,7 +320,7 @@ This script will:
 
 If you prefer to install manually:
 
-### 1. Install Python 3.8+
+### 1. Install Python 3.10+
 
 Download and install from [python.org](https://www.python.org/downloads/):
 - Choose the macOS installer for your architecture (Intel or Apple Silicon)

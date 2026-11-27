@@ -86,7 +86,7 @@ Run the automated installation script:
 ```
 
 This script will:
-1. Check and install Python 3.8+ from python.org
+1. Check and install Python 3.10+ from python.org
 2. Install FFmpeg from official sources (Homebrew as fallback)
 3. Set up a virtual environment
 4. Install all Python dependencies
@@ -99,7 +99,7 @@ This script will:
 
 If you prefer to install manually:
 
-### 1. Install Python 3.8+
+### 1. Install Python 3.10+
 
 Download and install from [python.org](https://www.python.org/downloads/):
 - Choose the macOS installer for your architecture (Intel or Apple Silicon)
@@ -254,7 +254,7 @@ If you encounter issues with the virtual environment:
 ## System Requirements
 
 - **macOS**: 10.9 (Mavericks) or later
-- **Python**: 3.8 or higher
+- **Python**: 3.10 or higher
 - **RAM**: 2GB minimum, 4GB recommended
 - **Disk Space**: 500MB for installation, additional space for media
 
@@ -571,7 +571,7 @@ curl -X POST http://localhost:8410/api/media \
 
 ## Requirements
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - pip (Python package manager)
 - FFmpeg (optional, for advanced streaming features)
 
@@ -874,7 +874,7 @@ When issues are detected, the installer can:
 ## Requirements
 
 - macOS 10.9 (Mavericks) or later
-- Python 3.8 or higher (will be installed if missing)
+- Python 3.10 or higher (will be installed if missing)
 - tkinter (included with Python)
 
 ## Installation
@@ -938,7 +938,7 @@ Run the automated installation script:
 ```
 
 This script will:
-1. Check and install Python 3.8+ from python.org
+1. Check and install Python 3.10+ from python.org
 2. Install FFmpeg from official sources (Homebrew as fallback)
 3. Set up a virtual environment
 4. Install all Python dependencies
@@ -951,7 +951,7 @@ This script will:
 
 If you prefer to install manually:
 
-### 1. Install Python 3.8+
+### 1. Install Python 3.10+
 
 Download and install from [python.org](https://www.python.org/downloads/):
 - Choose the macOS installer for your architecture (Intel or Apple Silicon)
@@ -1582,7 +1582,7 @@ Common issues encountered during StreamTV installation and their solutions.
 1. Download Python from [python.org](https://www.python.org/downloads/)
    - Choose the macOS installer for your architecture (Intel or Apple Silicon)
    - Run the installer and follow instructions
-   - Verify: `python3 --version` (should show 3.8+)
+   - Verify: `python3 --version` (should show 3.10+)
 
 2. Or use Homebrew:
    ```bash
@@ -1599,13 +1599,13 @@ Common issues encountered during StreamTV installation and their solutions.
 ### Python Version Too Old
 
 **Symptoms:**
-- Error: "Python 3.8+ required"
+- Error: "Python 3.10+ required"
 - Current version is 3.7 or earlier
 
 **Solutions:**
-1. Upgrade Python to 3.8 or later
+1. Upgrade Python to 3.10 or later
 2. Verify version: `python3 --version`
-3. If multiple Python versions installed, ensure `python3` points to 3.8+
+3. If multiple Python versions installed, ensure `python3` points to 3.10+
 
 ## FFmpeg Installation Issues
 

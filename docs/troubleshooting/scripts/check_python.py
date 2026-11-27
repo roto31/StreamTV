@@ -20,12 +20,12 @@ def main():
     print()
     
     # Check minimum version
-    if version.major < 3 or (version.major == 3 and version.minor < 8):
-        print("❌ ERROR: Python 3.8+ is required")
+    if version.major < 3 or (version.major == 3 and version.minor < 10):
+        print("❌ ERROR: Python 3.10+ is required")
         print(f"   Current version: {version.major}.{version.minor}.{version.micro}")
         return 1
     else:
-        print("✓ Python version is acceptable (3.8+)")
+        print("✓ Python version is acceptable (3.10+)")
     
     # Check pip
     try:

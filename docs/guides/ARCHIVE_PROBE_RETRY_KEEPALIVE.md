@@ -1,6 +1,6 @@
 # Archive probe retry + keepalive auto-heal
 
-**Status:** shipped (private tip / production Studio + Mini). Lesson **41b**.
+**Status:** shipped (private tip / production Studio + Mini). Lessons **41b**, **41c**.
 
 Multi-gigabyte Archive.org CDN MP4s can miss StreamTV’s **5 s** quick ffprobe even when
 the file is already **H.264 + AAC**. Issue **23** correctly refuses blind copy, so a
@@ -47,7 +47,7 @@ LaunchAgent `com.streamtv.stalled-ffmpeg-heal` every **~120 s**:
 
 1. `heal_stalled_ffmpeg.py` — archive.org ffmpeg, not overlay/burn, pcpu≤**0.15**,
    etime≥**90 s** (was 300) → SIGTERM.
-2. `heal_keepalive_tunes.py` — sample configured `/auto/v*` (~12 s); if
+2. `heal_keepalive_tunes.py` — sample configured `/hdhomerun/auto/v*` (unwrapped, so Layer C hold bytes never mask a wedge; ~12 s); if
    **KEEPALIVE_ONLY** (~8192), kill matching stalled ffmpeg and
    `POST …/stream-restart` (soft).
 
@@ -56,7 +56,7 @@ flowchart TD
   LA[com.streamtv.stalled-ffmpeg-heal @ 120s] --> H1[heal_stalled_ffmpeg]
   H1 -->|etime≥90 low CPU archive| Kill[SIGTERM ffmpeg]
   LA --> H2[heal_keepalive_tunes]
-  H2 --> Sample[GET /auto/vN ~12s]
+  H2 --> Sample[GET /hdhomerun/auto/vN ~12s]
   Sample -->|bytes ≫ 8192| OK[Leave alone]
   Sample -->|KEEPALIVE_ONLY| Kill
   Kill --> Soft[POST stream-restart]
@@ -70,6 +70,55 @@ bash scripts/install-stalled-ffmpeg-heal-launchagent.sh
 ```
 
 Env: `STREAMTV_STALL_HEAL_MIN_ETIME=90`, `STREAMTV_STALL_HEAL_MAX_PCPU=0.15`.
+
+## Layer C — non-faststart slow open (Lesson 41c)
+
+Some multi-GB Archive MP4s keep the `moov` index at the **tail** (1984.2 Tape 1:
+6.9 GB, 24 MiB moov). FFmpeg must fetch the tail before the first packet, so a cold
+open takes **~40–55 s** — longer than Plex patience (~25 s), the probe chain, and the
+old FFmpeg first-chunk wait (15 + 10 s). Three pieces close that gap:
+
+| Piece | Where | Behavior |
+|-------|-------|----------|
+| Wait-phase video hold | `streamtv/tuners/video_hold.py`, root `/auto/vN` | Allowlist `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` (empty = none). Real h264/aac hold until first program TS, then splice; **no re-hold**. |
+| Probe sidecar cache | `streamtv/utils/archive_probe_cache.py` (bedrock caller) | `<cache>/archive_probe/<id>/<file>.probe.json`, 30-day TTL. Only real ffprobe successes; inferred results never stored. |
+| First-chunk budget | `mpegts_streamer` (bedrock, APPROVED) | archive.org HTTP: `STREAMTV_ARCHIVE_FIRST_CHUNK_SEC` (default 60, min 25). Others: 15 + 10 s. |
+
+```mermaid
+sequenceDiagram
+  participant P as Plex / Apple TV
+  participant R as root /auto/vN
+  participant H as video_hold (allowlist)
+  participant S as mpegts_streamer
+  participant C as Archive CDN
+  P->>R: tune 1984.2
+  R->>H: wrap (rehold=False)
+  H-->>P: hold h264/aac (TTFB < 1s)
+  S->>S: probe sidecar hit → copy mode
+  S->>C: FFmpeg open, fetch tail moov
+  Note over S,C: ~40–55 s, budget 60 s
+  C-->>S: first packets
+  S-->>H: first program TS
+  H-->>P: splice to program (no re-hold)
+```
+
+Seed sidecars before allowlisting a channel, and re-run after cache eviction:
+
+```bash
+./venv/bin/python3 scripts/warm_archive_probe_cache.py --channel 1984.2          # dry run
+./venv/bin/python3 scripts/warm_archive_probe_cache.py --channel 1984.2 --apply
+```
+
+Allowlist rollout (LaunchAgent env, then bootout/bootstrap — kickstart does not reread
+plist env):
+
+```bash
+/usr/libexec/PlistBuddy -c "Add :EnvironmentVariables:STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS string 1984.2" \
+  ~/Library/LaunchAgents/com.streamtv.plist
+```
+
+Add channels one at a time after an Apple TV soak: Archive copy splices have a known
+black-freeze risk on some devices, which is why there is no wildcard.
 
 ## Operator verify
 
@@ -96,4 +145,5 @@ Logs to expect on success: `Archive.org probe retry ok … (cdn|ring)` and
 - Wiki: [Streaming-Resilience-Ops](../wiki/Streaming-Resilience-Ops.md) ·
   [Scripts-and-Tools](../wiki/Scripts-and-Tools.md)
 - Skill: `.cursor/skills/heal-stalled-ffmpeg-keepalive`
-- Lessons: **41**, **41b** (private `LESSONS_LEARNED.md`)
+- [PLEX_VIDEO_HOLD.md](PLEX_VIDEO_HOLD.md) — hold mux, YouTube + Archive wait-phase
+- Lessons: **41**, **41b**, **41c** (private `LESSONS_LEARNED.md`)

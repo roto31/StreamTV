@@ -27,7 +27,8 @@ Complete documentation for all StreamTV utility scripts and tools.
 | `scripts/heal_streamtv_ssd_cache.py` | Enforce media-cache ceiling (default 30 GiB) / free-floor (15 GiB) |
 | `scripts/install-streamtv-ssd-cache-heal-launchagent.sh` | Install `com.streamtv.ssd-cache-heal` (~120s) |
 | `scripts/heal_stalled_ffmpeg.py` | Lesson 41 Archive FFmpeg keepalive wedge (etime≥90s) |
-| `scripts/heal_keepalive_tunes.py` | Lesson 41b: keepalive-only `/auto/v*` → kill + soft-restart |
+| `scripts/heal_keepalive_tunes.py` | Lesson 41b: keepalive-only `/hdhomerun/auto/v*` → kill + soft-restart |
+| `scripts/warm_archive_probe_cache.py` | Lesson 41c: seed Archive probe sidecars for a channel (`--channel N --apply`) |
 | `scripts/install-stalled-ffmpeg-heal-launchagent.sh` | Install stall + keepalive heal LA (~120s) |
 | `scripts/probe_hdhr_hang.py` | Detect keepalive-only / stalled FFmpeg |
 | `scripts/deploy_soft.sh` | Soft-restart channel streams |

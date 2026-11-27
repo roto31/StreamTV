@@ -36,7 +36,7 @@ python3 check_python.py
 ```
 
 **What it checks:**
-- Python version (requires 3.8+)
+- Python version (requires 3.10+)
 - Python executable path
 - pip availability
 - Virtual environment status

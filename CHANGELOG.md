@@ -16,8 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Archive.org probe retry** — when the quick codec probe misses on large CDN files, StreamTV retries once (including a local ring buffer when available) before forcing a software encode, so verified H.264/AAC Archive items can remux instead of stalling Live TV on keepalives. See [Archive probe retry](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
 - **Keepalive tune heal** — periodic healer samples HDHomeRun channels; keepalive-only tunes trigger a soft channel restart. Stalled Archive FFmpeg processes are cleaned up sooner (about 90 seconds of idle CPU).
 - **Idle YouTube auto-warm** — with full-cache mode, idle channels keep the on-air YouTube window downloading so cold zaps reach READY without a manual pre-warm.
+- **Archive slow-open hold (opt-in)** — channels listed in `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` show real hold video immediately while very large Archive MP4s (index at the end of the file) open, then switch to the program. Codec probe results are cached on disk, and `scripts/warm_archive_probe_cache.py` pre-seeds them. See [Archive probe retry](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
 
 ### Changed
+- Archive.org inputs get a longer first-data budget (`STREAMTV_ARCHIVE_FIRST_CHUNK_SEC`, default 60 s) so slow-opening files are not stopped mid-open.
 - Streaming resilience / Architecture Mermaid diagrams document Archive probe escalation and the stall + keepalive heal LaunchAgent.
 
 ### Removed

@@ -17,7 +17,7 @@ Common issues encountered during StreamTV installation and their solutions.
 1. Download Python from [python.org](https://www.python.org/downloads/)
    - Choose the macOS installer for your architecture (Intel or Apple Silicon)
    - Run the installer and follow instructions
-   - Verify: `python3 --version` (should show 3.8+)
+   - Verify: `python3 --version` (should show 3.10+)
 
 2. Or use Homebrew:
    ```bash
@@ -34,13 +34,13 @@ Common issues encountered during StreamTV installation and their solutions.
 ### Python Version Too Old
 
 **Symptoms:**
-- Error: "Python 3.8+ required"
+- Error: "Python 3.10+ required"
 - Current version is 3.7 or earlier
 
 **Solutions:**
-1. Upgrade Python to 3.8 or later
+1. Upgrade Python to 3.10 or later
 2. Verify version: `python3 --version`
-3. If multiple Python versions installed, ensure `python3` points to 3.8+
+3. If multiple Python versions installed, ensure `python3` points to 3.10+
 
 ## FFmpeg Installation Issues
 

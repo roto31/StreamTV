@@ -37,6 +37,25 @@ flowchart LR
   Keep --> Heal["heal LA @ 120s"]
 ```
 
+## Non-faststart Archive slow open (Lesson 41c)
+
+Some multi-GB Archive MP4s keep the `moov` index at the file tail, so a cold open takes
+~40–55 s. Allowlisted channels (`STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS`, e.g. `1984.2`)
+show real hold video immediately and splice to the program once FFmpeg delivers. A probe
+sidecar cache keeps copy mode consistent, and Archive inputs get a 60 s first-chunk budget.
+
+```mermaid
+flowchart LR
+  Tune["Plex tune"] --> Hold["hold h264/aac < 1s"]
+  Tune --> Side["probe sidecar → copy"]
+  Side --> Open["FFmpeg opens tail moov ~40-55s"]
+  Open --> Splice["splice to program (no re-hold)"]
+  Hold --> Splice
+```
+
+Seed sidecars: `scripts/warm_archive_probe_cache.py --channel N --apply`. Details:
+[Layer C](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-c--non-faststart-slow-open-lesson-41c).
+
 ## Troubleshooting UI
 
 Settings → **Troubleshooting** (Web UI + macOS app) lists public-safe scripts with hover help — see [Scripts-and-Tools](Scripts-and-Tools).
