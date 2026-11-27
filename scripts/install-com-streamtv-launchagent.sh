@@ -59,6 +59,16 @@ fi
 
 mkdir -p "${LOG_DIR}" "${HOME}/Library/LaunchAgents"
 
+# Optional passthrough: Archive wait-phase video hold allowlist (Lesson 41c).
+ENV_BLOCK=""
+if [[ -n "${STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS:-}" ]]; then
+  ENV_BLOCK="  <key>EnvironmentVariables</key>
+  <dict>
+    <key>STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS</key>
+    <string>${STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS}</string>
+  </dict>"
+fi
+
 cat >"${PLIST_PATH}" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -82,6 +92,7 @@ cat >"${PLIST_PATH}" <<PLIST
   <string>${LOG_DIR}/streamtv.stdout.log</string>
   <key>StandardErrorPath</key>
   <string>${LOG_DIR}/streamtv.stderr.log</string>
+${ENV_BLOCK}
 </dict>
 </plist>
 PLIST

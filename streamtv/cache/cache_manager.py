@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from ..config import config
 from ..database.models import CachedMedia, CacheStatus, MediaItem, StreamSource
+from ..utils.clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -81,13 +82,13 @@ class CacheManager:
                 return None
 
             # TTL check
-            if row.expires_at and datetime.utcnow() > row.expires_at:
+            if row.expires_at and utc_now_naive() > row.expires_at:
                 logger.info(f"Cache TTL expired for {source_id}, removing.")
                 self._evict_row(db, row)
                 return None
 
             # Record hit
-            row.accessed_at = datetime.utcnow()
+            row.accessed_at = utc_now_naive()
             row.hit_count = (row.hit_count or 0) + 1
             if str(path) != row.local_path:
                 row.local_path = str(path)
@@ -286,7 +287,7 @@ class CacheManager:
                 .filter(CachedMedia.source_id == media_item.source_id)
                 .first()
             )
-            expires_at = datetime.utcnow() + timedelta(
+            expires_at = utc_now_naive() + timedelta(
                 hours=ttl_hours or self.default_ttl_hours
             )
             if row is None:
@@ -358,7 +359,7 @@ class CacheManager:
             size = local_path.stat().st_size if local_path.exists() else 0
             row.status = CacheStatus.READY
             row.size_bytes = size
-            row.accessed_at = datetime.utcnow()
+            row.accessed_at = utc_now_naive()
             db.commit()
             logger.info(
                 f"Cache READY: {source_id} → {local_path} "
@@ -456,7 +457,7 @@ class CacheManager:
                         local_path=str(placeholder_path),
                         status=CacheStatus.QUEUED,
                         size_bytes=0,
-                        expires_at=datetime.utcnow()
+                        expires_at=utc_now_naive()
                         + timedelta(hours=self.default_ttl_hours),
                     )
                 )
@@ -527,7 +528,7 @@ class CacheManager:
             expired = (
                 db.query(CachedMedia)
                 .filter(
-                    CachedMedia.expires_at < datetime.utcnow(),
+                    CachedMedia.expires_at < utc_now_naive(),
                     CachedMedia.status == CacheStatus.READY,
                 )
                 .all()
@@ -617,7 +618,7 @@ class CacheManager:
                 return
             to_free = (current + needed_bytes) - self.max_size_bytes
             freed = 0
-            grace_cutoff = datetime.utcnow() - timedelta(minutes=20)
+            grace_cutoff = utc_now_naive() - timedelta(minutes=20)
             rows = (
                 db.query(CachedMedia)
                 .filter(CachedMedia.status == CacheStatus.READY)

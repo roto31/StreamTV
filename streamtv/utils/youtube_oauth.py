@@ -124,7 +124,7 @@ class YouTubeOAuth:
         
         # Store tokens for later use
         tokens_file = output_path.parent / "youtube_oauth_tokens.json"
-        with open(tokens_file, 'w') as f:
+        with open(tokens_file, 'w', encoding='utf-8') as f:
             json.dump(tokens, f, indent=2)
         
         logger.info(f"OAuth tokens stored at {tokens_file}")

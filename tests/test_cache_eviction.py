@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 
 from streamtv.cache.cache_manager import CacheManager
 from streamtv.database.models import CachedMedia, CacheStatus, StreamSource
+from streamtv.utils.clock import utc_now_naive
 
 
 @pytest.fixture()
@@ -45,7 +45,7 @@ def _add_ready_row(
                 local_path=str(path),
                 size_bytes=path.stat().st_size,
                 status=status,
-                accessed_at=datetime.utcnow(),
+                accessed_at=utc_now_naive(),
             )
         )
         db.commit()

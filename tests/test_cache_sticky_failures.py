@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -10,6 +10,7 @@ import pytest
 
 from streamtv.cache.cache_manager import CacheManager
 from streamtv.database.models import CacheStatus, CachedMedia, MediaItem, StreamSource
+from streamtv.utils.clock import utc_now_naive
 
 
 @pytest.fixture()
@@ -62,7 +63,7 @@ def test_queue_allows_rate_limited_after_cooldown(cache_mgr: CacheManager) -> No
     row = MagicMock(spec=CachedMedia)
     row.status = CacheStatus.FAILED
     row.failure_class = "rate_limited"
-    row.retry_after = datetime.utcnow() - timedelta(seconds=1)
+    row.retry_after = utc_now_naive() - timedelta(seconds=1)
     row.error_message = "429"
 
     db = MagicMock()
@@ -80,7 +81,7 @@ def test_queue_blocks_rate_limited_before_cooldown(cache_mgr: CacheManager) -> N
     row = MagicMock(spec=CachedMedia)
     row.status = CacheStatus.FAILED
     row.failure_class = "rate_limited"
-    row.retry_after = datetime.utcnow() + timedelta(minutes=10)
+    row.retry_after = utc_now_naive() + timedelta(minutes=10)
 
     db = MagicMock()
     db.query.return_value.filter.return_value.first.return_value = row

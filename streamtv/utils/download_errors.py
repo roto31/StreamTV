@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional
 
+from .clock import utc_now_naive
+
 # Sticky until operator POST /api/cache/items/{id}/retry
 TERMINAL_CLASSES = frozenset({"auth_required", "unavailable", "no_playable_file"})
 # May auto-requeue after retry_after
@@ -78,7 +80,7 @@ def classify_download_error(
     primarily string- and status-based so both downloaders share one path.
     """
     text = (message or "").strip() or "Download failed"
-    now = datetime.utcnow()
+    now = utc_now_naive()
 
     if http_status == 429 or _RATE_LIMIT.search(text):
         return ClassifiedDownloadError(
@@ -133,7 +135,7 @@ def may_auto_requeue(
     """True when a FAILED row may be moved back to QUEUED without operator retry."""
     if not failure_class or failure_class not in RETRYABLE_CLASSES:
         return False
-    clock = now or datetime.utcnow()
+    clock = now or utc_now_naive()
     if retry_after is not None and retry_after > clock:
         return False
     return True

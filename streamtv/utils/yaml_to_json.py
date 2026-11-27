@@ -26,7 +26,7 @@ def yaml_to_json(file_path: Path) -> Dict[str, Any]:
     if not file_path.exists():
         raise FileNotFoundError(f"YAML file not found: {file_path}")
     
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         yaml_data = yaml.safe_load(f)
     
     if yaml_data is None:
@@ -73,7 +73,7 @@ def json_to_yaml(data: Dict[str, Any], file_path: Optional[Path] = None) -> str:
     yaml_string = yaml.dump(data, default_flow_style=False, sort_keys=False, allow_unicode=True)
     
     if file_path:
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             f.write(yaml_string)
         logger.info(f"Converted JSON to YAML and saved to {file_path}")
     

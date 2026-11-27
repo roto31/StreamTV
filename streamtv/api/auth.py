@@ -229,7 +229,7 @@ async def youtube_set_cookies(request: Request, file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
         
         # Validate it's a valid cookies file (basic check)
-        with open(cookies_path, "r") as f:
+        with open(cookies_path, "r", encoding="utf-8") as f:
             content = f.read()
             if "youtube.com" not in content.lower() and "# Netscape" not in content:
                 cookies_path.unlink()  # Delete invalid file
@@ -276,7 +276,7 @@ async def archive_set_cookies(request: Request, file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
         
         # Validate it's a valid cookies file (basic check)
-        with open(cookies_path, "r") as f:
+        with open(cookies_path, "r", encoding="utf-8") as f:
             content = f.read()
             if "archive.org" not in content.lower() and "# Netscape" not in content:
                 cookies_path.unlink()  # Delete invalid file
@@ -322,7 +322,7 @@ async def archive_logout(request: Request):
         
         # Directly manipulate YAML file to avoid validation issues
         config_path = Path(config._config_path)
-        with open(config_path, 'r') as f:
+        with open(config_path, 'r', encoding='utf-8') as f:
             yaml_data = yaml.safe_load(f) or {}
         
         # Update archive_org section
@@ -334,7 +334,7 @@ async def archive_logout(request: Request):
         yaml_data["archive_org"]["use_authentication"] = False
         
         # Write back to file
-        with open(config_path, 'w') as f:
+        with open(config_path, 'w', encoding='utf-8') as f:
             yaml.safe_dump(yaml_data, f, sort_keys=False, default_flow_style=False, allow_unicode=True)
         
         # Reload config
@@ -595,7 +595,7 @@ async def youtube_oauth_callback(request: Request, code: Optional[str] = None, s
             tokens_file = Path("data/cookies/youtube_oauth_tokens.json")
             tokens_file.parent.mkdir(parents=True, exist_ok=True)
             import json
-            with open(tokens_file, 'w') as f:
+            with open(tokens_file, 'w', encoding='utf-8') as f:
                 json.dump(tokens, f, indent=2)
             
             logger.info("OAuth tokens received. Note: yt-dlp OAuth integration requires additional configuration.")

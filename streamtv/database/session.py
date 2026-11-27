@@ -1,8 +1,7 @@
 """Database session management"""
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from typing import Generator
 
 from ..config import config

@@ -2,10 +2,10 @@
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text, Float, Enum as SQLEnum, event
 from sqlalchemy.orm import relationship, reconstructor
-from datetime import datetime
 from enum import Enum
 
 from .session import Base
+from ..utils.clock import utc_now_naive
 
 
 class StreamSource(str, Enum):
@@ -94,8 +94,8 @@ class Channel(Base):
     # Conversion to enum handled by @reconstructor method
     playout_mode = Column(String, default=PlayoutMode.CONTINUOUS.value, nullable=False)  # Continuous or on-demand
     epg_sync_class = Column(String, nullable=True)  # A | B | C — EPG sync taxonomy
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # ErsatzTV-compatible settings
     ffmpeg_profile_id = Column(Integer, ForeignKey("ffmpeg_profiles.id"), nullable=True)
@@ -248,8 +248,8 @@ class MediaItem(Base):
     upload_date = Column(String, nullable=True)
     view_count = Column(Integer, nullable=True)
     meta_data = Column(Text, nullable=True)  # JSON string for additional metadata (renamed from 'metadata' to avoid SQLAlchemy conflict)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     playlist_items = relationship("PlaylistItem", back_populates="media_item", cascade="all, delete-orphan")
@@ -271,8 +271,8 @@ class Collection(Base):
     description = Column(Text, nullable=True)
     collection_type = Column(SQLEnum(CollectionTypeEnum), default=CollectionTypeEnum.MANUAL, nullable=False)  # manual, smart, multi
     search_query = Column(Text, nullable=True)  # For smart collections - stores the search query
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     items = relationship("CollectionItem", back_populates="collection", cascade="all, delete-orphan")
@@ -286,7 +286,7 @@ class CollectionItem(Base):
     collection_id = Column(Integer, ForeignKey("collections.id"), nullable=False)
     media_item_id = Column(Integer, ForeignKey("media_items.id"), nullable=False)
     order = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
     
     # Relationships
     collection = relationship("Collection", back_populates="items")
@@ -301,8 +301,8 @@ class Playlist(Base):
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     channel_id = Column(Integer, ForeignKey("channels.id"), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     channel = relationship("Channel", back_populates="playlists")
@@ -318,7 +318,7 @@ class PlaylistItem(Base):
     media_item_id = Column(Integer, ForeignKey("media_items.id"), nullable=False)
     order = Column(Integer, default=0)
     start_time = Column(DateTime, nullable=True)  # For scheduled playback
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
     
     # Relationships
     playlist = relationship("Playlist", back_populates="items")
@@ -405,8 +405,8 @@ class Schedule(Base):
     end_time = Column(DateTime, nullable=True)
     repeat = Column(Boolean, default=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     channel = relationship("Channel", back_populates="schedules")
@@ -473,8 +473,8 @@ class ScheduleItem(Base):
     preferred_subtitle_language = Column(String, nullable=True)
     subtitle_mode = Column(String, nullable=True)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     schedule = relationship("Schedule", back_populates="items")
@@ -509,8 +509,8 @@ class ChannelPlaybackPosition(Base):
     channel = relationship("Channel", backref="playback_position")
     last_item = relationship("MediaItem")
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
 
 # Hardware Acceleration Enums
@@ -619,8 +619,8 @@ class Resolution(Base):
     width = Column(Integer, nullable=False)
     height = Column(Integer, nullable=False)
     is_custom = Column(Boolean, default=False, nullable=False)  # True for user-created resolutions
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     ffmpeg_profiles = relationship("FFmpegProfile", back_populates="resolution")
@@ -667,8 +667,8 @@ class FFmpegProfile(Base):
     normalize_framerate = Column(Boolean, default=False, nullable=False)
     deinterlace_video = Column(Boolean, nullable=True)  # None = auto-detect
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     resolution = relationship("Resolution", back_populates="ffmpeg_profiles")
@@ -698,8 +698,8 @@ class Watermark(Base):
     opacity_expression = Column(String, nullable=True)  # For opacity expression mode
     z_index = Column(Integer, default=0, nullable=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
     
     # Relationships
     channels = relationship("Channel", back_populates="watermark")
@@ -740,8 +740,8 @@ class CachedMedia(Base):
     expires_at = Column(DateTime, nullable=True, index=True)
     accessed_at = Column(DateTime, nullable=True)
     hit_count = Column(Integer, default=0, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
     updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime, default=utc_now_naive, onupdate=utc_now_naive
     )
     media_item = relationship("MediaItem", backref="cache_entry")

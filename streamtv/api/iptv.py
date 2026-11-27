@@ -40,6 +40,7 @@ from ..epg_sync_class import (
     resolve_epg_sync_class,
 )
 from ..scheduling.media_format import mp4_only_for_content
+from ..utils.clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -446,7 +447,7 @@ async def get_epg(
         base_url = resolve_hdhomerun_base_url(request)
         
         # Generate EPG based on configured build days
-        now = datetime.utcnow()
+        now = utc_now_naive()
         build_days = config.playout.build_days
         end_time = now + timedelta(days=build_days)
         
@@ -1173,7 +1174,7 @@ async def get_hls_stream(
     # - Use current UTC time to find position within the repeating schedule
     # - Start the HLS playlist from the item that should be playing now
     #
-    now_utc = datetime.utcnow()
+    now_utc = utc_now_naive()
     try:
         creation_date_utc = channel.created_at.replace(tzinfo=None)
     except Exception:

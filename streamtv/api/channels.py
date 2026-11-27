@@ -12,6 +12,7 @@ import logging
 from ..database import get_db, Channel, Playlist, PlaylistItem
 from ..database.models import PlayoutMode, ChannelPlaybackPosition
 from ..api.schemas import ChannelCreate, ChannelUpdate, ChannelResponse
+from ..utils.clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -179,7 +180,7 @@ def create_channel(channel: ChannelCreate, db: Session = Depends(get_db)):
         if channel.mirror_source_channel_id == channel.id if hasattr(channel, 'id') else False:
             raise HTTPException(status_code=400, detail="Channel cannot mirror itself")
     
-    db_channel = Channel(**channel.dict())
+    db_channel = Channel(**channel.model_dump())
     db.add(db_channel)
     db.commit()
     db.refresh(db_channel)
@@ -199,7 +200,7 @@ def update_channel(channel_id: int, channel_update: ChannelUpdate, db: Session =
             detail="Channel is defined in YAML. Edit the YAML file and re-import."
         )
     
-    update_data = channel_update.dict(exclude_unset=True)
+    update_data = channel_update.model_dump(exclude_unset=True)
     
     # Validate FFmpeg profile if being updated
     if "ffmpeg_profile_id" in update_data and update_data["ffmpeg_profile_id"] is not None:
@@ -318,7 +319,7 @@ def save_playback_position(
     
     playback_pos.last_item_index = position.item_index
     playback_pos.last_item_media_id = position.media_id
-    playback_pos.last_played_at = datetime.utcnow()
+    playback_pos.last_played_at = utc_now_naive()
     playback_pos.total_items_watched = position.item_index  # Track total items watched
     
     db.commit()
@@ -407,7 +408,7 @@ def _apply_playout_reset(
         playout_anchor_for_item_index,
     )
 
-    anchor = datetime.utcnow()
+    anchor = utc_now_naive()
     if at:
         try:
             anchor = datetime.fromisoformat(at.replace("Z", ""))
@@ -461,7 +462,7 @@ def _apply_playout_reset(
     playback_pos.playout_start_time = start
     playback_pos.last_item_index = resolved_index
     playback_pos.last_item_media_id = None
-    playback_pos.last_position_update = datetime.utcnow()
+    playback_pos.last_position_update = utc_now_naive()
     playback_pos.last_played_at = None
     db.commit()
     return start, resolved_index

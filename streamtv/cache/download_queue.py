@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from ..config import config
 from ..database.models import CachedMedia, CacheStatus, MediaItem, StreamSource
+from ..utils.clock import utc_now_naive
 from .cache_manager import CacheManager
 from .archive_org_downloader import ArchiveOrgDownloader
 from .archive_org_http_downloader import ArchiveOrgHttpDownloader
@@ -231,7 +232,7 @@ class DownloadQueue:
 
     async def prioritize(self, media_item: MediaItem) -> None:
         """Move a queued item to the front of the download batch."""
-        from datetime import datetime, timedelta
+        from datetime import timedelta
 
         await self.enqueue(media_item)
         db = self.db_session_factory()
@@ -242,7 +243,7 @@ class DownloadQueue:
                 .first()
             )
             if row and row.status == CacheStatus.QUEUED:
-                row.created_at = datetime.utcnow() - timedelta(days=3650)
+                row.created_at = utc_now_naive() - timedelta(days=3650)
                 db.commit()
         finally:
             db.close()

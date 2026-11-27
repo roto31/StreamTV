@@ -112,7 +112,7 @@ class YouTubeDownloader:
             return existing
 
         await self._acquire_rate_limit_slot()
-        return await asyncio.get_event_loop().run_in_executor(
+        return await asyncio.get_running_loop().run_in_executor(
             None, self._download_sync, video_id, url, fmt
         )
 
@@ -272,7 +272,7 @@ class YouTubeDownloader:
             playlistend=max_items,
         )
         try:
-            info = await asyncio.get_event_loop().run_in_executor(
+            info = await asyncio.get_running_loop().run_in_executor(
                 None,
                 lambda: self._extract_flat(playlist_url, ydl_opts),
             )

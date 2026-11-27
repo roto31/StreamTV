@@ -51,7 +51,7 @@ def create_ffmpeg_profile(profile: FFmpegProfileCreate, db: Session = Depends(ge
     if existing:
         raise HTTPException(status_code=400, detail="FFmpeg profile with this name already exists")
 
-    data = profile.dict()
+    data = profile.model_dump()
     resolution = db.query(Resolution).filter(Resolution.id == data.get("resolution_id")).first()
     if not resolution:
         data["resolution_id"] = _default_resolution_id(db)
@@ -83,7 +83,7 @@ def update_ffmpeg_profile(profile_id: int, profile_update: FFmpegProfileUpdate, 
             raise HTTPException(status_code=400, detail="Resolution not found")
     
     # Update fields
-    for field, value in profile_update.dict(exclude_unset=True).items():
+    for field, value in profile_update.model_dump(exclude_unset=True).items():
         setattr(profile, field, value)
     
     db.commit()

@@ -428,10 +428,12 @@ if config.hdhomerun.enabled:
         Default: no YouTube wait-phase hold (was causing Apple TV spinner/black
         while cold full-cache downloads deferred). Opt-in:
         STREAMTV_PLEX_VIDEO_HOLD_YOUTUBE=1. Full native re-hold remains
-        STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1. Archive CDN-first stays unwrapped.
+        STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1. Archive CDN-first stays unwrapped
+        unless allowlisted in STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS.
         """
         from .hdhomerun.api import stream_channel
         from .tuners.video_hold import (
+            maybe_wrap_archive_wait_hold,
             maybe_wrap_mpegts_hold,
             maybe_wrap_youtube_wait_hold,
         )
@@ -441,7 +443,10 @@ if config.hdhomerun.enabled:
         native = os.environ.get("STREAMTV_PLEX_VIDEO_HOLD_NATIVE", "0").strip().lower()
         if native in ("1", "true", "yes", "on"):
             return maybe_wrap_mpegts_hold(response)
-        return maybe_wrap_youtube_wait_hold(response, channel_number, db)
+        wrapped = maybe_wrap_youtube_wait_hold(response, channel_number, db)
+        if wrapped is not response:
+            return wrapped
+        return maybe_wrap_archive_wait_hold(response, channel_number)
 
 # Setup templates with auto-escaping enabled for XSS protection
 templates_dir = Path(__file__).parent / "templates"
@@ -823,11 +828,11 @@ async def logs_page(request: Request):
 @app.get("/health")
 async def health(request: Request):
     """Simple health check endpoint - use /api/health/detailed for comprehensive check"""
-    from datetime import datetime
+    from .utils.clock import utc_now_naive
     discovery = getattr(request.app.state, "hdhr_discovery", None)
     payload = {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": utc_now_naive().isoformat(),
         "device_id": config.hdhomerun.device_id,
     }
     if discovery is not None:

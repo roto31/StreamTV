@@ -18,6 +18,7 @@ from streamtv.ffmpeg.constants import (
     YOUTUBE_URL_TTL_VOD_SECONDS,
     youtube_stream_selector,
 )
+from streamtv.utils.clock import utc_now_naive
 from streamtv.youtube.ydl_opts import youtube_ydl_opts
 
 from .youtube_api_client import YouTubeAPIClient
@@ -172,7 +173,7 @@ class YouTubeAdapter:
         """If YouTube session is rate-limited, fail fast — never block the event loop for an hour."""
         if not YouTubeAdapter._shared_rate_limited_until:
             return
-        now = datetime.utcnow()
+        now = utc_now_naive()
         if now >= YouTubeAdapter._shared_rate_limited_until:
             YouTubeAdapter._shared_rate_limited_until = None
             return
@@ -254,7 +255,7 @@ class YouTubeAdapter:
         await self._apply_request_delay()
         
         try:
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
             info = await loop.run_in_executor(self._executor, self._get_video_info_sync, url)
             return info
         except DownloadError as e:
@@ -284,7 +285,7 @@ class YouTubeAdapter:
             is_rate_limited = any(indicator in error_msg.lower() for indicator in rate_limit_indicators)
             
             if is_rate_limited:
-                YouTubeAdapter._shared_rate_limited_until = datetime.utcnow() + timedelta(
+                YouTubeAdapter._shared_rate_limited_until = utc_now_naive() + timedelta(
                     seconds=self.rate_limit_delay
                 )
                 logger.error(
@@ -329,7 +330,7 @@ class YouTubeAdapter:
             is_rate_limited = any(indicator in error_msg.lower() for indicator in rate_limit_indicators)
             
             if is_rate_limited:
-                YouTubeAdapter._shared_rate_limited_until = datetime.utcnow() + timedelta(
+                YouTubeAdapter._shared_rate_limited_until = utc_now_naive() + timedelta(
                     seconds=self.rate_limit_delay
                 )
                 logger.error(
@@ -524,7 +525,7 @@ class YouTubeAdapter:
         executor = self._tune_executor if tune_priority else self._executor
         
         try:
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
             stream_url = await asyncio.wait_for(
                 loop.run_in_executor(
                     executor,
@@ -568,7 +569,7 @@ class YouTubeAdapter:
                            not is_rate_limited and 'try again later' not in error_msg.lower()
             
             if is_rate_limited:
-                YouTubeAdapter._shared_rate_limited_until = datetime.utcnow() + timedelta(
+                YouTubeAdapter._shared_rate_limited_until = utc_now_naive() + timedelta(
                     seconds=self.rate_limit_delay
                 )
                 logger.error(
@@ -606,7 +607,7 @@ class YouTubeAdapter:
                 # Try one more time with a very permissive format
                 try:
                     logger.debug(f"Retrying with permissive stream selector for {url}")
-                    loop = asyncio.get_event_loop()
+                    loop = asyncio.get_running_loop()
                     stream_url = await asyncio.wait_for(
                         loop.run_in_executor(
                             executor,

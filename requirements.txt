@@ -1,11 +1,12 @@
 # StreamTV Secure Dependencies
 # Updated to latest secure versions compatible with Python 3.10+ (July 2026)
+# Python 3.14 / 3.15: every pin installs from wheels (--only-binary=:all:), verified Nov 2026
 # Addresses all known security vulnerabilities with access to latest package versions
 
 # Core Framework
 fastapi==0.139.0          # Supports patched Starlette 1.x releases
 uvicorn[standard]==0.40.0 # Latest version (requires Python 3.10+) - fixes 3+ CVEs
-pydantic==2.12.5          # Latest version (requires Python 3.9+) - fixes 1+ CVE
+pydantic==2.14.4          # pydantic-core 2.50.5 ships cp310–cp315 wheels (2.12.x core has no cp315)
 pydantic-settings==2.14.2 # Fixes GHSA-4xgf-cpjx-pc3j
 
 # Database
@@ -29,15 +30,14 @@ passlib[bcrypt]==1.7.4    # Current version (no updates available)
 webauthn>=2.1.0           # WebAuthn/Passkey support (required for passkey auth)
 
 # XML/HTML Processing
-lxml==6.1.1               # Fixes CVE-2026-41066
+lxml==6.1.3               # Fixes CVE-2026-41066; first patch with cp315 wheels
 
 # Utilities
 aiofiles==25.1.0          # Latest version (requires Python 3.9+)
-pytz==2025.2              # Latest version (Python 3.8+ compatible)
 schedule==1.2.2           # Latest version (Python 3.7+ compatible)
 jsonschema==4.25.1        # Latest version (Python 3.8+ compatible) - compatible with jsonschema-specifications
 jsonschema-specifications==2024.10.1  # Version with all schema drafts including draft-04
-pyyaml==6.0.3             # Latest version (Python 3.8+ compatible) - fixes 1 CVE
+pyyaml==6.0.4             # Fixes 1 CVE; first patch with cp315 wheels
 slowapi==0.1.9            # Current version (no updates available)
 
 # Security Auditing (Development)
@@ -65,12 +65,13 @@ urllib3==2.7.0            # Fixes CVE-2026-44431 and CVE-2026-44432
 # - All dependencies updated to latest secure versions compatible with Python 3.10+
 # - yt-dlp floor updated to 2026.8.19 for visionos client (Issue 73; was 2026.7.4)
 # - FastAPI, Uvicorn, and Pydantic updated to latest versions with security patches
-# - LXML updated to 6.1.1 to address XML parsing vulnerabilities
+# - LXML updated to 6.1.3 (XML parsing CVE fix + Python 3.15 wheels)
 # - SQLAlchemy updated to 2.0.45 (latest, supports Python 3.7+)
 # - httpx updated to 0.28.1 (latest, supports Python 3.8+)
 # - Jinja2 updated to 3.1.6 (latest, supports Python 3.7+)
-# - PyYAML updated to 6.0.3 (latest, supports Python 3.8+)
-# - pytz updated to 2025.2 (latest)
+# - PyYAML updated to 6.0.4 (Python 3.15 wheels)
+# - Pydantic updated to 2.14.4 (pydantic-core with Python 3.15 wheels)
+# - pytz removed (unused; EPG uses stdlib zoneinfo)
 # - python-jose updated to 3.5.0 (latest) - fixes CVE-2024-33663, CVE-2024-33664
 # - pip-audit added for automated security scanning
 # - Regular updates recommended (monthly security review)

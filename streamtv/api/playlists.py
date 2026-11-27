@@ -43,7 +43,7 @@ def get_playlist_items(playlist_id: int, db: Session = Depends(get_db)):
 @router.post("", response_model=PlaylistResponse, status_code=status.HTTP_201_CREATED)
 def create_playlist(playlist: PlaylistCreate, db: Session = Depends(get_db)):
     """Create a new playlist"""
-    db_playlist = Playlist(**playlist.dict())
+    db_playlist = Playlist(**playlist.model_dump())
     db.add(db_playlist)
     db.commit()
     db.refresh(db_playlist)

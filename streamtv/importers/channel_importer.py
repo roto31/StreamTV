@@ -599,7 +599,7 @@ class ChannelImporter:
                         + "\n  ".join(collisions)
                     )
         
-        with open(yaml_path, 'r') as f:
+        with open(yaml_path, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
         
         # Initialize database

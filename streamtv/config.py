@@ -4,10 +4,7 @@ from pathlib import Path
 from typing import Optional, Dict, Type, List
 import os
 import logging
-try:
-    from pydantic_settings import BaseSettings
-except ImportError:
-    from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel, Field
 import yaml
 
@@ -50,9 +47,7 @@ class YouTubeConfig(BaseSettings):
     js_runtime: Optional[str] = None
     remote_components: Optional[str] = None
 
-    class Config:
-        env_prefix = "STREAMTV_YOUTUBE_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_YOUTUBE_", case_sensitive=False)
 
 
 class ArchiveOrgConfig(BaseSettings):
@@ -85,9 +80,7 @@ class SecurityConfig(BaseSettings):
     access_token: Optional[str] = None  # Can be set via STREAMTV_SECURITY_ACCESS_TOKEN env var
     allow_local_path_import: bool = False  # POST /api/import/channels/yaml/path (operator-only)
 
-    class Config:
-        env_prefix = "STREAMTV_SECURITY_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_SECURITY_", case_sensitive=False)
 
 
 class LoggingConfig(BaseSettings):
@@ -144,9 +137,7 @@ class PlayoutConfig(BaseSettings):
     )
     epg_sync_class_fallback: Dict[str, str] = Field(default_factory=dict)
 
-    class Config:
-        env_prefix = "STREAMTV_PLAYOUT_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_PLAYOUT_", case_sensitive=False)
 
 
 class PlexConfig(BaseSettings):
@@ -164,9 +155,7 @@ class PlexConfig(BaseSettings):
     dvr_id: Optional[str] = None  # Plex DVR key; auto-discovered when unset
     logs_path: Optional[str] = None  # Path to Plex Media Server logs directory (auto-detected if not set)
     
-    class Config:
-        env_prefix = "STREAMTV_PLEX_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_PLEX_", case_sensitive=False)
 
 
 class MetadataConfig(BaseSettings):
@@ -184,9 +173,7 @@ class MetadataConfig(BaseSettings):
     enable_tmdb: bool = True  # Use TMDB (for movies)
     cache_duration: int = 86400  # Cache duration in seconds (24 hours)
     
-    class Config:
-        env_prefix = "STREAMTV_METADATA_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_METADATA_", case_sensitive=False)
 
 
 
@@ -199,9 +186,7 @@ class DownloadStrategyConfig(BaseSettings):
     youtube_rate_limit_cooldown_seconds: float = 3600.0
     scheduled_downloads: list = []
 
-    class Config:
-        env_prefix = "STREAMTV_DOWNLOAD_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_DOWNLOAD_", case_sensitive=False)
 
 
 class CacheConfig(BaseSettings):
@@ -245,9 +230,7 @@ class CacheConfig(BaseSettings):
     evict_off_schedule: bool = True
     download_strategy: DownloadStrategyConfig = DownloadStrategyConfig()
 
-    class Config:
-        env_prefix = "STREAMTV_CACHE_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_CACHE_", case_sensitive=False)
 
 
 class BackupConfig(BaseSettings):
@@ -258,9 +241,7 @@ class BackupConfig(BaseSettings):
     retain_count: int = 7
     include_secrets: bool = True
 
-    class Config:
-        env_prefix = "STREAMTV_BACKUP_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_BACKUP_", case_sensitive=False)
 
 
 class TunerManagerConfig(BaseModel):
@@ -305,7 +286,7 @@ class Config:
             config_path = Path("config.yaml")
         
         if config_path.exists():
-            with open(config_path, 'r') as f:
+            with open(config_path, 'r', encoding='utf-8') as f:
                 config_data = yaml.safe_load(f)
         else:
             config_data = {}
@@ -463,7 +444,7 @@ class Config:
             else:
                 section_data[key] = value
         
-        with open(self._config_path, "w") as f:
+        with open(self._config_path, "w", encoding="utf-8") as f:
             yaml.safe_dump(self._config_data, f, sort_keys=False, default_flow_style=False, allow_unicode=True)
         
         section_class = self._section_classes[section]
@@ -492,7 +473,7 @@ class Config:
         """Re-read config.yaml into memory (used after backup restore)."""
         path = self._config_path
         if path.exists():
-            with open(path, "r") as f:
+            with open(path, "r", encoding="utf-8") as f:
                 config_data = yaml.safe_load(f) or {}
         else:
             config_data = {}

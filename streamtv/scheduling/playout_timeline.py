@@ -7,6 +7,8 @@ import zoneinfo
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
+from ..utils.clock import utc_now_naive
+
 if TYPE_CHECKING:
     from .parser import ParsedSchedule
 
@@ -65,7 +67,7 @@ def compute_continuous_playout_position(
 ) -> Dict[str, Any]:
     """Mirror channel_manager._get_current_position() for EPG alignment."""
     if now is None:
-        now = datetime.utcnow()
+        now = utc_now_naive()
 
     if not schedule_items:
         return {
@@ -146,7 +148,7 @@ def playout_anchor_for_item_index(
     anchor: Optional[datetime] = None,
 ) -> tuple[datetime, int]:
     """Return (playout_start_time, last_item_index) so the guide opens on item_index."""
-    anchor = anchor or datetime.utcnow()
+    anchor = anchor or utc_now_naive()
     if not schedule_items:
         return anchor, 0
     idx = max(0, min(int(item_index), len(schedule_items) - 1))
@@ -190,7 +192,7 @@ def load_channel_stream_schedule(channel: Any, db_session: Any) -> List[Dict[str
         raise ValueError(f"No schedule file for channel {channel.number}")
 
     parsed = ScheduleParser.parse_file(schedule_file, schedule_file.parent)
-    anchor = datetime.utcnow()
+    anchor = utc_now_naive()
     engine = ScheduleEngine(
         db_session,
         seed=playout_shuffle_seed(str(channel.number), anchor, 0),
@@ -364,7 +366,7 @@ def resolve_live_epg_air_position(
 ) -> Dict[str, Any]:
     """Wall-clock guide position, adjusted to the item actually on-air when playout lags."""
     if now is None:
-        now = datetime.utcnow()
+        now = utc_now_naive()
     if timeline_items:
         position = resolve_stream_playout_position(
             schedule_items, timeline_items, playout_start_time, now
@@ -472,7 +474,7 @@ def _aware_dt(dt: datetime) -> datetime:
 
 
 def _naive_utc(dt: datetime) -> datetime:
-    """Normalize to naive UTC (matches datetime.utcnow() in EPG builder)."""
+    """Normalize to naive UTC (matches utc_now_naive() in EPG builder)."""
     return _aware_dt(dt).astimezone(timezone.utc).replace(tzinfo=None)
 
 

@@ -178,8 +178,7 @@ class MediaItemResponse(MediaItemBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Collection Schemas
@@ -200,8 +199,7 @@ class CollectionItemResponse(BaseModel):
     order: int
     media_item: Optional[MediaItemResponse] = None
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CollectionResponse(CollectionBase):
@@ -210,9 +208,8 @@ class CollectionResponse(CollectionBase):
     updated_at: datetime
     items: List[CollectionItemResponse] = []
     
-    class Config:
-        from_attributes = True
-        # Pydantic will automatically serialize enum values to their string values
+    # Pydantic will automatically serialize enum values to their string values
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Playlist Schemas
@@ -232,8 +229,7 @@ class PlaylistItemResponse(BaseModel):
     order: int
     media_item: Optional[MediaItemResponse] = None
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PlaylistResponse(PlaylistBase):
@@ -242,8 +238,7 @@ class PlaylistResponse(PlaylistBase):
     updated_at: datetime
     items: List[PlaylistItemResponse] = []
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Schedule Schemas
@@ -281,8 +276,7 @@ class ScheduleResponse(ScheduleBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Schedule Item Schemas
@@ -389,8 +383,7 @@ class ScheduleItemResponse(ScheduleItemBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Settings Schemas
@@ -434,8 +427,7 @@ class FFmpegSettingsResponse(BaseModel):
     pbs_video_encoder: Optional[str]
     plex_video_encoder: Optional[str]
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # HDHomeRun Settings Schemas
@@ -458,8 +450,7 @@ class HDHomeRunSettingsResponse(BaseModel):
     tuner_count: int
     enable_ssdp: bool
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Playout Settings Schemas
@@ -474,8 +465,7 @@ class PlayoutSettingsUpdate(PlayoutSettingsBase):
 class PlayoutSettingsResponse(BaseModel):
     build_days: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Plex Settings Schemas
@@ -496,8 +486,7 @@ class PlexSettingsResponse(BaseModel):
     token: Optional[str]
     use_for_epg: bool
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Resolution Schemas
@@ -524,8 +513,7 @@ class ResolutionResponse(ResolutionBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # FFmpeg Profile Schemas
@@ -618,8 +606,7 @@ class FFmpegProfileResponse(FFmpegProfileBase):
     updated_at: datetime
     resolution: Optional[ResolutionResponse] = None
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class HardwareAccelerationResponse(BaseModel):
@@ -691,5 +678,4 @@ class WatermarkResponse(WatermarkBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

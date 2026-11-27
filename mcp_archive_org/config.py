@@ -2,10 +2,7 @@
 
 import os
 from typing import Optional
-try:
-    from pydantic_settings import BaseSettings
-except ImportError:
-    from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
 
@@ -45,9 +42,7 @@ class ArchiveOrgConfig(BaseSettings):
         description="Maximum number of retry attempts for failed requests"
     )
     
-    class Config:
-        env_prefix = "ARCHIVE_ORG_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="ARCHIVE_ORG_", case_sensitive=False)
 
 
 # Global config instance

@@ -1,6 +1,6 @@
 """Playout API endpoints for schedule metadata and time blocks"""
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 from typing import Dict, Any
 
@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db, Channel
 from ..scheduling import ScheduleParser, ScheduleEngine
 from ..config import config
+from ..utils.clock import utc_now_naive
 
 router = APIRouter(prefix="/playouts", tags=["Playouts"])
 
@@ -55,7 +56,7 @@ def get_playout_detail(channel_number: str, db: Session = Depends(get_db)):
         channel, parsed_schedule, max_items=max_items
     )
 
-    current_time = datetime.utcnow().replace(microsecond=0)
+    current_time = utc_now_naive().replace(microsecond=0)
     for item in playlist_items:
         media_item = item.get("media_item")
         if not media_item:

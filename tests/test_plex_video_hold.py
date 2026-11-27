@@ -152,6 +152,40 @@ def test_youtube_wait_hold_env_default_on(hold_mod, monkeypatch) -> None:
     assert hold_mod.youtube_wait_hold_env_enabled() is True
 
 
+def _streaming_response():
+    from starlette.responses import StreamingResponse
+
+    async def body():
+        yield _KEEPALIVE
+
+    return StreamingResponse(body(), media_type="video/mp2t")
+
+
+def test_archive_wait_hold_wraps_allowlisted(hold_mod, monkeypatch, tmp_path) -> None:
+    hold = tmp_path / "hold.ts"
+    hold.write_bytes(_fake_video_packet() * 20)
+    monkeypatch.setenv("STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS", "80, 1984.2")
+    resp = _streaming_response()
+    assert hold_mod.maybe_wrap_archive_wait_hold(resp, "1984.2", hold_path=hold) is not resp
+
+
+def test_archive_wait_hold_skips_unlisted(hold_mod, monkeypatch, tmp_path) -> None:
+    hold = tmp_path / "hold.ts"
+    hold.write_bytes(_fake_video_packet() * 20)
+    monkeypatch.setenv("STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS", "1984.2")
+    resp = _streaming_response()
+    assert hold_mod.maybe_wrap_archive_wait_hold(resp, "1984", hold_path=hold) is resp
+
+
+def test_archive_wait_hold_empty_env_wraps_nothing(hold_mod, monkeypatch, tmp_path) -> None:
+    hold = tmp_path / "hold.ts"
+    hold.write_bytes(_fake_video_packet() * 20)
+    monkeypatch.delenv("STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS", raising=False)
+    assert hold_mod.archive_wait_hold_channels() == frozenset()
+    resp = _streaming_response()
+    assert hold_mod.maybe_wrap_archive_wait_hold(resp, "1984.2", hold_path=hold) is resp
+
+
 def test_hold_chunk_pace(hold_mod) -> None:
     pace = hold_mod.hold_chunk_pace_sec(8192)
     assert 0.02 <= pace <= 0.2

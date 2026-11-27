@@ -24,9 +24,35 @@ from streamtv.ffmpeg.constants import (
 )
 from streamtv.scheduling.parser import ScheduleParser
 from streamtv.scheduling.engine import ScheduleEngine
+from streamtv.utils import archive_probe_cache
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
+
+# First-chunk wait: default wait plus one extended wait before the kill.
+FIRST_CHUNK_TIMEOUT_SEC = 15.0
+FIRST_CHUNK_EXTENDED_SEC = 10.0
+# Archive.org non-faststart MP4 (moov at tail) can need ~40s before the first TS
+# byte (Lesson 41c, 1984.2); the 15+10s default killed it mid-open every tune.
+ARCHIVE_FIRST_CHUNK_DEFAULT_SEC = 60.0
+ARCHIVE_FIRST_CHUNK_MIN_SEC = 25.0
+
+
+def _first_chunk_timeout_sec(stream_url: Union[str, tuple]) -> float:
+    """Initial first-chunk wait; total budget = this + FIRST_CHUNK_EXTENDED_SEC."""
+    if not (
+        isinstance(stream_url, str)
+        and stream_url.startswith("http")
+        and "archive.org" in stream_url.lower()
+    ):
+        return FIRST_CHUNK_TIMEOUT_SEC
+    raw = os.environ.get("STREAMTV_ARCHIVE_FIRST_CHUNK_SEC", "")
+    try:
+        budget = float(raw) if raw.strip() else ARCHIVE_FIRST_CHUNK_DEFAULT_SEC
+    except ValueError:
+        budget = ARCHIVE_FIRST_CHUNK_DEFAULT_SEC
+    budget = max(ARCHIVE_FIRST_CHUNK_MIN_SEC, budget)
+    return budget - FIRST_CHUNK_EXTENDED_SEC
 
 
 class StreamURLExpiredError(RuntimeError):
@@ -945,7 +971,22 @@ class MPEGTSStreamer:
         # Blind H.264 copy assumption breaks Plex on MPEG-4 Part 2 sources (ch 1992).
         # 1984.2: 5s probe often times out on multi-GB CDN → false force-transcode.
         if is_http and "archive.org" in probe_url.lower():
-            quick = await self._quick_ffprobe_codec(probe_url, timeout=5.0)
+            # Lesson 41c: reuse a past real ffprobe (sidecar) — never inferred.
+            cached = archive_probe_cache.load(stream_url) or archive_probe_cache.load(
+                probe_url
+            )
+            if cached:
+                logger.info(
+                    "Archive.org probe cache hit: video=%s audio=%s copy_v=%s "
+                    "copy_a=%s (sidecar)",
+                    cached.get("video_codec"),
+                    cached.get("audio_codec"),
+                    cached.get("can_copy_video"),
+                    cached.get("can_copy_audio"),
+                )
+                quick = dict(cached)
+            else:
+                quick = await self._quick_ffprobe_codec(probe_url, timeout=5.0)
             if not quick:
                 logger.info(
                     "Archive.org quick probe miss; retrying with longer timeout "
@@ -1000,6 +1041,9 @@ class MPEGTSStreamer:
                             quick["can_copy_video"],
                             quick["can_copy_audio"],
                         )
+            if quick and not cached:
+                if not archive_probe_cache.save(stream_url, quick):
+                    archive_probe_cache.save(probe_url, quick)
             if quick:
                 audio_lang = _normalize_media_lang(quick.get("audio_language"))
                 need_subs = (
@@ -1356,7 +1400,7 @@ class MPEGTSStreamer:
             # Stream output in chunks
             # Use longer timeout for first chunk to handle problematic files (especially AVI)
             # Some Archive.org AVI files need more time to start
-            first_chunk_timeout = 15.0  # Wait up to 15 seconds for first chunk (increased for AVI files)
+            first_chunk_timeout = _first_chunk_timeout_sec(stream_url)
             first_chunk_received = False
             subsequent_timeout = 5.0  # Increased timeout for subsequent chunks to handle network issues
             # Mid-stream stall: Archive.org FFmpeg can hang at 0% CPU with no stdout while still
@@ -1415,7 +1459,10 @@ class MPEGTSStreamer:
                             # Process still running but no data - might be a problematic file
                             # Give it one more chance with extended timeout
                             try:
-                                chunk = await asyncio.wait_for(process.stdout.read(8192), timeout=10.0)
+                                chunk = await asyncio.wait_for(
+                                    process.stdout.read(8192),
+                                    timeout=FIRST_CHUNK_EXTENDED_SEC,
+                                )
                                 if chunk:
                                     first_chunk_received = True
                                     stall_silence_started = None

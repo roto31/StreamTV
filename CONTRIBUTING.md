@@ -34,7 +34,7 @@ maintained Linux fork. See [macOS tree protection](docs/MACOS_TREE_PROTECTION.md
 ## Development Setup
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.10 or higher
 - FFmpeg
 - Git
 

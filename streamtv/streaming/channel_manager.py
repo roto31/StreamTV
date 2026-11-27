@@ -14,6 +14,7 @@ from streamtv.streaming.mpegts_streamer import MPEGTSStreamer
 from streamtv.streaming.mpegts_keepalive import keepalive_chunk
 from streamtv.streaming.archive_org_playback import skip_non_mp4_archive_item
 from streamtv.config import config
+from streamtv.utils.clock import utc_now_naive
 
 # Boot priority: archive-primary first, hybrid second, YouTube-only last.
 # YouTube playout defer is per-item (_defer_youtube_playout_until_tuner), not per-channel.
@@ -281,7 +282,7 @@ class ChannelStream:
                             logger.info(f"Resuming channel {self.channel_number} from saved playout start time: {self._playout_start_time}")
                         else:
                             # First time or no saved position - start from now
-                            self._playout_start_time = datetime.utcnow()
+                            self._playout_start_time = utc_now_naive()
                             logger.info(f"Starting channel {self.channel_number} from current time: {self._playout_start_time}")
                             
                             # Save the start time for future resumes
@@ -290,17 +291,17 @@ class ChannelStream:
                                     channel_id=self.channel_id,
                                     channel_number=self.channel_number,
                                     playout_start_time=self._playout_start_time,
-                                    last_position_update=datetime.utcnow()
+                                    last_position_update=utc_now_naive()
                                 )
                                 db.add(playback_pos)
                             else:
                                 playback_pos.playout_start_time = self._playout_start_time
-                                playback_pos.last_position_update = datetime.utcnow()
+                                playback_pos.last_position_update = utc_now_naive()
                             db.commit()
                     except Exception as e:
                         logger.error(f"Error loading saved position for channel {self.channel_number}: {e}", exc_info=True)
                         # Fallback to starting from now
-                        self._playout_start_time = datetime.utcnow()
+                        self._playout_start_time = utc_now_naive()
                         logger.info(f"Starting channel {self.channel_number} from current time (fallback): {self._playout_start_time}")
                     finally:
                         db.close()
@@ -389,13 +390,13 @@ class ChannelStream:
                                 channel_number=self.channel_number,
                                 playout_start_time=self._playout_start_time,
                                 last_item_index=current_index,
-                                last_position_update=datetime.utcnow()
+                                last_position_update=utc_now_naive()
                             )
                             db.add(playback_pos)
                         else:
                             playback_pos.playout_start_time = self._playout_start_time
                             playback_pos.last_item_index = current_index
-                            playback_pos.last_position_update = datetime.utcnow()
+                            playback_pos.last_position_update = utc_now_naive()
                         db.commit()
                         logger.info(f"Saved position for channel {self.channel_number}: item {current_index}, playout_start_time={self._playout_start_time}")
                     except Exception as e:
@@ -461,7 +462,7 @@ class ChannelStream:
             from streamtv.scheduling.playout_timeline import item_duration
 
             _elapsed = (
-                datetime.utcnow() - self._current_item_start_time
+                utc_now_naive() - self._current_item_start_time
             ).total_seconds()
             _slot = item_duration(self._schedule_items[self._current_item_index])
             if _elapsed < max(15, int(_slot * 0.85)):
@@ -951,11 +952,11 @@ class ChannelStream:
                                 tune_priority=True,
                             )
                             timeout_seconds = 30.0  # 30 second timeout for first chunk
-                            start_time = asyncio.get_event_loop().time()
+                            start_time = asyncio.get_running_loop().time()
                             
                             async for chunk in chunk_iter:
                                 if first_chunk_time is None:
-                                    first_chunk_time = asyncio.get_event_loop().time() - start_time
+                                    first_chunk_time = asyncio.get_running_loop().time() - start_time
                                     logger.info(f"ON_DEMAND: First chunk received for item {idx} after {first_chunk_time:.2f}s")
                                 
                                 yield chunk
@@ -1038,7 +1039,7 @@ class ChannelStream:
             
             # Continuous: calculate position in playout timeline using system time (ErsatzTV-style)
             current_position = await self._get_current_position()
-            now = datetime.utcnow()
+            now = utc_now_naive()
             elapsed_hours = int(current_position['elapsed_seconds'] // 3600)
             elapsed_minutes = int((current_position['elapsed_seconds'] % 3600) // 60)
             logger.info(f"Client connected to channel {self.channel_number} (CONTINUOUS mode) at {now} - position {current_position['item_index']}/{len(self._schedule_items)} ({elapsed_hours}h {elapsed_minutes}m from midnight, total clients: {self._client_count})")
@@ -1100,13 +1101,13 @@ class ChannelStream:
                     channel_number=self.channel_number,
                     playout_start_time=self._playout_start_time,
                     last_item_index=item_index,
-                    last_position_update=datetime.utcnow(),
+                    last_position_update=utc_now_naive(),
                 )
                 db_session.add(playback_pos)
             else:
                 playback_pos.playout_start_time = self._playout_start_time
                 playback_pos.last_item_index = item_index
-                playback_pos.last_position_update = datetime.utcnow()
+                playback_pos.last_position_update = utc_now_naive()
             if media_id is not None:
                 playback_pos.last_item_media_id = media_id
             db_session.commit()
@@ -1140,7 +1141,7 @@ class ChannelStream:
             
             playback_pos.last_item_index = item_index
             playback_pos.last_item_media_id = media_id
-            playback_pos.last_played_at = datetime.utcnow()
+            playback_pos.last_played_at = utc_now_naive()
             playback_pos.total_items_watched = max(playback_pos.total_items_watched, item_index)
             
             db_session.commit()
@@ -1158,7 +1159,7 @@ class ChannelStream:
                 return {'item_index': 0, 'elapsed_seconds': 0}
 
             if not self._playout_start_time:
-                self._playout_start_time = datetime.utcnow()
+                self._playout_start_time = utc_now_naive()
 
             timeline = self._timeline_items or self._schedule_items
             return resolve_stream_playout_position(
@@ -1273,11 +1274,11 @@ class ChannelStream:
                             logger.info(f"Loaded playout start time for channel {self.channel_number} from database: {self._playout_start_time}")
                         else:
                             # Fallback: use now
-                            self._playout_start_time = datetime.utcnow()
+                            self._playout_start_time = utc_now_naive()
                             logger.info(f"Using current time as playout start for channel {self.channel_number}: {self._playout_start_time}")
                     except Exception as e:
                         logger.error(f"Error loading playout start time in _run_continuous_stream: {e}")
-                        self._playout_start_time = datetime.utcnow()
+                        self._playout_start_time = utc_now_naive()
             
             logger.info(f"Streaming playout for channel {self.channel_number} with {len(self._schedule_items)} items (resuming from saved position)")
             
@@ -1436,7 +1437,7 @@ class ChannelStream:
 
             async with self._timeline_lock:
                 self._current_item_index = start_index
-                self._current_item_start_time = datetime.utcnow()
+                self._current_item_start_time = utc_now_naive()
             
             resume_sid = _item_source_id(self._schedule_items, start_index)
             resume_keep = {resume_sid} if resume_sid else None
@@ -1506,7 +1507,7 @@ class ChannelStream:
                                 media_at = self._schedule_items[idx].get("media_item")
                             async with self._timeline_lock:
                                 self._current_item_index = idx
-                                self._current_item_start_time = datetime.utcnow()
+                                self._current_item_start_time = utc_now_naive()
                             save_db = self.db_session_factory()
                             try:
                                 self._persist_playout_anchor(
@@ -1581,7 +1582,7 @@ class ChannelStream:
                     # Update timeline position using system time
                     async with self._timeline_lock:
                         self._current_item_index = idx
-                        self._current_item_start_time = datetime.utcnow()  # Use system time
+                        self._current_item_start_time = utc_now_naive()  # Use system time
                     
                     # Save position at every item start so a restart resumes the
                     # current item (every-5 cadence replayed up to 5 items after
@@ -1631,7 +1632,7 @@ class ChannelStream:
                     except Exception:
                         pass
 
-                    _stream_started = datetime.utcnow()
+                    _stream_started = utc_now_naive()
                     try:
                         streamed = await self._stream_item_to_clients(media_item)
                     except asyncio.CancelledError:
@@ -1725,7 +1726,7 @@ class ChannelStream:
                         pos = await self._get_current_position()
                         guide_idx = int(pos.get("item_index", idx))
                         _stream_elapsed = (
-                            datetime.utcnow() - _stream_started
+                            utc_now_naive() - _stream_started
                         ).total_seconds()
                         _slot_dur = item_duration(self._schedule_items[idx])
                         _complete_threshold = max(15, int(_slot_dur * 0.85))

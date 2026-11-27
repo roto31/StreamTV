@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from streamtv.database import Channel, Playlist, PlaylistItem, MediaItem, Collection, CollectionItem
 from .parser import ParsedSchedule, ScheduleParser
 from .media_format import filter_media_items
+from streamtv.utils.clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -371,7 +372,7 @@ class ScheduleEngine:
         pre_roll_sequence = None
         mid_roll_sequence = None
         post_roll_sequence = None
-        current_time = datetime.utcnow()
+        current_time = utc_now_naive()
         
         # Process sequence items in order (ErsatzTV processes sequentially)
         for item in sequence:

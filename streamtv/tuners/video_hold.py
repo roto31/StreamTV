@@ -443,6 +443,40 @@ def maybe_wrap_youtube_wait_hold(
     )
 
 
+def archive_wait_hold_channels() -> frozenset[str]:
+    """Channels allowlisted for Archive wait-phase hold (Lesson 41c).
+
+    STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS is a comma list; empty means none.
+    Archive copy-mode splices can black-freeze Apple TV, so there is no wildcard.
+    """
+    raw = os.environ.get("STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS", "")
+    return frozenset(c.strip() for c in raw.split(",") if c.strip())
+
+
+def maybe_wrap_archive_wait_hold(
+    response: Any,
+    channel_number: str,
+    *,
+    hold_path: Optional[HoldPath] = None,
+) -> Any:
+    """Hold an allowlisted Archive channel until first real video (no re-hold).
+
+    Non-faststart multi-GB Archive MP4s can take ~40s to open over HTTP; null
+    keepalives make Plex abandon the tune before the first program TS.
+    """
+    if str(channel_number) not in archive_wait_hold_channels():
+        return response
+    logger.info(
+        "video_hold: Archive wait-phase wrap for channel %s (rehold=False)",
+        channel_number,
+    )
+    return maybe_wrap_mpegts_hold(
+        response,
+        hold_path=hold_path,
+        rehold_on_silence=False,
+    )
+
+
 async def proxy_upstream_bytes(url: str, *, timeout: float = 0.0) -> AsyncIterator[bytes]:
     """Stream bytes from an upstream HTTP MPEG-TS URL."""
     import httpx

@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-try:
-    from pydantic_settings import BaseSettings
-except ImportError:
-    from pydantic import BaseSettings  # type: ignore
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
 
@@ -69,9 +66,7 @@ class StreamTVConfig(BaseSettings):
         description="Comma list of allowed Origin headers",
     )
 
-    class Config:
-        env_prefix = "STREAMTV_"
-        case_sensitive = False
+    model_config = SettingsConfigDict(env_prefix="STREAMTV_", case_sensitive=False)
 
 
 config = StreamTVConfig()

@@ -5,9 +5,10 @@ import base64
 import json
 import logging
 from typing import Optional, Dict, Any, List
-from datetime import datetime, timedelta
 import hashlib
 from pathlib import Path
+
+from .clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +97,7 @@ class PasskeyManager:
             "type": "registration",
             "username": username,
             "user_id": user_id,
-            "timestamp": datetime.utcnow(),
+            "timestamp": utc_now_naive(),
             "rp_id": self.rp_id
         }
         
@@ -121,7 +122,7 @@ class PasskeyManager:
             raise ValueError("Challenge type mismatch")
         
         # Check challenge expiration (5 minutes)
-        if (datetime.utcnow() - challenge_data["timestamp"]).total_seconds() > 300:
+        if (utc_now_naive() - challenge_data["timestamp"]).total_seconds() > 300:
             del self._challenges[challenge]
             raise ValueError("Challenge expired")
         
@@ -165,7 +166,7 @@ class PasskeyManager:
                 "id": credential_id_b64,
                 "public_key": bytes_to_base64url(verification.credential_public_key),
                 "sign_count": verification.sign_count,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": utc_now_naive().isoformat()
             }
             
             # Save credentials to file
@@ -235,7 +236,7 @@ class PasskeyManager:
         self._challenges[challenge_b64] = {
             "type": "authentication",
             "username": username,
-            "timestamp": datetime.utcnow(),
+            "timestamp": utc_now_naive(),
             "rp_id": self.rp_id
         }
         
@@ -260,7 +261,7 @@ class PasskeyManager:
             raise ValueError("Challenge type mismatch")
         
         # Check challenge expiration (5 minutes)
-        if (datetime.utcnow() - challenge_data["timestamp"]).total_seconds() > 300:
+        if (utc_now_naive() - challenge_data["timestamp"]).total_seconds() > 300:
             del self._challenges[challenge]
             raise ValueError("Challenge expired")
         
@@ -354,7 +355,7 @@ class PasskeyManager:
         """Load credentials from file"""
         if self.credentials_file.exists():
             try:
-                with open(self.credentials_file, 'r') as f:
+                with open(self.credentials_file, 'r', encoding='utf-8') as f:
                     self._credentials = json.load(f)
                 logger.info(f"Loaded {len(self._credentials)} Passkey credentials")
             except Exception as e:
@@ -367,7 +368,7 @@ class PasskeyManager:
     def _save_credentials(self):
         """Save credentials to file"""
         try:
-            with open(self.credentials_file, 'w') as f:
+            with open(self.credentials_file, 'w', encoding='utf-8') as f:
                 json.dump(self._credentials, f, indent=2)
         except Exception as e:
             logger.error(f"Failed to save Passkey credentials: {e}")

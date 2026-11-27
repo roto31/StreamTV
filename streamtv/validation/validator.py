@@ -38,14 +38,14 @@ class YAMLValidator:
         # Load channel schema
         channel_schema_path = schemas_dir / "channel.schema.json"
         if channel_schema_path.exists():
-            with open(channel_schema_path, 'r') as f:
+            with open(channel_schema_path, 'r', encoding='utf-8') as f:
                 self.schemas['channel'] = json.load(f)
             logger.info("Loaded channel schema")
         
         # Load schedule schema
         schedule_schema_path = schemas_dir / "schedule.schema.json"
         if schedule_schema_path.exists():
-            with open(schedule_schema_path, 'r') as f:
+            with open(schedule_schema_path, 'r', encoding='utf-8') as f:
                 self.schemas['schedule'] = json.load(f)
             logger.info("Loaded schedule schema")
     
@@ -86,7 +86,7 @@ class YAMLValidator:
         
         try:
             # Load and parse YAML
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 yaml_data = yaml.safe_load(f)
             
             if yaml_data is None:

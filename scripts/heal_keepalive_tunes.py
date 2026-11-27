@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Heal keepalive-only HDHomeRun tunes (Archive FFmpeg wedge → Plex Playback Error).
 
-Samples /auto/v{N} for a short window. When a channel returns only ~8192 B
+Samples /hdhomerun/auto/v{N} (never video-hold wrapped, so hold bytes cannot
+mask a wedge) for a short window. When a channel returns only ~8192 B
 (null keepalive), kill matching stalled Archive.org FFmpeg (same criteria as
 heal_stalled_ffmpeg.py) and soft-restart that channel so ChannelManager respawns.
 
@@ -61,7 +62,7 @@ def _base_url() -> str:
 
 
 def sample_tune(channel: str, *, tune_sec: int, base: str) -> dict[str, Any]:
-    url = f"{base.rstrip('/')}/auto/v{channel}"
+    url = f"{base.rstrip('/')}/hdhomerun/auto/v{channel}"
     out = Path(f"/tmp/streamtv_keepalive_heal_ch{channel}.ts")
     try:
         out.unlink(missing_ok=True)

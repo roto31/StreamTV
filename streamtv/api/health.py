@@ -11,11 +11,11 @@ import socket
 import httpx
 import asyncio
 from typing import Dict, List, Any, Optional
-from datetime import datetime, timedelta
 import re
 
 from ..database import get_db, Channel, MediaItem
 from ..config import config
+from ..utils.clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -364,7 +364,7 @@ async def detailed_health_check(
     """Comprehensive health check of all platform components"""
     
     health_report = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": utc_now_naive().isoformat(),
         "overall_status": "healthy",
         "checks": {}
     }
@@ -482,5 +482,5 @@ async def detailed_health_check(
 @router.get("/health")
 async def simple_health_check():
     """Simple health check endpoint"""
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "healthy", "timestamp": utc_now_naive().isoformat()}
 

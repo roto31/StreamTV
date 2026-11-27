@@ -7,8 +7,9 @@ import httpx
 import logging
 import json
 from typing import Optional, Dict, Any, List
-from datetime import datetime
 import asyncio
+
+from .clock import utc_now_naive
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ class TVDBClient:
     async def _ensure_authenticated(self) -> str:
         """Ensure we have a valid auth token"""
         if self._auth_token and self._token_expires:
-            if datetime.utcnow() < self._token_expires:
+            if utc_now_naive() < self._token_expires:
                 return self._auth_token
         
         # Use read token if provided (TVDB v4 uses bearer tokens)

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import timedelta
+
+from streamtv.utils.clock import utc_now_naive
 
 from streamtv.utils.download_errors import (
     TERMINAL_CLASSES,
@@ -54,9 +56,9 @@ def test_transient_default() -> None:
 
 
 def test_may_auto_requeue_respects_retry_after() -> None:
-    future = datetime.utcnow() + timedelta(minutes=5)
+    future = utc_now_naive() + timedelta(minutes=5)
     assert not may_auto_requeue("rate_limited", future)
-    past = datetime.utcnow() - timedelta(seconds=1)
+    past = utc_now_naive() - timedelta(seconds=1)
     assert may_auto_requeue("rate_limited", past)
     assert not may_auto_requeue("unavailable", past)
     assert not may_auto_requeue(None, None)
