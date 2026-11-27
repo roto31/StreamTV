@@ -11,15 +11,20 @@ Gate notes: [phase3-gate](https://github.com/roto31/StreamTV-source/blob/main/do
 ```mermaid
 flowchart TD
   SSD["SSD youtube_full_cache"] --> Prefetch["prefetch_count + TTL"]
-  Prefetch --> AutoWarm["idle auto-warm / evening LA"]
+  Prefetch --> AutoWarm["idle auto-warm + LRU pin on-air"]
   AutoWarm --> Ready["Cache READY"]
   Ready --> Plex["Plex Live TV"]
   Dead["F-class quarantine"] --> Ready
-  Probe["Archive probe 5s + 15s retry"] --> Copy["H.264/AAC copy when verified"]
+  Probe["Archive probe 5s + 15s retry + cookie warm"] --> Copy["H.264/AAC copy when verified"]
   Copy --> Plex
+  HEVC["HEVC Archive"] -->|"accept encode"| Xcode["libx264 path"]
+  Xcode --> Plex
+  Trickle["under-rate copy <16KiB/s"] --> Abort["abort FFmpeg"]
   Stall["heal_stalled_ffmpeg etime≥90 + keepalive bridge"] --> Soft["soft stream-restart"]
+  Abort --> Soft
   Soft --> Plex
   P3["Phase 3a–3f bedrock"] -.->|"PARKED"| SSD
+  DP["HEVC MPEG-TS Direct Play"] -.->|"Studio HOLD — Mini soak only"| Plex
 ```
 
 ## Archive probe miss → keepalive (Lesson 41b)
@@ -53,8 +58,17 @@ flowchart LR
   Hold --> Splice
 ```
 
-Seed sidecars: `scripts/warm_archive_probe_cache.py --channel N --apply`. Details:
-[Layer C](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-c--non-faststart-slow-open-lesson-41c).
+Seed sidecars: `scripts/warm_archive_probe_cache.py --channel N --apply` (cookie-aware).
+Details: [Layer C](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-c--non-faststart-slow-open-lesson-41c) ·
+[Layer B2 under-rate](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-b2--under-rate-copy-trickle-plex-black) ·
+[Layer D auth inventory](https://github.com/roto31/StreamTV/blob/main/docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-d--inventory-vs-playback-auth-lesson-75).
+
+## HEVC / Direct Play (decision)
+
+Production **accepts encode** for HEVC Archive items. Do **not** enable HEVC
+MPEG-TS copy / Live TV Direct Play on Studio until a Mini fork soak proves Plex
+Apple TV Direct Play. Twin remaps are report-only / curated
+(`scripts/report_archive_hevc_twins.py`).
 
 ## Troubleshooting UI
 

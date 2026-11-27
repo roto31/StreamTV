@@ -47,8 +47,8 @@ LaunchAgent `com.streamtv.stalled-ffmpeg-heal` every **~120 s**:
 
 1. `heal_stalled_ffmpeg.py` — archive.org ffmpeg, not overlay/burn, pcpu≤**0.15**,
    etime≥**90 s** (was 300) → SIGTERM.
-2. `heal_keepalive_tunes.py` — sample configured `/hdhomerun/auto/v*` (unwrapped, so Layer C hold bytes never mask a wedge; ~12 s); if
-   **KEEPALIVE_ONLY** (~8192), kill matching stalled ffmpeg and
+2. `heal_keepalive_tunes.py` — sample configured `/hdhomerun/auto/v*` (unwrapped, so Layer C hold bytes never mask a wedge; **≥30 s**, **2 consecutive** keepalive-only samples); if
+   **KEEPALIVE_ONLY** (~8192) streak met, kill matching stalled ffmpeg and
    `POST …/stream-restart` (soft).
 
 ```mermaid
@@ -71,6 +71,25 @@ bash scripts/install-stalled-ffmpeg-heal-launchagent.sh
 
 Env: `STREAMTV_STALL_HEAL_MIN_ETIME=90`, `STREAMTV_STALL_HEAL_MAX_PCPU=0.15`.
 
+## Layer B2 — under-rate copy trickle (Plex black)
+
+**Evidence:** copy-mode FFmpeg sometimes emitted one tiny TS chunk every few
+seconds. That reset the consecutive-silence timer forever, so Lesson 41 never
+aborted, while Plex/Apple TV stayed on a black Live TV frame (bytes ≫ 8192 but
+far below playable video).
+
+**Code decision:** after ≥15 s of yielding, if average rate &lt; **16 KiB/s** and
+no overlay encode is active, `midstream_stall_decision` returns **abort** and
+the streamer kills FFmpeg so heal/restart can recover.
+
+```mermaid
+flowchart LR
+  Copy["Archive copy-mode FFmpeg"] --> Rate{"avg yield ≥16 KiB/s?"}
+  Rate -->|yes| PlexOK["Plex sees real video"]
+  Rate -->|no ≥15s| Abort["abort under-rate"]
+  Abort --> Heal["heal / stream-restart"]
+```
+
 ## Layer C — non-faststart slow open (Lesson 41c)
 
 Some multi-GB Archive MP4s keep the `moov` index at the **tail** (1984.2 Tape 1:
@@ -80,8 +99,8 @@ old FFmpeg first-chunk wait (15 + 10 s). Three pieces close that gap:
 
 | Piece | Where | Behavior |
 |-------|-------|----------|
-| Wait-phase video hold | `streamtv/tuners/video_hold.py`, root `/auto/vN` | Allowlist `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` (empty = none). Real h264/aac hold until first program TS, then splice; **no re-hold**. |
-| Probe sidecar cache | `streamtv/utils/archive_probe_cache.py` (bedrock caller) | `<cache>/archive_probe/<id>/<file>.probe.json`, 30-day TTL. Only real ffprobe successes; inferred results never stored. |
+| Wait-phase video hold | `streamtv/tuners/video_hold.py`, root `/auto/vN` | Allowlist `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` (empty = none). Real h264/aac hold until first program TS, then splice; **no re-hold**. Hold geometry must match the on-air item: 640×480 → `plex_hold_480.ts`, 1280×720 → `plex_hold.ts`, otherwise **skip wrap** ([geometry table](PLEX_VIDEO_HOLD.md#archive-hold-geometry-lesson-41c)). |
+| Probe sidecar cache | `streamtv/utils/archive_probe_cache.py` (bedrock caller) | `<cache>/archive_probe/<id>/<file>.probe.json`, 30-day TTL. Only real ffprobe successes; inferred results never stored. Warm script also stores `width`/`height`/`profile` for the hold picker. SSD cache healer skips this directory. |
 | First-chunk budget | `mpegts_streamer` (bedrock, APPROVED) | archive.org HTTP: `STREAMTV_ARCHIVE_FIRST_CHUNK_SEC` (default 60, min 25). Others: 15 + 10 s. |
 
 ```mermaid
@@ -102,12 +121,31 @@ sequenceDiagram
   H-->>P: splice to program (no re-hold)
 ```
 
-Seed sidecars before allowlisting a channel, and re-run after cache eviction:
+Seed sidecars before allowlisting a channel, and re-run after cache eviction.
+**Warm must use Archive login cookies** (same as FFmpeg) — bare CDN **401** is
+often a gated item, not a missing file (Lesson **75**).
 
 ```bash
 ./venv/bin/python3 scripts/warm_archive_probe_cache.py --channel 1984.2          # dry run
 ./venv/bin/python3 scripts/warm_archive_probe_cache.py --channel 1984.2 --apply
+./venv/bin/python3 scripts/report_archive_hold_geometry.py --channel 1984.2   # hold per item
 ```
+
+## Layer D — inventory vs playback auth (Lesson 75)
+
+```mermaid
+flowchart TD
+  Play["FFmpeg playout + cookies"] --> OK["CDN 200 / playable"]
+  WarmOld["Warm/probe without cookies"] --> Gate["CDN 401 gated"]
+  Gate --> FalseDead["False dead → over-prune"]
+  WarmNew["Warm/probe + Archive cookies"] --> Same["Same truth as playout"]
+  Meta["metadata files[] only"] --> Prune{"may_remove_from_library?"}
+  Prune -->|EMPTY / truly absent| Drop["Safe prune"]
+  Prune -->|UNCERTAIN / mismatch / CDN_UNREACHABLE / 401| Keep["Keep URL"]
+```
+
+Never purge YAML/DB/schedules from anonymous 401, probe MISS, or HEVC encode
+cost. HEVC → libx264 is accept-encode; Studio HEVC Direct Play remains **off**.
 
 Allowlist rollout (LaunchAgent env, then bootout/bootstrap — kickstart does not reread
 plist env):

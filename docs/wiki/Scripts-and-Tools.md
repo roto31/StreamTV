@@ -28,7 +28,12 @@ Complete documentation for all StreamTV utility scripts and tools.
 | `scripts/install-streamtv-ssd-cache-heal-launchagent.sh` | Install `com.streamtv.ssd-cache-heal` (~120s) |
 | `scripts/heal_stalled_ffmpeg.py` | Lesson 41 Archive FFmpeg keepalive wedge (etime≥90s) |
 | `scripts/heal_keepalive_tunes.py` | Lesson 41b: keepalive-only `/hdhomerun/auto/v*` → kill + soft-restart |
-| `scripts/warm_archive_probe_cache.py` | Lesson 41c: seed Archive probe sidecars for a channel (`--channel N --apply`) |
+| `scripts/warm_archive_probe_cache.py` | Lesson 41c/75: seed Archive probe sidecars (`--channel N --apply`); uses Archive cookies |
+| `scripts/report_archive_hold_geometry.py` | Lesson 41c: which hold TS (480/720/skip) each Archive item would use |
+| `scripts/report_archive_hevc_twins.py` | Report-only HEVC vs h264 twin inventory (no auto remap) |
+| `scripts/prune_dead_archive_urls.py` | Lesson 75: metadata-safe prune only (`UNCERTAIN`/401 keep) |
+| `scripts/check_yaml_url_dedupe.py` | Within-channel URL uniqueness audit |
+| `scripts/dedupe_yaml_stream_urls.py` | Schedule-aware URL twin repair |
 | `scripts/install-stalled-ffmpeg-heal-launchagent.sh` | Install stall + keepalive heal LA (~120s) |
 | `scripts/probe_hdhr_hang.py` | Detect keepalive-only / stalled FFmpeg |
 | `scripts/deploy_soft.sh` | Soft-restart channel streams |

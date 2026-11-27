@@ -36,6 +36,8 @@ Gate command: `pip install --only-binary=:all: -r requirements.txt -r requiremen
 - Import `streamtv.main`, `scripts/check_core_dependency_freshness.py`: PASS on 3.14.6 and 3.15.2.
 - `pip-audit`: same findings on every version, so none is interpreter-specific. They come from existing pins:
   `certifi` 2025.11.12, `urllib3` 2.7.0, `python-jose` 3.5.0, `ecdsa` 0.19.2.
+  Since closed: `certifi` 2026.11.20, `urllib3` 2.8.0, `python-jose` (and `ecdsa`) removed from
+  server requirements; `pip-audit -r requirements.txt` is clean.
 - Isolated runtime soak (own port, DB copy, cache and HOME; SSDP off):
   `/health` 200, `/lineup.json`, HDHomeRun `/auto/v101` H.264 + AAC MPEG-TS,
   11-minute continuous tune, 180 s cold A/B 3.14 vs 3.15 with 0 decode errors and 0 log ERRORs.
@@ -70,7 +72,7 @@ These still emit deprecation warnings on 3.12+. None breaks on 3.15:
 
 ## Watch list for 3.16 (~2027-10)
 
-- `slowapi` 0.1.9 calls `asyncio.iscoroutinefunction`, which is **removed in 3.16**. Needs an upstream fix or a replacement.
+- `slowapi` 0.1.9 calls `asyncio.iscoroutinefunction`, which is **removed in 3.16**. 0.1.10 (Nov 2026) still does. Needs an upstream fix or a replacement.
 - The asyncio policy system is removed in 3.16. Nothing in StreamTV uses it directly; check uvicorn's loop setup.
 - uvicorn 0.40 uses `websockets.legacy` (deprecated).
 - Pydantic V3 drops class-based `Config`. StreamTV and the MCP servers now use `model_config` throughout.

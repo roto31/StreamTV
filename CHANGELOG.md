@@ -14,13 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Archive.org probe retry** — when the quick codec probe misses on large CDN files, StreamTV retries once (including a local ring buffer when available) before forcing a software encode, so verified H.264/AAC Archive items can remux instead of stalling Live TV on keepalives. See [Archive probe retry](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
-- **Keepalive tune heal** — periodic healer samples HDHomeRun channels; keepalive-only tunes trigger a soft channel restart. Stalled Archive FFmpeg processes are cleaned up sooner (about 90 seconds of idle CPU).
-- **Idle YouTube auto-warm** — with full-cache mode, idle channels keep the on-air YouTube window downloading so cold zaps reach READY without a manual pre-warm.
-- **Archive slow-open hold (opt-in)** — channels listed in `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` show real hold video immediately while very large Archive MP4s (index at the end of the file) open, then switch to the program. Codec probe results are cached on disk, and `scripts/warm_archive_probe_cache.py` pre-seeds them. See [Archive probe retry](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
+- **Keepalive tune heal** — periodic healer samples HDHomeRun channels; keepalive-only tunes trigger a soft channel restart. Stalled Archive FFmpeg processes are cleaned up sooner (about 90 seconds of idle CPU). Healer skips channels that already have a watching client.
+- **Idle YouTube auto-warm** — with full-cache mode, idle channels keep the on-air YouTube window downloading so cold zaps reach READY without a manual pre-warm. On-air / in-window cache entries are pinned against LRU eviction.
+- **Archive slow-open hold (opt-in)** — channels listed in `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` show real hold video immediately while very large Archive MP4s (index at the end of the file) open, then switch to the program. Hold resolution matches the on-air item (SD vs HD); codec probe results are cached on disk and pre-seeded by `scripts/warm_archive_probe_cache.py`. See [Archive probe retry](docs/guides/ARCHIVE_PROBE_RETRY_KEEPALIVE.md).
+- **Archive library hygiene** — probe/warm uses the same Archive login cookies as playback so gated CDN responses are not mistaken for missing files; prune/import refuse to drop items on unauthenticated 401/uncertain metadata. HEVC Archive items keep playing via software encode; production does **not** enable HEVC MPEG-TS copy / Live TV Direct Play.
+
+### Fixed
+- **Under-rate copy abort** — a copy-mode FFmpeg that only drips a few kilobytes per second no longer looks “alive” to the silence timer while Live TV stays black; StreamTV aborts and recovers that path.
 
 ### Changed
 - Archive.org inputs get a longer first-data budget (`STREAMTV_ARCHIVE_FIRST_CHUNK_SEC`, default 60 s) so slow-opening files are not stopped mid-open.
-- Streaming resilience / Architecture Mermaid diagrams document Archive probe escalation and the stall + keepalive heal LaunchAgent.
+- Streaming resilience / Architecture Mermaid diagrams document Archive probe escalation, stall + keepalive heal, under-rate abort, and Archive auth-aligned inventory.
 
 ### Removed
 - Removed the external tuner proxy and library export integration. Docs and wiki keep Tunarr only as zlib design-inspiration credit ([NOTICE](NOTICE)); TunarrRAM remains the local RAM-disk volume name.

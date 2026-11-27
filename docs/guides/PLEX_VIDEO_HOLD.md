@@ -17,8 +17,27 @@ upstream StreamTV or external stream when it produces non-null TS packets.
 |-------|------|
 | [`streamtv/tuners/video_hold.py`](../../streamtv/tuners/video_hold.py) | Hold mux: emit hold → splice → optional re-hold; YouTube wait-phase (`rehold=False`) |
 | [`streamtv/main.py`](../../streamtv/main.py) `/auto/v*` | **YouTube wait-phase hold** when `STREAMTV_PLEX_VIDEO_HOLD_YOUTUBE=1` and `youtube_full_cache` + YouTube channel (**default off**). Full native re-hold only with `STREAMTV_PLEX_VIDEO_HOLD_NATIVE=1`. Archive CDN-first stays unwrapped unless listed in `STREAMTV_PLEX_VIDEO_HOLD_ARCHIVE_CHANNELS` (wait-phase, no re-hold; production `1984.2`; see [Layer C](ARCHIVE_PROBE_RETRY_KEEPALIVE.md#layer-c--non-faststart-slow-open-lesson-41c)). `/hdhomerun/auto/v*` is never wrapped. |
-| `data/plex_hold.ts` | Pre-encoded 2s 720p loop (gitignored; generate below) |
-| `scripts/generate_plex_hold_ts.sh` | Builds the hold file |
+| `data/plex_hold.ts` | Pre-encoded 2s 1280×720 loop: YouTube wait-phase and 720p Archive items (gitignored; generate below) |
+| `data/plex_hold_480.ts` | Pre-encoded 2s 640×480 High@L3.0 loop for SD Archive items (gitignored) |
+| `scripts/generate_plex_hold_ts.sh` | Builds both hold files |
+| `scripts/report_archive_hold_geometry.py` | Read-only: per Archive item, sidecar WxH and which hold (or skip) it gets |
+
+## Archive hold geometry (Lesson 41c)
+
+A hold whose SPS geometry differs from the program (720p hold → 480p Tape 1)
+leaves Apple TV's decoder in a green/smeared melt after the splice. Allowlisted
+Archive channels therefore pick the hold from the **on-air item's probe sidecar**
+(`width`/`height`, written by `scripts/warm_archive_probe_cache.py`):
+
+| Sidecar geometry | Hold |
+|------------------|------|
+| 640×480 | `data/plex_hold_480.ts` (`STREAMTV_PLEX_HOLD_ARCHIVE_TS` override) |
+| 1280×720 | `data/plex_hold.ts` (`STREAMTV_PLEX_HOLD_TS` override) |
+| anything else, no geometry, or hold file missing | **skip wrap** — null keepalives, no splice |
+
+There is no fallback hold. Warm sidecars before allowlisting; the on-air item is
+`ChannelPlaybackPosition.last_item_media_id`. The SSD cache healer never trims
+`<cache>/archive_probe/`.
 
 ## TunarrRAM vs SSD
 
@@ -32,7 +51,7 @@ then restart external.app.
 ## Operator install
 
 ```bash
-# 1) Hold asset
+# 1) Hold assets (plex_hold.ts 720p + plex_hold_480.ts 480p)
 bash scripts/generate_plex_hold_ts.sh
 
 # 2) external SSD heal LaunchAgent
@@ -73,8 +92,10 @@ curl -s -m 8 -o /tmp/arch_probe.ts -w 'HTTP %{http_code} size=%{size_download}\n
 **Pass (YouTube):** `size_download` ≫ 8192, `h264` + `aac` within ~2s; log
 `video_hold: YouTube wait-phase wrap`. Apple TV cold tune stays on channel.
 **Pass (Archive):** real program TS after brief keepalive; no wait-phase wrap log.
-**Pass (allowlisted Archive, e.g. 1984.2):** TTFB < 1 s with hold h264/aac; log
-`video_hold: Archive wait-phase wrap` then `spliced to upstream (… rehold=False)`.
+**Pass (allowlisted Archive, e.g. 1984.2):** TTFB < 1 s with hold h264/aac at the
+program's geometry; log `video_hold: Archive wait-phase wrap … hold=640x480` then
+`spliced to upstream (… rehold=False hold=640x480)`. A `wait-phase skip … — <reason>`
+line means no matching hold (null keepalives only), never a mismatched splice.
 
 ## Related
 
